@@ -1,0 +1,29 @@
+{
+  "name": "deep-signal",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "데이터 심해를 탐사하는 웹 기반 덱 빌딩 로그라이크.",
+  "scripts": {
+    "start": "python3 -m http.server 4173",
+    "dev": "python3 -m http.server 4173",
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "assets:arena": "python3 scripts/generate-arena-backdrops.py && python3 scripts/generate-arena-props.py && python3 scripts/generate-event-backdrops.py",
+    "assets:backdrops": "python3 scripts/generate-arena-backdrops.py",
+    "assets:events": "python3 scripts/generate-event-backdrops.py",
+    "assets:cards": "python3 scripts/rebuild-card-illustrations.py",
+    "assets:enemies": "python3 scripts/generate-enemy-portraits.py",
+    "assets:combatants": "python3 scripts/rebuild-combatants.py",
+    "qa:screens": "node scripts/capture-browser-qa.mjs",
+    "balance": "node scripts/balance-runner.mjs",
+    "audit": "node scripts/release-audit.mjs"
+  },
+  "keywords": [
+    "deckbuilding",
+    "roguelike",
+    "browser-game",
+    "cards"
+  ],
+  "license": "UNLICENSED"
+}

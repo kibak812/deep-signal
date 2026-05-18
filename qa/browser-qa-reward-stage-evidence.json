@@ -1,0 +1,84 @@
+{
+  "at": "2026-05-17T23:57:10.907Z",
+  "app": "http://127.0.0.1:4187/dist/",
+  "screenshots": [
+    "browser-qa-title-reward-stage.png",
+    "browser-qa-settings-reward-stage.png",
+    "browser-qa-codex-reward-stage.png",
+    "browser-qa-map-reward-stage.png",
+    "browser-qa-combat-reward-stage.png",
+    "browser-qa-reward-stage.png",
+    "browser-qa-mobile-reward-stage.png",
+    "browser-qa-victory-coda-reward-stage.png"
+  ],
+  "rewardEvidenceBefore": {
+    "viewport": {
+      "width": 1440,
+      "height": 900,
+      "scrollY": 0,
+      "documentHeight": 910
+    },
+    "action": {
+      "top": 673.25,
+      "bottom": 735.25,
+      "left": 210,
+      "right": 1230,
+      "width": 1020,
+      "height": 62
+    },
+    "relic": {
+      "top": 267.34375,
+      "bottom": 614.34375,
+      "left": 931.265625,
+      "right": 1230,
+      "width": 298.734375,
+      "height": 347
+    },
+    "cards": {
+      "top": 267.34375,
+      "bottom": 661.25,
+      "left": 210,
+      "right": 921.265625,
+      "width": 711.265625,
+      "height": 393.90625
+    },
+    "stage": {
+      "top": 267.34375,
+      "bottom": 661.25,
+      "left": 210,
+      "right": 1230,
+      "width": 1020,
+      "height": 393.90625
+    },
+    "actionRelicOverlap": 0,
+    "actionCardOverlap": 0,
+    "stageClass": "reward-choice-stage with-relics",
+    "actionPosition": "static",
+    "cardColumns": "231.75px 231.75px 231.75px",
+    "relicColumns": "276.734px",
+    "readiness": "진행 카드 · 유물 카드와 유물을 하나씩 고르면 경로가 열립니다. 카드 대기 유물 대기 경로",
+    "hasRelicChoices": 3
+  },
+  "rewardEvidenceAfterCard": {
+    "selectedCards": 1,
+    "selectedRelics": 0,
+    "readiness": "진행 카드 · 유물 카드와 유물을 하나씩 고르면 경로가 열립니다. 해류 흡수 선택 유물 대기 경로",
+    "phaseStillReward": true
+  },
+  "rewardEvidenceAfterRelic": {
+    "onMap": true,
+    "onReward": false,
+    "heading": "경로 선택"
+  },
+  "victoryEvidence": {
+    "relicPulseVisible": false,
+    "boardClass": "combat-board victory-coda-board feedback-reward arena-act-1 arena-combat arena-variant-3 arena-depth-entry arena-motif-signal",
+    "scene": "잠긴 서버 구역",
+    "sceneKey": "machine",
+    "hasProps": true,
+    "title": "승리",
+    "action": "보상 확인",
+    "codaOpacity": "1"
+  },
+  "consoleErrors": []
+}

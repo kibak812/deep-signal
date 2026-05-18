@@ -1,0 +1,3316 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import test from "node:test";
+import { CARDS, CARD_BY_ID } from "../src/data/cards.js";
+import { CHALLENGE_MODIFIERS } from "../src/data/challenges.js";
+import { ENEMIES, ENEMY_BY_ID } from "../src/data/enemies.js";
+import { EVENTS } from "../src/data/events.js";
+import { KEYWORDS, STATUS_LABELS } from "../src/data/keywords.js";
+import { RELICS } from "../src/data/relics.js";
+
+const CARD_EFFECT_OPS = new Set([
+  "apply",
+  "block",
+  "blockPerHand",
+  "chargePerEnemy",
+  "cleanse",
+  "damage",
+  "damageByCharge",
+  "damagePerExhaust",
+  "discardRandom",
+  "discountRandomHand",
+  "draw",
+  "exhaustRandomHand",
+  "gainCharge",
+  "gainEnergy",
+  "gainFocus",
+  "gainGold",
+  "gainMaxEnergy",
+  "gainStatus",
+  "generate",
+  "heal",
+  "ifAttackCount",
+  "ifEnemyStatus",
+  "ifPlayerBlock",
+  "loseHp",
+  "loseMaxHp",
+  "resetHand",
+  "spendChargeDamage",
+  "upgradeRandomHand"
+]);
+
+const EVENT_EFFECT_OPS = new Set([
+  "addCard",
+  "addRandomCard",
+  "cardReward",
+  "chanceCurse",
+  "chanceRelic",
+  "duplicateCard",
+  "eventCombat",
+  "gainGold",
+  "gainMaxHp",
+  "gainRelic",
+  "gainRunFlag",
+  "heal",
+  "loseGold",
+  "loseHp",
+  "loseMaxHp",
+  "removeCard",
+  "transformCard",
+  "upgradeRandomDeck"
+]);
+
+const STATUS_KEYS = new Set([...Object.keys(STATUS_LABELS), ...Object.keys(KEYWORDS)]);
+const CARD_TARGETS = new Set(["enemy", "self", "allEnemies", undefined]);
+const ENEMY_MOVE_TYPES = new Set(["attack", "buff", "debuff", "defend", "summon"]);
+const CHALLENGE_EFFECT_KEYS = new Set([
+  "eliteGoldBonus",
+  "enemyHpMultiplier",
+  "enemyStartVirus",
+  "firstTurnDraw",
+  "maxHp",
+  "rewardCardBonus",
+  "rewardGoldMultiplier",
+  "shopPriceMultiplier",
+  "startCharge",
+  "startingGold",
+  "startVulnerable",
+  "startWeak"
+]);
+
+test("content ids are unique and names are release-readable", () => {
+  assertUnique(CARDS.map((card) => card.id), "card id");
+  assertUnique(CARDS.map((card) => card.name), "card name");
+  assertUnique(RELICS.map((relic) => relic.id), "relic id");
+  assertUnique(RELICS.map((relic) => relic.name), "relic name");
+  assertUnique(ENEMIES.map((enemy) => enemy.id), "enemy id");
+  assertUnique(ENEMIES.map((enemy) => enemy.name), "enemy name");
+  assertUnique(EVENTS.map((event) => event.id), "event id");
+  assertUnique(EVENTS.map((event) => event.name), "event name");
+  assertUnique(CHALLENGE_MODIFIERS.map((modifier) => modifier.id), "challenge modifier id");
+  assertUnique(CHALLENGE_MODIFIERS.map((modifier) => modifier.name), "challenge modifier name");
+});
+
+test("visible copy stays Korean-first and avoids awkward placeholder phrasing", () => {
+  const visibleSources = new Map([
+    ["main", readFileSync(new URL("../src/main.js", import.meta.url), "utf8")],
+    ["engine", readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8")],
+    ["character", readFileSync(new URL("../src/data/character.js", import.meta.url), "utf8")],
+    ["cards", readFileSync(new URL("../src/data/cards.js", import.meta.url), "utf8")],
+    ["events", readFileSync(new URL("../src/data/events.js", import.meta.url), "utf8")],
+    ["relics", readFileSync(new URL("../src/data/relics.js", import.meta.url), "utf8")],
+    ["enemies", readFileSync(new URL("../src/data/enemies.js", import.meta.url), "utf8")],
+    ["keywords", readFileSync(new URL("../src/data/keywords.js", import.meta.url), "utf8")],
+    ["challenges", readFileSync(new URL("../src/data/challenges.js", import.meta.url), "utf8")],
+    ["index", readFileSync(new URL("../index.html", import.meta.url), "utf8")],
+    ["package", readFileSync(new URL("../package.json", import.meta.url), "utf8")],
+    ["readme", readFileSync(new URL("../README.md", import.meta.url), "utf8")]
+  ]);
+  const bannedCopy = [
+    /Abyssal Archive/,
+    /Echo Archivist/,
+    /Archive Codex/,
+    /Archive Recovered/,
+    /Signal Lost/,
+    /Final Deck/,
+    /Recovered Relics/,
+    /Recovered Relic/,
+    /Archive Depths/,
+    /Choose Your Reward/,
+    /Refit at the Waystation/,
+    /Cards for Sale/,
+    /Relics for Sale/,
+    /Rest at the Waystation/,
+    /<h3>Services<\/h3>/,
+    /\bHP\b/,
+    /골드/,
+    /금화/,
+    /동력/,
+    /에너지 회수/,
+    /스킬/,
+    /초반에 이기는 방법/,
+    /초반에 이길 방법/,
+    /초반 빌드 선언/,
+    /상태 대응/,
+    /상태 압력/,
+    /덱 순환 압박/,
+    /덱 순환/,
+    /축 선언/,
+    /빌드 실험/,
+    /빌드 축/,
+    /보스 기믹/,
+    /덱 스타일/,
+    /상태 처리/,
+    /압박/,
+    /전투 조작/,
+    /방어\/조작/,
+    /방어\/반격/,
+    /방어\/강화 없음/,
+    /마무리 각/,
+    /자원 흐름/,
+    /이상 위험/,
+    /압축도/,
+    /압축 정비/,
+    /압축 체력/,
+    /중복 압축/,
+    /덱 회전/,
+    /빠른 순환/,
+    /핵심 카드 접근/,
+    /카드와 바로 맞습니다/,
+    /색인관 전술 안내/,
+    /정찰 불가/,
+    /보스 정찰/,
+    /받지 않을 가치/,
+    /덱과 연결/,
+    /유물 연결/,
+    /한 턴 결정력/,
+    /초반 주력 선택/,
+    /전하 폭발/,
+    /표식 연속 공격/,
+    /방어와 반격/,
+    /필요 카드 찾기/,
+    /대가 있는 추가 행동/,
+    /같은 계획/,
+    /승리 계획/,
+    /같은 이름의 보상/,
+    /심연 장서관/,
+    /잔향 색인관/,
+    /색인관 조언/,
+    /회수 보상 선택/,
+    /후보:\s*후보/,
+    /맥동 창/,
+    /휴식 포드/,
+    /스테이션 마켓/,
+    /스테이션 상점/,
+    /추천 정비/,
+    /서기/,
+    /장부/,
+    /잉크/,
+    /열람/,
+    /책/,
+    /여백/,
+    /인쇄기/,
+    /인쇄한다/,
+    /금으로 쓴다/,
+    /전술 힌트/,
+    /비공격/,
+    /직접 공격 없음/,
+    /상태 이상 없음/,
+    /을 대상으로 삼고/,
+    /다음 수를 엽니다/,
+    /크레딧가/,
+    /크레딧를/,
+    /크레딧로/,
+    /조류 방패/,
+    /기억 체질/,
+    /영점 핀/,
+    /품질/,
+    /phase별/,
+    /polish/,
+    /\bQA\b/,
+    /\bKO\b/,
+    /바이럴/,
+    /오래된 컴파일/,
+    /메모리 누수/,
+    /미리보기 미지원/,
+    /상태 보고 선택/,
+    /시작 목표/,
+    /정비 목표/,
+    /서비스/,
+    /부족한 준비/,
+    /딥 아카이브/,
+    /의도 대기/,
+    /다음 행동 대기/,
+    /버림 더미 재섞기 대기/
+  ];
+  for (const [name, source] of visibleSources) {
+    for (const pattern of bannedCopy) {
+      assert.doesNotMatch(source, pattern, `${name} includes awkward or English-first copy: ${pattern}`);
+    }
+  }
+  assert.match(visibleSources.get("main"), /딥 시그널/);
+  assert.match(visibleSources.get("character"), /에코 다이버/);
+  assert.match(visibleSources.get("package"), /deep-signal/);
+  assert.match(visibleSources.get("main"), /주력 고르기/);
+  assert.match(visibleSources.get("main"), /뽑고, 쓰고, 남기지 않기/);
+  assert.match(visibleSources.get("main"), /심해 네트워크/);
+  assert.match(visibleSources.get("main"), /해로운 상태/);
+  assert.match(visibleSources.get("main"), /경로 선택/);
+  assert.match(visibleSources.get("main"), /보상 선택/);
+  assert.match(visibleSources.get("readme"), /플레이 힌트/);
+});
+
+test("release documentation lists QA artifacts and current combat feedback", () => {
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  const auditSource = readFileSync(new URL("../scripts/release-audit.mjs", import.meta.url), "utf8");
+  const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
+  assert.match(readme, /## 검증 산출물/);
+  assert.match(readme, /qa\/release-audit\.json/);
+  assert.match(readme, /qa\/balance-report\.json/);
+  assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
+  assert.match(readme, /browser-qa-combat-card-hover\.png/);
+  assert.match(readme, /browser-qa-enemy-grouped-fx\.png/);
+  assert.match(readme, /browser-qa-enemy-grouped-fx\.json/);
+  assert.match(readme, /browser-qa-shop-refreshed\.png/);
+  assert.match(readme, /browser-qa-rest-refreshed\.png/);
+  assert.match(readme, /browser-qa-reward-relics-refreshed\.png/);
+  assert.match(readme, /browser-qa-summary-lost-refreshed\.png/);
+  assert.match(readme, /browser-qa-summary-won-refreshed\.png/);
+  assert.match(readme, /browser-qa-records-refreshed\.png/);
+  assert.match(readme, /browser-qa-about-refreshed\.png/);
+  assert.match(readme, /다시 캡처해야 출시 감사가 통과합니다/);
+  assert.match(readme, /드래그 시 카드에서 대상까지 이어지는 조준선/);
+  assert.match(readme, /크레딧/);
+  assert.match(readme, /이용 안내·라이선스/);
+  assert.match(readme, /새 런 시작, 난이도 선택.*콘솔 오류 없음/s);
+  assert.match(auditSource, /browser-qa-artifacts/);
+  assert.match(auditSource, /function browserQaFreshness\(qaFiles, requiredBrowserQa\)/);
+  assert.match(auditSource, /sourceFreshAfter/);
+  assert.match(auditSource, /freshFiles/);
+  assert.match(auditSource, /staleFiles/);
+  assert.match(auditSource, /현재 소스 변경 이후 다시 찍은/);
+  assert.match(auditSource, /credits-license/);
+  assert.match(auditSource, /verified-flow-coverage/);
+  assert.match(auditSource, /requiredBrowserQa/);
+  assert.match(auditSource, /card-hover/);
+  assert.match(auditSource, /about/);
+  assert.match(auditSource, /reward-relics/);
+  assert.match(auditSource, /summary-lost/);
+  assert.match(auditSource, /summary-won/);
+  assert.match(auditSource, /records/);
+  assert.match(auditSource, /requiredReleaseInfo/);
+  assert.match(auditSource, /requiredFlowDocs/);
+  assert.match(auditSource, /requiredFlowTests/);
+  assert.match(auditSource, /browser-qa-.+\\.png/);
+  assert.match(auditSource, /검증 산출물/);
+  assert.match(captureSource, /browser-qa-combat-card-hover\.png/);
+  assert.match(captureSource, /browser-qa-about-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-reward-relics-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-summary-lost-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-summary-won-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-records-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-enemy-grouped-fx\.png/);
+  assert.match(captureSource, /browser-qa-enemy-grouped-fx\.json/);
+  assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
+  assert.match(captureSource, /duplicateFxCount/);
+  assert.match(captureSource, /fixtureHasMultiHit/);
+  assert.match(captureSource, /hitCount/);
+  assert.match(captureSource, /Victory coda lacks combat payoff/);
+  assert.match(captureSource, /Victory coda should hide regular HUD/);
+  assert.match(captureSource, /await navigate\(cdp, baseUrl\);\s*await waitForSelector\(cdp, "\.title-screen"\);/);
+  assert.match(captureSource, /titleScreen: Boolean\(document\.querySelector\("\.title-screen"\)\)/);
+  assert.match(captureSource, /combatBoard: Boolean\(document\.querySelector\("\.combat-board"\)\)/);
+  assert.match(captureSource, /function stageRewardFixture\(cdp\)/);
+  assert.match(captureSource, /function stageSummaryFixture\(cdp, outcome\)/);
+  assert.match(captureSource, /function stageRecordsFixture\(cdp\)/);
+  assert.match(captureSource, /function assertCardHoverLayout\(cdp\)/);
+  assert.match(captureSource, /function assertCombatRiskSingleSource\(cdp\)/);
+  assert.match(captureSource, /await assertCombatRiskSingleSource\(cdp\);/);
+  assert.match(captureSource, /Combat risk single source failed/);
+  assert.match(captureSource, /commandHidden/);
+  assert.match(captureSource, /forecastHidden/);
+  assert.match(captureSource, /function assertCombatPileDockCompact\(cdp\)/);
+  assert.match(captureSource, /await assertCombatPileDockCompact\(cdp\);/);
+  assert.match(captureSource, /Combat pile dock compact state failed/);
+  assert.match(captureSource, /Combat pile dock hover label failed/);
+  assert.match(captureSource, /withinViewport/);
+  assert.match(captureSource, /badgeInsideCard/);
+  assert.match(captureSource, /badgeClearTitle/);
+  assert.match(captureSource, /aimLineMatchesTarget/);
+  assert.match(captureSource, /selfPreview \? aimLineHidden : enemyPreview \? !aimLineHidden : true/);
+  assert.match(captureSource, /Card hover layout failed/);
+  assert.match(captureSource, /function assertMapRouteUx\(cdp\)/);
+  assert.match(captureSource, /await assertMapRouteUx\(cdp\);/);
+  assert.match(captureSource, /Map route UX failed/);
+  assert.match(captureSource, /function assertMapPreviewFocus\(cdp\)/);
+  assert.match(captureSource, /await assertMapPreviewFocus\(cdp\);/);
+  assert.match(captureSource, /Map preview focus failed/);
+  assert.match(captureSource, /focus\.classList\.contains\("is-previewing"\)/);
+  assert.match(captureSource, /\.map-horizon/);
+  assert.match(captureSource, /function assertAboutReleaseInfo\(cdp\)/);
+  assert.match(captureSource, /await assertAboutReleaseInfo\(cdp\);/);
+  assert.match(captureSource, /About release info failed/);
+  assert.match(captureSource, /function stageActInterludeFixture\(cdp\)/);
+  assert.match(captureSource, /function assertActInterludeSingleUse\(cdp\)/);
+  assert.match(captureSource, /browser-qa-act-interlude-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-act-interlude-one-shot\.png/);
+  assert.match(captureSource, /Act interlude one-shot return state failed/);
+  assert.match(captureSource, /Act interlude persisted one-shot failed/);
+  assert.match(captureSource, /Act interlude persisted dismissal failed/);
+  assert.match(captureSource, /hiddenAfterReturn\.count !== 0/);
+  assert.match(captureSource, /persistedSeen\.count !== 0/);
+  assert.match(captureSource, /function stageBossFixture\(cdp\)/);
+  assert.match(captureSource, /function assertBossStatusStrip\(cdp\)/);
+  assert.match(captureSource, /browser-qa-boss-status-strip\.png/);
+  assert.match(captureSource, /Boss status strip failed/);
+  assert.match(captureSource, /function assertShopFocusUx\(cdp\)/);
+  assert.match(captureSource, /await assertShopFocusUx\(cdp\);/);
+  assert.match(captureSource, /Shop focus UX failed/);
+  assert.match(captureSource, /dimmedCards >= 1/);
+  assert.match(captureSource, /function stageStatusTooltipFixture\(cdp\)/);
+  assert.match(captureSource, /function assertStatusTooltipUx\(cdp\)/);
+  assert.match(captureSource, /browser-qa-combat-status-tooltip\.png/);
+  assert.match(captureSource, /Status tooltip UX failed/);
+  assert.match(captureSource, /pseudoDisplay === "none"/);
+  assert.match(captureSource, /function assertRewardDecisionUx\(cdp\)/);
+  assert.match(captureSource, /await assertRewardDecisionUx\(cdp\);/);
+  assert.match(captureSource, /Reward decision UX failed/);
+  assert.match(captureSource, /collapsedRelicEffects === relicChoices\.length/);
+  assert.match(captureSource, /Reward relic hover detail failed/);
+  assert.match(captureSource, /await hoverSelector\(cdp, "\.reward-relic-choice"\)/);
+  assert.match(captureSource, /function assertRewardSelectionProgress\(cdp\)/);
+  assert.match(captureSource, /await assertRewardSelectionProgress\(cdp\);/);
+  assert.match(captureSource, /browser-qa-reward-card-selected\.png/);
+  assert.match(captureSource, /Reward selection progress failed/);
+  assert.match(captureSource, /spotlightArtBackground\.includes\("card-illustrations"\)/);
+  assert.match(captureSource, /await waitForSelector\(cdp, "\.reward-choice-stage\.preview-active"\)/);
+  assert.match(captureSource, /previewStageActive/);
+  assert.match(captureSource, /dimmedOptions >= 1/);
+  assert.match(captureSource, /skipCompact/);
+  assert.match(captureSource, /Reward skip compact hover failed/);
+  assert.match(captureSource, /await hoverSelector\(cdp, "\.reward-skip-choice"\)/);
+  assert.match(captureSource, /stageCardReady/);
+  assert.match(captureSource, /dimmedUnselectedCards >= 1/);
+  assert.match(captureSource, /expandedPickLines <= 1/);
+  assert.match(captureSource, /visibleDetailButtons <= 1/);
+  assert.match(captureSource, /selectedPickExpanded/);
+  assert.match(captureSource, /selectedDetailButtonVisible/);
+  assert.match(captureSource, /function assertRestSceneProductionArt\(cdp\)/);
+  assert.match(captureSource, /await assertRestSceneProductionArt\(cdp\);/);
+  assert.match(captureSource, /Rest scene production art failed/);
+  assert.match(captureSource, /function assertSummaryActionsVisible\(cdp\)/);
+  assert.match(captureSource, /await assertSummaryActionsVisible\(cdp\);/);
+  assert.match(captureSource, /Summary actions not visible in first viewport/);
+  assert.match(captureSource, /const seenCodaIds = new Set\(\)/);
+  assert.match(captureSource, /Victory coda duplicated before reward/);
+});
+
+test("all card data references implemented effects, statuses, and generated cards", () => {
+  for (const card of CARDS) {
+    assert.ok(card.name && card.text, `${card.id} needs name and text`);
+    assert.ok(card.upgradedText, `${card.id} needs upgraded text`);
+    assert.ok(["attack", "skill", "power", "curse", "status"].includes(card.type), `${card.id} has unknown type`);
+    assert.ok(["starter", "common", "uncommon", "rare", "special", "curse"].includes(card.rarity), `${card.id} has unknown rarity`);
+    for (const keyword of card.keywords ?? []) {
+      assert.ok(KEYWORDS[keyword] || STATUS_LABELS[keyword], `${card.id} keyword ${keyword} lacks description`);
+    }
+    for (const effect of collectEffects([...(card.effects ?? []), ...(card.upgrade?.effects ?? [])])) {
+      assert.ok(CARD_EFFECT_OPS.has(effect.op), `${card.id} has unimplemented effect op ${effect.op}`);
+      assert.ok(CARD_TARGETS.has(effect.target), `${card.id} has unsupported target ${effect.target}`);
+      if (effect.status) assert.ok(STATUS_KEYS.has(effect.status), `${card.id} effect status ${effect.status} lacks label/description`);
+      if (effect.cardId) assert.ok(CARD_BY_ID[effect.cardId], `${card.id} references missing card ${effect.cardId}`);
+    }
+  }
+});
+
+test("card rules text exposes the numbers and concepts used by effects", () => {
+  for (const card of CARDS) {
+    assertCardRulesText(card, card.effects ?? [], card.text, `${card.id}.text`);
+    const upgradedEffects = card.upgrade?.effects ?? card.effects ?? [];
+    assertCardRulesText(card, upgradedEffects, card.upgradedText, `${card.id}.upgradedText`);
+    if (card.type === "power") {
+      assertTextHas(card.text, /동조/, `${card.id}.text should mention power tuning`);
+      assertTextHas(card.upgradedText, /동조/, `${card.id}.upgradedText should mention power tuning`);
+    }
+    const baseExhaust = Boolean(card.exhaust) && card.type !== "power";
+    const upgradedExhaust = Boolean(card.upgrade?.exhaust ?? card.exhaust) && card.type !== "power";
+    if (upgradedExhaust) assertTextHas(card.upgradedText, /소멸/, `${card.id}.upgradedText should mention exhaust`);
+    if (baseExhaust) assertTextHas(card.text, /소멸/, `${card.id}.text should mention exhaust`);
+    if (card.retain) assertTextHas(card.text, /보존/, `${card.id}.text should mention retain`);
+    if (card.upgrade?.retain) assertTextHas(card.upgradedText, /보존/, `${card.id}.upgradedText should mention retain`);
+    if (card.unplayable) {
+      assertTextHas(card.text, /사용할 수 없습니다/, `${card.id}.text should mention unplayable`);
+      assertTextHas(card.upgradedText, /사용할 수 없습니다/, `${card.id}.upgradedText should mention unplayable`);
+    }
+  }
+});
+
+test("all enemy moves expose clear intents and valid summons/statuses", () => {
+  for (const enemy of ENEMIES) {
+    assert.ok(enemy.description, `${enemy.id} needs description`);
+    assert.ok(enemy.hp[0] > 0 && enemy.hp[1] >= enemy.hp[0], `${enemy.id} has invalid hp range`);
+    if (enemy.tier === "boss") {
+      assert.ok(enemy.phaseAt > 0 && enemy.phaseAt < 1, `${enemy.id} boss needs a phase threshold`);
+      assert.ok(enemy.mechanic && enemy.phaseName, `${enemy.id} boss needs visible mechanic and phase text`);
+      assert.ok(enemy.moves.some((move) => move.phase === 2), `${enemy.id} boss needs phase 2 moves`);
+    }
+    assert.ok(enemy.moves.length >= 3, `${enemy.id} should have at least three moves`);
+    for (const move of enemy.moves) {
+      assert.ok(move.label && move.intent, `${enemy.id}.${move.id} needs label and intent`);
+      assert.ok(ENEMY_MOVE_TYPES.has(move.type), `${enemy.id}.${move.id} has unknown type ${move.type}`);
+      for (const status of [...(move.self ?? []), ...(move.applyToPlayer ?? [])]) {
+        assert.ok(STATUS_KEYS.has(status.status), `${enemy.id}.${move.id} status ${status.status} lacks label/description`);
+        assert.ok(status.amount > 0, `${enemy.id}.${move.id} status amount must be positive`);
+      }
+      for (const summon of move.summon ?? []) {
+        assert.ok(ENEMY_BY_ID[summon.enemyId], `${enemy.id}.${move.id} summons missing enemy ${summon.enemyId}`);
+      }
+    }
+  }
+});
+
+test("enemy pressure spikes stay readable across the run", () => {
+  const move = (enemyId, moveId) => {
+    const found = ENEMY_BY_ID[enemyId].moves.find((enemyMove) => enemyMove.id === moveId);
+    assert.ok(found, `${enemyId}.${moveId} should exist`);
+    return found;
+  };
+  const playerStatus = (enemyMove, status) => enemyMove.applyToPlayer?.find((entry) => entry.status === status)?.amount ?? 0;
+  const selfStatus = (enemyMove, status) => enemyMove.self?.find((entry) => entry.status === status)?.amount ?? 0;
+  const totalDamage = (enemyMove) => (enemyMove.damage ?? 0) * (enemyMove.hits ?? 1);
+
+  assert.ok(playerStatus(move("rust_choir", "chorus"), "virus") <= 2, "early normal enemies should not open with heavy 바이러스");
+  assert.ok(playerStatus(move("coral_engine", "spores"), "virus") <= 3, "elite 바이러스 should remain answerable");
+  assert.ok(playerStatus(move("viral_cantor", "infect"), "virus") <= 4, "elite infection should not decide a run by itself");
+  assert.ok(playerStatus(move("viral_cantor", "choir_call"), "virus") <= 2, "summon turns should leave room to stabilize");
+  assert.ok(selfStatus(move("drowned_algorithm", "compile"), "strength") <= 1, "act 2 boss scaling should ramp gradually");
+  assert.ok(playerStatus(move("drowned_algorithm", "leak"), "virus") <= 3, "act 2 boss 바이러스 should be a plan, not a cliff");
+  assert.ok(totalDamage(move("drowned_algorithm", "phase_crash")) <= 22, "act 2 phase attack should stay blockable with a real deck");
+  assert.ok(playerStatus(move("last_gate_choir", "intonation"), "virus") <= 4, "final boss opening 바이러스 should be threatening but readable");
+  assert.ok(totalDamage(move("last_gate_choir", "phase_requiem")) <= 32, "final boss finisher should test defense without erasing medium decks");
+});
+
+test("event choices are actionable and reference valid content", () => {
+  for (const event of EVENTS) {
+    assert.ok(event.text, `${event.id} needs event text`);
+    assert.ok(event.choices.length >= 2, `${event.id} needs at least two choices`);
+    for (const choice of event.choices) {
+      assert.ok(choice.label && choice.detail, `${event.id} has incomplete choice text`);
+      for (const effect of choice.effects ?? []) {
+        assert.ok(EVENT_EFFECT_OPS.has(effect.op), `${event.id} has unimplemented event op ${effect.op}`);
+        if (effect.cardId) assert.ok(CARD_BY_ID[effect.cardId], `${event.id} references missing card ${effect.cardId}`);
+        if (effect.flag) assert.ok(effect.amount > 0, `${event.id} flag ${effect.flag} needs positive amount`);
+        if (effect.op === "gainRunFlag") {
+          assert.ok([undefined, "run", "nextCombat"].includes(effect.scope), `${event.id} has unsupported run flag scope ${effect.scope}`);
+          if (/다음 전투/.test(choice.detail)) {
+            assert.equal(effect.scope, "nextCombat", `${event.id} says next combat but applies a longer run flag`);
+          }
+        }
+      }
+    }
+  }
+});
+
+test("event choices expose risk and reward previews", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
+  assert.match(mainSource, /function eventChoicePreview\(run, option\)/);
+  assert.match(mainSource, /function eventRecommendedChoice\(run, previews\)/);
+  assert.match(mainSource, /function eventEffectChip\(run, effect, projected\)/);
+  assert.match(mainSource, /function renderEventChoicePreview\(preview\)/);
+  assert.match(mainSource, /function renderEventChoiceOutcome\(preview\)/);
+  assert.match(mainSource, /function renderEventStatusRail\(run\)/);
+  assert.match(mainSource, /function eventChoiceGlyph\(preview\)/);
+  assert.match(mainSource, /function renderEventSceneMarker\(preview\)/);
+  assert.match(mainSource, /function renderEventSceneSet\(eventDefinition, preview\)/);
+  assert.match(mainSource, /function eventSceneGlyph\(preview\)/);
+  assert.match(mainSource, /function renderEventSceneBrief\(eventDefinition, previews, recommendedIndex\)/);
+  assert.match(mainSource, /function eventChoiceResources\(run, projected, blockReason = null\)/);
+  assert.match(mainSource, /function eventResourceDelta\(delta = 0, maxDelta = 0\)/);
+  assert.match(mainSource, /function eventSignedDelta\(value\)/);
+  assert.match(mainSource, /function renderEventSpotlight\(eventDefinition, previews, recommendedIndex\)/);
+  assert.match(mainSource, /function eventVisualClass\(preview\)/);
+  assert.match(mainSource, /function eventIllustrationStyle\(eventDefinition, preview\)/);
+  assert.match(mainSource, /function eventBackdropCell\(eventDefinition, preview\)/);
+  assert.match(mainSource, /function eventPropCell\(eventDefinition, preview\)/);
+  assert.match(mainSource, /function eventSceneIndex\(eventDefinition, preview\)/);
+  assert.match(mainSource, /--event-bg-x:\$\{scene\.x\}%/);
+  assert.match(mainSource, /--event-bg-y:\$\{scene\.y\}%/);
+  assert.match(mainSource, /--event-prop-bg-x:\$\{prop\.x\}%/);
+  assert.match(mainSource, /--event-side-bg-x:\$\{prop\.sideX\}%/);
+  assert.match(mainSource, /function renderChoiceWayfinder\(run, label\)/);
+  assert.match(mainSource, /function choiceWayfinder\(run, label\)/);
+  assert.match(mainSource, /function choiceWayfinderPriority\(run, analysis, brief\)/);
+  assert.match(mainSource, /function eventChoiceDecisionLine\(preview\)/);
+  assert.match(mainSource, /function eventPreviewLabel\(projected, blockReason\)/);
+  assert.match(mainSource, /function eventToneLabel\(preview\)/);
+  assert.match(mainSource, /eventChoiceBlockReason\(run, option\.effects/);
+  assert.match(mainSource, /const previews = eventDefinition\.choices\.map/);
+  assert.match(mainSource, /const recommendedIndex = eventRecommendedChoice\(run, previews\)/);
+  assert.match(mainSource, /renderEventStatusRail\(run\)/);
+  assert.match(mainSource, /renderEventSceneSet\(eventDefinition, recommendedPreview\)/);
+  assert.doesNotMatch(mainSource, /renderEventSpotlight\(eventDefinition, previews, recommendedIndex\)[\s\S]*<div class="event-options"/);
+  assert.match(mainSource, /renderEventSceneBrief\(eventDefinition, previews, recommendedIndex\)/);
+  assert.match(mainSource, /eventVisualClass\(recommendedPreview\)/);
+  assert.match(mainSource, /preview\.blocked \|\| preview\.tone === "lethal"/);
+  assert.match(mainSource, /class="event-choice \$\{preview\.tone\} \$\{recommended \? "recommended" : ""\}"/);
+  assert.match(mainSource, /class="event-spotlight \$\{preview\.tone\}"/);
+  assert.match(mainSource, /class="event-status-strip"/);
+  assert.match(mainSource, /class="event-choice-head"/);
+  assert.match(mainSource, /class="event-choice-icon"/);
+  assert.match(mainSource, /class="event-choice-copy"/);
+  assert.match(mainSource, /class="event-risk-label"/);
+  assert.match(mainSource, /class="event-choice-outcome"/);
+  assert.match(mainSource, /preview\.showDetail \? `<small>\$\{preview\.detail\}<\/small>` : ""/);
+  assert.match(mainSource, /eventToneLabel\(preview \?\? \{ tone: "steady" \}\)/);
+  assert.match(mainSource, /preview\.label/);
+  assert.match(mainSource, /대가 있는 보상/);
+  assert.match(mainSource, /추천 선택/);
+  assert.match(mainSource, /체력 \$\{hpDeltaText\} · \$\{projected\.hp\}\/\$\{projected\.maxHp\}/);
+  assert.match(mainSource, /value: `\$\{projected\.hp\}\/\$\{projected\.maxHp\}`/);
+  assert.match(mainSource, /delta: blockReason === "cost" && goldDelta < 0 \? "부족" : eventResourceDelta\(goldDelta\)/);
+  assert.match(mainSource, /resources\.filter\(\(resource\) => resource\.changed/);
+  assert.match(mainSource, /showDetail: projected\.blocked \|\| projected\.lethal/);
+  assert.match(mainSource, /현재 자원으로 선택할 수 없습니다/);
+  assert.match(mainSource, /지금은 얻는 효과가 없어 선택할 수 없습니다/);
+  assert.match(mainSource, /효과 없음/);
+  assert.match(mainSource, /즉시 런을 끝낼 수 있습니다/);
+  assert.match(styleSource, /\.event-choice-preview/);
+  assert.match(styleSource, /\.event-choice-outcome/);
+  assert.match(styleSource, /\.event-choice-outcome span\.gain/);
+  assert.match(styleSource, /\.event-choice-outcome span\.cost/);
+  assert.match(styleSource, /\.event-choice-outcome span\.danger/);
+  assert.match(styleSource, /event-backdrops\.png/);
+  assert.match(styleSource, /var\(--event-bg-x, 0%\) var\(--event-bg-y, 0%\) \/ 300% 200% no-repeat/);
+  assert.match(styleSource, /\.event-illustration::before/);
+  assert.match(styleSource, /\.event-scene-set/);
+  assert.match(styleSource, /\.event-scene-prop/);
+  assert.match(styleSource, /arena-props\.png/);
+  assert.match(styleSource, /\.event-diver-sprite/);
+  assert.match(styleSource, /player-sprite\.png/);
+  assert.match(styleSource, /\.event-scene-floor/);
+  assert.match(styleSource, /\.event-scene-marker/);
+  assert.match(styleSource, /\.event-scene-marker::before/);
+  assert.match(styleSource, /\.event-scene-marker b/);
+  assert.match(styleSource, /\.event-scene-marker span:nth-child\(3\)/);
+  assert.match(styleSource, /\.event-scene-brief/);
+  assert.match(styleSource, /\.event-scene-brief i\.danger/);
+  assert.match(styleSource, /\.event-choice-outcome[\s\S]*display:\s*flex/);
+  assert.match(styleSource, /\.event-visual-rewarding/);
+  assert.match(styleSource, /\.event-spotlight/);
+  assert.match(styleSource, /\.choice-wayfinder/);
+  assert.match(styleSource, /\.choice-wayfinder-chips/);
+  assert.match(styleSource, /\.choice-wayfinder small[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.choice-wayfinder-chips[\s\S]*max-height:\s*40px/);
+  assert.match(styleSource, /\.choice-wayfinder em\.danger/);
+  assert.match(styleSource, /\.event-status-strip/);
+  assert.match(styleSource, /\.phase-event \.combat-log[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.phase-event \.run-briefing,\s*\.phase-event \.tactical-advisor[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.event-choice-head/);
+  assert.match(styleSource, /\.event-choice-icon/);
+  assert.match(styleSource, /\.event-choice-copy/);
+  assert.match(styleSource, /\.event-risk-label/);
+  assert.match(styleSource, /\.event-choice-detail[\s\S]*-webkit-line-clamp:\s*1/);
+  assert.match(styleSource, /\.event-choice\.recommended/);
+  assert.match(styleSource, /\.event-recommendation/);
+  assert.match(styleSource, /\.event-chip-row/);
+  assert.match(styleSource, /\.event-chip\.danger/);
+  assert.match(captureSource, /function assertEventSceneUx\(cdp\)/);
+  assert.match(captureSource, /await assertEventSceneUx\(cdp\);/);
+  assert.match(captureSource, /Event scene UX failed/);
+});
+
+test("daily contract modifiers are valid and wired into engine and title UI", () => {
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.ok(CHALLENGE_MODIFIERS.length >= 6, "daily contracts need enough rotating modifiers");
+  for (const modifier of CHALLENGE_MODIFIERS) {
+    assert.ok(modifier.id && modifier.name && modifier.text && modifier.tone, `${modifier.id} needs visible contract copy`);
+    for (const key of Object.keys(modifier.effects ?? {})) {
+      assert.ok(CHALLENGE_EFFECT_KEYS.has(key), `${modifier.id} has unsupported contract effect ${key}`);
+    }
+  }
+  assert.match(engineSource, /function applyChallengeModifiers\(run\)/);
+  assert.match(engineSource, /function challengeLabel\(run\)/);
+  assert.match(engineSource, /function challengeSummary\(run\)/);
+  assert.match(engineSource, /challengeModifierNames/);
+  assert.match(engineSource, /runFlags\.enemyHpMultiplier/);
+  assert.match(engineSource, /runFlags\.rewardCardBonus/);
+  assert.match(engineSource, /runFlags\.shopPriceMultiplier/);
+  assert.match(mainSource, /function dailyModifierIds\(dateKey, difficulty\)/);
+  assert.match(mainSource, /function renderDailyContract\(challenge\)/);
+  assert.match(mainSource, /function challengeLabel\(challenge\)/);
+  assert.match(mainSource, /GAME_DATA\.challengeModifiers/);
+  assert.match(mainSource, /class="daily-contract"/);
+  assert.match(styleSource, /\.daily-contract/);
+  assert.match(styleSource, /\.daily-contract article\.virus/);
+});
+
+test("relics document timing and stay within supported rarity bands", () => {
+  for (const relic of RELICS) {
+    assert.ok(relic.text && relic.timing && relic.icon, `${relic.id} needs visible text, timing, and icon`);
+    assert.ok(["starter", "common", "uncommon", "rare"].includes(relic.rarity), `${relic.id} has unknown rarity`);
+  }
+});
+
+test("all non-starter relic ids are wired into gameplay implementation", () => {
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  for (const relic of RELICS.filter((item) => item.rarity !== "starter")) {
+    assert.ok(engineSource.includes(`"${relic.id}"`) || engineSource.includes(`'${relic.id}'`), `${relic.id} is not referenced by engine behavior`);
+  }
+});
+
+test("in-run relic surfaces explain timing effects and deck connections", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /relicOpen:\s*false/);
+  assert.match(mainSource, /data-action="open-relics"/);
+  assert.match(mainSource, /function renderRelicInspector\(run\)/);
+  assert.match(mainSource, /aria-label="유물 상세"/);
+  assert.match(mainSource, /function relicTooltip\(relic, rarity, insight, active = false\)/);
+  assert.match(mainSource, /function relicRunInsight\(relicId, run\)/);
+  assert.match(mainSource, /function relicTimingTone\(timing = ""\)/);
+  assert.match(mainSource, /현재 덱: \$\{labels\} 카드 \$\{matchingCards\.length\}장과 연결/);
+  assert.match(mainSource, /RELIC_SYNERGY_HINTS\.find/);
+  assert.match(styleSource, /\.relic-tooltip/);
+  assert.match(styleSource, /\.relic-modal/);
+  assert.match(styleSource, /\.relic-insight/);
+  assert.match(styleSource, /\.relic-detail-grid/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.relic-row-button[\s\S]*max-width:\s*180px/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.relic-insight,[\s\S]*\.relic-detail-grid[\s\S]*grid-template-columns:\s*1fr/);
+});
+
+test("accessibility settings and combat feedback are wired into the rendered UI", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /role="status" aria-live="polite" aria-atomic="true"/);
+  assert.match(mainSource, /function renderCombatEventFeed\(run\)/);
+  assert.match(mainSource, /run\.log\.at\(-1\)/);
+  assert.match(mainSource, /aria-label="전투 피드백"/);
+  assert.match(mainSource, /function combatEventLabel\(tone = "system"\)/);
+  assert.match(mainSource, /aria-label="자동 저장 상태"/);
+  assert.match(mainSource, /function renderTopObjective\(run\)/);
+  assert.match(mainSource, /function currentRunObjective\(run\)/);
+  assert.match(mainSource, /function combatTopObjective\(run, progress\)/);
+  assert.match(mainSource, /aria-label="현재 목표: \$\{objective\.title\}\. \$\{objective\.detail\}"/);
+  assert.match(mainSource, /피해 \$\{forecast\.hpLoss\} 막기/);
+  assert.match(mainSource, /카드나 유물 고르기/);
+  assert.match(mainSource, /function renderRelicPulse\(run\)/);
+  assert.match(mainSource, /function recentRelicTriggers\(run\)/);
+  assert.match(mainSource, /function renderCombatForecast\(run\)/);
+  assert.match(mainSource, /function combatForecastPrimary\(run, forecast\)/);
+  assert.match(mainSource, /<span aria-hidden="true">\$\{primary\.icon\}<\/span>/);
+  assert.match(mainSource, /<b aria-hidden="true">\$\{chip\.icon\}<\/b>/);
+  assert.match(mainSource, /icon:\s*"✦"/);
+  assert.match(mainSource, /icon:\s*"⬡"/);
+  assert.match(mainSource, /icon:\s*"◎"/);
+  assert.match(mainSource, /value:\s*`-\$\{forecast\.hpLoss\}`/);
+  assert.doesNotMatch(mainSource, /value:\s*`피해 \$\{forecast\.hpLoss\}`/);
+  assert.match(mainSource, /function combatForecastSetupIcon\(forecast\)/);
+  assert.match(mainSource, /function combatForecastSetupValue\(forecast\)/);
+  assert.match(mainSource, /if \(forecast\.summons > 0\) return `×\$\{forecast\.summons\}`/);
+  assert.match(mainSource, /function combatForecastSecondaryChips\(run, forecast\)/);
+  assert.match(mainSource, /function renderTurnPlan\(run\)/);
+  assert.match(mainSource, /function renderTurnPlanSequence\(sequence = \[\]\)/);
+  assert.match(mainSource, /function turnPlanSummary\(plan\)/);
+  assert.match(mainSource, /function combatTurnPlan\(run\)/);
+  assert.match(mainSource, /function combatTurnSequence\(run, previewEntries, forecast, selected, harmfulCount\)/);
+  assert.match(mainSource, /function renderCombatCommandRow\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function renderCombatPlayPanel\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function renderCombatPileDock\(combat\)/);
+  assert.match(mainSource, /function renderCombatEnergyPanel\(combat\)/);
+  assert.match(mainSource, /function renderCombatDepthRail\(run\)/);
+  assert.match(mainSource, /function renderCombatMissionStrip\(run\)/);
+  assert.match(mainSource, /function renderCombatReadinessStrip\(readiness\)/);
+  assert.match(mainSource, /function combatReadinessHighlights\(readiness\)/);
+  assert.match(mainSource, /function combatMissionNodeType\(run\)/);
+  assert.match(mainSource, /function combatMissionForNode\(type, progress\)/);
+  assert.match(mainSource, /function renderCombatFxLayer\(run\)/);
+  assert.match(mainSource, /function renderCombatFxSource\(fx\)/);
+  assert.match(mainSource, /function renderCombatFxChipRow\(fx\)/);
+  assert.match(mainSource, /renderCombatFxSource\(fx\)/);
+  assert.match(mainSource, /renderCombatFxChipRow\(fx\)/);
+  assert.match(mainSource, /fx\.actorCount > 1 \? " fx-grouped" : ""/);
+  assert.match(mainSource, /data-actor-count="×\$\{fx\.actorCount\}"/);
+  assert.match(mainSource, /function enemyFxHitCount\(move = \{\}\)/);
+  assert.match(mainSource, /data-hit-count="\$\{hitLabel\}"/);
+  assert.match(mainSource, /fx\.sourceMode \? ` fx-source-\$\{fx\.sourceMode\}` : ""/);
+  assert.match(mainSource, /<span class="fx-trail"><i><\/i><\/span>/);
+  assert.match(mainSource, /function renderCombatActionRecap\(run\)/);
+  assert.match(mainSource, /function renderCombatVictoryCoda\(coda, run\)/);
+  assert.match(mainSource, /function victoryCodaKicker\(type\)/);
+  assert.match(mainSource, /class="combat-aim-line" hidden aria-hidden="true"/);
+  assert.match(mainSource, /function combatVictorySnapshot\(run, uid, targetUid = null\)/);
+  assert.match(mainSource, /arena:\s*combatVictoryArenaSnapshot\(run\)/);
+  assert.match(mainSource, /function combatVictoryArenaSnapshot\(run\)/);
+  assert.match(mainSource, /function combatVictoryArenaClasses\(run, boss\)/);
+  assert.match(mainSource, /function stageCombatVictoryCoda\(run, before\)/);
+  assert.match(mainSource, /function stageCombatVictoryCoda\(run, before\)[\s\S]*const key = combatVictoryCodaKey\(before, run\.reward, relicChoices\);[\s\S]*if \(state\.combatVictoryCoda\?\.key === key && activeCombatVictoryCoda\(run\)\) return;/);
+  assert.match(mainSource, /const id = `\$\{Date\.now\(\)\}-\$\{Math\.random\(\)\.toString\(36\)\.slice\(2, 8\)\}`/);
+  assert.match(mainSource, /data-coda-id="\$\{coda\.id\}"/);
+  assert.match(mainSource, /seenCombatVictoryCodaKeys:\s*new Set\(\)/);
+  assert.match(mainSource, /dismissedCombatVictoryCodaKeys:\s*new Set\(\)/);
+  assert.match(mainSource, /if \(state\.seenCombatVictoryCodaKeys\.has\(key\)\) return;/);
+  assert.match(mainSource, /if \(state\.dismissedCombatVictoryCodaKeys\.has\(key\)\) return;/);
+  assert.match(mainSource, /function rememberCombatVictoryCodaKey\(key\)/);
+  assert.match(mainSource, /function rememberDismissedCombatVictoryCodaKey\(key\)/);
+  assert.match(mainSource, /function dismissCombatVictoryCoda\(run = state\.run\)/);
+  assert.match(mainSource, /before\.nodeId/);
+  assert.match(mainSource, /function stageCombatVictoryCoda\(run, before\)[\s\S]*clearCombatFx\(\);[\s\S]*clearChoicePulse\(\);[\s\S]*clearCombatVictoryCoda\(\);/);
+  assert.match(mainSource, /function combatVictoryCodaKey\(before, reward, relicChoices = \[\]\)/);
+  assert.match(mainSource, /function clearCombatVictoryCoda\(\)/);
+  assert.match(mainSource, /function activeCombatVictoryCoda\(run = state\.run\)/);
+  assert.match(mainSource, /function combatFxDuration\(\)/);
+  assert.match(mainSource, /let cardTooltipSuppressUntil = 0/);
+  assert.match(mainSource, /function playCardWithFx\(run, uid, targetUid = null\)[\s\S]*cardTooltipSuppressUntil = Date\.now\(\) \+ combatFxDuration\(\) \+ 900;[\s\S]*hideCardPortalTooltip\(\);[\s\S]*clearCombatCardPreview\(\);/);
+  assert.match(mainSource, /function setCombatFx\(fx\)/);
+  assert.match(mainSource, /function clearCombatFx\(\)/);
+  assert.match(mainSource, /function finishCombatCardFx\(run, before\)/);
+  assert.match(mainSource, /function syncCardHoverFromPointer\(event\)/);
+  assert.match(mainSource, /if \(state\.combatFx && state\.run\?\.phase === "combat"\) return;/);
+  assert.match(mainSource, /if \(Date\.now\(\) < cardTooltipSuppressUntil\) return;/);
+  assert.match(mainSource, /app\.addEventListener\("mousemove", \(event\) => \{\s*syncCardHoverFromPointer\(event\);/);
+  assert.match(mainSource, /function setCombatPreviewAssist\(card, preview, selected, aliveEnemies, mode, tone\)/);
+  assert.match(mainSource, /function combatPreviewAssistTargetInfo\(preview, selected, aliveEnemies = \[\]\)/);
+  assert.match(mainSource, /function restoreCombatPreviewAssist\(\)/);
+  assert.match(mainSource, /setCombatPreviewAssist\(card, preview, selected, aliveEnemies, mode, tone\)/);
+  assert.match(mainSource, /function combatFxMergeChips\(chips, limit = 2\)/);
+  assert.match(mainSource, /function combatFxSupportingChips\(chips = \[\]\)/);
+  assert.match(mainSource, /function enemyFxActorCount\(before\)/);
+  assert.match(mainSource, /function enemyFxActorName\(actor, actorCount = 1\)/);
+  assert.match(mainSource, /function enemyFxMoveName\(actor, actorCount = 1\)/);
+  assert.match(mainSource, /actorName: enemyFxActorName\(actor, actorCount\)/);
+  assert.match(mainSource, /cardName: enemyFxMoveName\(actor, actorCount\)/);
+  assert.match(mainSource, /combatFxMergeChips\(\[hitChip, \.\.\.combatFxSupportingChips\(fx\.chips\)\], 2\)/);
+  assert.match(mainSource, /combatFxMergeChips\(\[\{ label: "처치", tone: "damage" \}, \.\.\.combatFxSupportingChips\(fx\.chips\)\], 2\)/);
+  assert.match(mainSource, /function combatFxVisibleChipText\(chip = \{\}\)/);
+  assert.doesNotMatch(mainSource, /if \(\/\^\(약화\|취약\|바이러스\|표식\|집중\)\/\.test\(label\)\) return label\.replace/);
+  assert.match(mainSource, /cardOutcomeText\(chip, cardOutcomeVisual\(chip\)\)/);
+  assert.match(mainSource, /function renderEntityFxBadge\(mode, uid = null\)/);
+  assert.match(mainSource, /function renderEntityResultStack\(mode, uid = null, options = \{\}\)/);
+  assert.match(mainSource, /function combatFxEntityResultChips\(fx, mode, uid = null, options = \{\}\)/);
+  assert.match(mainSource, /suppressPrimaryDamage/);
+  assert.match(mainSource, /renderEntityResultStack\("enemy", enemy\.uid, \{ suppressPrimaryDamage: Boolean\(fxHitAmount \|\| fxBlockLossAmount \|\| fxDefeated\) \}\)/);
+  assert.match(mainSource, /function combatFxTargetsEntity\(fx, mode, uid = null\)/);
+  assert.match(mainSource, /function combatFxKindLabel\(fx\)/);
+  assert.match(mainSource, /function stageCombatFx\(run, uid, targetUid = null\)/);
+  assert.match(mainSource, /sourceMode: targetMode === "enemy" \|\| targetMode === "all-enemies" \? "player" : "card"/);
+  assert.match(mainSource, /const playerSource = app\.querySelector\("\.player-stand \.character-sprite"\) \?\? app\.querySelector\("\.player-stand"\)/);
+  assert.match(mainSource, /function combatFxStatusLabel\(preview\)/);
+  assert.match(mainSource, /function combatFocus\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function renderPlayHint\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function combatRecommendedCardInsight\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function combatRecommendationReason\(preview, forecast, selected, harmfulCount\)/);
+  assert.match(mainSource, /function renderTacticalAdvisor\(run\)/);
+  assert.match(mainSource, /function tacticalAdvisor\(run\)/);
+  assert.match(mainSource, /function mapAdvisor\(run\)/);
+  assert.match(mainSource, /function combatAdvisor\(run\)/);
+  assert.match(mainSource, /function rewardAdvisor\(run\)/);
+  assert.match(mainSource, /function shopAdvisor\(run\)/);
+  assert.match(mainSource, /function bossPreparationServiceAdvice\(run, options = \{\}\)/);
+  assert.match(mainSource, /function bossPreparationRestAdvice\(run, options = \{\}\)/);
+  assert.match(mainSource, /const bossPrep = bossPreparationServiceAdvice\(run, \{ canHeal, canRemove, canUpgrade, analysis \}\)/);
+  assert.match(mainSource, /const bossPrep = bossPreparationRestAdvice\(run, \{ healAmount, analysis, canUpgrade, canRemove \}\)/);
+  assert.match(mainSource, /보스 전 체력 확보/);
+  assert.match(mainSource, /보스용 카드 강화/);
+  assert.match(mainSource, /부족 \$\{bossPrep\.missing\.slice\(0, 2\)\.join\(" · "\)\}/);
+  assert.match(mainSource, /function bestPreviewTotal\(previews, energy, key\)/);
+  assert.match(mainSource, /enemyIntentForecast\(run\)/);
+  assert.match(mainSource, /class="combat-forecast priority threat-\$\{primary\.tone\}"/);
+  assert.match(mainSource, /class="forecast-primary \$\{primary\.tone\}"/);
+  assert.match(mainSource, /class="forecast-secondary"/);
+  assert.match(mainSource, /fullLabel:\s*"받을 피해"/);
+  assert.match(mainSource, /aria-label="\$\{chip\.fullLabel\}: \$\{chip\.value\}\. \$\{chip\.detail\}"/);
+  assert.match(mainSource, /class="combat-play-panel\$\{dockFxClass\}"/);
+  assert.match(mainSource, /data-fx-label="\$\{dockFx\.label\}"/);
+  assert.match(mainSource, /phase-\$\{displayPhase\}/);
+  assert.match(mainSource, /"combat-victory"/);
+  assert.match(mainSource, /\$\{victoryCoda \? "" : renderTopBar\(run\)\}/);
+  assert.match(mainSource, /\$\{victoryCoda \? "" : renderRelicPulse\(run\)\}/);
+  assert.match(mainSource, /class="combat-victory-coda \$\{quick \? "quick" : "full"\}"/);
+  assert.match(mainSource, /class="combat-board victory-coda-board \$\{quick \? "quick-coda-board" : ""\} feedback-reward \$\{arena\.classes \?\? ""\}"/);
+  assert.match(mainSource, /data-scene="\$\{arena\.label \?\? "전투 종료"\}"/);
+  assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
+  assert.match(mainSource, /aria-live="assertive"/);
+  assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
+  assert.match(mainSource, /function cardPlayAriaLabel\(card, cardInstance, cost, preview, recommended = false, playable = true\)/);
+  assert.match(mainSource, /aria-label="\$\{cardPlayAriaLabel\(card, cardInstance, cost, playPreview, recommended, options\.playable !== false\)\}"/);
+  assert.match(mainSource, /if \(recommended\) parts\.push\("추천 카드"\)/);
+  assert.match(styleSource, /\.hand-zone \.card-recommendation::before/);
+  assert.match(styleSource, /content:\s*"★"/);
+  assert.match(mainSource, /class="combat-mission-strip \$\{progress\.tone\} node-\$\{nodeType\}"/);
+  assert.match(mainSource, /class="combat-readiness-strip \$\{readiness\.tone\}"/);
+  assert.match(mainSource, /class="combat-mission-chips"/);
+  assert.match(mainSource, /const visibleEnemies = combat\.enemies\.filter/);
+  assert.match(mainSource, /class="enemy-line enemy-count-\$\{visibleEnemies\.length\}"/);
+  assert.match(mainSource, /visibleEnemies\.map\(\(enemy, index\) => renderEnemy\(run, enemy, index, visibleEnemies\.length\)\)/);
+  assert.match(mainSource, /function enemyStageStyle\(index = 0, totalEnemies = 1, template = null\)/);
+  assert.match(mainSource, /--enemy-stage-y:\$\{lift\}px/);
+  assert.match(mainSource, /class="combatant-plate player-plate"/);
+  assert.match(mainSource, /class="combatant-plate enemy-plate"/);
+  assert.match(mainSource, /function renderBlockReadout\(block = 0\)/);
+  assert.match(mainSource, /aria-label="방어 \$\{amount\}"/);
+  assert.match(mainSource, /function statusIcon\(keyword\)/);
+  assert.match(mainSource, /const statusTooltipLayer = document\.createElement\("div"\)/);
+  assert.match(mainSource, /function showStatusPortalTooltip\(statusChip\)/);
+  assert.match(mainSource, /function hideStatusPortalTooltip\(source = null\)/);
+  assert.match(mainSource, /function positionStatusPortalTooltip\(\)/);
+  assert.match(mainSource, /positionStatusPortalTooltip\(\);/);
+  assert.match(mainSource, /showStatusPortalTooltip\(statusChip\)/);
+  assert.match(mainSource, /aria-label="상태 효과: \$\{summary\}"/);
+  assert.match(mainSource, /tabindex="0"/);
+  assert.match(mainSource, /data-status-label="\$\{label\} \$\{value\}"/);
+  assert.match(mainSource, /<i aria-hidden="true">\$\{statusIcon\(key\)\}<\/i><strong>\$\{value\}<\/strong>/);
+  assert.match(mainSource, /function playerCombatantAriaLabel\(run\)/);
+  assert.match(mainSource, /function enemyCombatantAriaLabel\(enemy, move\)/);
+  assert.match(mainSource, /function renderStatusMoreChip\(entries = \[\]\)/);
+  assert.match(mainSource, /function statusSummarySentence\(statuses = \{\}\)/);
+  assert.match(mainSource, /entries\.length > 4 \? entries\.slice\(0, 3\) : entries/);
+  assert.match(styleSource, /\.status-row span\.status-more/);
+  assert.doesNotMatch(mainSource, /class="energy-orb"/);
+  assert.match(mainSource, /class="combat-command-row \$\{focus\.tone\}/);
+  assert.match(mainSource, /class="combat-action-recap sr-only fx-\$\{fx\.tone\}"/);
+  assert.match(mainSource, /<span class="fx-trail"><i><\/i><\/span>/);
+  assert.match(mainSource, /function renderEnemyThreatStrip\(enemy, selected = false\)/);
+  assert.match(mainSource, /function enemyIntentIconLabel\(move = \{\}\)/);
+  assert.match(mainSource, /function enemyThreatProfile\(enemy, selected = false\)/);
+  assert.match(mainSource, /function enemyMoveDamageTotal\(move = \{\}\)/);
+  assert.match(mainSource, /class="enemy-threat \$\{threat\.tone\} \$\{visible \? "compact" : "sr-only"\}"/);
+  assert.match(mainSource, /renderEnemyThreatStrip\(enemy, selected\)/);
+  assert.match(mainSource, /function renderEntityFxBadge\(mode, uid = null\)[\s\S]*return "";/);
+  assert.match(mainSource, /combatPreviewSource/);
+  assert.match(mainSource, /function showCombatCardPreview\(cardElement, targetUid = null, mode = "hover"\)/);
+  assert.match(mainSource, /function clearCombatCardPreview\(source = null\)/);
+  assert.match(mainSource, /function positionCombatAimLine\(\)/);
+  assert.match(mainSource, /function combatPreviewShouldDrawAimLine\(preview, targetUids = \[\]\)/);
+  assert.match(mainSource, /if \(!combatPreviewShouldDrawAimLine\(preview, targetUids\)\)[\s\S]*hideCombatAimLine\(\);[\s\S]*return;/);
+  assert.match(mainSource, /function combatAimTargetElement\(preview, targetUids\)/);
+  assert.match(mainSource, /function hideCombatAimLine\(\)/);
+  assert.match(mainSource, /function renderCombatCardPreviewRail\(card, preview, selected, targetCount, mode = "hover"\)/);
+  assert.match(mainSource, /function combatPreviewRailLabel\(card, preview, selected, targetCount, mode = "hover"\)/);
+  assert.match(mainSource, /function combatPreviewTargetName\(preview, selected, targetCount = 1\)/);
+  assert.match(mainSource, /function combatPreviewTargetIcon\(targetCount = 1\)/);
+  assert.match(mainSource, /function combatPreviewTargetBadge\(preview, selected, targetCount = 1\)/);
+  assert.match(mainSource, /function combatPreviewEffectBadge\(preview, selected, targetCount = 1\)/);
+  assert.match(mainSource, /function combatPreviewSelfBadge\(preview\)/);
+  assert.match(mainSource, /function combatPreviewTargetUids\(preview, aliveEnemies, selected\)/);
+  assert.match(mainSource, /class="combat-card-preview-rail"/);
+  assert.match(mainSource, /className = `combat-aim-line \$\{tone\} aim-\$\{mode\}/);
+  assert.match(mainSource, /previewing-card/);
+  assert.match(mainSource, /preview-target/);
+  assert.match(mainSource, /data-preview-label/);
+  assert.match(mainSource, /data-preview-icon/);
+  assert.match(mainSource, /data-preview-value/);
+  assert.match(mainSource, /data-preview-text/);
+  assert.match(mainSource, /removeAttribute\("data-preview-label"\)/);
+  assert.match(mainSource, /removeAttribute\("data-preview-icon"\)/);
+  assert.match(mainSource, /removeAttribute\("data-preview-value"\)/);
+  assert.match(mainSource, /removeAttribute\("data-preview-text"\)/);
+  assert.match(mainSource, /function combatPreviewMarker\(preview, selected, targetCount = 1, label = ""\)/);
+  assert.match(mainSource, /function combatPreviewMarkerText\(marker\)/);
+  assert.match(mainSource, /combatPreviewMarkerText\(marker\)/);
+  assert.match(mainSource, /function combatFxActionSteps\(fx\)/);
+  assert.match(mainSource, /function combatFxResultSentence\(fx\)/);
+  assert.match(mainSource, /return "카드 결과"/);
+  assert.match(mainSource, /combatVictoryCodaDuration\(sourceType = "combat"\)[\s\S]*sourceType === "combat" \? 1900 : 4200/);
+  assert.match(mainSource, /combatFxDuration\(\)[\s\S]*return 3000 \/ motionScale\(\)/);
+  assert.match(mainSource, /function motionScale\(\)/);
+  assert.match(mainSource, /Number\.isFinite\(value\) \? clamp\(value, 0\.45, 1\.6\) : 1/);
+  assert.match(mainSource, /class="victory-coda-impact"/);
+  assert.match(mainSource, /class="victory-coda-finisher"/);
+  assert.match(mainSource, /class="victory-coda-enemies"/);
+  assert.match(mainSource, /class="victory-coda-rewards"/);
+  assert.match(mainSource, /class="victory-coda-actions"/);
+  assert.match(mainSource, /data-action="dismiss-victory-coda"/);
+  assert.match(mainSource, /fx\.lethal \? " fx-lethal" : ""/);
+  assert.match(mainSource, /class="fx-lethal-stamp"/);
+  assert.match(mainSource, /defeatedUids/);
+  assert.match(mainSource, /hitAmounts/);
+  assert.match(mainSource, /function combatFxHitAmount\(fx, uid\)/);
+  assert.match(mainSource, /blockLossAmounts/);
+  assert.match(mainSource, /function combatFxBlockLossAmount\(fx, uid\)/);
+  assert.match(mainSource, /templateId:\s*enemy\.templateId/);
+  assert.match(mainSource, /cardId:\s*cardInstance\.cardId/);
+  assert.match(mainSource, /cardCost:\s*cardCost\(cardInstance, combat\)/);
+  assert.match(mainSource, /actorTemplateId:\s*actor\.templateId/);
+  assert.match(mainSource, /actorUid:\s*actor\.uid/);
+  assert.match(mainSource, /actorCount,\s*actorName: enemyFxActorName\(actor, actorCount\)/);
+  assert.match(mainSource, /moveName: enemyFxMoveName\(actor, actorCount\)/);
+  assert.match(mainSource, /function enemyMoveFallbackLabel\(move\)/);
+  assert.match(mainSource, /\$\{fx\.actorName \? `\$\{fx\.actorName\}의 ` : ""\}\$\{fx\.cardName\} → \$\{fx\.targetName\}: \$\{fx\.label\}/);
+  assert.match(mainSource, /fxHit \? "fx-hit" : ""/);
+  assert.match(mainSource, /fxSource \? "fx-source" : ""/);
+  assert.match(mainSource, /class="entity-damage-pop"/);
+  assert.match(mainSource, /class="entity-damage-pop blocked"/);
+  assert.match(mainSource, /<b>✦<\/b><em>-\$\{fxHitAmount\}<\/em>/);
+  assert.match(mainSource, /<b>⬡<\/b><em>-\$\{fxBlockLossAmount\}<\/em>/);
+  assert.match(mainSource, /class="entity-result-stack \$\{mode\}"/);
+  assert.match(mainSource, /selfHpLoss:\s*playerHpLoss/);
+  assert.match(mainSource, /selfBlockGain:\s*targetMode === "self"/);
+  assert.match(mainSource, /fxDefeated \? "fx-defeated" : ""/);
+  assert.match(mainSource, /preview\.damage > 0 \|\| preview\.blockedDamage > 0/);
+  assert.match(mainSource, /targetMode = hitsAllEnemies \? "all-enemies"/);
+  assert.match(mainSource, /targetName: targetMode === "all-enemies" \? "모든 적"/);
+  assert.match(mainSource, /<details class="turn-plan \$\{plan\.tone\}"/);
+  assert.match(mainSource, /class="turn-plan-sequence"/);
+  assert.match(mainSource, /aria-label="추천 사용 순서"/);
+  assert.match(mainSource, /class="forecast-chip \$\{chip\.tone\}"/);
+  assert.match(mainSource, /class="target-assist combat-action-guide \$\{insight\?\.tone \?\? "steady"\}"/);
+  assert.match(mainSource, /const targetLabel = selected\.name/);
+  assert.match(mainSource, /function enemyIntentReadout\(move = null, fallback = "행동 없음"\)/);
+  assert.match(mainSource, /const targetDetail = enemyIntentReadout\(selected\.nextMove, "행동 확인 전"\)/);
+  assert.match(mainSource, /const assistLabel = insight \? `현재 대상 \$\{targetLabel\}\. 추천 \$\{nextAction\}\. \$\{reason\}` : `현재 대상 \$\{targetLabel\}\. \$\{nextAction\}\. \$\{reason\}`/);
+  assert.match(mainSource, /aria-label="\$\{assistLabel\}"/);
+  assert.match(mainSource, /state\.settings\.tacticalAdvisor !== false \? combatRecommendedCardInsight\(run, recommendedCardUid\) : null/);
+  assert.match(mainSource, /class="tactical-advisor \$\{advice\.tone\}"/);
+  assert.match(mainSource, /tacticalAdvisor:\s*true/);
+  assert.match(mainSource, /renderSettingSwitch\("tacticalAdvisor"/);
+  assert.match(mainSource, /data-setting="\$\{key\}"/);
+  assert.match(mainSource, /이번 턴 적 행동 예고/);
+  assert.match(mainSource, /막아야 할 피해/);
+  assert.match(mainSource, /보스 대비/);
+  assert.match(mainSource, /에너지/);
+  assert.match(mainSource, /추천 순서/);
+  assert.match(mainSource, />순서<\/span>/);
+  assert.match(mainSource, /위협 요약/);
+  assert.match(mainSource, /큰 공격/);
+  assert.match(mainSource, /상태 이상/);
+  assert.match(mainSource, /현재 대상/);
+  assert.match(mainSource, /const recommendedPreview = selected && recommended \? cardPlayPreview\(run, recommended, selected\.uid\) : null/);
+  assert.match(mainSource, /function combatFocusStatusDetail\(preview, selected, aliveEnemies, statusText\)/);
+  assert.match(mainSource, /title: "상태 이상 대비"/);
+  assert.match(mainSource, /detail: combatFocusStatusDetail\(recommendedPreview, selected, aliveEnemies, statusText\)/);
+  assert.match(mainSource, /function combatFocusTargetDetail\(preview, selected, aliveEnemies = \[\]\)/);
+  assert.match(mainSource, /if \(target\.label === "나"\) return `나에게 \$\{target\.detail\}`/);
+  assert.match(mainSource, /detail: recommendedPreview \? combatFocusTargetDetail\(recommendedPreview, selected, aliveEnemies\) : "추천 카드 강조 중"/);
+  assert.match(mainSource, />처치</);
+  assert.match(mainSource, />손패</);
+  assert.match(mainSource, /플레이 힌트/);
+  assert.match(mainSource, /예고 피해/);
+  assert.match(mainSource, /예상 손실 \$\{forecast\.hpLoss\}를 막습니다/);
+  assert.match(mainSource, /쓸 카드나 에너지를 늘립니다/);
+  assert.match(mainSource, /class="assist-target-lock"/);
+  assert.match(mainSource, /class="assist-action-lock"/);
+  assert.match(mainSource, /function keywordDescription\(keyword\)/);
+  assert.match(mainSource, /data-status-description="\$\{description\}"/);
+  assert.match(mainSource, /KEYWORDS\[keyword\] \?\? statusOnlyDescriptions\(\)\[keyword\]/);
+  assert.match(mainSource, /class="relic-pulse-stack" role="status" aria-live="polite"/);
+  assert.match(mainSource, /function endTurnWithFx\(run\)/);
+  assert.match(mainSource, /function combatFxSnapshot\(run\)/);
+  assert.match(mainSource, /function renderCombatTurnCue\(run\)/);
+  assert.match(mainSource, /function turnCueChipVisual\(chip\)/);
+  assert.match(mainSource, /aria-hidden="true">\$\{cue\.chips\.map/);
+  assert.match(mainSource, /return `<i class="\$\{chip\.tone\}" title="\$\{chip\.label\}"><b>\$\{visual\.icon\}<\/b><em>\$\{visual\.value\}<\/em><\/i>`/);
+  assert.match(mainSource, /<h3 class="card-name">\$\{card\.name\}<\/h3>/);
+  assert.match(mainSource, /function stageEnemyTurnCue\(run\)/);
+  assert.match(mainSource, /function stagePlayerTurnCue\(run\)/);
+  assert.match(mainSource, /function combatTurnActionDelay\(\)/);
+  assert.match(mainSource, /function combatTurnFollowupDelay\(\)/);
+  assert.match(mainSource, /function combatTurnFollowupDelay\(\) \{[\s\S]*return combatFxDuration\(\) \+ 180 \/ motionScale\(\);/);
+  assert.match(mainSource, /combatTurnInputLocked\(\)/);
+  assert.match(mainSource, /state\.combatFx\?\.kind === "enemy-action"/);
+  assert.match(mainSource, /const turnLocked = combatTurnInputLocked\(run\)/);
+  assert.match(mainSource, /aria-label="\$\{turnLocked \? "상대 턴 진행 중" : "턴 종료"\}"/);
+  assert.match(mainSource, /deferredMutation = endTurnWithFx\(run\)/);
+  assert.match(mainSource, /endTurn\(run\);[\s\S]*afterMutation\("end-turn"\)/);
+  assert.match(mainSource, /base\.push\("turn-locked"\)/);
+  assert.match(mainSource, /kicker:\s*"턴 전환"/);
+  assert.match(mainSource, /title:\s*"상대 턴"/);
+  assert.match(mainSource, /title:\s*"내 턴"/);
+  assert.match(mainSource, /카드 사용 가능 ·/);
+  assert.match(mainSource, /function stageEnemyTurnFx\(run, before\)/);
+  assert.match(mainSource, /kind:\s*"enemy-action"/);
+  assert.match(mainSource, /const finishedFx = state\.combatFx/);
+  assert.match(mainSource, /finishedFx\.kind === "enemy-action"[\s\S]*stagePlayerTurnCue\(state\.run\)/);
+  assert.match(mainSource, /state\.combatTurnFollowupTimer = window\.setTimeout\(\(\) => \{[\s\S]*if \(activeCombatTurnCue\(state\.run\)\) return;[\s\S]*stagePlayerTurnCue\(state\.run\)/);
+  assert.match(mainSource, /fx-\$\{fx\.kind\}/);
+  assert.match(mainSource, /base\.push\("fx-active"/);
+  assert.match(mainSource, /function renderEntityImpactRing\(mode, uid = null\)/);
+  assert.match(mainSource, /renderSettingRange\("textScale", "텍스트 크기"/);
+  assert.match(mainSource, /renderSettingRange\("musicVolume", "배경음"/);
+  assert.match(mainSource, /data-setting-value="\$\{key\}"/);
+  assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}"/);
+  assert.match(mainSource, /function renderSettingRange\(key, label, detail, min, max, step\)/);
+  assert.match(mainSource, /function renderSettingSwitch\(key, label, detail, checked\)/);
+  assert.match(mainSource, /class="settings-grid"/);
+  assert.match(mainSource, /턴 요약과 추천 카드를 표시합니다/);
+  assert.match(mainSource, /function updateSettingReadouts/);
+  assert.doesNotMatch(styleSource, /calc\([^)]*\*\s*var\(--motion-scale\)/, "animation speed should divide durations so higher values feel faster");
+  assert.match(styleSource, /calc\(120ms \/ var\(--motion-scale\)\)/);
+  assert.match(styleSource, /\.relic\.active/);
+  assert.match(styleSource, /\.save-status/);
+  assert.match(styleSource, /\.top-objective/);
+  assert.match(styleSource, /\.phase-combat > \.top-bar \.top-objective/);
+  assert.match(styleSource, /\.phase-combat > \.top-bar \.brand-button::before/);
+  assert.match(styleSource, /\.phase-combat > \.top-bar \.deck-toggle-button::before/);
+  assert.match(styleSource, /\.high-contrast \.top-objective/);
+  assert.match(styleSource, /\.relic-pulse-stack/);
+  assert.match(styleSource, /\.phase-combat \.relic-pulse-stack[\s\S]*top:\s*7px[\s\S]*left:\s*56px/);
+  assert.match(styleSource, /\.phase-combat \.relic-pulse \.relic-icon[\s\S]*width:\s*24px/);
+  assert.match(styleSource, /\.phase-combat \.relic-pulse > span:not\(\.relic-icon\)[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.phase-combat \.relic-pulse small[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-alerts b/);
+  assert.match(styleSource, /\.combat-alerts small/);
+  assert.match(styleSource, /\.combat-alerts span \+ span/);
+  assert.match(styleSource, /\.combat-forecast/);
+  assert.match(styleSource, /\.forecast-primary/);
+  assert.match(styleSource, /\.forecast-secondary/);
+  assert.match(styleSource, /\.forecast-secondary[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-forecast[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.forecast-primary[\s\S]*grid-template-columns:\s*auto auto/);
+  assert.match(styleSource, /\.forecast-primary span[\s\S]*border-radius:\s*50%/);
+  assert.match(styleSource, /\.forecast-primary strong[\s\S]*font-family:\s*"JetBrains Mono", ui-monospace, monospace/);
+  assert.match(styleSource, /\.combat-play-panel/);
+  assert.match(styleSource, /\.combat-board \.combat-command-row,[\s\S]*\.combat-board \.combat-command-row\.advisor-off,[\s\S]*clip:\s*rect\(0 0 0 0\)/);
+  assert.match(styleSource, /\.combat-board \.combat-command-row \.combat-forecast[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.end-turn::after/);
+  assert.match(styleSource, /\.end-turn\.risk-danger::after/);
+  assert.match(styleSource, /@keyframes end-turn-risk-ring/);
+  assert.match(styleSource, /\.combat-command-row[\s\S]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /\.combat-focus-card[\s\S]*min-height:\s*42px/);
+  assert.match(styleSource, /\.combat-resource-stack/);
+  assert.match(styleSource, /\.combat-resource-stack[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.combat-resource-stack \.combat-energy-panel[\s\S]*order:\s*2/);
+  assert.match(styleSource, /\.combat-pile-dock/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile-row/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile-icon::before/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile-label[\s\S]*position:\s*absolute/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile-label[\s\S]*opacity:\s*0/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile:hover \.pile-label/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile:focus-visible \.pile-label/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile\[aria-pressed="true"\] \.pile-label/);
+  assert.match(styleSource, /\.combat-energy-panel/);
+  assert.match(styleSource, /\.combat-energy-panel\.empty/);
+  assert.match(styleSource, /\.energy-pips/);
+  assert.match(styleSource, /\.forecast-chip/);
+  assert.match(styleSource, /\.combat-command-row/);
+  assert.match(styleSource, /\.combat-command-row:has\(\.turn-plan\[open\]\)/);
+  assert.match(styleSource, /\.hand-zone \.game-card\.energy-locked \.card-cost/);
+  assert.match(styleSource, /\.status-row span[\s\S]*grid-template-columns:\s*auto auto/);
+  assert.match(styleSource, /\.status-row span::after[\s\S]*attr\(data-status-label\) " · " attr\(data-status-description\)/);
+  assert.match(styleSource, /\.status-row span::after[\s\S]*visibility:\s*hidden/);
+  assert.match(styleSource, /\.status-row span::after[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.status-portal-tooltip/);
+  assert.match(styleSource, /\.status-portal-tooltip\[hidden\][\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.status-row span:focus-visible/);
+  assert.match(styleSource, /\.status-row span\.status-charge/);
+  assert.match(styleSource, /\.depth-rail/);
+  assert.match(styleSource, /\.combat-mission-strip/);
+  assert.match(styleSource, /\.combat-mission-chips/);
+  assert.match(styleSource, /\.combat-readiness-strip/);
+  assert.match(styleSource, /\.high-contrast \.combat-readiness-strip/);
+  assert.match(styleSource, /\.combat-action-fx/);
+  assert.match(styleSource, /\.combat-turn-cue/);
+  assert.match(styleSource, /\.combat-turn-cue[\s\S]*width:\s*max-content/);
+  assert.match(styleSource, /\.combat-turn-cue[\s\S]*background:\s*transparent/);
+  assert.match(styleSource, /\.combat-turn-cue span[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-turn-cue strong[\s\S]*font-size:\s*clamp\(1rem, 1\.55vw, 1\.34rem\)/);
+  assert.match(styleSource, /\.combat-turn-cue div[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-board\.turn-locked \.hand-zone/);
+  assert.match(styleSource, /\.end-turn\.is-locked/);
+  assert.match(styleSource, /\.combat-board\.turn-locked \.end-turn\.is-locked/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy::after/);
+  assert.match(styleSource, /@keyframes combat-turn-cue-enter/);
+  assert.match(styleSource, /@keyframes combat-turn-cue-enemy/);
+  assert.match(styleSource, /@keyframes combat-turn-cue-ready/);
+  assert.match(styleSource, /@keyframes combat-turn-board-dim/);
+  assert.match(styleSource, /@keyframes enemy-turn-step/);
+  assert.match(styleSource, /@keyframes player-turn-brace/);
+  assert.match(styleSource, /@keyframes player-turn-ready-rise/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy \.enemy-card/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-player \.player-sprite/);
+  assert.match(mainSource, /if \(\(forecast\?\.incomingDamage \?\? 0\) > 0\) base\.push\("enemy-aiming"\)/);
+  assert.match(mainSource, /if \(\(forecast\?\.hpLoss \?\? 0\) > 0\) base\.push\("enemy-aiming-danger"\)/);
+  assert.match(mainSource, /function renderEnemyIntentLane\(move = \{\}\)/);
+  assert.match(mainSource, /class="enemy-intent-lane" data-threat="\$\{label\}"/);
+  assert.match(styleSource, /\.combat-board\.enemy-aiming \.player-stand:not\(\.preview-self\)::after/);
+  assert.match(styleSource, /\.enemy-intent-lane/);
+  assert.match(styleSource, /\.enemy-card\.selected \.enemy-intent-lane/);
+  assert.match(styleSource, /@keyframes enemy-intent-lane-pulse/);
+  assert.match(styleSource, /@keyframes incoming-player-mark/);
+  assert.match(styleSource, /\.high-contrast \.enemy-intent-lane/);
+  assert.match(styleSource, /\.combat-action-recap/);
+  assert.match(styleSource, /\.combat-action-recap\.sr-only/);
+  assert.match(styleSource, /@keyframes fx-simple-impact/);
+  assert.match(styleSource, /@keyframes fx-simple-cut/);
+  assert.match(styleSource, /\.hand-zone:has\(\.game-card:hover\)/);
+  assert.match(styleSource, /\.combat-guidance-stack/);
+  assert.match(styleSource, /\.combat-card-preview-rail/);
+  assert.match(styleSource, /\.combat-card-preview-rail \.preview-action-symbol/);
+  assert.match(styleSource, /\.combat-card-preview-rail \.preview-target-name/);
+  assert.match(styleSource, /\.combat-card-preview-rail \.preview-effect-icons/);
+  assert.match(styleSource, /\.preview-energy-after/);
+  assert.match(mainSource, /class="preview-energy-after"[\s\S]*>⚡\$\{Math\.max\(0, preview\.energyAfter\)\}<\/b>/);
+  assert.doesNotMatch(mainSource, /class="preview-energy-after"[\s\S]*>에너지 \$\{Math\.max\(0, preview\.energyAfter\)\}<\/b>/);
+  assert.match(styleSource, /\.preview-energy-after[\s\S]*min-width:\s*42px/);
+  assert.match(styleSource, /\.preview-energy-after[\s\S]*font-family:\s*inherit/);
+  assert.match(styleSource, /\.combat-aim-line/);
+  assert.match(styleSource, /\.combat-aim-line\.aim-drag/);
+  assert.match(styleSource, /@keyframes combat-aim-flow/);
+  assert.match(styleSource, /\.high-contrast \.combat-aim-line/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-aim-line[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.game-card\.previewing-card/);
+  assert.match(styleSource, /\.enemy-card\.preview-target/);
+  assert.match(styleSource, /\.enemy-card\.preview-target,[\s\S]*\.player-stand\.preview-self[\s\S]*box-shadow:\s*none/);
+  assert.match(styleSource, /\.enemy-card\.preview-target::before,[\s\S]*\.player-stand\.preview-self::before[\s\S]*bottom:\s*86px[\s\S]*border-radius:\s*50%/);
+  assert.match(styleSource, /\.enemy-card\.preview-target::after/);
+  assert.match(styleSource, /\.enemy-card\.preview-target::after,[\s\S]*left:\s*50%[\s\S]*transform:\s*translateX\(-50%\)/);
+  assert.match(styleSource, /\.player-stand\.preview-self::after/);
+  assert.match(styleSource, /content:\s*attr\(data-preview-text\)/);
+  assert.match(styleSource, /\.enemy-card\.preview-lethal::after/);
+  assert.match(styleSource, /\.enemy-target-marker/);
+  assert.match(styleSource, /@keyframes selected-target-ring/);
+  assert.match(styleSource, /@keyframes selected-target-pulse/);
+  assert.match(styleSource, /\.enemy-threat/);
+  assert.match(styleSource, /\.combat-board \.enemy-threat:not\(\.compact\)/);
+  assert.match(styleSource, /\.combatant-plate/);
+  assert.match(styleSource, /\.combatant-plate[\s\S]*border-top:\s*1px solid rgba\(236, 248, 243, 0\.1\)/);
+  assert.match(styleSource, /\.combatant-plate[\s\S]*backdrop-filter:\s*blur\(4px\)/);
+  assert.match(styleSource, /\.combatant-plate \.health-bar[\s\S]*height:\s*12px/);
+  assert.match(styleSource, /\.combatant-plate \.block-readout[\s\S]*grid-template-columns:\s*auto auto/);
+  assert.match(styleSource, /\.combatant-plate \.block-readout\.empty[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combatant-plate \.block-readout\.active/);
+  assert.match(styleSource, /\.enemy-line[\s\S]*perspective:\s*940px/);
+  assert.match(styleSource, /\.enemy-card[\s\S]*z-index:\s*var\(--enemy-stage-z, 1\)/);
+  assert.match(styleSource, /\.enemy-card[\s\S]*transform:\s*translateY\(var\(--enemy-stage-y, 0\)\) scale\(var\(--enemy-stage-scale, 1\)\)/);
+  assert.match(styleSource, /@keyframes enemy-hit-jolt[\s\S]*var\(--enemy-stage-y, 0\)/);
+  assert.match(styleSource, /\.enemy-card:has\(\.enemy-sprite\.tier-boss\) \.enemy-plate/);
+  assert.match(styleSource, /\.character-sprite[\s\S]*margin:\s*0 auto clamp\(24px, 2\.6vh, 36px\)/);
+  assert.match(styleSource, /\.player-sprite[\s\S]*margin-bottom:\s*clamp\(22px, 2\.4vh, 34px\)/);
+  assert.match(styleSource, /\.enemy-sprite\.tier-boss[\s\S]*margin-bottom:\s*clamp\(38px, 4\.2vh, 58px\)/);
+  assert.match(styleSource, /\.high-contrast \.combatant-plate/);
+  assert.match(styleSource, /\.intent[\s\S]*top:\s*clamp\(76px, 9vh, 108px\)/);
+  assert.match(styleSource, /\.intent i/);
+  assert.match(styleSource, /\.intent em/);
+  assert.match(styleSource, /\.enemy-threat[\s\S]*top:\s*clamp\(118px, 13vh, 152px\)/);
+  assert.match(styleSource, /\.enemy-threat\.danger/);
+  assert.match(mainSource, /function enemyThreatShouldSurface\(threat, selected = false\)/);
+  assert.match(mainSource, /if \(!selected \|\| threat\.tone !== "attack"\) return false/);
+  assert.match(mainSource, /chip\.tone !== "attack" && chip\.tone !== "calm"/);
+  assert.match(mainSource, /function enemyThreatIconVisual\(chip = \{\}\)/);
+  assert.match(mainSource, /class="enemy-threat \$\{threat\.tone\} \$\{visible \? "compact" : "sr-only"\}"/);
+  assert.match(styleSource, /\.enemy-threat[\s\S]*width:\s*max-content/);
+  assert.match(styleSource, /\.enemy-threat span[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.enemy-threat strong[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.enemy-threat div[\s\S]*display:\s*flex/);
+  assert.match(styleSource, /\.enemy-threat i b,[\s\S]*\.enemy-threat i em/);
+  assert.match(styleSource, /\.enemy-threat i\.warning/);
+  assert.match(styleSource, /\.high-contrast \.enemy-threat/);
+  assert.match(styleSource, /\.high-contrast \.enemy-card\.preview-target::after/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.enemy-card \.enemy-threat/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.enemy-card[\s\S]*transform:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.enemy-card \.intent[\s\S]*position:\s*static/);
+  assert.match(styleSource, /@keyframes combat-preview-rail-in/);
+  assert.match(styleSource, /@keyframes preview-target-ring/);
+  assert.match(styleSource, /grid-template-rows:\s*31px 172px 0 34px 0/);
+  assert.match(styleSource, /fx-layer-exit calc\(3000ms \/ var\(--motion-scale\)\)/);
+  assert.match(styleSource, /\.fx-action-line/);
+  assert.match(styleSource, /\.entity-impact-ring/);
+  assert.match(styleSource, /@keyframes combat-impact-settle/);
+  assert.match(styleSource, /\.arena[\s\S]*transform:\s*translateY\(clamp\(-142px, -12\.6vh, -98px\)\)/);
+  assert.match(styleSource, /@keyframes combat-impact-settle[\s\S]*translateY\(clamp\(-142px, -12\.6vh, -98px\)\)/);
+  assert.match(styleSource, /@keyframes fx-action-line-hold/);
+  assert.match(styleSource, /@keyframes entity-impact-lock/);
+  assert.match(styleSource, /@keyframes victory-stamp-lock/);
+  assert.match(styleSource, /@keyframes victory-reward-reveal/);
+  assert.match(styleSource, /@keyframes victory-enemy-burst/);
+  assert.match(styleSource, /@keyframes victory-coda-flare/);
+  assert.match(styleSource, /@keyframes victory-coda-sweep/);
+  assert.match(styleSource, /@keyframes victory-impact-cut/);
+  assert.match(styleSource, /@keyframes victory-finisher-lock/);
+  assert.match(styleSource, /@keyframes victory-action-ready/);
+  assert.match(styleSource, /@keyframes fx-lethal-impact/);
+  assert.match(styleSource, /@keyframes fx-lethal-stamp/);
+  assert.match(styleSource, /@keyframes enemy-defeated-hit/);
+  assert.match(styleSource, /@keyframes enemy-defeated-collapse/);
+  assert.match(styleSource, /@keyframes enemy-defeated-stamp/);
+  assert.match(styleSource, /@keyframes enemy-sprite-slash/);
+  assert.match(styleSource, /@keyframes enemy-sprite-lethal-slash/);
+  assert.match(styleSource, /\.combat-victory-coda/);
+  assert.match(styleSource, /\.victory-coda-board[\s\S]*min-height:\s*100vh/);
+  assert.match(styleSource, /\.phase-combat-victory\.game-screen[\s\S]*padding-top:\s*0/);
+  assert.match(styleSource, /\.phase-combat-victory > \.combat-board[\s\S]*min-height:\s*100vh/);
+  assert.match(styleSource, /\.victory-coda-board \.combat-background/);
+  assert.match(styleSource, /\.victory-coda-board \.arena-stage-floor/);
+  assert.match(styleSource, /\.victory-coda-finisher/);
+  assert.match(styleSource, /\.combat-victory-coda\.quick \.victory-coda-enemy/);
+  assert.match(styleSource, /\.combat-victory-coda\.quick \.victory-coda-rewards i/);
+  assert.doesNotMatch(styleSource, /\.combat-victory-coda\.quick \.victory-coda-enemies,[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.victory-coda-actions/);
+  assert.match(styleSource, /\.victory-reward-button/);
+  assert.match(styleSource, /\.victory-coda-enemy/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-lethal/);
+  assert.match(styleSource, /\.fx-card-echo/);
+  assert.match(styleSource, /\.fx-actor-echo/);
+  assert.match(styleSource, /\.fx-actor-echo em/);
+  assert.match(styleSource, /\.fx-actor-echo em[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@keyframes fx-card-echo-launch/);
+  assert.match(styleSource, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.combat-action-fx[\s\S]*opacity:\s*1 !important/);
+  assert.match(styleSource, /@media \(prefers-reduced-motion: reduce\)[\s\S]*\.fx-card-echo[\s\S]*opacity:\s*1 !important/);
+  assert.match(styleSource, /\.fx-lethal-stamp/);
+  assert.match(styleSource, /\.enemy-card\.fx-defeated/);
+  assert.match(styleSource, /\.enemy-card\.fx-hit:not\(\.fx-defeated\)/);
+  assert.match(styleSource, /\.entity-damage-pop/);
+  assert.match(styleSource, /\.entity-damage-pop[\s\S]*top:\s*154px/);
+  assert.match(styleSource, /\.entity-damage-pop\.blocked/);
+  assert.match(styleSource, /\.entity-damage-pop b,/);
+  assert.match(styleSource, /\.entity-result-stack/);
+  assert.match(styleSource, /\.entity-result-stack[\s\S]*top:\s*172px/);
+  assert.match(styleSource, /\.entity-result-stack\.self[\s\S]*top:\s*178px/);
+  assert.match(styleSource, /\.entity-result-stack i\.emphasis/);
+  assert.match(styleSource, /\.entity-result-stack i b,/);
+  assert.match(styleSource, /\.fx-impact strong[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@keyframes victory-coda-enter/);
+  assert.match(styleSource, /@keyframes victory-coda-enter[\s\S]*0%[\s\S]*opacity:\s*0\.82/);
+  assert.match(styleSource, /\.entity-fx-badge/);
+  assert.match(styleSource, /@keyframes entity-fx-badge-pop/);
+  assert.match(styleSource, /@keyframes entity-result-stack-enter/);
+  assert.match(styleSource, /@keyframes enemy-hit-jolt/);
+  assert.match(styleSource, /@keyframes enemy-hit-sprite/);
+  assert.match(styleSource, /@keyframes enemy-source-lunge/);
+  assert.match(styleSource, /@keyframes player-hit-brace/);
+  assert.match(styleSource, /@keyframes player-card-strike/);
+  assert.match(styleSource, /@keyframes entity-damage-rise/);
+  assert.match(styleSource, /@keyframes health-hit-flare/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-enemy-action\.fx-self/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-grouped \.fx-actor-echo::after/);
+  assert.match(styleSource, /content:\s*attr\(data-actor-count\)/);
+  assert.match(styleSource, /\.fx-actor-echo\[data-hit-count\]::before/);
+  assert.match(styleSource, /content:\s*attr\(data-hit-count\)/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-echo/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-type/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-echo \.card-art[\s\S]*display:\s*block/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-echo \.card-art-image/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-cost,[\s\S]*\.combat-action-fx\.fx-source-player \.fx-card-type[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-board\.fx-active:not\(\.fx-enemy-board\)\.fx-mode-enemy \.player-sprite/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.enemy-card\.fx-source:not\(\.fx-defeated\) \.enemy-sprite/);
+  assert.match(styleSource, /\.player-stand\.fx-target \.player-sprite/);
+  assert.match(styleSource, /\.fx-chip-row i\.warn/);
+  assert.match(styleSource, /\.player-stand\.fx-target \.status-row span/);
+  assert.match(styleSource, /@keyframes fx-impact-pop/);
+  assert.match(styleSource, /@keyframes fx-impact-ring/);
+  assert.match(styleSource, /@keyframes fx-route-surge/);
+  assert.match(styleSource, /@keyframes fx-trail-spark/);
+  assert.match(styleSource, /\.fx-trail i/);
+  assert.match(styleSource, /@keyframes fx-target-ring/);
+  assert.match(styleSource, /\.player-stand\.fx-target::before,[\s\S]*border-radius:\s*50%/);
+  assert.doesNotMatch(styleSource, /\.player-stand\.fx-target::before,[\s\S]*inset:\s*-7px/);
+  assert.match(styleSource, /@keyframes status-chip-pop/);
+  assert.match(styleSource, /@keyframes combat-recap-dwell/);
+  assert.match(styleSource, /\.combat-action-fx::before/);
+  assert.match(styleSource, /\.combat-action-fx::before[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.entity-hit-sparks:not\(\.lethal\) i:nth-child\(n \+ 2\)[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.fx-impact::before,/);
+  assert.match(styleSource, /\.enemy-card\.fx-target::before/);
+  assert.match(styleSource, /\.enemy-card\.fx-target \.health-bar/);
+  assert.match(styleSource, /\.combat-focus-card/);
+  assert.match(styleSource, /\.turn-plan/);
+  assert.match(styleSource, /\.turn-plan\[open\]/);
+  assert.match(styleSource, /\.turn-plan summary::after/);
+  assert.match(styleSource, /\.turn-plan-grid/);
+  assert.match(styleSource, /\.turn-plan\[open\] \.turn-plan-grid/);
+  assert.match(styleSource, /\.turn-plan-sequence/);
+  assert.match(styleSource, /\.turn-plan-sequence li/);
+  assert.match(styleSource, /\.turn-plan-sequence i\.resource/);
+  assert.match(styleSource, /\.play-hint/);
+  assert.match(styleSource, /\.play-hint\.damage/);
+  assert.match(styleSource, /\.play-hint b\.resource/);
+  assert.match(styleSource, /\.target-assist\.damage/);
+  assert.match(styleSource, /\.assist-chips \.resource/);
+  assert.match(styleSource, /\.settings-grid/);
+  assert.match(styleSource, /\.settings-group/);
+  assert.match(styleSource, /\.settings-control-line/);
+  assert.match(styleSource, /\.settings-switch/);
+  assert.match(styleSource, /\.tactical-advisor/);
+  assert.match(styleSource, /\.advisor-chips/);
+  assert.match(styleSource, /\.combat-board\.feedback-damage::after/);
+  assert.match(styleSource, /\.combat-board\.feedback-block::after/);
+  assert.match(styleSource, /@keyframes combat-impact-flash/);
+  assert.match(styleSource, /@keyframes combat-hit-nudge/);
+  assert.match(styleSource, /\.forecast-chip\.danger/);
+  assert.match(styleSource, /\.enemy-card\.selected::after/);
+  assert.match(styleSource, /\.turn-plan\.danger/);
+  assert.match(styleSource, /\.status-row span::after/);
+  assert.match(styleSource, /\.high-contrast \.status-portal-tooltip/);
+  assert.match(styleSource, /\.high-contrast \.status-tooltip-icon/);
+  assert.match(styleSource, /@keyframes relic-slide/);
+  assert.match(styleSource, /\.high-contrast[\s\S]*--text:\s*#ffffff/);
+  assert.match(styleSource, /\.high-contrast \.combat-background[\s\S]*filter:/);
+  assert.match(styleSource, /\.high-contrast \.title-hero[\s\S]*backdrop-filter:\s*none/);
+});
+
+test("procedural music loop and audio settings are wired", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  assert.match(mainSource, /const MUSIC_THEMES =/);
+  assert.match(mainSource, /const BOSS_MUSIC_THEME_BY_ID =/);
+  assert.match(mainSource, /the_cataloger:\s*\{\s*normal:\s*"boss_cataloger",\s*phase2:\s*"boss_cataloger_phase2"/);
+  assert.match(mainSource, /drowned_algorithm:\s*\{\s*normal:\s*"boss_algorithm",\s*phase2:\s*"boss_algorithm_phase2"/);
+  assert.match(mainSource, /last_gate_choir:\s*\{\s*normal:\s*"boss_lastgate",\s*phase2:\s*"boss_lastgate_phase2"/);
+  assert.match(mainSource, /boss_lastgate_phase2:/);
+  assert.match(mainSource, /function syncMusic\(\)/);
+  assert.match(mainSource, /function currentMusicTheme\(\)/);
+  assert.match(mainSource, /function currentBossMusicTheme\(run\)/);
+  assert.match(mainSource, /function startMusicTheme\(themeName\)/);
+  assert.match(mainSource, /function scheduleMusic\(\)/);
+  assert.match(mainSource, /function playMusicMotif\(theme, start, beatLength, step\)/);
+  assert.match(mainSource, /if \(event\.isTrusted\) ensureAudio\(\)/);
+  assert.match(mainSource, /state\.audio\.resume\(\)\.then/);
+  assert.match(mainSource, /state\.audio\.state !== "running"/);
+  assert.match(mainSource, /deferredTone = soundCueForEndTurn\(run\)/);
+  assert.match(mainSource, /const endTurnTone = soundCueForEndTurn\(run\)/);
+  assert.match(mainSource, /function soundCueForEndTurn\(run\)/);
+  assert.match(mainSource, /function combatFxSoundCue\(fx = state\.combatFx\)/);
+  assert.match(mainSource, /if \(action === "play-card" && activeCombatVictoryCoda\(run\)\) return "finish"/);
+  assert.match(mainSource, /turnDanger:/);
+  assert.match(mainSource, /finish:/);
+  assert.match(mainSource, /theme\.motif/);
+  assert.match(mainSource, /function playMusicVoice\(frequency, start, duration, type, amount/);
+  assert.match(mainSource, /musicVolume:\s*0\.28/);
+  assert.match(mainSource, /document\.body\.dataset\.musicTheme/);
+  assert.match(mainSource, /state\.music\.timer = window\.setInterval\(scheduleMusic/);
+});
+
+test("run summary surfaces replay-relevant build evidence", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
+  assert.match(mainSource, /run\.phase === "summary" \|\| victoryCoda \? "" : renderLog\(run\)/);
+  assert.match(engineSource, /const BUILD_CONCEPTS/);
+  assert.match(engineSource, /function summarizeBuild\(run\)/);
+  assert.match(engineSource, /function buildEffectOps\(effects = \[\]\)/);
+  assert.match(engineSource, /scores\[concept\.id\] \+= keywordHits \* 2 \+ effectHits/);
+  assert.doesNotMatch(engineSource, /scores\[template\.type\]/);
+  assert.match(mainSource, /class="summary-meta"/);
+  assert.match(mainSource, /function renderSummaryFinale\(summary, defeatedBosses, replaySeed, nextDifficulty = null, verdict = summaryVerdict\(summary, replaySeed, nextDifficulty\)\)/);
+  assert.match(mainSource, /function renderSummaryIntro\(summary, run\)/);
+  assert.match(mainSource, /function renderSummaryMeta\(summary, run\)/);
+  assert.match(mainSource, /class="summary-finale won"/);
+  assert.match(mainSource, /최종 보스 격파/);
+  assert.match(mainSource, /class="summary-finale-stage"/);
+  assert.match(mainSource, /class="summary-finale-diver"/);
+  assert.match(mainSource, /class="summary-finale-boss"/);
+  assert.match(mainSource, /class="summary-finale-core"/);
+  assert.match(mainSource, /function renderSummarySnapshot\(summary, defeatedBosses\)/);
+  assert.match(mainSource, /function renderSummaryVerdict\(summary, replaySeed, nextDifficulty = null, verdict = summaryVerdict\(summary, replaySeed, nextDifficulty\)\)/);
+  assert.match(mainSource, /function renderSummaryActions\(replaySeed, replayDifficulty, nextDifficulty = null\)/);
+  assert.match(mainSource, /aria-label="런 종료 후 바로 할 수 있는 행동"/);
+  assert.match(mainSource, /function summaryVerdict\(summary, replaySeed, nextDifficulty = null\)/);
+  assert.match(mainSource, /function renderSummaryPathStrip\(summary\)/);
+  assert.match(mainSource, /function renderSummaryPathAct\(act\)/);
+  assert.match(mainSource, /class="summary-snapshot"/);
+  assert.match(mainSource, /class="summary-verdict \$\{summary\.won \? "won" : "lost"\}"/);
+  assert.match(mainSource, /aria-label="이번 런 결론"/);
+  assert.match(mainSource, /다음 런 브리핑/);
+  assert.match(mainSource, /function summaryRetryBriefLine\(summary\)/);
+  assert.match(mainSource, /function summaryRetryBriefChips\(summary, replaySeed, nextDifficulty = null\)/);
+  assert.match(mainSource, /같은 시드에서 첫 보상 바꿔보기/);
+  assert.match(mainSource, /function renderSummaryFocusStrip\(summary, verdict\)/);
+  assert.match(mainSource, /function summaryBuildShortNote\(summary\)/);
+  assert.match(mainSource, /class="summary-path-strip \$\{summary\.won \? "won" : "lost"\}"/);
+  assert.match(mainSource, /aria-label="런 진행 경로 요약"/);
+  assert.match(mainSource, /class="summary-details"/);
+  assert.match(mainSource, /summary\.killedBosses/);
+  assert.match(mainSource, /class="deck-grid summary-deck"/);
+  assert.match(mainSource, /class="summary-relics"/);
+  assert.match(mainSource, /function formatDuration/);
+  assert.match(mainSource, /function summaryBuildNote/);
+  assert.match(mainSource, /function renderSummaryDebrief\(summary\)/);
+  assert.match(mainSource, /function renderSummaryPlan\(summary\)/);
+  assert.match(mainSource, /function renderSummaryRunHook\(summary\)/);
+  assert.match(mainSource, /function renderSummaryReplayPrompt\(summary, replaySeed, nextDifficulty = null\)/);
+  assert.match(mainSource, /function renderSummaryNextRail\(summary\)/);
+  assert.match(mainSource, /class="summary-command-panel"/);
+  assert.match(mainSource, /aria-label="다음 런 바로가기"/);
+  assert.match(mainSource, /function summaryNextStepShortText\(detail = ""\)/);
+  assert.match(mainSource, /function summaryReplayPrompt\(summary, replaySeed, nextDifficulty = null\)/);
+  assert.match(mainSource, /function summaryStopPoint\(summary\)/);
+  assert.match(mainSource, /function summaryRunHook\(summary\)/);
+  assert.match(mainSource, /function summaryNextRunSteps\(summary\)/);
+  assert.match(mainSource, /function renderSummaryScorecard\(summary\)/);
+  assert.match(mainSource, /function summaryScorecardItems\(summary\)/);
+  assert.match(mainSource, /이번 런 점검표/);
+  assert.match(mainSource, /다음 런 포인트/);
+  assert.match(mainSource, /다시 해볼 선택/);
+  assert.match(mainSource, /다음에 바꿀 선택/);
+  assert.match(mainSource, /aria-label="다음 런 추천 행동"/);
+  assert.match(mainSource, /renderSummaryNextRail\(summary\)/);
+  assert.match(mainSource, /aria-label="재도전 제안"/);
+  assert.match(mainSource, /class="summary-replay-prompt \$\{prompt\.tone\}"/);
+  assert.match(mainSource, /class="summary-next-steps"/);
+  assert.match(mainSource, /첫 세 보상 안에 하나만 고르기/);
+  assert.match(mainSource, /상태 누적을 끊을 수단이 필요했습니다/);
+  assert.match(mainSource, /첫 세 보상 안에 주력 정하기/);
+  assert.match(mainSource, /function renderSummaryRoute\(summary\)/);
+  assert.match(mainSource, /function renderRouteActSummary\(act\)/);
+  assert.match(mainSource, /function summaryPlanItems\(summary\)/);
+  assert.match(mainSource, /aria-label="탐사 경로 회고"/);
+  assert.match(mainSource, /function buildConcepts\(tags = \[\]\)/);
+  assert.match(mainSource, /function renderBuildTags\(tags, emptyText = "주력 미정"\)/);
+  assert.match(mainSource, /function buildConceptText\(tags, emptyText = "주력 미정"\)/);
+  assert.match(mainSource, /function summaryPrimaryBuildText\(summary, emptyText = "주력 미정"\)/);
+  assert.match(mainSource, /function summaryBuildLine\(summary, emptyText = "주력 미정"\)/);
+  assert.match(mainSource, /shortLabel:\s*"표식 러시"/);
+  assert.match(mainSource, /function summaryConceptLabel\(axis\)/);
+  assert.match(mainSource, /title:\s*`\$\{headlineFocus\}로 코어를 회수했습니다`/);
+  assert.match(mainSource, /concept-build-tags/);
+  assert.match(mainSource, /function nextDifficultyAfter\(difficultyId\)/);
+  assert.match(mainSource, /function summaryThreatRead\(summary\)/);
+  assert.match(mainSource, /function summaryNextExperiment\(summary\)/);
+  assert.match(mainSource, /같은 시드 재도전/);
+  assert.match(mainSource, /data-action="start-next-difficulty"/);
+  assert.match(mainSource, /다음 런 작전/);
+  assert.match(mainSource, /먼저 보강할 것|초반 선택/);
+  assert.ok(mainSource.indexOf("renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty)") < mainSource.indexOf("renderSummaryPathStrip(summary)"));
+  assert.ok(mainSource.indexOf("renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty)") < mainSource.indexOf("renderSummaryReplayPrompt(summary, replaySeed, nextDifficulty)"));
+  assert.match(styleSource, /\.summary-collections/);
+  assert.match(styleSource, /\.summary-finale/);
+  assert.match(styleSource, /url\("\.\.\/public\/assets\/combatants\/player-echo-diver\.png"\)/);
+  assert.match(styleSource, /url\("\.\.\/public\/assets\/combatants\/boss-lastgate\.png"\)/);
+  assert.match(styleSource, /@keyframes summary-core-pulse/);
+  assert.match(styleSource, /\.summary-snapshot/);
+  assert.match(styleSource, /\.summary-verdict/);
+  assert.match(styleSource, /\.summary-verdict-stats/);
+  assert.match(styleSource, /\.summary-verdict-cta/);
+  assert.match(styleSource, /\.summary-verdict-cta-main/);
+  assert.match(styleSource, /\.summary-verdict-cta-chips/);
+  assert.match(styleSource, /\.phase-summary > \.top-bar/);
+  assert.match(styleSource, /\.phase-summary > \.top-bar \.top-objective/);
+  assert.match(styleSource, /\.phase-summary > \.top-bar \.relic-row-button/);
+  assert.match(styleSource, /\.summary-command-panel/);
+  assert.match(styleSource, /\.summary-command-panel \.summary-replay-prompt/);
+  assert.match(styleSource, /\.summary-command-panel \.summary-next-rail/);
+  assert.match(styleSource, /\.summary-path-strip/);
+  assert.match(styleSource, /\.summary-path-strip > div/);
+  assert.match(styleSource, /\.summary-path-strip article\.defeated/);
+  assert.match(styleSource, /\.summary-focus-strip/);
+  assert.match(styleSource, /\.summary-focus-strip article/);
+  assert.match(styleSource, /\.high-contrast \.summary-path-strip/);
+  assert.match(styleSource, /\.summary-details > summary/);
+  assert.match(styleSource, /\.summary-route/);
+  assert.match(styleSource, /\.summary-route-grid/);
+  assert.match(styleSource, /\.summary-scorecard/);
+  assert.match(styleSource, /\.summary-scorecard > div/);
+  assert.match(styleSource, /\.high-contrast \.summary-verdict/);
+  assert.match(styleSource, /\.summary-replay-prompt/);
+  assert.match(styleSource, /\.summary-replay-prompt > div/);
+  assert.match(styleSource, /\.summary-replay-prompt > p[\s\S]*-webkit-line-clamp:\s*1/);
+  assert.match(styleSource, /\.summary-replay-prompt > div[\s\S]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /\.summary-replay-prompt\.strong/);
+  assert.match(styleSource, /\.high-contrast \.summary-replay-prompt/);
+  assert.match(styleSource, /\.summary-next-rail/);
+  assert.match(styleSource, /\.summary-next-rail ol/);
+  assert.match(styleSource, /\.summary-next-rail li b/);
+  assert.match(styleSource, /\.summary-next-rail li small/);
+  assert.match(styleSource, /\.summary-next-rail li\.warning/);
+  assert.match(styleSource, /\.high-contrast \.summary-next-rail/);
+  assert.match(styleSource, /\.summary-run-hook/);
+  assert.match(styleSource, /\.summary-hook-head/);
+  assert.match(styleSource, /\.summary-hook-chips/);
+  assert.match(styleSource, /\.summary-next-steps/);
+  assert.match(styleSource, /\.summary-next-steps li p[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.summary-scorecard article p[\s\S]*-webkit-line-clamp:\s*3/);
+  assert.match(styleSource, /\.summary-deck \.game-card/);
+  assert.match(styleSource, /\.summary-debrief/);
+  assert.match(styleSource, /\.summary-plan/);
+  assert.match(styleSource, /\.summary-actions[\s\S]*border:\s*1px solid rgba\(125, 211, 252, 0\.22\)/);
+  assert.match(styleSource, /\.summary-actions \.primary[\s\S]*min-width:\s*156px/);
+  assert.match(styleSource, /\.primary\.ghost/);
+  assert.match(captureSource, /summary-finale-stage/);
+  assert.match(captureSource, /player-echo-diver/);
+  assert.match(captureSource, /boss-lastgate/);
+});
+
+test("boss fights surface mechanics and phase state in combat UI", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  assert.match(mainSource, /function activeCombatBoss\(run\)/);
+  assert.match(mainSource, /function combatBoardClass\(run, lastTone, boss\)/);
+  assert.match(mainSource, /function combatArenaVariantClasses\(run\)/);
+  assert.match(mainSource, /function combatArenaMotifClass\(enemies\)/);
+  assert.match(mainSource, /function renderBossPhaseShock\(run, boss\)/);
+  assert.match(mainSource, /function renderBossCurtain\(boss\)/);
+  assert.match(mainSource, /function renderBossStatusStrip\(boss\)/);
+  assert.match(mainSource, /function renderBossPhaseChip\(enemy, template\)/);
+  assert.match(mainSource, /function bossPhaseCue\(run\)/);
+  assert.match(mainSource, /function isFreshBossPhaseLog\(run, template\)/);
+  assert.match(mainSource, /class="boss-curtain \$\{phaseTwo \? "phase-two" : ""\} sr-only"/);
+  assert.match(mainSource, /renderBossStatusStrip\(boss\)/);
+  assert.match(mainSource, /class="boss-status-strip \$\{phaseTwo \? "phase-two" : ""\}"/);
+  assert.match(mainSource, /--boss-hp:\$\{hpPercent\}%/);
+  assert.match(mainSource, /--boss-threshold:\$\{thresholdPercent\}%/);
+  assert.match(mainSource, /class="boss-phase-chip \$\{phaseTwo \? "phase-two" : ""\}"/);
+  assert.match(mainSource, /<span class="enemy-name-text">\$\{enemy\.name\}<\/span>\$\{renderBossPhaseChip\(enemy, template\)\}/);
+  assert.match(mainSource, /class="boss-phase-shock"/);
+  assert.match(mainSource, /const label = `보스전 상황:/);
+  assert.match(mainSource, /aria-label="\$\{label\}"/);
+  assert.match(mainSource, /현재 의도/);
+  assert.match(mainSource, /심층 보스/);
+  assert.match(mainSource, /bossPhase:\s*\{\s*notes:/);
+  assert.match(mainSource, /playTone\(phaseCue \? "bossPhase" : soundCueFor/);
+  assert.match(mainSource, /boss-\$\{boss\.template\.sprite\}/);
+  assert.match(mainSource, /arena-variant-\$\{variant\}/);
+  assert.match(mainSource, /arena-depth-\$\{depth\}/);
+  assert.match(mainSource, /arena-motif-signal/);
+  assert.match(mainSource, /function renderBossMechanic\(enemy, template\)/);
+  assert.match(mainSource, /class="boss-mechanic"/);
+  assert.match(mainSource, /2단계 전환 체력/);
+  assert.match(styleSource, /\.boss-mechanic/);
+  assert.match(styleSource, /\.boss-phase/);
+  assert.match(styleSource, /\.boss-curtain/);
+  assert.match(styleSource, /\.sr-only[\s\S]*clip:\s*rect\(0 0 0 0\)/);
+  assert.match(styleSource, /\.enemy-name-text/);
+  assert.match(styleSource, /\.boss-phase-chip/);
+  assert.match(styleSource, /\.boss-phase-chip\.phase-two/);
+  assert.match(styleSource, /\.boss-phase-shock/);
+  assert.match(styleSource, /\.boss-status-strip/);
+  assert.match(styleSource, /\.boss-status-meter/);
+  assert.match(styleSource, /\.boss-status-strip\.phase-two/);
+  assert.match(styleSource, /\.high-contrast \.boss-status-strip/);
+  assert.match(styleSource, /\.boss-curtain-readout[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.boss-cataloger \.combat-background/);
+  assert.match(styleSource, /\.boss-algorithm \.combat-background/);
+  assert.match(styleSource, /\.boss-lastgate \.combat-background/);
+  assert.match(styleSource, /\.arena-combat\.arena-variant-5 \.combat-background/);
+  assert.match(styleSource, /\.arena-motif-coral/);
+  assert.match(styleSource, /\.arena-depth-deep \.combat-background/);
+  assert.match(mainSource, /const ARENA_SCENE_DEFINITIONS/);
+  assert.match(mainSource, /function combatArenaScene\(run, boss\)/);
+  assert.match(mainSource, /function arenaBackdropPosition\(cell\)/);
+  assert.match(mainSource, /data-scene="\$\{arenaScene\.label\}"/);
+  assert.match(mainSource, /class="arena-depth-fog"/);
+  assert.match(mainSource, /class="arena-props"/);
+  assert.match(mainSource, /class="arena-stage-floor"/);
+  assert.match(mainSource, /--arena-horizon:\$\{stageHorizon\}%/);
+  assert.match(mainSource, /--arena-stage-glow:\$\{stageGlow\.toFixed\(2\)\}/);
+  assert.match(mainSource, /--arena-prop-depth:\$\{propDepth\.toFixed\(2\)\}/);
+  assert.match(styleSource, /\.arena-light-rig/);
+  assert.match(styleSource, /\.arena-props/);
+  assert.match(styleSource, /arena-props\.png/);
+  assert.match(styleSource, /\.arena-stage-floor/);
+  assert.match(styleSource, /mask-image:\s*linear-gradient/);
+  assert.match(styleSource, /--arena-horizon:\s*60%/);
+  assert.match(styleSource, /\.arena-foreground/);
+  assert.match(styleSource, /--arena-zoom/);
+  assert.match(styleSource, /--arena-prop-opacity/);
+  assert.match(styleSource, /calc\(300% \* var\(--arena-zoom\)\) calc\(200% \* var\(--arena-zoom\)\)/);
+  assert.match(styleSource, /@keyframes arena-light-breathe/);
+  assert.match(styleSource, /@keyframes arena-props-parallax/);
+  assert.match(styleSource, /\.combat-background::before/);
+  assert.match(styleSource, /--arena-drift-x:\s*0%/);
+  assert.match(styleSource, /--arena-drift-y:\s*0%/);
+  assert.match(styleSource, /repeating-linear-gradient\(var\(--arena-sweep/);
+  assert.match(styleSource, /\.player-sprite::after,/);
+  assert.match(styleSource, /\.enemy-sprite-art::after/);
+  assert.match(styleSource, /\.arena::before/);
+  assert.match(styleSource, /\.arena::after/);
+  assert.match(styleSource, /@keyframes arena-drift/);
+  assert.match(styleSource, /@keyframes arena-floor-glow/);
+  assert.match(styleSource, /@keyframes arena-particle-drift/);
+  assert.match(styleSource, /@keyframes boss-arena-pulse/);
+  assert.match(styleSource, /@keyframes boss-phase-shock/);
+  assert.match(engineSource, /function updateEnemyPhase\(run, enemy\)/);
+  assert.match(engineSource, /phaseName/);
+});
+
+test("boss approach briefing checks survival and deck readiness", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function renderBossReadiness\(readiness\)/);
+  assert.match(mainSource, /function bossReadiness\(run, boss, distance\)/);
+  assert.match(mainSource, /function cardSupportsDefense\(card\)/);
+  assert.match(mainSource, /function cardSupportsFinish\(card\)/);
+  assert.match(mainSource, /function cardSupportsStatusControl\(card\)/);
+  assert.match(mainSource, /function cardSupportsFlow\(card\)/);
+  assert.match(mainSource, /aria-label="보스 대비 점검"/);
+  assert.match(mainSource, /보스 대비/);
+  assert.match(mainSource, /정화·약화/);
+  assert.match(mainSource, /카드 뽑기/);
+  assert.match(mainSource, /먼저 보강할 것/);
+  assert.match(mainSource, /distance <= 3 \? bossReadiness/);
+  assert.match(styleSource, /\.boss-readiness/);
+  assert.match(styleSource, /\.boss-readiness-list/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.boss-readiness-list[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+});
+
+test("enemy pools are act-gated for a readable run curve", () => {
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  assert.match(engineSource, /export function enemyIdsForNode\(type, act = 1\)/);
+  assert.match(engineSource, /function normalEnemyPool\(act\)/);
+  assert.match(engineSource, /function eliteEnemyPool\(act\)/);
+  assert.match(engineSource, /act <= 1[\s\S]*silt_clerk[\s\S]*ledger_mite/);
+  assert.match(engineSource, /act === 2[\s\S]*barnacle_drone[\s\S]*mirror_jelly/);
+  assert.match(engineSource, /return NORMAL_ENEMY_IDS/);
+  assert.match(engineSource, /return ELITE_ENEMY_IDS/);
+  assert.match(mainSource, /enemyIdsForNode/);
+  assert.doesNotMatch(mainSource, /function routeEnemyIds\(tier, act\)[\s\S]{0,500}rust_choir/);
+  assert.doesNotMatch(mainSource, /function routeEnemyIds\(tier, act\)[\s\S]{0,500}bell_diver/);
+});
+
+test("in-run support screens preserve a clear return path", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  assert.match(mainSource, /returnScreen:\s*null/);
+  assert.match(mainSource, /function openScreen\(screen\)/);
+  assert.match(mainSource, /function returnToPreviousScreen\(\)/);
+  assert.match(mainSource, /data-action="return-screen"/);
+  assert.match(mainSource, /event\.key === "Escape"/);
+  assert.match(mainSource, /event\.code === "KeyD"/);
+  assert.match(mainSource, /function renderGuide\(\)/);
+  assert.match(mainSource, /function renderGuideConcepts\(\)/);
+  assert.match(mainSource, /data-id="guide"/);
+  assert.match(mainSource, /게임 가이드/);
+  assert.match(mainSource, /주력 전략/);
+  assert.match(mainSource, /코덱스에서 키워드 보기/);
+});
+
+test("codex exposes win-condition guides before raw catalog lists", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /id="codex-concepts"/);
+  assert.match(mainSource, /주력 전략/);
+  assert.match(mainSource, /function renderCodexConceptGuide\(axis\)/);
+  assert.match(mainSource, /conceptForCard\(card\)\?\.id === axis\.id/);
+  assert.match(mainSource, /conceptForRelic\(relic\.id\)\?\.id === axis\.id/);
+  assert.match(mainSource, /관련 카드/);
+  assert.match(mainSource, /관련 유물/);
+  assert.match(mainSource, /class="concept-codex-more"/);
+  assert.match(mainSource, /<b>고를 때<\/b><span>/);
+  assert.match(mainSource, /<b>주의<\/b><span>/);
+  assert.ok(mainSource.indexOf('id="codex-concepts"') < mainSource.indexOf('id="codex-keywords"'));
+  assert.match(styleSource, /\.concept-codex-grid/);
+  assert.match(styleSource, /\.concept-codex-more/);
+  assert.match(styleSource, /\.concept-codex-advice/);
+  assert.match(styleSource, /\.concept-codex-advice small[\s\S]*grid-template-columns:\s*auto minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.concept-codex-list/);
+});
+
+test("guide screen teaches first-run decisions without leaving the run", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function renderGuideCard\(title, items\)/);
+  assert.match(mainSource, /보상은 같은 키워드로/);
+  assert.match(mainSource, /체력이 낮으면 안전 경로/);
+  assert.match(mainSource, /보스 전 빈 역할 보강/);
+  assert.match(mainSource, /주력 전략 빠른 보기/);
+  assert.match(mainSource, /대분류자 칼리스/);
+  assert.match(mainSource, /익사한 알고리즘/);
+  assert.match(mainSource, /마지막 문 성가대/);
+  assert.match(mainSource, /전하 모아 한 번에 쓰기/);
+  assert.match(mainSource, /표식 남기고 연달아 공격/);
+  assert.match(mainSource, /막고 되받아치기/);
+  assert.match(mainSource, /전하를 얻는 카드와 전하를 쓰는 카드가 함께 보일 때/);
+  assert.match(mainSource, /표식만 남기고 공격을 잇지 못하면 효과가 작습니다/);
+  assert.match(mainSource, /대가를 내고 더 행동하기/);
+  assert.match(mainSource, /추가 에너지로 바로 피해나 방어를 만들 수 있을 때/);
+  assert.match(mainSource, /체력을 쓴 뒤 회복하거나 전투를 끝낼 길을 확인하세요/);
+  assert.match(mainSource, /경로 선택/);
+  assert.match(mainSource, /전투/);
+  assert.match(mainSource, /덱 정비/);
+  assert.match(mainSource, /보스 대비/);
+  assert.match(mainSource, /state\.returnScreen === "game"/);
+  assert.match(styleSource, /\.guide-screen/);
+  assert.match(styleSource, /\.guide-flow/);
+  assert.match(styleSource, /\.guide-concepts/);
+  assert.match(styleSource, /\.guide-concept-card/);
+  assert.match(styleSource, /\.guide-concept-grid/);
+  assert.match(styleSource, /\.guide-card/);
+  assert.match(styleSource, /\.guide-grid/);
+  assert.match(styleSource, /\.guide-actions/);
+});
+
+test("title screen supports seeded and daily challenge runs with Korean credits", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const saveSource = readFileSync(new URL("../src/engine/save-slots.js", import.meta.url), "utf8");
+  assert.match(mainSource, /customSeed:\s*""/);
+  assert.match(mainSource, /pendingStart:\s*null/);
+  assert.match(mainSource, /pendingDeleteSave:\s*null/);
+  assert.match(saveSource, /export const SAVE_BACKUP_KEY = "abyssalArchive\.save\.backup\.v1"/);
+  assert.match(mainSource, /saveNotice:\s*saveRecoveryNotice/);
+  assert.match(mainSource, /data-seed-input/);
+  assert.match(mainSource, /function selectedRunConfig\(\)/);
+  assert.match(mainSource, /function requestRunStart\(config, label = "새 런"\)/);
+  assert.match(mainSource, /function requestDeleteSave\(\)/);
+  assert.match(mainSource, /function deleteSavedRunNow\(\)/);
+  assert.match(mainSource, /function renderStartConfirmOverlay\(\)/);
+  assert.match(mainSource, /function renderDeleteSaveConfirmOverlay\(\)/);
+  assert.match(mainSource, /state\.pendingStart && !\["start-confirmed", "start-cancel", "continue-run"\]\.includes\(action\)/);
+  assert.match(mainSource, /state\.pendingDeleteSave && !\["delete-save-confirmed", "delete-save-cancel"\]\.includes\(action\)/);
+  assert.match(mainSource, /function dailyRunConfig/);
+  assert.match(mainSource, /function renderContinuePreview\(run\)/);
+  assert.match(mainSource, /function savedRunResumeContext\(run\)/);
+  assert.match(mainSource, /function savedRunNextAction\(run/);
+  assert.match(mainSource, /할 일/);
+  assert.match(mainSource, /function renderSaveRecoveryNotice\(\)/);
+  assert.match(saveSource, /export function loadRunSlot\(storage, key\)/);
+  assert.match(saveSource, /export function loadRunFromStorage\(storage\)/);
+  assert.match(saveSource, /export function saveRunToStorage\(storage, run\)/);
+  assert.match(saveSource, /function isNewerRun\(candidate, current\)/);
+  assert.match(saveSource, /function canUseStorage\(storage\)/);
+  assert.match(saveSource, /function storageUnavailableNotice\(\)/);
+  assert.match(saveSource, /브라우저 저장소를 사용할 수 없음/);
+  assert.match(mainSource, /function formatSavedAt\(timestamp\)/);
+  assert.match(mainSource, /function dailyModifierIds\(dateKey, difficulty\)/);
+  assert.match(mainSource, /function renderDailyContract\(challenge\)/);
+  assert.match(mainSource, /class="run-options"/);
+  assert.match(mainSource, /class="daily-contract"/);
+  assert.match(mainSource, /class="continue-preview/);
+  assert.match(mainSource, /class="save-notice \$\{notice\.tone\}"/);
+  assert.match(mainSource, /data-action="dismiss-save-notice"/);
+  assert.match(mainSource, /function readBrowserJson\(key, fallback\)/);
+  assert.match(mainSource, /function writeBrowserJson\(key, value\)/);
+  assert.match(mainSource, /function browserStorage\(\)/);
+  assert.match(mainSource, /loadRunFromStorage\(browserStorage\(\)\)/);
+  assert.match(mainSource, /saveRunToStorage\(browserStorage\(\), run\)/);
+  assert.match(mainSource, /deleteSavedRun\(browserStorage\(\)\)/);
+  assert.match(mainSource, /const settingsStored = saveSettings\(\)/);
+  assert.match(mainSource, /data-settings-save-notice/);
+  assert.match(mainSource, /function refreshSettingsSaveNotice\(\)/);
+  assert.match(mainSource, /function tabOnlyStorageNotice\(scope\)/);
+  assert.match(mainSource, /function clearTabOnlyStorageNotice\(scope\)/);
+  assert.match(mainSource, /저장 불가/);
+  assert.match(mainSource, /data-action="delete-save-confirmed"/);
+  assert.match(mainSource, /data-action="delete-save-cancel"/);
+  assert.match(mainSource, /저장된 런을 삭제할까요/);
+  assert.match(saveSource, /removeStorage\(storage, SAVE_BACKUP_KEY\)/);
+  assert.match(saveSource, /writeStorage\(storage, SAVE_BACKUP_KEY, payload\)/);
+  assert.match(mainSource, /data-action="start-confirmed"/);
+  assert.match(mainSource, /data-action="start-cancel"/);
+  assert.match(mainSource, /if \(state\.pendingStart\)/);
+  assert.match(mainSource, /저장된 런을 덮어쓸까요/);
+  assert.match(mainSource, /data-action="daily-run"/);
+  assert.match(mainSource, /데일리 계약/);
+  assert.match(mainSource, /런 세팅/);
+  assert.match(mainSource, /class="title-start-panel"/);
+  assert.match(mainSource, /class="title-run-readout"/);
+  assert.match(mainSource, /오늘의 계약/);
+  assert.match(mainSource, /class="about-hero"/);
+  assert.match(mainSource, /class="about-facts"/);
+  assert.match(mainSource, /class="about-art-window"/);
+  assert.match(mainSource, /class="about-flow"/);
+  assert.match(mainSource, /class="about-license-list"/);
+  assert.match(mainSource, /class="about-release"/);
+  assert.match(mainSource, /크레딧/);
+  assert.match(mainSource, /라이선스/);
+  assert.match(mainSource, /이용 안내/);
+  assert.match(mainSource, /npm run dev/);
+  assert.match(mainSource, /npm test · npm run build · npm run balance · npm run audit/);
+  assert.match(styleSource, /\.run-setup/);
+  assert.match(styleSource, /\.title-start-panel/);
+  assert.match(styleSource, /\.title-run-readout/);
+  assert.match(styleSource, /\.run-options/);
+  assert.match(styleSource, /\.run-setup input/);
+  assert.match(styleSource, /\.daily-contract/);
+  assert.match(styleSource, /\.continue-preview/);
+  assert.match(styleSource, /\.continue-context/);
+  assert.match(styleSource, /\.save-notice/);
+  assert.match(styleSource, /\.start-confirm/);
+  assert.match(styleSource, /\.delete-confirm/);
+  assert.match(styleSource, /\.about-hero/);
+  assert.match(styleSource, /\.about-facts/);
+  assert.match(styleSource, /\.about-art-window/);
+  assert.match(styleSource, /\.about-flow/);
+  assert.match(styleSource, /\.about-license-list/);
+  assert.match(styleSource, /\.about-release/);
+});
+
+test("title screen presents the selected character before a run", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const characterSource = readFileSync(new URL("../src/data/character.js", import.meta.url), "utf8");
+  assert.match(characterSource, /mechanics:/);
+  assert.match(mainSource, /function renderCharacterPanel\(\)/);
+  assert.match(mainSource, /aria-label="선택한 캐릭터"/);
+  assert.match(mainSource, /플레이어/);
+  assert.match(mainSource, /class="character-mechanic-chips"/);
+  assert.match(mainSource, /class="starter-relic-row"/);
+  assert.match(mainSource, /시작 유물/);
+  assert.match(mainSource, /function starterDeckSummary\(deck\)/);
+  assert.match(mainSource, /character\.starterDeck\.length/);
+  assert.match(styleSource, /\.character-panel/);
+  assert.match(styleSource, /\.character-mechanic-chips/);
+  assert.match(styleSource, /\.starter-relic-row/);
+  assert.match(styleSource, /\.starter-deck-preview/);
+});
+
+test("records screen preserves replay seeds and run-shaping details", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const recordsSource = readFileSync(new URL("../src/engine/records.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(recordsSource, /seed:\s*run\.summary\.seed/);
+  assert.match(recordsSource, /difficultyId:\s*run\.summary\.difficultyId/);
+  assert.match(recordsSource, /difficulties:\s*\{\}/);
+  assert.match(recordsSource, /dailyContracts:\s*\{\s*runs:\s*0/);
+  assert.match(recordsSource, /function recordDifficultySummary\(records, run, completedAt\)/);
+  assert.match(recordsSource, /function recordDailyContractSummary\(records, run, completedAt\)/);
+  assert.match(recordsSource, /function normalizeDifficultyRecords\(raw\)/);
+  assert.match(recordsSource, /function normalizeDailyContractRecords\(raw\)/);
+  assert.match(recordsSource, /challengeModifierNames:\s*Array\.isArray/);
+  assert.match(recordsSource, /cardsAdded:\s*run\.summary\.cardsAdded/);
+  assert.match(recordsSource, /cardsRemoved:\s*run\.summary\.cardsRemoved/);
+  assert.match(recordsSource, /damageTaken:\s*run\.summary\.damageTaken/);
+  assert.match(recordsSource, /route:\s*normalizeRouteSummary\(run\.summary\.route\)/);
+  assert.match(recordsSource, /function normalizeRouteSummary\(route\)/);
+  assert.match(mainSource, /function renderDailyContractRecords\(records\)/);
+  assert.match(mainSource, /function renderRecordsNextGoal\(records, history, conceptCounts\)/);
+  assert.match(mainSource, /function renderRecordsCareer\(records, history, conceptCounts, bossEntries\)/);
+  assert.match(mainSource, /function recordsCareerNextAction\(records, history, conceptCounts\)/);
+  assert.match(mainSource, /function renderRecordsCareerActionButton\(next\)/);
+  assert.match(mainSource, /function recordsNextGoalItems\(records, history, conceptCounts\)/);
+  assert.match(mainSource, /function recordsMaintenanceGoal\(latest\)/);
+  assert.match(mainSource, /function recordsBuildGoal\(records, conceptCounts, latest\)/);
+  assert.match(mainSource, /function renderHistoryReplayCue\(entry, replaySeed = ""\)/);
+  assert.match(mainSource, /function renderHistoryPathLine\(entry\)/);
+  assert.match(mainSource, /function historyReplayCue\(entry, replaySeed = ""\)/);
+  assert.match(mainSource, /function historyStopPoint\(entry\)/);
+  assert.match(mainSource, /function historyNextChoice\(entry\)/);
+  assert.match(mainSource, /다음 목표/);
+  assert.match(mainSource, /기록 요약/);
+  assert.match(mainSource, /aria-label="기록 요약"/);
+  assert.match(mainSource, /class="summary-stats records-stat-strip"/);
+  assert.match(mainSource, /다시 해볼 선택/);
+  assert.match(mainSource, /aria-label="기록 재도전 메모"/);
+  assert.match(mainSource, /aria-label="최근 런 경로 요약"/);
+  assert.match(mainSource, /class="history-path-line \$\{entry\.won \? "won" : "lost"\}"/);
+  assert.match(mainSource, /class="history-replay-cue \$\{cue\.tone\}"/);
+  assert.match(mainSource, /추천 재도전/);
+  assert.match(mainSource, /막힌 지점 다시 보기/);
+  assert.match(mainSource, /일일 계약 기록/);
+  assert.match(mainSource, /class="daily-records"/);
+  assert.match(mainSource, /class="records-next-goal"/);
+  assert.match(mainSource, /data-action="replay-seed"/);
+  assert.match(mainSource, /기록 재도전/);
+  assert.match(mainSource, /function buildConceptRecordEntries\(builds = \{\}\)/);
+  assert.match(mainSource, /buildConceptRecordEntries\(records\.builds\)/);
+  assert.match(mainSource, /renderBuildTags\(entry\.build\)/);
+  assert.match(mainSource, /buildConceptText\(entry\.build, "주력 미기록"\)/);
+  assert.match(mainSource, /function renderDifficultyLadder\(records\)/);
+  assert.match(mainSource, /난이도 진행/);
+  assert.match(mainSource, /class="difficulty-ladder"/);
+  assert.match(mainSource, /function renderDifficultyProgress\(progress, compact = false\)/);
+  assert.match(mainSource, /class="history-detail"/);
+  assert.match(mainSource, /function routeRecordText\(route\)/);
+  assert.match(mainSource, /경로 \$\{stop\}/);
+  assert.match(styleSource, /\.records-next-goal/);
+  assert.match(styleSource, /\.records-career/);
+  assert.match(styleSource, /\.records-career-metrics/);
+  assert.match(styleSource, /\.records-career-action/);
+  assert.match(styleSource, /\.records-stat-strip/);
+  assert.match(styleSource, /\.records-next-goal > div/);
+  assert.match(styleSource, /\.history-path-line/);
+  assert.match(styleSource, /\.history-path-line\.lost/);
+  assert.match(styleSource, /\.high-contrast \.history-path-line/);
+  assert.match(styleSource, /\.history-replay-cue/);
+  assert.match(styleSource, /\.history-replay-cue > div/);
+  assert.match(styleSource, /\.history-replay-cue\.strong/);
+  assert.match(styleSource, /\.high-contrast \.history-replay-cue/);
+  assert.match(styleSource, /\.daily-records/);
+  assert.match(styleSource, /\.daily-record-summary/);
+});
+
+test("mobile combat layout keeps core controls readable", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function renderTargetAssist\(run, recommendedCardUid = null\)/);
+  assert.match(mainSource, /function renderCombatPlayPanel\(run, recommendedCardUid\)/);
+  assert.match(mainSource, /function renderCombatEnergyPanel\(combat\)/);
+  assert.match(mainSource, /function handLayoutStyle\(count\)/);
+  assert.match(mainSource, /--hand-count:\$\{count\}; --hand-overlap:\$\{overlap\}px/);
+  assert.match(mainSource, /aria-label="손패 \$\{combat\.hand\.length\}장"/);
+  assert.match(mainSource, /class="target-assist combat-action-guide/);
+  assert.match(mainSource, /class="combat-play-panel\$\{dockFxClass\}"/);
+  assert.match(mainSource, /지금 낼 수 있는 카드 \$\{playableCount\}장/);
+  assert.match(mainSource, /energy-locked/);
+  assert.match(mainSource, />\$\{actionName\}<\/b>/);
+  assert.match(styleSource, /\.hand-zone \.game-card \+ \.game-card/);
+  assert.match(styleSource, /margin-left:\s*calc\(-1 \* var\(--hand-overlap, 0px\)\)/);
+  assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-x:\s*auto/);
+  assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-y:\s*hidden/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*--hand-zone-height:\s*262px/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*padding-bottom:\s*calc\(var\(--hand-zone-height\) \+ var\(--hand-bottom\) \+ 52px\)/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-mission-strip[\s\S]*flex:\s*1 1 360px/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-command-row,[\s\S]*\.combat-command-row\.advisor-off[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.turn-plan\[open\][\s\S]*position:\s*relative/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-play-panel[\s\S]*bottom:\s*calc\(var\(--hand-bottom\) \+ var\(--hand-zone-height\) \+ var\(--play-panel-gap\) \+ 126px\)/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-play-panel[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-resource-stack[\s\S]*grid-template-columns:\s*112px minmax\(0, 1fr\)/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.enemy-line[\s\S]*order:\s*-1/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.enemy-card[\s\S]*scroll-snap-align:\s*start/);
+  assert.match(styleSource, /@media \(min-width: 1041px\) and \(max-width: 1400px\)[\s\S]*\.hand-zone[\s\S]*left:\s*148px/);
+  assert.match(styleSource, /@media \(min-width: 1041px\) and \(max-width: 1400px\)[\s\S]*\.hand-zone[\s\S]*overflow-x:\s*auto/);
+  assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.combat-command-row,[\s\S]*position:\s*relative/);
+  assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.combat-command-row \.turn-plan[\s\S]*display:\s*grid/);
+  assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.arena[\s\S]*transform:\s*translateY\(clamp\(-118px, -10vh, -72px\)\)/);
+  assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.hand-zone[\s\S]*left:\s*clamp\(116px, 12vw, 136px\)/);
+  assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.hand-zone[\s\S]*overflow-x:\s*auto/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.hand-zone \.game-card[\s\S]*margin-left:\s*0/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-alerts[\s\S]*position:\s*relative/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.enemy-line[\s\S]*order:\s*-1/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.enemy-line[\s\S]*flex-wrap:\s*nowrap/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.player-stand[\s\S]*grid-template-areas:/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.enemy-card[\s\S]*grid-template-areas:/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.pile-row[\s\S]*grid-template-columns:\s*repeat\(4, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.phase-combat > \.top-bar[\s\S]*grid-template-columns:\s*38px minmax\(54px, 1fr\) 48px 42px/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.phase-combat > \.top-bar \.hud-stat,[\s\S]*\.phase-combat > \.top-bar \.save-status,[\s\S]*\.phase-combat > \.top-bar \.icon-button\[data-id="codex"\],[\s\S]*\.phase-combat > \.top-bar \.icon-button\[data-id="guide"\][\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.target-assist/);
+  assert.match(styleSource, /\.assist-target-lock/);
+  assert.match(styleSource, /\.assist-action-lock/);
+  assert.match(styleSource, /\.target-assist\.previewing[\s\S]*width:\s*1px/);
+  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*width:\s*min\(326px, 100%\)/);
+  assert.match(styleSource, /\.assist-target-lock,[\s\S]*\.assist-action-lock[\s\S]*grid-template-columns:\s*auto minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.assist-target-lock,[\s\S]*\.assist-action-lock[\s\S]*min-height:\s*30px/);
+  assert.match(styleSource, /\.target-assist small[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-board[\s\S]*--hand-zone-height:\s*204px/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-board[\s\S]*padding:\s*8px 8px calc\(var\(--hand-zone-height\) \+ var\(--hand-bottom\) \+ 74px\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-mission-strip[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-readiness-strip[\s\S]*overflow-x:\s*auto/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-forecast[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.forecast-secondary[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.turn-plan[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-play-panel[\s\S]*bottom:\s*calc\(var\(--hand-bottom\) \+ var\(--hand-zone-height\) \+ var\(--play-panel-gap\) \+ 68px\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-play-panel[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-resource-stack[\s\S]*grid-template-columns:\s*minmax\(96px, 124px\) minmax\(0, 1fr\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-pile-dock \.pile-row[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-resource-stack\.fx-target::after/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*content:\s*attr\(data-fx-label\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-action-fx,[\s\S]*\.combat-action-fx\.fx-self[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-energy-panel[\s\S]*grid-template-columns:\s*42px minmax\(0, 1fr\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.hand-zone \.game-card[\s\S]*width:\s*124px/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.hand-zone \.game-card p[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*scroll-snap-type:\s*x proximity/);
+});
+
+test("card surfaces expose rarity and type without relying on color alone", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const cardAssetScript = readFileSync(new URL("../scripts/rebuild-card-illustrations.py", import.meta.url), "utf8");
+  const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
+  assert.match(mainSource, /const rarityText = rarityLabel\(card\.rarity\)/);
+  assert.match(mainSource, /const typeText = typeLabel\(card\.type\)/);
+  assert.match(mainSource, /class="card-meta"/);
+  assert.match(mainSource, /class="card-upgrade-mark"/);
+  assert.match(mainSource, /function renderCardCatalogItem\(card\)/);
+  assert.match(mainSource, /class="catalog-card-preview-pair"/);
+  assert.match(mainSource, /codex-\$\{card\.id\}-upgraded/);
+  assert.match(mainSource, /강화 없음/);
+  assert.match(mainSource, /const visibleKeywords = \(card\.keywords \?\? \[\]\)\.slice\(0, 2\)/);
+  assert.match(mainSource, /<b>희귀도<\/b>/);
+  assert.match(mainSource, /aria-label="\$\{card\.name\}\. \$\{upgradedText\}\$\{rarityText\} \$\{typeText\}/);
+  assert.match(styleSource, /\.card-meta/);
+  assert.match(styleSource, /\.card-meta[\s\S]*grid-row:\s*1/);
+  assert.match(styleSource, /\.card-meta[\s\S]*grid-column:\s*1 \/ -1/);
+  assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*grid-row:\s*1/);
+  assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*background:\s*transparent/);
+  assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*white-space:\s*normal/);
+  assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*word-break:\s*keep-all/);
+  assert.match(styleSource, /\.card-art[\s\S]*grid-column:\s*1 \/ -1/);
+  assert.match(styleSource, /\.hand-zone \.game-card[\s\S]*grid-template-rows:\s*31px 172px 0 34px 0/);
+  assert.match(styleSource, /\.hand-zone \.card-art-sigil[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.card-art-sigil[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.hand-zone \.card-cost[\s\S]*top:\s*7px/);
+  assert.match(styleSource, /\.hand-zone \.card-cost[\s\S]*width:\s*28px/);
+  assert.match(styleSource, /card-illustrations\.png\?v=20260518-cardart3/);
+  assert.match(styleSource, /\.card-art-image[\s\S]*transform:\s*scale\(1\)/);
+  assert.match(styleSource, /\.card-upgrade-mark/);
+  assert.match(styleSource, /\.game-card\.upgraded \.card-art/);
+  assert.match(styleSource, /\.catalog-card-preview-pair/);
+  assert.match(styleSource, /\.catalog-no-upgrade/);
+  assert.match(styleSource, /\.high-contrast \.card-upgrade-mark/);
+  assert.match(styleSource, /\.card-cost[\s\S]*0 0 0 2px rgba\(3, 13, 15, 0\.82\)/);
+  assert.match(styleSource, /\.card-keywords[\s\S]*grid-row:\s*5/);
+  assert.match(styleSource, /\.card-rules[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.rarity-rare \.card-meta/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.card-catalog \.catalog-card[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(cardAssetScript, /CELL_H = 288/);
+  assert.match(cardAssetScript, /STARTER_ART_OVERRIDES = set\(\)/);
+  assert.match(cardAssetScript, /PAINTED_SOURCE_CARD_IDS = \{"pulse_lance", "tide_ward", "memory_sift", "null_pin"\}/);
+  assert.match(cardAssetScript, /MINIMAL_OVERLAY_CARD_IDS = PAINTED_SOURCE_CARD_IDS/);
+  assert.match(cardAssetScript, /def soften_alpha\(layer, factor\)/);
+  assert.match(cardAssetScript, /def overlay_strength\(card\)/);
+  assert.match(cardAssetScript, /def symbol_strength\(card\)/);
+  assert.match(readme, /71개 일러스트 셀/);
+  assert.match(readme, /덧그린 문양 없이 페인팅 원본/);
+});
+
+test("combat hand cards expose play outcome previews", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
+  assert.match(engineSource, /export function cardPlayPreview\(run, cardInstance, targetUid = null\)/);
+  assert.match(engineSource, /previewAttack/);
+  assert.match(engineSource, /previewBlock/);
+  assert.match(engineSource, /function withObjectParticle\(text\)/);
+  assert.match(engineSource, /withObjectParticle\(card\.name\)/);
+  assert.match(mainSource, /cardPlayPreview\(options\.run, cardInstance\)/);
+  assert.match(mainSource, /const recommendedCardUid = combatRecommendedCardUid\(run\)/);
+  assert.match(mainSource, /function combatRecommendedCardUid\(run\)/);
+  assert.match(mainSource, /function combatCardRecommendationScore\(preview, forecast, selected, harmfulCount\)/);
+  assert.match(mainSource, /function combatRecommendationTargetInfo\(preview, selected, aliveEnemies = \[\]\)/);
+  assert.match(mainSource, /targetLabel: targetInfo\.label/);
+  assert.match(mainSource, /targetDetail: targetInfo\.detail/);
+  assert.match(mainSource, /label: "나", detail: combatPreviewSelfBadge\(preview\)/);
+  assert.match(mainSource, /label: "모든 적", detail: combatPreviewTargetBadge\(preview, selected, targetUids\.length\)/);
+  assert.match(mainSource, /function combatStatusRecommendationScore\(status\)/);
+  assert.match(mainSource, /PLAYER_HARMFUL_STATUSES/);
+  assert.match(mainSource, /function renderCardOutcome\(preview\)/);
+  assert.match(mainSource, /const secondaryClass = chips\.length > 1 \? " has-secondary" : ""/);
+  assert.match(mainSource, /class="card-outcome\$\{secondaryClass\}"/);
+  assert.match(mainSource, /function cardOutcomeText\(chip, visual\)/);
+  assert.match(mainSource, /cardOutcomeText\(chip, visual\)/);
+  assert.match(mainSource, /function cardOutcomeText\(chip, visual\) \{[\s\S]*const value = String\(visual\?\.value \?\? ""\)\.trim\(\)[\s\S]*if \(value\) return value[\s\S]*const label = String/);
+  assert.doesNotMatch(mainSource, /function cardOutcomeText\(chip, visual\) \{[\s\S]*return label[\s\S]*\.replace/);
+  assert.doesNotMatch(mainSource, /\.replace\(\/\^광역 \//);
+  assert.doesNotMatch(mainSource, /replace\(\/\^모든 적 \//);
+  assert.match(mainSource, /const value = String\(visual\?\.value \?\? ""\)\.trim\(\)/);
+  assert.match(mainSource, /if \(value\) return value/);
+  assert.match(mainSource, /return number \?\? "•"/);
+  assert.match(mainSource, /if \(\/처치\/\.test\(label\)\) return \{ icon: "✕", value: number \|\| "끝" \}/);
+  assert.match(mainSource, /icon: "✦"/);
+  assert.match(mainSource, /icon: "⬡"/);
+  assert.match(mainSource, /icon: "▤"/);
+  assert.match(mainSource, /icon: "⚡"/);
+  assert.doesNotMatch(mainSource, /icon: "KO"/);
+  assert.doesNotMatch(mainSource, /value: number \|\| "HIT"/);
+  assert.doesNotMatch(mainSource, /value: number \|\| "DRAW"/);
+  assert.match(mainSource, /function renderCardTooltipPreview\(preview\)/);
+  assert.match(mainSource, /function cardPreviewTargetText\(preview\)/);
+  assert.match(mainSource, /if \(combatPreviewAffectsSelf\(preview\)\) return "대상: 나"/);
+  assert.match(mainSource, /const cardTooltipLayer = document\.createElement\("div"\)/);
+  assert.match(mainSource, /function showCardPortalTooltip\(cardElement\)/);
+  assert.match(mainSource, /function showCardPortalTooltip\(cardElement\) \{[\s\S]*if \(state\.combatFx && state\.run\?\.phase === "combat"\) return;/);
+  assert.match(mainSource, /function positionCardPortalTooltip\(\)/);
+  assert.match(mainSource, /if \(isCombatHandCard\) showCombatCardPreview\(cardElement\)/);
+  assert.match(mainSource, /app\.querySelector\("\.combat-board"\)\?\.classList\.add\("preview-active"\)/);
+  assert.match(mainSource, /app\.querySelector\("\.combat-board"\)\?\.classList\.remove\("preview-active"\)/);
+  assert.match(mainSource, /document\.querySelectorAll\("\.combat-play-panel, \.target-assist, \.combat-card-preview-rail:not\(\[hidden\]\), \.combat-action-recap"\)/);
+  assert.match(mainSource, /app\.addEventListener\("pointerover"/);
+  assert.match(mainSource, /app\.addEventListener\("mouseover"/);
+  assert.match(mainSource, /app\.addEventListener\("focusin"/);
+  assert.match(mainSource, /이번 사용/);
+  assert.match(mainSource, /function keywordTooltipDescription\(keyword\)/);
+  assert.match(mainSource, /description\.replace\(new RegExp\(`\^\$\{escapeRegExp\(label\)\}\[:：\]/);
+  assert.match(mainSource, /class="tooltip-keywords"/);
+  assert.match(mainSource, /<span> \$\{keywordTooltipDescription\(keyword\)\}<\/span>/);
+  assert.doesNotMatch(mainSource, /<small><b>\$\{keywordLabel\(keyword\)\}<\/b>:/);
+  assert.match(mainSource, /class="tooltip-card-head"/);
+  assert.match(mainSource, /class="tooltip-card-meta"/);
+  assert.match(mainSource, /cardElement\?\.closest\?\.\("\.deck-select-grid"\)/);
+  assert.match(mainSource, /const isHandCard = Boolean\(cardTooltipSource\.closest\("\.hand-zone"\)\)/);
+  assert.match(mainSource, /isHandCard \? 344 : 306/);
+  assert.match(mainSource, /function bestCombatHandTooltipPosition\(\{ left, top, width, height, sourceRect, margin \}\)/);
+  assert.match(mainSource, /function combatTooltipAvoidRects\(\)/);
+  assert.match(mainSource, /\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-intent-lane, \.enemy-card \.combatant-plate/);
+  assert.match(mainSource, /element\.matches\("\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-intent-lane, \.enemy-card \.combatant-plate"\)/);
+  assert.match(mainSource, /strict:\s*combatant/);
+  assert.match(mainSource, /if \(item\.strict && overlap > 0\) score \+= 1000000/);
+  assert.match(mainSource, /function rectOverlapArea\(a, b\)/);
+  assert.match(captureSource, /combatantOverlaps/);
+  assert.match(captureSource, /combatantOverlaps\.length === 0/);
+  assert.match(captureSource, /previewBoardActive/);
+  assert.match(captureSource, /dimmedCards >= 1/);
+  assert.match(mainSource, /const recommendationLabel = recommended \?/);
+  assert.match(mainSource, /추천 카드/);
+  assert.match(styleSource, /\.card-outcome/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*position:\s*static/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*grid-row:\s*4/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*grid-column:\s*1 \/ -1/);
+  assert.match(styleSource, /\.hand-zone \.game-card[\s\S]*grid-template-rows:\s*31px 172px 0 34px 0/);
+  assert.match(styleSource, /\.hand-zone \.card-meta[\s\S]*display:\s*none[\s\S]*position:\s*absolute[\s\S]*top:\s*48px/);
+  assert.match(styleSource, /\.hand-zone \.card-type-mark[\s\S]*background:\s*rgba\(3, 13, 15, 0\.74\)/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome,[\s\S]*\.hand-zone \.game-card\.previewing-card \.card-outcome[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome span[\s\S]*justify-content:\s*center/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome span em[\s\S]*font-family:\s*"JetBrains Mono", ui-monospace, monospace/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*1 \/ -1/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*auto/);
+  assert.match(styleSource, /\.hand-zone \.game-card\.previewing-card \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*auto/);
+  assert.match(styleSource, /\.hand-zone \.game-card\.energy-locked \.card-cost::after[\s\S]*content:\s*"×"/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome \.primary[\s\S]*box-shadow/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome span:not\(\.primary\)[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome span:not\(\.primary\)[\s\S]*display:\s*inline-flex/);
+  assert.match(styleSource, /\.hand-zone \.game-card\.previewing-card \.card-outcome span:not\(\.primary\)[\s\S]*display:\s*inline-flex/);
+  assert.match(styleSource, /\.target-assist:not\(\.previewing\) \.assist-action-lock[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.target-assist\.previewing[\s\S]*clip-path:\s*inset\(50%\)/);
+  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*grid-template-columns:\s*23px minmax\(72px, 1fr\) minmax\(58px, auto\) minmax\(64px, auto\)/);
+  assert.match(styleSource, /\.combat-card-preview-rail \.preview-effect-icons i em[\s\S]*white-space:\s*nowrap/);
+  assert.match(styleSource, /\.combat-aim-line[\s\S]*z-index:\s*2[\s\S]*opacity:\s*0\.5/);
+  assert.match(styleSource, /\.combat-aim-line::before[\s\S]*height:\s*1px[\s\S]*opacity:\s*0\.58/);
+  assert.match(styleSource, /\.combat-aim-line\.aim-drag[\s\S]*opacity:\s*0\.82/);
+  assert.match(styleSource, /\.combat-board\.preview-active \.hand-zone \.game-card\[data-action="play-card"\]:not\(\.previewing-card\)[\s\S]*opacity:\s*0\.48/);
+  assert.match(styleSource, /\.combat-board\.preview-active \.enemy-card:not\(\.preview-target\) \.enemy-sprite[\s\S]*filter:\s*saturate\(0\.72\) brightness\(0\.78\)/);
+  assert.match(styleSource, /\.hand-zone[\s\S]*backdrop-filter:\s*blur\(8px\)/);
+  assert.match(styleSource, /\.game-card\.recommended/);
+  assert.match(styleSource, /\.card-recommendation/);
+  assert.match(styleSource, /\.hand-zone \.card-recommendation[\s\S]*top:\s*46px/);
+  assert.match(styleSource, /\.hand-zone \.card-recommendation[\s\S]*left:\s*44px/);
+  assert.match(styleSource, /\.hand-zone \.game-card\.recommended \.card-art/);
+  assert.match(styleSource, /\.tooltip-card-head/);
+  assert.match(styleSource, /\.tooltip-card-head \.card-art[\s\S]*grid-row:\s*1/);
+  assert.match(styleSource, /\.tooltip-card-copy/);
+  assert.match(styleSource, /\.tooltip-card-meta[\s\S]*word-break:\s*keep-all/);
+  assert.match(styleSource, /\.tooltip-card-meta span[\s\S]*white-space:\s*nowrap/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-card-head/);
+  assert.match(styleSource, /\.hand-zone \.game-card[\s\S]*transform-origin:\s*center bottom/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover:not\(:disabled\),[\s\S]*transform:\s*translateY\(-10px\) rotate\(0deg\) scale\(1\.006\)/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-art-image/);
+  assert.match(styleSource, /\.card-art-image[\s\S]*transition:\s*transform calc\(180ms \/ var\(--motion-scale\)\) ease/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip[\s\S]*max-height:\s*min\(328px, calc\(100vh - 118px\)\)/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip[\s\S]*overflow:\s*auto/);
+  assert.match(styleSource, /\.card-portal-tooltip p,[\s\S]*\.card-portal-tooltip small[\s\S]*word-break:\s*keep-all/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip p[\s\S]*border-left:\s*2px solid/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip p[\s\S]*font-size:\s*0\.78rem/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip p[\s\S]*overflow:\s*visible/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-preview[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-card-head[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-card-head \.card-art[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.tooltip-preview/);
+  assert.match(styleSource, /\.tooltip-preview span b[\s\S]*border-radius:\s*50%/);
+  assert.match(styleSource, /\.tooltip-keywords/);
+  assert.match(styleSource, /\.tooltip-keywords span[\s\S]*word-break:\s*keep-all/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-keywords[\s\S]*max-height:\s*154px/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-keywords small[\s\S]*white-space:\s*normal/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-keywords span[\s\S]*overflow:\s*visible/);
+  assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-keywords span[\s\S]*white-space:\s*normal/);
+  assert.match(styleSource, /\.card-portal-tooltip/);
+  assert.match(styleSource, /z-index:\s*120/);
+  assert.match(styleSource, /@keyframes card-tooltip-pop/);
+  assert.match(mainSource, /function handLayoutStyle\(count\)/);
+  assert.match(mainSource, /const cardWidth = 180/);
+  assert.match(mainSource, /const targetWidth = 980/);
+  assert.match(mainSource, /const overlap = count > 5 \? Math\.min\(108/);
+  assert.match(readFileSync(new URL("../README.md", import.meta.url), "utf8"), /6장 이상 손패도 데스크톱에서 잘리지 않는 부채꼴 배치/);
+});
+
+test("combat keyboard shortcuts are wired for accessible play", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function handleCombatHotkey\(event\)/);
+  assert.match(mainSource, /function combatCardHotkeyIndex\(event\)/);
+  assert.match(mainSource, /function cycleCombatTarget\(run, delta\)/);
+  assert.match(mainSource, /aria-keyshortcuts="\$\{options\.hotkey\}"/);
+  assert.match(mainSource, /aria-keyshortcuts="E Space"/);
+  assert.match(mainSource, /handHotkeyLabel\(index\)/);
+  assert.match(mainSource, /event\.key === "ArrowLeft" \|\| event\.key === "ArrowRight"/);
+  assert.match(mainSource, /event\.repeat \|\| shouldIgnoreRepeatedAction\("play-card", card\.uid, cardIndex, run\)/);
+  assert.match(mainSource, /event\.repeat \|\| shouldIgnoreRepeatedAction\("end-turn", "", -1, run\)/);
+  assert.match(styleSource, /\.card-hotkey/);
+  assert.match(styleSource, /\.end-turn span/);
+});
+
+test("combat cards support touch and pen drag targeting", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /let pointerCardDrag = null/);
+  assert.match(mainSource, /let suppressPointerClick = false/);
+  assert.match(mainSource, /app\.addEventListener\("pointerdown"/);
+  assert.match(mainSource, /app\.addEventListener\("pointermove"/);
+  assert.match(mainSource, /app\.addEventListener\("pointerup"/);
+  assert.match(mainSource, /app\.addEventListener\("pointercancel"/);
+  assert.match(mainSource, /event\.pointerType === "mouse"/);
+  assert.match(mainSource, /document\.elementFromPoint\(x, y\)\?\.closest\("\.enemy-card:not\(\.dead\)"/);
+  assert.match(mainSource, /function highlightPointerDropTarget\(x, y\)/);
+  assert.match(mainSource, /showCombatCardPreview\(pointerCardDrag\.card, enemy \? Number\(enemy\.dataset\.id\) : null, "drag"\)/);
+  assert.match(mainSource, /showCombatCardPreview\(draggedCard, Number\(enemy\.dataset\.id\), "drag"\)/);
+  assert.match(mainSource, /let combatPreviewTargetUid = null/);
+  assert.match(mainSource, /function clearPointerCardDrag\(\)/);
+  assert.match(mainSource, /playCardWithFx\(state\.run, drag\.uid, Number\(enemy\.dataset\.id\)\)/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action="play-card"\][\s\S]*touch-action:\s*none/);
+  assert.match(styleSource, /\.enemy-card\.drop-ready/);
+  assert.match(styleSource, /\.combat-card-preview-rail\.preview-drag/);
+});
+
+test("combat piles are inspectable during tactical planning", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /const COMBAT_PILE_DEFINITIONS =/);
+  assert.match(mainSource, /pileOpen:\s*null/);
+  assert.match(mainSource, /function renderCombatPileInspector\(run\)/);
+  assert.match(mainSource, /function combatPileButton\(combat, id\)/);
+  assert.match(mainSource, /class="pile pile-\$\{id\} \$\{emptyClass\}"/);
+  assert.match(mainSource, /function combatPileCards\(combat, id\)/);
+  assert.match(mainSource, /function combatPileSummary\(cards\)/);
+  assert.match(mainSource, /function combatDrawPreview\(cards\)/);
+  assert.match(mainSource, /data-action="open-pile"/);
+  assert.match(mainSource, /data-action="close-pile"/);
+  assert.match(mainSource, /aria-label="전투 더미 점검"/);
+  assert.match(mainSource, /aria-current="true"/);
+  assert.match(mainSource, /다음 카드/);
+  assert.match(styleSource, /button\.pile/);
+  assert.match(styleSource, /\.pile-modal/);
+  assert.match(styleSource, /\.pile-tabs/);
+  assert.match(styleSource, /\.pile-insight/);
+  assert.match(styleSource, /\.pile-grid/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.pile-tabs[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+});
+
+test("cards and enemies have distinctive production art hooks", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
+  const cardArtScript = readFileSync(new URL("../scripts/rebuild-card-illustrations.py", import.meta.url), "utf8");
+  const combatantScript = readFileSync(new URL("../scripts/rebuild-combatants.py", import.meta.url), "utf8");
+  const eventBackdropScript = readFileSync(new URL("../scripts/generate-event-backdrops.py", import.meta.url), "utf8");
+  const cardArtKeys = new Set(CARDS.map((card) => card.art));
+  const enemySprites = new Set(ENEMIES.map((enemy) => enemy.sprite));
+  const combatantImageFor = (sprite) => {
+    if (["cataloger", "algorithm", "lastgate"].includes(sprite)) return `boss-${sprite}.png`;
+    if (["bailiff", "engine", "knight", "cantor", "colossus"].includes(sprite)) return `elite-${sprite}.png`;
+    return `enemy-${sprite}.png`;
+  };
+  const combatantFiles = new Set(["player-echo-diver.png", ...ENEMIES.map((enemy) => combatantImageFor(enemy.sprite))]);
+  const pngSize = (file, directory = "../public/assets/combatants") => {
+    const buffer = readFileSync(new URL(`${directory}/${file}`, import.meta.url));
+    assert.equal(buffer.subarray(0, 8).toString("hex"), "89504e470d0a1a0a", `${file} should be a PNG`);
+    return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+  };
+
+  assert.equal(cardArtKeys.size, CARDS.length, "each card should own a distinct art key");
+  assert.equal(enemySprites.size, ENEMIES.length, "each enemy should own a distinct sprite key");
+  for (const card of CARDS) assert.ok(card.art, `${card.id} needs an art key`);
+  for (const enemy of ENEMIES) assert.ok(enemy.sprite, `${enemy.id} needs a sprite key`);
+
+  assert.match(mainSource, /function renderCardArt\(card\)/);
+  assert.match(mainSource, /data-art-signature/);
+  assert.match(mainSource, /data-sigil-cell/);
+  assert.match(mainSource, /class="card-art-sigil"/);
+  assert.match(mainSource, /function cardArtMotif\(card\)/);
+  assert.match(mainSource, /function cardArtSigilCell\(card, motif\)/);
+  assert.match(mainSource, /const CARD_ART_KEYS = \[\.\.\.new Set\(GAME_DATA\.cards\.map\(\(card\) => card\.art\)\)\]/);
+  assert.match(mainSource, /const CARD_ILLUSTRATION_CELLS/);
+  assert.match(mainSource, /const CARD_ART_SIGIL_CELLS/);
+  assert.match(mainSource, /const CARD_ART_EXACT_ATLAS/);
+  for (const card of CARDS) assert.match(mainSource, new RegExp(`${card.art}:`), `${card.id} art key should be mapped deliberately`);
+  assert.match(mainSource, /function renderEnemySprite\(enemy, template\)/);
+  assert.match(mainSource, /class="enemy-sprite-art"/);
+  assert.match(mainSource, /class="enemy-intent-sigil"/);
+  assert.match(mainSource, /function enemyIntentSigilCell\(move\)/);
+  assert.match(mainSource, /const ENEMY_INTENT_SIGIL_CELLS/);
+  assert.match(mainSource, /const ENEMY_SPRITE_MOTIFS/);
+  assert.match(mainSource, /const SPRITE_ATLAS_CELLS/);
+  assert.match(mainSource, /const ENEMY_PORTRAIT_CELLS/);
+  assert.match(mainSource, /function cardArtAtlasCell\(card, motif, seed\)/);
+  assert.match(mainSource, /function enemySpriteAtlasCell\(template, motif\)/);
+  assert.match(mainSource, /function enemyPortraitPosition\(sprite\)/);
+  assert.match(mainSource, /function enemyCombatantImage\(template\)/);
+  assert.match(mainSource, /data-atlas-cell/);
+  assert.match(mainSource, /data-portrait-cell/);
+  assert.match(mainSource, /--sigil-atlas-x/);
+  assert.match(mainSource, /--enemy-sprite-image/);
+  assert.match(mainSource, /--enemy-portrait-x/);
+  assert.match(mainSource, /--intent-atlas-x/);
+  assert.match(styleSource, /sprite-atlas\.png/);
+  assert.match(styleSource, /enemy-portraits\.png/);
+  assert.match(styleSource, /combat-sprites\.png/);
+  assert.match(styleSource, /combatants\/player-echo-diver\.png/);
+  assert.match(styleSource, /combatant-idle-player/);
+  assert.match(styleSource, /combatant-idle-enemy/);
+  assert.match(styleSource, /combatant-idle-threat/);
+  assert.match(styleSource, /\.combat-board:not\(\.turn-locked\):not\(\.fx-active\):not\(\.turn-cue-enemy\):not\(\.turn-cue-player\) \.player-sprite/);
+  assert.match(mainSource, /combatants\/boss-cataloger\.png/);
+  assert.match(mainSource, /combatants\/boss-algorithm\.png/);
+  assert.match(mainSource, /combatants\/boss-lastgate\.png/);
+  assert.match(mainSource, /combatants\/elite-bailiff\.png/);
+  assert.match(mainSource, /combatants\/elite-engine\.png/);
+  assert.match(mainSource, /combatants\/elite-knight\.png/);
+  assert.match(mainSource, /combatants\/elite-cantor\.png/);
+  assert.match(mainSource, /combatants\/elite-colossus\.png/);
+  assert.match(mainSource, /combatants\/enemy-\$\{template\.sprite\}\.png/);
+  assert.match(styleSource, /card-illustrations\.png/);
+  assert.match(styleSource, /card-illustrations\.png\?v=20260518-cardart3/);
+  assert.match(styleSource, /arena-backdrops\.png/);
+  assert.match(styleSource, /event-backdrops\.png/);
+  assert.match(packageSource, /assets:backdrops/);
+  assert.match(packageSource, /assets:cards/);
+  assert.match(packageSource, /assets:combatants/);
+  assert.match(packageSource, /assets:events/);
+  assert.match(cardArtScript, /COLS = 9/);
+  assert.match(cardArtScript, /ROWS = 8/);
+  assert.match(cardArtScript, /BASE_BY_ART/);
+  assert.match(cardArtScript, /ART_SAFE_BOUNDS = \(18, 16, CELL_W - 18, CELL_H - 16\)/);
+  assert.match(cardArtScript, /def draw_landmark\(layer, card, hue, seed\):/);
+  assert.match(cardArtScript, /def frame_art_panel\(image, card, hue\):/);
+  assert.match(cardArtScript, /def validate_card_cell\(image, card\):/);
+  assert.match(cardArtScript, /QA_DIR/);
+  assert.match(cardArtScript, /def write_contact_sheet\(atlas, art_cards\):/);
+  assert.match(cardArtScript, /card-illustrations-sheet\.png/);
+  assert.match(cardArtScript, /STARTER_ART_OVERRIDES = set\(\)/);
+  assert.match(cardArtScript, /PAINTED_SOURCE_CARD_IDS = \{"pulse_lance", "tide_ward", "memory_sift", "null_pin"\}/);
+  assert.match(cardArtScript, /MINIMAL_OVERLAY_CARD_IDS = PAINTED_SOURCE_CARD_IDS/);
+  assert.match(cardArtScript, /if card\["id"\] in MINIMAL_OVERLAY_CARD_IDS:/);
+  assert.match(cardArtScript, /"lance": "pulseLance"/);
+  assert.match(cardArtScript, /"ward": "shieldWard"/);
+  assert.match(cardArtScript, /"memory_sift": "cacheCleanse"/);
+  assert.match(cardArtScript, /"pin": "harpoonBeam"/);
+  assert.match(cardArtScript, /def compose_starter_lance\(seed\):/);
+  assert.match(cardArtScript, /def compose_starter_ward\(seed\):/);
+  assert.match(cardArtScript, /def compose_starter_memory\(seed\):/);
+  assert.match(cardArtScript, /def compose_starter_pin\(seed\):/);
+  assert.deepEqual(pngSize("card-illustrations.png", "../public/assets"), { width: 2880, height: 2304 }, "card illustrations should expose one stable atlas slot per card art key");
+  assert.match(eventBackdropScript, /OUT = ROOT \/ "public" \/ "assets" \/ "event-backdrops\.png"/);
+  assert.match(eventBackdropScript, /CELL_W = 768/);
+  assert.match(eventBackdropScript, /CELL_H = 432/);
+  assert.match(eventBackdropScript, /def memory_market\(draw, glow\):/);
+  assert.match(eventBackdropScript, /def terminal_patch\(draw, glow\):/);
+  assert.match(eventBackdropScript, /def coral_contract\(draw, glow\):/);
+  assert.match(eventBackdropScript, /def judgment_chamber\(draw, glow\):/);
+  assert.match(eventBackdropScript, /def warm_current\(draw, glow\):/);
+  assert.match(eventBackdropScript, /def last_waystation\(draw, glow\):/);
+  assert.deepEqual(pngSize("event-backdrops.png", "../public/assets"), { width: 2304, height: 864 }, "event backdrops should expose six stable scene cells");
+  assert.match(combatantScript, /TIER_FRAMES/);
+  assert.match(combatantScript, /remove_chroma_key/);
+  assert.match(combatantScript, /CANVAS = \(1024, 1536\)/);
+  assert.match(combatantScript, /SOURCE_DIR/);
+  assert.match(combatantScript, /QA_DIR/);
+  assert.match(combatantScript, /CORE_ALPHA_THRESHOLD/);
+  assert.match(combatantScript, /VISIBLE_ALPHA_THRESHOLD/);
+  assert.match(combatantScript, /CENTER_TOLERANCE/);
+  assert.match(combatantScript, /"safe": 72/);
+  assert.match(combatantScript, /def source_path_for\(spec\):/);
+  assert.match(combatantScript, /def load_source_sprite\(spec\):/);
+  assert.match(combatantScript, /def enforce_sprite_safety\(image, tier\):/);
+  assert.match(combatantScript, /def write_contact_sheet\(paths\):/);
+  assert.match(combatantScript, /combatants-safe-regenerated-sheet\.png/);
+  assert.match(combatantScript, /core silhouette leaves the safe frame/);
+  assert.match(combatantScript, /baseline drifted too far/);
+  assert.match(combatantScript, /deque/);
+  assert.match(combatantScript, /ImageChops\.subtract/);
+  assert.match(combatantScript, /def add_sprite_rim\(image, hue, accent, tier\):/);
+  for (const file of combatantFiles) {
+    assert.deepEqual(pngSize(file), { width: 1024, height: 1536 }, `${file} should use the normalized combat canvas`);
+  }
+  assert.match(mainSource, /class="card-art-image"/);
+  assert.match(mainSource, /class="card-art-depth"/);
+  assert.match(mainSource, /data-card-id="\$\{card\.id\}"/);
+  assert.match(styleSource, /\.card-art-image/);
+  assert.match(styleSource, /background-size:\s*900% 800%/);
+  assert.match(styleSource, /\.card-art-sigil/);
+  assert.match(styleSource, /\.card-art\[data-art-id="pulse_lance"\]::before,[\s\S]*\.card-art\[data-art-id="tide_ward"\]::before[\s\S]*opacity:\s*0/);
+  assert.match(styleSource, /\.card-art\[data-art-id="pulse_lance"\] \.card-art-sigil,[\s\S]*\.card-art\[data-art-id="tide_ward"\] \.card-art-sigil[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.enemy-intent-sigil/);
+  assert.match(styleSource, /\.enemy-sprite-art/);
+  assert.match(styleSource, /\.enemy-sprite-art[\s\S]*inset:\s*0/);
+  assert.match(styleSource, /background-image:\s*var\(--enemy-sprite-image/);
+  assert.match(styleSource, /background-size:\s*contain/);
+  assert.match(styleSource, /\.character-sprite[\s\S]*--sprite-box-h:/);
+  assert.match(styleSource, /\.character-sprite[\s\S]*aspect-ratio:\s*2 \/ 3/);
+  assert.match(styleSource, /\.character-sprite[\s\S]*width:\s*calc\(var\(--sprite-box-h\) \* 0\.6667\)/);
+  assert.match(styleSource, /\.player-sprite[\s\S]*--sprite-box-h:\s*clamp\(286px, 43vh, 470px\)/);
+  assert.match(styleSource, /\.enemy-sprite\.tier-elite/);
+  assert.match(styleSource, /\.enemy-sprite\.tier-elite[\s\S]*--sprite-box-h:\s*clamp\(292px, 39vh, 486px\)/);
+  assert.match(styleSource, /\.enemy-sprite\.sprite-bailiff/);
+  assert.match(styleSource, /\.enemy-sprite\.sprite-engine/);
+  assert.match(styleSource, /\.enemy-sprite\.sprite-knight/);
+  assert.match(styleSource, /\.enemy-sprite\.sprite-cantor/);
+  assert.match(styleSource, /\.enemy-sprite\.sprite-colossus/);
+  assert.match(styleSource, /--sigil-atlas-x/);
+  assert.match(styleSource, /--intent-atlas-x/);
+  assert.match(mainSource, /--enemy-portrait-x/);
+  assert.match(styleSource, /mask-image:\s*none/);
+  assert.match(styleSource, /--arena-hue/);
+  assert.match(styleSource, /\.arena-combat\.arena-variant-0 \.combat-background/);
+  assert.match(styleSource, /\.arena-motif-archive/);
+  assert.match(styleSource, /--art-atlas-x/);
+  assert.doesNotMatch(styleSource, /background-position:\s*var\(--sprite-atlas-x\)/);
+  assert.doesNotMatch(styleSource, /\.enemy-sprite\.sprite-[^{]+\{[^}]*inset:\s*-/);
+  assert.doesNotMatch(styleSource, /\.card-art-svg/);
+  assert.doesNotMatch(styleSource, /\.enemy-sprite svg/);
+  assert.match(styleSource, /\.enemy-sprite\.tier-boss/);
+  assert.match(styleSource, /\.enemy-sprite\.tier-boss[\s\S]*--sprite-box-h:\s*clamp\(306px, 42vh, 530px\)/);
+});
+
+test("card rewards explain current deck and relic synergy", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /const RELIC_SYNERGY_HINTS/);
+  assert.match(mainSource, /function renderRewardInsight\(run, cardId\)/);
+  assert.match(mainSource, /function renderRewardPickLine\(run, cardId\)/);
+  assert.match(mainSource, /function renderRewardDeckShift\(run, cardId\)/);
+  assert.match(mainSource, /function rewardDeckShift\(run, cardId\)/);
+  assert.match(mainSource, /function rewardAxisShortLabel\(axis\)/);
+  assert.match(mainSource, /function rewardCardRoleLabel\(card\)/);
+  assert.match(mainSource, /function rewardPickLineText\(card, insight\)/);
+  assert.match(mainSource, /function renderRewardFlow\(run\)/);
+  assert.match(mainSource, /function renderRewardSkipChoice\(run, skipRecommended = false\)/);
+  assert.match(mainSource, /function renderRewardCompass\(run\)/);
+  assert.match(mainSource, /function renderRewardSpotlight\(run, recommendedCardId, skipRecommended, previewCardId = null\)/);
+  assert.match(mainSource, /function renderRewardSpotlightCardArt\(card\)/);
+  assert.doesNotMatch(mainSource, /\$\{renderRewardReadiness\(run\)\}/);
+  assert.match(mainSource, /rewardPreviewCardId:\s*null/);
+  assert.match(mainSource, /function activeRewardPreviewCardId\(run, cardReady = Boolean/);
+  assert.match(mainSource, /function previewRewardCardFromElement\(cardElement\)/);
+  assert.match(mainSource, /function refreshRewardPreview\(\)/);
+  assert.match(mainSource, /stage\.classList\.toggle\("preview-active", Boolean\(previewCardId\)\)/);
+  assert.match(mainSource, /stage\.classList\.toggle\("card-ready", cardReady\)/);
+  assert.match(mainSource, /stage\.classList\.toggle\("relic-ready", Boolean\(reward\.selectedRelicId\)\)/);
+  assert.match(mainSource, /app\.addEventListener\("mouseover"[\s\S]*previewRewardCardFromElement\(rewardCard\)/);
+  assert.match(mainSource, /app\.addEventListener\("mouseout"[\s\S]*clearRewardCardPreview\(\)/);
+  assert.match(mainSource, /!card\.closest\("\.reward-option"\)/);
+  assert.match(mainSource, /class="reward-option \$\{reward\.selectedCardId === cardId \? "selected" : ""\} \$\{recommendedCardId === cardId \? "recommended" : ""\} \$\{previewCardId === cardId \? "previewing" : ""\}"/);
+  assert.match(mainSource, /previewCardId \? "preview-active" : ""/);
+  assert.match(mainSource, /cardReady \? "card-ready" : ""/);
+  assert.match(mainSource, /run\.reward\.selectedRelicId \? "relic-ready" : ""/);
+  assert.match(mainSource, /class="reward-selected-stamp">선택됨<\/em>/);
+  assert.match(mainSource, /비교 중/);
+  assert.match(mainSource, /previewing && card\s*\?\s*card\.name/);
+  assert.match(mainSource, /function renderRewardOptionDetail\(run, cardId\)/);
+  assert.match(mainSource, /function rewardOptionAriaLabel\(run, cardId, recommended = false, previewing = false, selected = false\)/);
+  assert.match(mainSource, /aria-label="\$\{rewardOptionAriaLabel\(run, cardId, recommendedCardId === cardId, previewCardId === cardId, reward\.selectedCardId === cardId\)\}"/);
+  assert.match(mainSource, /ariaLabel:\s*rewardOptionAriaLabel\(run, cardId, recommendedCardId === cardId, previewCardId === cardId, reward\.selectedCardId === cardId\)/);
+  assert.match(mainSource, /function rewardSpotlightDetail\(insight\)/);
+  assert.match(mainSource, /class="reward-spotlight/);
+  assert.match(mainSource, /class="reward-compass"/);
+  assert.match(mainSource, /phaseTransition:\s*null/);
+  assert.match(mainSource, /function renderPhaseTransition\(run\)/);
+  assert.match(mainSource, /run\.phase === "summary"/);
+  assert.match(mainSource, /run\.phase === "map"/);
+  assert.match(mainSource, /run\.phase === "reward"/);
+  assert.match(mainSource, /class="phase-transition phase-\$\{run\.phase\} \$\{cue\.tone\}"/);
+  assert.match(mainSource, /function phaseTransitionCue\(previousKey, nextKey, run\)/);
+  assert.match(mainSource, /if \(nextPhase === "map" \|\| nextPhase === "reward"\)/);
+  assert.match(mainSource, /if \(nextPhase === "summary"\) return null/);
+  assert.match(mainSource, /function rewardSourceKicker\(type\)/);
+  assert.match(mainSource, /const sourceLabel = rewardSourceKicker\(reward\.sourceType\)/);
+  assert.match(mainSource, /<h2>보상 선택<\/h2>/);
+  assert.match(mainSource, /class="reward-source-chip">\$\{sourceLabel\}<\/span>/);
+  assert.match(mainSource, /state\.phaseTransition = phaseTransitionCue\(previousRenderKey, renderKey, state\.run\)/);
+  assert.doesNotMatch(mainSource, /selector-tooltip/);
+  assert.match(mainSource, /function rewardInsightShortLabel\(insight\)/);
+  assert.match(mainSource, /function renderRewardConceptTag\(concept\)/);
+  assert.match(mainSource, /function skipInsightShortDetail\(insight\)/);
+  assert.match(mainSource, /function renderRewardRelicChoices\(run\)/);
+  assert.match(mainSource, /function rewardRelicChoiceAriaLabel\(relicId, insight, recommended = false, selected = false\)/);
+  assert.match(mainSource, /function rewardRelicFitLabel\(insight\)/);
+  assert.match(mainSource, /function relicIconGlyph\(icon\)/);
+  assert.match(mainSource, /data-glyph="\$\{relicIconGlyph\(relic\.icon\)\}"/);
+  assert.match(mainSource, /choicePulse:\s*null/);
+  assert.match(mainSource, /choicePulseTimer:\s*null/);
+  assert.match(mainSource, /const CHOICE_PULSE_ACTIONS = new Set/);
+  assert.match(mainSource, /const REPEAT_GUARDED_ACTIONS = new Set/);
+  assert.match(mainSource, /"dismiss-act-interlude"/);
+  assert.match(mainSource, /function actionAllowedForPhase\(action, run = state\.run\)/);
+  assert.match(mainSource, /if \(!actionAllowedForPhase\(action, run\)\)/);
+  assert.match(mainSource, /function shouldIgnoreRepeatedAction\(action, id = "", index = -1, run = state\.run\)/);
+  assert.match(mainSource, /function repeatedActionKey\(action, id = "", index = -1, run = state\.run\)/);
+  assert.match(mainSource, /if \(shouldIgnoreRepeatedAction\(action, id, index, run\)\) return;/);
+  assert.match(mainSource, /shouldIgnoreRepeatedAction\("play-card", drag\.uid, Number\(enemy\.dataset\.id\), state\.run\)/);
+  assert.match(mainSource, /function choicePulseSnapshot\(run, action = "", id = null, index = -1\)/);
+  assert.match(mainSource, /function stageChoicePulse\(action, before, run\)/);
+  assert.match(mainSource, /\["reward-card", "reward-relic", "skip-reward"\]\.includes\(action\)/);
+  assert.match(mainSource, /function choicePulseFromDelta\(action, before, after\)/);
+  assert.match(mainSource, /phase:\s*after\.phase/);
+  assert.match(mainSource, /nodeId:\s*after\.nodeId \?\? null/);
+  assert.match(mainSource, /if \(state\.choicePulse\.phase && state\.choicePulse\.phase !== run\.phase\)/);
+  assert.match(mainSource, /state\.choicePulse\.nodeId !== currentNodeId/);
+  assert.match(mainSource, /if \(action === "enter-node"\)[\s\S]*clearChoicePulse\(\);[\s\S]*clearMapRoutePreview\(\);/);
+  assert.match(mainSource, /function suppressCardPortalTooltip\(duration = 900\)/);
+  assert.match(mainSource, /cardTooltipSuppressUntil = Date\.now\(\) \+ duration/);
+  assert.match(mainSource, /if \(action === "enter-node"\)[\s\S]*suppressCardPortalTooltip\(\);[\s\S]*enterNode\(run, id\);/);
+  assert.match(mainSource, /function choicePulseSelectionChips\(action, before, after\)/);
+  assert.match(mainSource, /function choicePulseSelectionChanged\(action, before, after\)/);
+  assert.match(mainSource, /function setChoicePulse\(pulse\)[\s\S]*state\.choicePulse\?\.key === choicePulseKey\(pulse\)[\s\S]*activeChoicePulse\(\)[\s\S]*return;/);
+  assert.match(mainSource, /function clearChoicePulse\(\)/);
+  assert.match(mainSource, /function choicePulseKey\(pulse\)/);
+  assert.match(mainSource, /function withTopicParticle\(text\)/);
+  assert.match(mainSource, /function koreanTopicParticle\(text\)/);
+  assert.match(mainSource, /function koreanSubjectParticle\(text\)/);
+  assert.match(mainSource, /function koreanObjectParticle\(text\)/);
+  assert.match(mainSource, /function renderChoicePulse\(run\)/);
+  assert.match(mainSource, /class="choice-result-pulse \$\{pulse\.tone\}" role="status" aria-live="polite"/);
+  assert.match(mainSource, /stageChoicePulse\(action, choiceBefore, run\)/);
+  assert.match(mainSource, /renderChoicePulse\(run\)/);
+  assert.match(styleSource, /\.phase-shop \.combat-log,[\s\S]*\.phase-rest \.combat-log[\s\S]*display:\s*none/);
+  assert.match(mainSource, /function rewardRelicInsight\(run, relicId\)/);
+  assert.match(mainSource, /function rewardRecommendedCardId\(run\)/);
+  assert.match(mainSource, /function rewardCardRecommendationScore\(run, cardId\)/);
+  assert.match(mainSource, /function rewardSkipRecommended\(run, recommendedCardId\)/);
+  assert.match(mainSource, /function rewardRecommendedRelicId\(run, choices = rewardRelicChoices\(run\.reward\)\)/);
+  assert.match(mainSource, /function rewardRelicRecommendationScore\(run, relicId\)/);
+  assert.doesNotMatch(mainSource, /renderChoiceWayfinder\(run, "보상"\)/);
+  assert.match(mainSource, /const concept = conceptForRelic\(relicId, run\)/);
+  assert.match(mainSource, /renderRewardConceptTag\(insight\.concept\)/);
+  assert.match(mainSource, /class="reward-relic-icon-frame"/);
+  assert.match(mainSource, /class="reward-relic-copy"/);
+  assert.match(mainSource, /class="reward-relic-head"/);
+  assert.match(mainSource, /class="reward-relic-effect"/);
+  assert.match(mainSource, /rewardRelicFitLabel\(insight\)/);
+  assert.match(mainSource, /data-action="reward-relic"/);
+  assert.match(mainSource, /recommendationLabel: "추천 보상"/);
+  assert.match(mainSource, /추천 보상/);
+  assert.match(mainSource, /추천 유물/);
+  assert.match(mainSource, /추천 선택/);
+  assert.match(mainSource, /function rewardCardInsight\(run, cardId\)/);
+  assert.match(mainSource, /function rewardRoleNeed\(run, card\)/);
+  assert.match(mainSource, /function rewardBossPreparationNeed\(run, card\)/);
+  assert.match(mainSource, /scoreBonus/);
+  assert.match(mainSource, /function rewardComparisonChips\(run, cardId\)/);
+  assert.match(mainSource, /function rewardRelicChoices\(reward\)/);
+  assert.match(mainSource, /function skipRewardInsight\(run\)/);
+  assert.match(mainSource, /function renderRewardReadiness\(run\)/);
+  assert.match(mainSource, /function conceptForCard\(card, run = null\)/);
+  assert.match(mainSource, /function renderConceptTag\(concept\)/);
+  assert.match(mainSource, /return renderRewardConceptTag\(concept\)/);
+  assert.match(mainSource, /function averageDeckCost\(cardInstances\)/);
+  assert.match(mainSource, /function deckKeywordCounts\(run\)/);
+  assert.match(mainSource, /function buildAxisForCard\(card, concept = conceptForCard\(card\)\)/);
+  assert.match(mainSource, /const keywordScore = matchingKeywords\.reduce/);
+  assert.match(mainSource, /if \(matchingKeywords\.length > 0 && score >= 2\)/);
+  assert.match(mainSource, /받지 않기와 비교/);
+  assert.match(mainSource, /마무리 보강/);
+  assert.match(mainSource, /정화·약화 보강/);
+  assert.match(mainSource, /보스 대비 방어/);
+  assert.match(mainSource, /보스 대비 정화/);
+  assert.match(mainSource, /aria-label="카드 보상 받지 않기/);
+  assert.match(mainSource, />카드 받지 않기<\/span>/);
+  assert.match(mainSource, /class="reward-card-choices"/);
+  assert.match(mainSource, /class="reward-choice-stage \$\{relicChoices\.length \? "with-relics" : "cards-only"\} \$\{previewCardId \? "preview-active" : ""\} \$\{cardReady \? "card-ready" : ""\} \$\{run\.reward\.selectedRelicId \? "relic-ready" : ""\}"/);
+  assert.match(mainSource, /class="reward-section-heading reward-card-heading"[\s\S]*\$\{renderRewardSkipChoice\(run, skipRecommended\)\}/);
+  assert.match(mainSource, /class="reward-pick-line \$\{insight\.tone\}"/);
+  assert.match(mainSource, /class="reward-deck-shift \$\{shift\.tone\}"/);
+  assert.match(mainSource, /선택 시 덱 변화/);
+  assert.match(mainSource, /선택 뒤 덱 변화/);
+  assert.match(mainSource, /고른 뒤 덱/);
+  assert.match(mainSource, /평균 비용 \$\{deckShift\.beforeCostText\}→\$\{deckShift\.afterCostText\}/);
+  assert.match(mainSource, /전하 모아 쓰기/);
+  assert.match(mainSource, /function rewardFlowState\(run\)/);
+  assert.match(mainSource, /class="reward-flow\$\{flow\.hasRelicChoices \? "" : " no-relic"\}"/);
+  assert.match(mainSource, /data-state="\$\{flow\.stateName\}"/);
+  assert.match(mainSource, /class="reward-flow-steps"/);
+  assert.match(mainSource, /class="reward-flow-copy"/);
+  assert.match(mainSource, /class="reward-skip-choice \$\{run\.reward\.cardSkipped \? "selected" : ""\} \$\{skipRecommended \? "recommended" : ""\}/);
+  assert.match(mainSource, /aria-label="카드 보상 받지 않기\. \$\{shortDetail\}/);
+  assert.match(mainSource, /title="\$\{shortDetail\}"/);
+  assert.doesNotMatch(mainSource, /\$\{renderRewardReadiness\(run\)\}/);
+  assert.match(mainSource, /label: "경로"/);
+  assert.match(mainSource, /카드 선택 완료/);
+  assert.match(mainSource, /유물 선택 필요/);
+  assert.match(mainSource, /유물까지 고르면 보상이 확정됩니다/);
+  assert.match(mainSource, /withSubjectParticle\(target\)/);
+  assert.match(mainSource, /const compactPhase = \["combat", "combat-victory", "reward", "map", "event", "shop", "rest"\]\.includes\(displayPhase\)/);
+  assert.match(mainSource, /run\.phase === "summary" \|\| compactPhase \? "" : renderRunBriefing\(run\)/);
+  assert.match(mainSource, /run\.phase === "summary" \|\| compactPhase \? "" : renderTacticalAdvisor\(run\)/);
+  assert.match(mainSource, /덱 \+1장/);
+  assert.match(mainSource, /비용 \$\{beforeCostText\} 유지/);
+  assert.match(mainSource, /비용 \$\{beforeCostText\}→\$\{afterCostText\}/);
+  assert.match(mainSource, /<section class="reward-insight \$\{insight\.tone\}"/);
+  assert.match(mainSource, /<details class="reward-option-detail">/);
+  assert.match(mainSource, /<summary>상세 비교<\/summary>/);
+  assert.match(mainSource, /rewardComparisonChips\(run, cardId\)\.slice\(0, 3\)/);
+  assert.match(mainSource, /data-action="skip-reward"/);
+  assert.match(mainSource, /renderRewardConceptTag\(insight\.concept\)/);
+  assert.match(styleSource, /\.reward-compare-row/);
+  assert.match(styleSource, /\.phase-transition/);
+  assert.match(styleSource, /\.phase-transition\.phase-combat/);
+  assert.match(styleSource, /\.phase-transition\.phase-combat[\s\S]*clip-path:\s*inset\(50%\)/);
+  assert.match(styleSource, /\.phase-transition\.phase-combat[\s\S]*animation:\s*none !important/);
+  assert.match(styleSource, /\.phase-transition\.phase-combat small,[\s\S]*\.phase-transition\.phase-combat div[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.phase-transition\.phase-shop/);
+  assert.match(styleSource, /\.phase-transition\.phase-reward small,[\s\S]*\.phase-transition\.phase-rest div[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@keyframes phase-cue/);
+  assert.match(styleSource, /\.reward-spotlight/);
+  assert.match(styleSource, /\.reward-spotlight[\s\S]*display:\s*grid/);
+  assert.match(styleSource, /\.reward-spotlight-card/);
+  assert.match(styleSource, /\.reward-spotlight-card-art/);
+  assert.match(styleSource, /\.reward-spotlight-card-art \.card-art-image[\s\S]*card-illustrations\.png/);
+  assert.match(styleSource, /\.reward-spotlight-card-art\.empty/);
+  assert.match(styleSource, /\.reward-spotlight\.previewing \.reward-spotlight-card/);
+  assert.match(styleSource, /\.reward-spotlight small[\s\S]*-webkit-line-clamp:\s*1/);
+  assert.match(styleSource, /\.reward-compass/);
+  assert.match(styleSource, /\.reward-bonus \.reward-source-chip/);
+  assert.match(styleSource, /\.reward-layout[\s\S]*min-height:\s*calc\(100vh - 76px\)/);
+  assert.match(styleSource, /\.reward-option \.game-card[\s\S]*height:\s*292px/);
+  assert.match(styleSource, /\.reward-option \.game-card[\s\S]*grid-template-rows:\s*34px 140px 18px minmax\(38px, 1fr\) 20px/);
+  assert.match(styleSource, /\.reward-option \.card-art/);
+  assert.match(styleSource, /\.reward-option \.card-art-sigil[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.reward-option \.game-card h3[\s\S]*grid-row:\s*1/);
+  assert.match(styleSource, /\.reward-option \.card-meta[\s\S]*grid-row:\s*3/);
+  assert.match(styleSource, /\.reward-option\.previewing \.game-card/);
+  assert.match(styleSource, /\.reward-choice-stage\.preview-active \.reward-option:not\(\.previewing\):not\(\.selected\),[\s\S]*\.reward-choice-stage\.preview-active \.reward-skip-choice:not\(\.selected\)[\s\S]*opacity:\s*0\.5/);
+  assert.match(styleSource, /\.reward-choice-stage\.card-ready\.with-relics \.reward-option:not\(\.selected\),[\s\S]*\.reward-choice-stage\.card-ready\.with-relics \.reward-skip-choice:not\(\.selected\)[\s\S]*opacity:\s*0\.36/);
+  assert.match(styleSource, /\.reward-choice-stage\.card-ready\.with-relics:not\(\.relic-ready\) \.reward-relic-choices/);
+  assert.match(styleSource, /\.reward-option\.previewing \.reward-pick-line/);
+  assert.match(styleSource, /\.reward-selected-stamp/);
+  assert.match(styleSource, /\.reward-relic-choice \.reward-selected-stamp/);
+  assert.match(styleSource, /\.reward-option\.selected \.reward-pick-line/);
+  assert.match(styleSource, /\.card-art-image[\s\S]*background-size:\s*900% 800%/);
+  assert.match(styleSource, /\.reward-pick-line/);
+  assert.match(styleSource, /\.reward-pick-line[\s\S]*grid-template-columns:\s*auto minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.reward-pick-line small[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.reward-option\.previewing \.reward-pick-line small,[\s\S]*\.reward-option\.selected \.reward-pick-line small,[\s\S]*display:\s*-webkit-box/);
+  assert.match(styleSource, /\.reward-pick-line small[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.reward-pick-line\.strong/);
+  assert.match(styleSource, /\.reward-option-detail[\s\S]*position:\s*absolute/);
+  assert.match(styleSource, /\.reward-option:hover \.reward-option-detail,[\s\S]*\.reward-option:focus-within \.reward-option-detail,[\s\S]*\.reward-option\.previewing \.reward-option-detail,[\s\S]*\.reward-option\.selected \.reward-option-detail/);
+  assert.match(styleSource, /\.reward-option-detail summary/);
+  assert.match(styleSource, /\.reward-option-detail-body/);
+  assert.match(styleSource, /\.reward-deck-shift/);
+  assert.match(styleSource, /\.reward-deck-shift\.strong/);
+  assert.match(styleSource, /\.reward-deck-shift i\.warn/);
+  assert.match(styleSource, /\.high-contrast \.reward-deck-shift/);
+  assert.match(styleSource, /\.reward-card-choices/);
+  assert.match(styleSource, /\.reward-card-choices > \.reward-section-heading > span/);
+  assert.match(styleSource, /\.reward-flow/);
+  assert.match(styleSource, /\.reward-cards[\s\S]*grid-template-columns:\s*repeat\(3, minmax\(204px, 1fr\)\)/);
+  assert.match(styleSource, /\.reward-option-detail summary::after/);
+  assert.match(styleSource, /\.reward-option-detail\[open\] summary::after/);
+  assert.match(styleSource, /\.reward-insight \.reward-insight-detail[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.concept-tag/);
+  assert.match(styleSource, /\.reward-relic-choices/);
+  assert.match(styleSource, /\.reward-relic-choice\.selected/);
+  assert.match(styleSource, /\.reward-relic-choice\.recommended/);
+  assert.match(styleSource, /\.reward-relic-icon-frame/);
+  assert.match(styleSource, /\.relic-icon::before[\s\S]*content:\s*attr\(data-glyph\)/);
+  assert.match(styleSource, /\.icon-anchor,[\s\S]*\.icon-weight,[\s\S]*\.icon-gear/);
+  assert.match(styleSource, /\.reward-relic-effect[\s\S]*display:\s*none[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.reward-relic-choice:hover \.reward-relic-effect,[\s\S]*\.reward-relic-choice:focus-visible \.reward-relic-effect,[\s\S]*\.reward-relic-choice\.selected \.reward-relic-effect[\s\S]*display:\s*-webkit-box/);
+  assert.match(styleSource, /\.reward-relic-fit b[\s\S]*text-overflow:\s*ellipsis/);
+  assert.match(styleSource, /\.reward-recommendation/);
+  assert.match(styleSource, /\.reward-readiness/);
+  assert.match(styleSource, /\.reward-choice-stage/);
+  assert.match(styleSource, /\.reward-choice-stage\.with-relics[\s\S]*grid-template-columns:\s*minmax\(620px, 1fr\) minmax\(280px, 0\.42fr\)/);
+  assert.match(styleSource, /\.reward-choice-stage\.with-relics \.reward-relic-choices[\s\S]*grid-column:\s*2/);
+  assert.match(styleSource, /\.reward-skip-choice/);
+  assert.match(styleSource, /\.reward-skip-choice[\s\S]*width:\s*38px/);
+  assert.match(styleSource, /\.reward-skip-choice[\s\S]*grid-template-columns:\s*20px minmax\(0, 0fr\) 0/);
+  assert.match(styleSource, /\.reward-skip-choice::before/);
+  assert.match(styleSource, /\.reward-skip-choice:hover,[\s\S]*\.reward-skip-choice:focus-visible,[\s\S]*\.reward-skip-choice\.recommended,[\s\S]*\.reward-skip-choice\.selected/);
+  assert.match(styleSource, /\.reward-skip-choice:hover span,[\s\S]*\.reward-skip-choice:focus-visible span,[\s\S]*\.reward-skip-choice\.recommended span,[\s\S]*\.reward-skip-choice\.selected span/);
+  assert.doesNotMatch(styleSource, /\.reward-action-bar/);
+  assert.match(styleSource, /\.choice-result-pulse/);
+  assert.match(styleSource, /@keyframes choice-result-pulse-in/);
+  assert.match(styleSource, /\.choice-result-pulse i\.cost/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.choice-result-pulse/);
+  assert.match(styleSource, /\.decision-footer/);
+  assert.match(styleSource, /@keyframes choice-confirm-pulse/);
+  assert.match(styleSource, /\.reward-card-heading/);
+  assert.match(styleSource, /\.reward-skip-choice\.recommended/);
+  assert.match(styleSource, /\.skip-recommendation/);
+  assert.match(styleSource, /\.phase-reward \.combat-log[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.reward-option/);
+  assert.match(styleSource, /\.reward-insight\.strong/);
+  assert.match(styleSource, /\.reward-insight\.warning/);
+  assert.match(styleSource, /\.reward-insight > span:not\(\.concept-tag\)[\s\S]*-webkit-line-clamp:\s*3/);
+});
+
+test("deck overlay explains build axes and maintenance pressure", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /const DECK_AXIS_DEFINITIONS/);
+  assert.match(mainSource, /function renderDeckAnalysis\(run\)/);
+  assert.match(mainSource, /function deckAnalysis\(run\)/);
+  assert.match(mainSource, /function deckAxisScore\(run, axis\)/);
+  assert.match(mainSource, /function renderDeckActionPanel\(analysis\)/);
+  assert.match(mainSource, /function deckSpotlightCards\(run, primary\)/);
+  assert.match(mainSource, /function cardAxisMatch\(card, axis\)/);
+  assert.match(mainSource, /function axisEffectReason\(effect\)/);
+  assert.match(mainSource, /function deckNextPicks\(run, analysis\)/);
+  assert.match(mainSource, /function conceptGuideForAxis\(axisId\)/);
+  assert.match(mainSource, /function deckAdvice\(/);
+  assert.match(mainSource, /aria-label="덱 분석"/);
+  assert.match(mainSource, /aria-label="덱 핵심 카드와 다음 보상 기준"/);
+  assert.match(mainSource, /평균 비용/);
+  assert.match(mainSource, /강화/);
+  assert.match(mainSource, /덱 크기/);
+  assert.match(mainSource, /핵심 카드/);
+  assert.match(mainSource, /다음 보상에서 찾기/);
+  assert.match(mainSource, /마무리 피해/);
+  assert.match(mainSource, /고를 때 · \$\{axis\.guide\.pick\}/);
+  assert.match(styleSource, /\.deck-analysis/);
+  assert.match(styleSource, /\.deck-axis-list/);
+  assert.match(styleSource, /\.deck-action-panel/);
+  assert.match(styleSource, /\.deck-spotlight-list/);
+  assert.match(styleSource, /\.deck-next-picks/);
+  assert.match(styleSource, /\.axis-pick/);
+  assert.match(styleSource, /\.deck-advice/);
+});
+
+test("shop purchases preview deck fit and service outcomes", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function renderShopCardPreview\(run, item\)/);
+  assert.match(mainSource, /function renderShopRelicPreview\(run, item\)/);
+  assert.match(mainSource, /function renderShopPurchaseLine\(run, item, kind\)/);
+  assert.match(mainSource, /function shopPurchaseStatus\(run, item, sold = false\)/);
+  assert.match(mainSource, /function shopRelicLineText\(relic, insight\)/);
+  assert.match(mainSource, /<details class="shop-insight \$\{item\.sold \? "muted" : insight\.tone\}"/);
+  assert.match(mainSource, /function shopCardSummary\(insight\)/);
+  assert.match(mainSource, /function shopRelicSummary\(insight\)/);
+  assert.match(mainSource, /function shopServiceGlyph\(service\)/);
+  assert.match(mainSource, /function shopRelicInsight\(run, relicId\)/);
+  assert.match(mainSource, /function conceptForRelic\(relicId, run = null\)/);
+  assert.match(mainSource, /function shopPurchaseReserveNote\(run, afterGold\)/);
+  assert.match(mainSource, /function shopServicePreview\(run, service, price\)/);
+  assert.match(mainSource, /function renderShopService\(run, service, price, advice = null\)/);
+  assert.match(mainSource, /function renderShopSpotlight\(run, advice\)/);
+  assert.match(mainSource, /function renderShopSpendPlan\(run, advice, prices\)/);
+  assert.match(mainSource, /function shopSpendPlan\(run, advice, prices = shopServicePrices\(run\)\)/);
+  assert.match(mainSource, /function shopSpendPlanSteps\(plan\)/);
+  assert.match(mainSource, /function shopReserveLabel\(run, prices, flags\)/);
+  assert.match(mainSource, /function shopUnavailableServiceText\(label, price, gold\)/);
+  assert.match(mainSource, /function renderShopExitPanel\(run, advice\)/);
+  assert.match(mainSource, /class="shop-status-bar"/);
+  assert.match(mainSource, /class="shop-spotlight \$\{advice\?\.tone \?\? "steady"\}"/);
+  assert.match(mainSource, /class="shop-spend-plan \$\{plan\.tone\}"/);
+  assert.match(mainSource, /class="shop-side-column"/);
+  assert.match(mainSource, /class="shop-service-stack"/);
+  assert.match(mainSource, /class="shop-exit-copy"/);
+  assert.match(mainSource, /class="shop-exit-checks"/);
+  assert.match(mainSource, /aria-label="크레딧 사용 계획"/);
+  assert.match(mainSource, /구매 우선순위/);
+  assert.match(mainSource, /카드 제거 먼저/);
+  assert.match(mainSource, /회복 먼저/);
+  assert.match(mainSource, /유물부터 확인/);
+  assert.match(mainSource, /class="decision-footer shop-exit-panel"/);
+  assert.match(mainSource, /class="shop-buy-button"/);
+  assert.match(mainSource, /class="primary shop-leave-button"/);
+  assert.match(mainSource, />맵으로 돌아가기<\/button>/);
+  assert.match(mainSource, /class="shop-buy-kind"/);
+  assert.match(mainSource, /class="shop-buy-status \$\{status\.tone\}"/);
+  assert.match(mainSource, /판단 근거/);
+  assert.match(mainSource, /효과 자세히/);
+  assert.match(mainSource, /renderChoiceWayfinder\(run, "마켓"\)/);
+  assert.match(mainSource, /shopAffordLabel\(run, item\.price, item\.sold\)/);
+  assert.match(mainSource, /잔액 \$\{afterGold\}/);
+  assert.match(mainSource, /제거 불가/);
+  assert.match(mainSource, /회복 불가/);
+  assert.match(mainSource, /recommendedService:\s*"remove"/);
+  assert.match(mainSource, /recommendedService:\s*"heal"/);
+  assert.match(mainSource, /recommendedService:\s*"upgrade"/);
+  assert.match(mainSource, /advice\?\.recommendedService === service/);
+  assert.match(mainSource, /추천 · \$\{shopServiceShortLabel/);
+  assert.match(mainSource, /const serviceCost = canAfford \?/);
+  assert.match(mainSource, /남음 \$\{run\.player\.gold - price\}/);
+  assert.match(mainSource, /체력 \+\$\{healAmount\} · \$\{hpAfter\}\/\$\{run\.player\.maxHp\}/);
+  assert.match(mainSource, /덱 -1장 · 남은 덱/);
+  assert.match(mainSource, /강화 후보 \$\{upgradeable\}장/);
+  assert.match(mainSource, /구매하면 \$\{rewardPickLineText\(card, insight\)\}/);
+  assert.match(mainSource, /withTopicParticle\(card\.name\)/);
+  assert.match(mainSource, /withTopicParticle\(relic\.name\)/);
+  assert.match(mainSource, /\$\{item\.price - run\.player\.gold\} 부족/);
+  assert.match(styleSource, /\.shop-insight/);
+  assert.match(styleSource, /\.shop-insight summary/);
+  assert.match(styleSource, /\.shop-insight summary::after/);
+  assert.match(styleSource, /\.shop-insight\[open\] summary::after/);
+  assert.match(styleSource, /\.shop-buy-line/);
+  assert.match(styleSource, /\.shop-buy-kind/);
+  assert.match(styleSource, /\.shop-buy-status/);
+  assert.match(styleSource, /\.shop-buy-status\.warn/);
+  assert.match(styleSource, /\.shop-buy-status\.steady/);
+  assert.match(styleSource, /\.shop-buy-line\.cannot-afford/);
+  assert.match(styleSource, /\.shop-status-bar/);
+  assert.match(styleSource, /\.shop-spotlight/);
+  assert.match(styleSource, /\.shop-spend-plan/);
+  assert.match(styleSource, /\.shop-plan-wallet/);
+  assert.match(styleSource, /\.shop-plan-steps/);
+  assert.match(styleSource, /\.shop-plan-steps em\.relic/);
+  assert.match(styleSource, /\.shop-buy-button/);
+  assert.match(styleSource, /\.shop-side-column/);
+  assert.match(styleSource, /\.shop-service-stack/);
+  assert.match(styleSource, /\.shop-exit-panel/);
+  assert.match(styleSource, /\.shop-exit-panel[\s\S]*position:\s*sticky/);
+  assert.match(styleSource, /\.shop-exit-panel \.shop-exit-copy/);
+  assert.match(styleSource, /\.shop-exit-panel \.shop-exit-checks/);
+  assert.match(styleSource, /\.shop-exit-panel \.shop-leave-button/);
+  assert.match(styleSource, /\.shop-leave-button/);
+  assert.match(styleSource, /\.shop-item\.sold::after/);
+  assert.match(styleSource, /\.shop-cards[\s\S]*grid-template-columns:\s*repeat\(auto-fit, minmax\(186px, 1fr\)\)/);
+  assert.match(styleSource, /\.shop-item \.game-card\.compact[\s\S]*height:\s*286px/);
+  assert.match(styleSource, /\.shop-item \.game-card\.compact[\s\S]*grid-template-rows:\s*34px 136px 18px minmax\(38px, 1fr\) 20px/);
+  assert.match(styleSource, /\.shop-item \.game-card\.compact h3[\s\S]*grid-row:\s*1/);
+  assert.match(styleSource, /\.shop-item \.card-meta[\s\S]*grid-row:\s*3/);
+  assert.match(styleSource, /\.shop-item \.card-art-sigil[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.shop-item:hover/);
+  assert.match(styleSource, /\.shop-item:focus-within/);
+  assert.match(styleSource, /\.shop-cards:has\(\.shop-item:hover\) \.shop-item:not\(:hover\)/);
+  assert.match(styleSource, /\.shop-item:hover \.shop-buy-line small/);
+  assert.match(styleSource, /\.shop-relics:has\(\.relic-sale:hover\) \.relic-sale:not\(:hover\)/);
+  assert.match(styleSource, /\.shop-insight\.warning/);
+  assert.match(styleSource, /\.shop-header-main/);
+  assert.match(styleSource, /\.shop-section-heading/);
+  assert.match(styleSource, /\.shop-insight-head/);
+  assert.match(styleSource, /\.shop-insight-detail[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.shop-service/);
+  assert.match(styleSource, /\.shop-service-icon/);
+  assert.match(styleSource, /\.shop-service-cost/);
+  assert.match(styleSource, /\.shop-service:hover/);
+  assert.match(styleSource, /\.shop-service:focus-visible/);
+  assert.match(styleSource, /\.shop-service-stack:has\(\.shop-service:hover\) \.shop-service:not\(:hover\)/);
+  assert.match(styleSource, /\.shop-service\.recommended/);
+  assert.match(styleSource, /\.service-recommendation/);
+  assert.match(styleSource, /\.high-contrast \.shop-spend-plan/);
+  assert.match(styleSource, /@media \(min-width: 861px\) and \(max-width: 1040px\)[\s\S]*\.shop-side-column[\s\S]*grid-column:\s*1/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.shop-spend-plan[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.shop-exit-panel[\s\S]*position:\s*static/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.shop-plan-steps[\s\S]*grid-template-columns:\s*1fr/);
+});
+
+test("upgrade service UI avoids dead-end deck choices", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(engineSource, /export function isUpgradeableCard\(cardInstance\)/);
+  assert.match(engineSource, /export function hasUpgradeableCards\(run\)/);
+  assert.match(engineSource, /!hasUpgradeableCards\(run\)/);
+  assert.match(mainSource, /hasUpgradeableCards/);
+  assert.match(mainSource, /isUpgradeableCard\(card\)/);
+  assert.match(mainSource, /강화 가능 카드 없음/);
+  assert.match(mainSource, /class="selector-hint"/);
+  assert.match(mainSource, /function renderDeckChoicePreview\(preview, recommended = false\)/);
+  assert.match(mainSource, /function renderDeckSelectorFocus\(run, recommendation\)/);
+  assert.match(mainSource, /function deckSelectorRecommendation\(run, choices\)/);
+  assert.match(mainSource, /function deckUpgradeRecommendationScore\(cardInstance, analysis\)/);
+  assert.match(mainSource, /function deckRemoveRecommendationScore\(run, cardInstance, analysis\)/);
+  assert.match(mainSource, /function upgradeChoicePreview\(cardInstance\)/);
+  assert.match(mainSource, /강화 가능/);
+  assert.match(mainSource, /recommendationLabel:\s*"추천"/);
+  assert.match(mainSource, /function compactEffectText\(text\)/);
+  assert.match(mainSource, /비용 \$\{formatCardCost\(before\.cost\)\}에서 \$\{formatCardCost\(after\.cost\)\}로 감소/);
+  assert.match(styleSource, /\.selector-hint/);
+  assert.match(styleSource, /\.selector-focus/);
+  assert.match(styleSource, /\.deck-select-grid/);
+  assert.match(styleSource, /\.deck-choice-preview/);
+  assert.match(styleSource, /\.deck-select-option\.recommended/);
+});
+
+test("rest compression explains deferred 체력 cost and free cancel", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  assert.match(engineSource, /export function restHealAmount\(run\)/);
+  assert.match(mainSource, /restHealAmount\(run\)/);
+  assert.match(engineSource, /hpCost:\s*5/);
+  assert.match(engineSource, /if \(run\.selector\.hpCost\) loseHp/);
+  assert.match(mainSource, /recommendedRest:\s*"heal"/);
+  assert.match(mainSource, /recommendedRest:\s*"remove"/);
+  assert.match(mainSource, /recommendedRest:\s*"upgrade"/);
+  assert.match(mainSource, /const restAdvice = restAdvisor\(run\)/);
+  assert.match(mainSource, /const progress = runProgressBrief\(run\)/);
+  assert.match(mainSource, /style="\$\{restSceneStyle\(run\)\}"/);
+  assert.match(mainSource, /function restSceneStyle\(run\)/);
+  assert.match(mainSource, /:safe-room/);
+  assert.match(mainSource, /function renderRestAction\(run, id, advice, disabled, label, detail\)/);
+  assert.match(mainSource, /function restActionImpact\(run, id, disabled\)/);
+  assert.match(mainSource, /function renderRestVital\(label, value, detail, tone = "steady"\)/);
+  assert.match(mainSource, /function restActionGlyph\(id\)/);
+  assert.match(mainSource, /function restActionLabel\(action\)/);
+  assert.match(mainSource, /class="rest-shell"/);
+  assert.match(mainSource, /class="rest-scene \$\{restAdvice\.tone\}"/);
+  assert.match(mainSource, /class="rest-scene-props"/);
+  assert.match(mainSource, /class="rest-floor-glow"/);
+  assert.match(mainSource, /class="rest-diver-sprite"/);
+  assert.match(mainSource, /class="rest-vitals"/);
+  assert.match(mainSource, /class="rest-progress-line"/);
+  assert.match(mainSource, /class="rest-flow-note"/);
+  assert.match(mainSource, /advice\?\.recommendedRest === id/);
+  assert.match(mainSource, /function deckSelectorHint\(run\)/);
+  assert.match(mainSource, /function renderDeckSelectorBrief\(run\)/);
+  assert.match(mainSource, /class="selector-brief \$\{isUpgrade \? "upgrade" : "remove"\}"/);
+  assert.match(mainSource, /function removeChoicePreview\(run, cardInstance\)/);
+  assert.match(mainSource, /덱 -1장/);
+  assert.match(mainSource, /체력 -\$\{run\.player\.hp - hpAfter\}/);
+  assert.match(mainSource, /\$\{card\.name\} 빠짐 · 남은 덱 \$\{deckAfter\}장 · \$\{role\}/);
+  assert.match(mainSource, /취소는 무료입니다/);
+  assert.match(mainSource, /취소하면 \$\{run\.selector\.refund\} 크레딧 반환/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-shell/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-scene-art/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /--rest-bg-x/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-scene-props[\s\S]*arena-props\.png/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-floor-glow/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-diver-sprite/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /combatants\/player-echo-diver\.png/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-vital/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-progress-line/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-actions button\.recommended/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-console \.rest-actions[\s\S]*grid-template-columns:\s*1fr/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-action-icon/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-action-impact/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-action-chips/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-recommendation/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.rest-flow-note/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.selector-brief/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.deck-select-grid \.game-card[\s\S]*height:\s*284px/);
+  assert.match(readFileSync(new URL("../src/styles.css", import.meta.url), "utf8"), /\.deck-select-grid \.card-art-sigil[\s\S]*display:\s*none/);
+});
+
+test("map route choices explain risk, reward, and upcoming branches", () => {
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  assert.match(mainSource, /function renderRunBriefing\(run\)/);
+  assert.match(mainSource, /function runProgressBrief\(run\)/);
+  assert.match(mainSource, /function runStageTitle\(run, distance, boss, stepsIntoAct = 0\)/);
+  assert.match(mainSource, /aria-label="런 진행 브리핑"/);
+  assert.match(mainSource, /보스까지 \$\{distance\}층/);
+  assert.match(mainSource, /nextTypes\.slice\(0, 3\)\.join/);
+  assert.match(mainSource, /const routeChoices = run\.map\.flat\(\)\.filter/);
+  assert.match(mainSource, /const routeAdvice = mapAdvisor\(run\)/);
+  assert.match(mainSource, /const progress = runProgressBrief\(run\)/);
+  assert.match(mainSource, /function renderActInterlude\(run\)/);
+  assert.match(mainSource, /run\.lastInterlude/);
+  assert.match(mainSource, /class="act-interlude \$\{view\.fresh \? "is-new" : "is-active is-compact"\}"/);
+  assert.match(mainSource, /function actInterludeView\(interlude\)/);
+  assert.match(mainSource, /function actInterludeKey\(interlude\)/);
+  assert.match(mainSource, /function markActInterludeSeen\(interlude, key\)/);
+  assert.match(mainSource, /function runHasSeenActInterludeKey\(run, key\)/);
+  assert.match(mainSource, /function rememberRunActInterludeKey\(run, key\)/);
+  assert.match(mainSource, /function rememberActInterludeKey\(key\)/);
+  assert.match(mainSource, /function dismissActInterlude\(key\)/);
+  assert.match(mainSource, /interlude\.dismissed = true/);
+  assert.match(mainSource, /interlude\.ackRequired = false/);
+  assert.match(mainSource, /if \(runHasSeenActInterludeKey\(state\.run, key\)\)/);
+  assert.match(mainSource, /if \(interlude\.seenAt\) return \{ key, fresh: false, hidden: true \}/);
+  assert.match(mainSource, /interlude\.presentationKey = key/);
+  assert.match(mainSource, /interlude\.ackRequired = false/);
+  assert.match(mainSource, /interlude\.dismissed = true/);
+  assert.match(mainSource, /interlude\.seenAt = Date\.now\(\)/);
+  assert.match(mainSource, /run\.runFlags\.seenActInterludes\.push\(key\)/);
+  assert.match(mainSource, /if \(interlude\.dismissed\) return ""/);
+  assert.match(mainSource, /if \(state\.seenActInterludeKeys\.has\(key\)\) return \{ key, fresh: false, hidden: true \}/);
+  assert.match(mainSource, /if \(changed && state\.run\?\.lastInterlude === interlude\) saveRun\(state\.run\)/);
+  assert.match(mainSource, /seenActInterludeKeys:\s*new Set\(\)/);
+  assert.match(mainSource, /dismissedActInterludeKeys:\s*new Set\(\)/);
+  assert.match(mainSource, /function rememberDismissedActInterludeKey\(key\)/);
+  assert.match(mainSource, /data-one-shot="true"/);
+  assert.doesNotMatch(mainSource, /class="act-interlude-dismiss"/);
+  assert.match(mainSource, /if \(action === "dismiss-act-interlude"\)/);
+  assert.match(mainSource, /막 완료/);
+  assert.match(mainSource, /function renderMapObjectiveCard\(run, progress\)/);
+  assert.match(mainSource, /class="map-objective-card \$\{readiness\?\.tone \?\? progress\.tone\}"/);
+  assert.match(mainSource, /aria-label="현재 목표"/);
+  assert.match(mainSource, /function renderMapHorizon\(run, progress, routeChoices = \[\], routeAdvice = null\)/);
+  assert.match(mainSource, /class="map-horizon \$\{progress\.tone\}"/);
+  assert.match(mainSource, /aria-label="현재 진행 목표"/);
+  assert.match(mainSource, /function bossFocusTags\(boss\)/);
+  assert.match(mainSource, /바이러스 관리/);
+  assert.match(mainSource, /해로운 상태 정리/);
+  assert.match(mainSource, /큰 공격 대비/);
+  assert.match(mainSource, /function renderMapDecisionPanel\(run, routeChoices, routeAdvice = null\)/);
+  assert.match(mainSource, /class="map-decision-panel \$\{tone\}"/);
+  assert.match(mainSource, /추천 길/);
+  assert.match(mainSource, /<i><b>보상<\/b>\$\{detail\.reward\}<\/i>/);
+  assert.match(mainSource, /function routeDecisionRiskText\(node, detail, scout\)/);
+  assert.match(mainSource, /function firstSentence\(text = ""\)/);
+  assert.match(mainSource, /function renderMapBoardHeader\(run, routeChoices, routeAdvice, progress\)/);
+  assert.match(mainSource, /class="map-board-header \$\{progress\.tone\}"/);
+  assert.match(mainSource, /aria-label="지도 현재 위치"/);
+  assert.match(mainSource, /function mapRowClass\(row, active\)/);
+  assert.match(mainSource, /class="\$\{mapRowClass\(row, active\)\}" data-floor="\$\{row\[0\]\?\.row \+ 1 \?\? ""\}층"/);
+  assert.match(mainSource, /function renderMapProgressRail\(run, routeChoices = \[\]\)/);
+  assert.match(mainSource, /class="map-progress-rail"/);
+  assert.match(mainSource, /class="map-progress-steps"/);
+  assert.match(mainSource, /function renderMapConnections\(run\)/);
+  assert.match(mainSource, /mapPreviewNodeId:\s*null/);
+  assert.match(mainSource, /function mapRoutePreview\(run, previewNodeId = state\.mapPreviewNodeId\)/);
+  assert.match(mainSource, /function previewMapRouteFromElement\(routeElement\)/);
+  assert.match(mainSource, /function refreshMapRoutePreview\(\)/);
+  assert.match(mainSource, /function refreshMapRouteFocusPanel\(run = state\.run\)/);
+  assert.match(mainSource, /refreshMapRouteFocusPanel\(run\)/);
+  assert.match(mainSource, /function clearMapRoutePreview\(\)/);
+  assert.match(mainSource, /function mapEdgeKey\(fromId, toId\)/);
+  assert.match(mainSource, /function mapNodePoint\(node, rowGap = 70\)/);
+  assert.match(mainSource, /class="map-connections"/);
+  assert.match(mainSource, /class="map-route-map" aria-label="층별 경로 지도"/);
+  assert.match(mainSource, /completed\.has\(node\.id\) && active\.has\(target\.id\)/);
+  assert.match(mainSource, /data-edge="\$\{edgeKey\}"/);
+  assert.match(mainSource, /preview\?\.edgeKeys\.has\(edgeKey\)/);
+  assert.match(mainSource, /const recommendedNodeId = routeAdvice\?\.recommendedNodeId \?\? routeChoices\[0\]\?\.id \?\? null/);
+  assert.match(mainSource, /const recommended = recommendedNodeId === node\.id && available && !node\.completed/);
+  assert.match(mainSource, /currentRunNode\(run\)/);
+  assert.match(mainSource, /function renderRouteChoices\(run, routeChoices, routeAdvice = null\)/);
+  assert.match(mainSource, /function renderRouteFocusPanel\(run, routeChoices, routeAdvice = null\)/);
+  assert.match(mainSource, /class="route-focus-panel \$\{focusedNode\.type\} \$\{tone\} \$\{previewing \? "is-previewing" : "is-recommended"\}"/);
+  assert.match(mainSource, /data-focus-node="\$\{focusedNode\.id\}"/);
+  assert.match(mainSource, /previewing \? "검토 중" : "추천 경로"/);
+  assert.match(mainSource, /previewing \? "is-previewing" : "is-recommended"/);
+  assert.match(mainSource, /function nodeRiskReward\(type\)/);
+  assert.match(mainSource, /function routeRewardShortLabel\(type\)/);
+  assert.match(mainSource, /function routeStrategicPreview\(run, node\)/);
+  assert.match(mainSource, /function bossReadinessMissing\(readiness\)/);
+  assert.match(mainSource, /routeRiskLevel\(focusedNode\.type, scout\)/);
+  assert.match(mainSource, /routeRiskLevel\(node\.type, scout\)/);
+  assert.match(mainSource, /if \(type === "boss" && scout\?\.missing\?\.length\) return scout\.missing\.slice\(0, 2\)\.join\(" · "\)/);
+  assert.match(mainSource, /const missing = bossReadinessMissing\(readiness\)/);
+  assert.match(mainSource, /지금 부족: \$\{missing\.slice\(0, 3\)\.join\(", "\)\}/);
+  assert.match(mainSource, /function eliteReadiness\(run, node\)/);
+  assert.match(mainSource, /첫 엘리트 위험|첫 엘리트 점검|첫 엘리트 도전 가능/);
+  assert.match(mainSource, /const highPressure = firstElite && difficulty >= 2/);
+  assert.match(mainSource, /전투, 상점, 세이프룸 중 안전한 쪽을 먼저 보세요/);
+  assert.match(mainSource, /function bossForAct\(act\)/);
+  assert.match(mainSource, /function routeEnemyIds\(tier, act\)/);
+  assert.match(mainSource, /return enemyIdsForNode\(tier === "elite" \? "elite" : "combat", act\)/);
+  assert.match(mainSource, /function routeConnectionSummary\(run, node\)/);
+  assert.match(mainSource, /function routeBranchSummaryText\(run, node\)/);
+  assert.match(mainSource, /function routeBranchLabels\(run, node\)/);
+  assert.match(mainSource, /function routeLookaheadBranchLabels\(run, node, maxDepth = 3\)/);
+  assert.match(mainSource, /const nonCombat = unique\.filter\(\(label\) => label !== "전투"\)/);
+  assert.match(mainSource, /immediateLabels\.every\(\(label\) => label === "전투"\)/);
+  assert.match(mainSource, /function routePathLabel\(run, node\)/);
+  assert.match(mainSource, /function routePrimaryBranchLabel\(branchLabels = \[\]\)/);
+  assert.match(mainSource, /전투 계속/);
+  assert.match(mainSource, /상점 방향/);
+  assert.match(mainSource, /routeStrategicPreview\(run, node\)/);
+  assert.match(mainSource, /recommendedNodeId:\s*pick\?\.id/);
+  assert.match(mainSource, /routeAdvice\?\.recommendedNodeId === node\.id/);
+  assert.match(mainSource, /추천 경로/);
+  assert.match(mainSource, /<b>\$\{scout\.label\}<\/b><span>\$\{scout\.detail\}<\/span>/);
+  assert.match(mainSource, /data-depth="\$\{node\.row \+ 1\}층"/);
+  assert.match(mainSource, /class="map-node-icon"/);
+  assert.match(mainSource, /class="map-node-label"/);
+  assert.match(mainSource, /<span class="map-node-label">\$\{nodeTypeLabel\(node\.type\)\}<\/span>/);
+  assert.doesNotMatch(mainSource, /<small>\$\{node\.row \+ 1\}<\/small>/);
+  assert.match(mainSource, /const compactPhase = \["combat", "combat-victory", "reward", "map", "event", "shop", "rest"\]\.includes\(displayPhase\)/);
+  assert.match(mainSource, /shopServicePrices\(run\)/);
+  assert.match(mainSource, /restHealAmount\(run\)/);
+  assert.match(mainSource, /boss\?\.mechanic/);
+  assert.match(mainSource, /aria-label="선택 가능한 경로"/);
+  assert.match(mainSource, /class="route-card \$\{node\.type\} \$\{recommended \? "recommended" : ""\} \$\{previewing \? "previewing" : ""\}"/);
+  assert.match(mainSource, /aria-label="\$\{aria\}"/);
+  assert.match(mainSource, /\$\{node\.row \+ 1\}층 · \$\{pathLabel\}/);
+  assert.match(mainSource, /routeRewardShortLabel\(node\.type\)/);
+  assert.match(mainSource, /<i>\$\{branchText\}<\/i>/);
+  assert.match(mainSource, /class="route-action"/);
+  assert.match(mainSource, /추천|선택/);
+  assert.match(mainSource, /<svg class="node-icon node-icon-\$\{type\}"/);
+  assert.match(mainSource, /aria-hidden="true" focusable="false"/);
+  assert.doesNotMatch(mainSource, /combat:\s*"X"/);
+  assert.doesNotMatch(mainSource, /elite:\s*"E"/);
+  assert.doesNotMatch(mainSource, /boss:\s*"B"/);
+  assert.match(styleSource, /\.route-preview/);
+  assert.match(styleSource, /\.act-interlude/);
+  assert.match(styleSource, /\.act-interlude\.is-new/);
+  assert.doesNotMatch(mainSource, /이전 구역 클리어/);
+  assert.match(styleSource, /\.act-interlude-dismiss/);
+  assert.match(styleSource, /\.act-interlude-chips/);
+  assert.match(styleSource, /@keyframes act-interlude-enter/);
+  assert.match(styleSource, /\.map-objective-card/);
+  assert.match(styleSource, /\.map-objective-card i/);
+  assert.match(styleSource, /\.map-horizon/);
+  assert.match(styleSource, /\.map-horizon-main/);
+  assert.match(styleSource, /\.map-horizon-boss/);
+  assert.match(styleSource, /\.map-horizon-status/);
+  assert.match(styleSource, /\.map-decision-panel/);
+  assert.match(styleSource, /\.map-decision-panel i/);
+  assert.match(styleSource, /\.map-decision-panel\.strong/);
+  assert.match(styleSource, /\.high-contrast \.map-decision-panel/);
+  assert.match(styleSource, /\.map-board-header/);
+  assert.match(styleSource, /\.map-route-map/);
+  assert.match(styleSource, /\.map-route-map::before/);
+  assert.match(styleSource, /\.map-progress-rail/);
+  assert.match(styleSource, /\.map-progress-steps/);
+  assert.match(styleSource, /\.map-progress-steps \.next/);
+  assert.match(styleSource, /\.route-focus-panel\.is-previewing/);
+  assert.match(styleSource, /\.route-focus-panel\.is-recommended/);
+  assert.match(styleSource, /\.map-connections/);
+  assert.match(styleSource, /\.map-connections path\.available/);
+  assert.match(styleSource, /\.map-connections path\.preview/);
+  assert.match(styleSource, /\.map-connections path\.route-previewed/);
+  assert.match(styleSource, /\.map-node[\s\S]*width:\s*68px/);
+  assert.match(styleSource, /\.map-node[\s\S]*grid-template-rows:\s*30px 1fr/);
+  assert.match(styleSource, /\.map-node\.previewing/);
+  assert.match(styleSource, /\.map-node\.preview-child/);
+  assert.match(styleSource, /\.map-node\.recommended/);
+  assert.match(styleSource, /\.map-node\.recommended::before/);
+  assert.match(styleSource, /\.map-node-label/);
+  assert.match(styleSource, /\.map-row::before/);
+  assert.match(styleSource, /\.map-row\.has-next::before/);
+  assert.match(styleSource, /\.map-row[\s\S]*justify-items:\s*center/);
+  assert.match(styleSource, /\.phase-map \.combat-log[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.route-card-list/);
+  assert.match(styleSource, /\.route-focus-panel/);
+  assert.match(styleSource, /\.route-focus-panel div[\s\S]*grid-template-columns:\s*repeat\(3, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /\.route-focus-panel i span[\s\S]*text-overflow:\s*ellipsis/);
+  assert.match(styleSource, /\.route-card\.recommended/);
+  assert.match(styleSource, /\.route-card\.previewing/);
+  assert.match(styleSource, /\.route-recommendation/);
+  assert.match(styleSource, /\.route-copy em[\s\S]*display:\s*inline-flex/);
+  assert.match(styleSource, /\.route-meta[\s\S]*max-height:\s*24px/);
+  assert.match(styleSource, /\.route-meta i[\s\S]*display:\s*inline-flex/);
+  assert.match(styleSource, /\.route-scout/);
+  assert.match(styleSource, /\.route-scout > span/);
+  assert.match(styleSource, /\.route-scout > span[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.route-card:hover \.route-scout > span/);
+  assert.match(styleSource, /\.route-action/);
+  assert.match(styleSource, /\.route-action::after/);
+  assert.match(styleSource, /\.node-icon/);
+  assert.match(styleSource, /\.route-icon \.node-icon/);
+  assert.match(styleSource, /\.map-node-icon/);
+  assert.match(styleSource, /\.map-node\.available::after/);
+  assert.match(styleSource, /@media \(max-width: 860px\)[\s\S]*\.map-layout/);
+  assert.match(styleSource, /\.run-briefing/);
+  assert.match(styleSource, /\.act-meter/);
+  assert.match(styleSource, /\.briefing-tags/);
+  assert.match(styleSource, /\.route-card:hover/);
+  assert.match(styleSource, /\.phase-map \.combat-log/);
+});
+
+function collectEffects(effects) {
+  const output = [];
+  for (const effect of effects) {
+    output.push(effect);
+    if (effect.effects) output.push(...collectEffects(effect.effects));
+  }
+  return output;
+}
+
+function assertCardRulesText(card, effects, text, label) {
+  assert.ok(text, `${label} must be present`);
+  for (const effect of effects) {
+    assertEffectText(card, effect, text, label);
+  }
+}
+
+function assertEffectText(card, effect, text, label) {
+  switch (effect.op) {
+    case "damage":
+      assertTextHas(text, new RegExp(`피해\\s*${effect.amount}`), `${label} should mention damage ${effect.amount}`);
+      if (effect.hits) assertTextHas(text, new RegExp(`${effect.hits}번`), `${label} should mention ${effect.hits} hits`);
+      if (effect.target === "allEnemies") assertTextHas(text, /모든 적/, `${label} should mention all-enemy damage`);
+      break;
+    case "damageByCharge":
+      assertTextHas(text, new RegExp(`피해\\s*${effect.base}`), `${label} should mention base charge damage ${effect.base}`);
+      assertTextHas(text, new RegExp(`마다\\s*피해\\s*${effect.per}`), `${label} should mention charge damage scaling ${effect.per}`);
+      break;
+    case "spendChargeDamage":
+      assertTextHas(text, /전하를 모두 소비|전하.*소비/, `${label} should mention spending charge`);
+      assertTextHas(text, new RegExp(`피해\\s*${effect.base}`), `${label} should mention spent-charge base damage ${effect.base}`);
+      assertTextHas(text, new RegExp(`마다\\s*피해\\s*${effect.per}`), `${label} should mention spent-charge scaling ${effect.per}`);
+      break;
+    case "damagePerExhaust":
+      assertTextHas(text, /소멸 더미/, `${label} should mention exhaust pile`);
+      assertTextHas(text, new RegExp(`마다\\s*피해\\s*${effect.amount}`), `${label} should mention exhaust damage scaling ${effect.amount}`);
+      break;
+    case "block":
+      assertTextHas(text, new RegExp(`방어도\\s*${effect.amount}`), `${label} should mention block ${effect.amount}`);
+      break;
+    case "blockPerHand":
+      assertTextHas(text, /손의 카드마다/, `${label} should mention hand-size scaling`);
+      assertTextHas(text, new RegExp(`마다\\s*방어도\\s*${effect.amount}`), `${label} should mention block scaling ${effect.amount}`);
+      break;
+    case "apply":
+      assertStatusAmountText(text, effect.status, effect.amount, label);
+      if (effect.target === "allEnemies") assertTextHas(text, /모든 적/, `${label} should mention all-enemy status`);
+      break;
+    case "gainStatus":
+      assertGainStatusText(text, effect.status, effect.amount, label);
+      break;
+    case "draw":
+      assertTextHas(text, new RegExp(`(?:카드\\s*)?${effect.amount}장[^.]*뽑`), `${label} should mention drawing ${effect.amount} cards`);
+      assertTextHas(text, /뽑/, `${label} should mention draw`);
+      break;
+    case "gainEnergy":
+      assertTextHas(text, new RegExp(`에너지\\s*${effect.amount}`), `${label} should mention energy ${effect.amount}`);
+      break;
+    case "gainCharge":
+      assertTextHas(text, new RegExp(`전하\\s*${effect.amount}`), `${label} should mention charge ${effect.amount}`);
+      break;
+    case "gainFocus":
+      assertTextHas(text, new RegExp(`집중\\s*${effect.amount}`), `${label} should mention focus ${effect.amount}`);
+      break;
+    case "generate": {
+      const generated = CARD_BY_ID[effect.cardId];
+      assert.ok(generated, `${label} references missing generated card ${effect.cardId}`);
+      assertTextHas(text, new RegExp(`${escapeRegExp(generated.name)}\\s*${effect.amount}장`), `${label} should mention generated card ${generated.name} x${effect.amount}`);
+      if (effect.temporary) assertTextHas(text, /임시/, `${label} should mention temporary generated cards`);
+      break;
+    }
+    case "discardRandom":
+      assertTextHas(text, new RegExp(`카드\\s*${effect.amount}장`), `${label} should mention discarding ${effect.amount} cards`);
+      assertTextHas(text, /버리/, `${label} should mention discard`);
+      break;
+    case "upgradeRandomHand":
+      assertTextHas(text, new RegExp(`카드\\s*${effect.amount}장`), `${label} should mention upgrading ${effect.amount} cards`);
+      assertTextHas(text, /강화/, `${label} should mention upgrade`);
+      break;
+    case "discountRandomHand":
+      assertTextHas(text, new RegExp(`카드\\s*${effect.count ?? 1}장`), `${label} should mention discounted card count`);
+      assertTextHas(text, new RegExp(`비용[\\s\\S]*${effect.amount}\\s*낮`), `${label} should mention discount ${effect.amount}`);
+      break;
+    case "exhaustRandomHand":
+      assertTextHas(text, new RegExp(`카드\\s*${effect.amount}장`), `${label} should mention exhausting ${effect.amount} cards`);
+      assertTextHas(text, /소멸/, `${label} should mention exhaust`);
+      break;
+    case "cleanse":
+      assertTextHas(text, new RegExp(`해로운 상태를\\s*${effect.amount}`), `${label} should mention cleanse ${effect.amount}`);
+      break;
+    case "loseHp":
+      assertTextHas(text, new RegExp(`체력\\s*${effect.amount}`), `${label} should mention 체력 loss ${effect.amount}`);
+      assertTextHas(text, /잃/, `${label} should mention losing 체력`);
+      break;
+    case "heal":
+      assertTextHas(text, new RegExp(`체력\\s*${effect.amount}`), `${label} should mention healing ${effect.amount}`);
+      assertTextHas(text, /회복/, `${label} should mention heal`);
+      break;
+    case "gainGold":
+      assertTextHas(text, new RegExp(`크레딧\\s*${effect.amount}`), `${label} should mention gold ${effect.amount}`);
+      break;
+    case "ifEnemyStatus":
+      assertTextHas(text, new RegExp(`${escapeRegExp(statusLabel(effect.status))}[^.]*있으면`), `${label} should mention ${effect.status} condition`);
+      for (const nested of effect.effects ?? []) assertEffectText(card, nested, text, label);
+      break;
+    case "ifPlayerBlock":
+      assertTextHas(text, /방어도가 있으면/, `${label} should mention block condition`);
+      for (const nested of effect.effects ?? []) assertEffectText(card, nested, text, label);
+      break;
+    case "ifAttackCount":
+      assertTextHas(text, new RegExp(`${ordinalKorean(effect.count)} 공격`), `${label} should mention attack count condition`);
+      for (const nested of effect.effects ?? []) assertEffectText(card, nested, text, label);
+      break;
+    case "chargePerEnemy":
+      assertTextHas(text, /살아있는 적 수만큼 전하/, `${label} should mention charge per living enemy`);
+      break;
+    case "resetHand":
+      assertTextHas(text, /손을 모두 버립니다/, `${label} should mention resetting hand`);
+      assertTextHas(text, new RegExp(`에너지\\s*${effect.energy}`), `${label} should mention reset energy ${effect.energy}`);
+      break;
+    case "gainMaxEnergy":
+      assertTextHas(text, new RegExp(`최대 에너지\\s*${effect.amount}`), `${label} should mention max energy ${effect.amount}`);
+      break;
+    case "loseMaxHp":
+      assertTextHas(text, new RegExp(`최대 체력\\s*${effect.amount}`), `${label} should mention max 체력 loss ${effect.amount}`);
+      break;
+    default:
+      assert.fail(`${card.id} has unsupported text audit effect ${effect.op}`);
+  }
+}
+
+function assertGainStatusText(text, status, amount, label) {
+  if (status === "deepIndex") {
+    assertTextHas(text, new RegExp(`카드\\s*${amount}장`), `${label} should mention deep index draw ${amount}`);
+    assertTextHas(text, /턴 시작마다/, `${label} should mention turn-start deep index timing`);
+    return;
+  }
+  if (status === "choir") {
+    assertTextHas(text, /기술을 사용할 때마다/, `${label} should mention skill-triggered choir`);
+    assertTextHas(text, new RegExp(`피해\\s*${amount}`), `${label} should mention choir damage ${amount}`);
+    return;
+  }
+  if (status === "contagion") {
+    assertTextHas(text, /턴 시작마다/, `${label} should mention contagion timing`);
+    assertStatusAmountText(text, "virus", amount, label);
+    return;
+  }
+  if (status === "pearlEngine") {
+    assertTextHas(text, new RegExp(`전하가\\s*${amount}\\s*이상`), `${label} should mention pearl engine threshold ${amount}`);
+    return;
+  }
+  if (status === "nextEnergy") {
+    assertTextHas(text, new RegExp(`다음 턴 에너지\\s*${amount}`), `${label} should mention next-turn energy ${amount}`);
+    return;
+  }
+  assertStatusAmountText(text, status, amount, label);
+}
+
+function assertStatusAmountText(text, status, amount, label) {
+  assertTextHas(text, new RegExp(`${escapeRegExp(statusLabel(status))}\\s*${amount}`), `${label} should mention ${status} ${amount}`);
+}
+
+function statusLabel(status) {
+  return STATUS_LABELS[status] ?? status;
+}
+
+function ordinalKorean(value) {
+  if (value === 1) return "첫 번째";
+  if (value === 2) return "두 번째";
+  if (value === 3) return "세 번째";
+  return `${value}번째`;
+}
+
+function assertTextHas(text, pattern, message) {
+  assert.match(text, pattern, `${message}; text was: ${text}`);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function assertUnique(values, label) {
+  const seen = new Set();
+  for (const value of values) {
+    assert.ok(value, `${label} must be present`);
+    assert.ok(!seen.has(value), `duplicate ${label}: ${value}`);
+    seen.add(value);
+  }
+}

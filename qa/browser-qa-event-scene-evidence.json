@@ -1,0 +1,13 @@
+{
+  "sceneBriefVisible": true,
+  "sceneBriefWithinViewport": true,
+  "choiceCount": 2,
+  "recommendedCount": 1,
+  "neutralOutcomeCount": 0,
+  "outcomeDeltas": [],
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "consoleErrors": []
+}

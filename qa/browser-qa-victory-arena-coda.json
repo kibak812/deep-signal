@@ -1,0 +1,13 @@
+{
+  "victoryEvidence": {
+    "boardClass": "combat-board victory-coda-board feedback-reward arena-act-1 arena-combat arena-variant-0 arena-depth-entry arena-motif-signal",
+    "scene": "심해 균열",
+    "sceneKey": "abyss",
+    "hasArenaX": true,
+    "hasProps": true,
+    "codaOpacity": "0.82",
+    "title": "승리",
+    "action": "보상 확인"
+  },
+  "logs": []
+}

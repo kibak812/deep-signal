@@ -1,0 +1,12 @@
+{
+  "result": {
+    "fxClass": "combat-action-fx fx-damage fx-enemy fx-card fx-source-player",
+    "cardArtVisible": true,
+    "typeIconDisplay": "none",
+    "backgroundImage": "url(\"http://127.0.0.1:4187/dist/public/assets/card-illustrations.png?v=20260518-cardart3\")",
+    "backgroundSize": "900% 800%",
+    "atlasCell": "lance",
+    "artId": "pulse_lance"
+  },
+  "logs": []
+}

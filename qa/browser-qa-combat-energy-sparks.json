@@ -1,0 +1,9 @@
+{
+  "hasCombatFx": true,
+  "hasEnergySpend": true,
+  "energyLabel": "에너지 -1",
+  "sparkCount": 3,
+  "damagePop": true,
+  "energyText": "2\n/3",
+  "consoleErrors": []
+}

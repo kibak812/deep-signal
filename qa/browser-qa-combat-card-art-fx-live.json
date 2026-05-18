@@ -1,0 +1,10 @@
+{
+  "fxEvidence": {
+    "artId": "pulse_lance",
+    "atlasCell": "lance",
+    "cardArtVisible": true,
+    "typeIconDisplay": "none",
+    "imageSource": "url(\"http://127.0.0.1:4187/dist/public/assets/card-illustrations.png?v=20260518-cardart3\")"
+  },
+  "logs": []
+}

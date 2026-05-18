@@ -1,0 +1,25 @@
+{
+  "at": "2026-05-17T23:43:21.455Z",
+  "app": "http://127.0.0.1:4187/dist/",
+  "screenshots": [
+    "browser-qa-title-no-relic-toast.png",
+    "browser-qa-settings-no-relic-toast.png",
+    "browser-qa-codex-no-relic-toast.png",
+    "browser-qa-map-no-relic-toast.png",
+    "browser-qa-combat-no-relic-toast.png",
+    "browser-qa-reward-no-relic-toast.png",
+    "browser-qa-mobile-no-relic-toast.png",
+    "browser-qa-victory-coda-no-relic-toast.png"
+  ],
+  "victoryEvidence": {
+    "relicPulseVisible": false,
+    "boardClass": "combat-board victory-coda-board feedback-reward arena-act-1 arena-combat arena-variant-0 arena-depth-entry arena-motif-signal",
+    "scene": "산호 전초지",
+    "sceneKey": "coral",
+    "hasProps": true,
+    "title": "승리",
+    "action": "보상 확인",
+    "codaOpacity": "1"
+  },
+  "consoleErrors": []
+}

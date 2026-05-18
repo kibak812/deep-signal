@@ -1,0 +1,19 @@
+{
+  "before": {
+    "url": "http://127.0.0.1:4187/dist/",
+    "title": "딥 시그널",
+    "bodyText": "딥 시그널\n덱 10\n설정\n전투\n1층\n1막 1층\n카드 보상 확보\n✦\n-24\n판단\n막기\n순서\n에코 다이버\n92/92\n✦\n강타\n14\n✦\n14\n익사한 페이지\n22/22\n✦\n압착\n10\n✦\n10\n랜턴 집게\n30/30\n⚡\n3\n/3\n↻\n4\n뽑기\n▣\n5\n손패\n↓\n0\n버림\n×\n0\n소멸\n나\n미리보기\n타이드 실드\n✓\n⬡\n나\n+5\n⚡2\n타이드 실드. 사용 가능. 대상 나. 방어 +5. 사용 후 에너지 2.\n1\n1\n펄스 랜스\n피해\n✦\n-6\n피해 6\n1\n2\n타이드 실드\n방어\n⬡\n+5\n방어 +5\n1\n3\n메모리 시프트\n전하\n▤\n+1\n뽑기 +1\n0\n4\n제로 핀\n표식\n✦\n-3\n피해 3\n1\n5\n캐시 정화\n▤\n+1\n뽑기 +1\nE\n턴 종료\n체력 -24\n타이드 실드\n비용\n1\n종류\n기술\n\n방어도 5.\n\n방어\n방어도: 이번 턴 받는 피해를 막습니다. 내 턴이 시작될 때 사라집니다.",
+    "buttonClass": "end-turn  risk-danger",
+    "buttonTitle": "턴을 넘기면 방어 없음 · 체력 -24.",
+    "buttonText": "E\n턴 종료\n체력 -24",
+    "riskSmall": "체력 -24",
+    "overlay": false
+  },
+  "after": {
+    "turnCue": "상대 턴",
+    "combatFx": true,
+    "locked": true,
+    "buttonText": "…\n상대 턴\n처리 중"
+  },
+  "consoleErrors": []
+}

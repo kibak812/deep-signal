@@ -1,0 +1,2092 @@
+{
+  "generatedAt": "2026-05-18T23:49:00.964Z",
+  "summary": {
+    "passed": 21,
+    "failed": 0,
+    "total": 21
+  },
+  "checks": [
+    {
+      "id": "scripts",
+      "label": "로컬 실행/빌드/테스트 명령",
+      "ok": true,
+      "detail": "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.",
+      "evidence": {
+        "start": "python3 -m http.server 4173",
+        "dev": "python3 -m http.server 4173",
+        "test": "node --test",
+        "build": "node scripts/build.mjs",
+        "assets:arena": "python3 scripts/generate-arena-backdrops.py && python3 scripts/generate-arena-props.py && python3 scripts/generate-event-backdrops.py",
+        "assets:backdrops": "python3 scripts/generate-arena-backdrops.py",
+        "assets:events": "python3 scripts/generate-event-backdrops.py",
+        "assets:cards": "python3 scripts/rebuild-card-illustrations.py",
+        "assets:enemies": "python3 scripts/generate-enemy-portraits.py",
+        "assets:combatants": "python3 scripts/rebuild-combatants.py",
+        "qa:screens": "node scripts/capture-browser-qa.mjs",
+        "balance": "node scripts/balance-runner.mjs",
+        "audit": "node scripts/release-audit.mjs"
+      }
+    },
+    {
+      "id": "content-counts",
+      "label": "콘텐츠 최소 수량",
+      "ok": true,
+      "detail": "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.",
+      "evidence": {
+        "cards": 71,
+        "rewardCards": 63,
+        "relics": 31,
+        "normalEnemies": 15,
+        "eliteEnemies": 5,
+        "bosses": 3,
+        "events": 20,
+        "difficulties": 6
+      }
+    },
+    {
+      "id": "unique-content",
+      "label": "콘텐츠 ID 중복 없음",
+      "ok": true,
+      "detail": "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "character",
+      "label": "완성 캐릭터와 시작 덱",
+      "ok": true,
+      "detail": "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.",
+      "evidence": {
+        "name": "에코 다이버",
+        "starterDeck": 10,
+        "mechanics": [
+          "전하: 모았다가 큰 공격이나 방어에 씁니다.",
+          "표식: 먼저 찍고 싼 공격을 이어 씁니다.",
+          "바이러스: 오래 버티는 적을 천천히 깎습니다."
+        ]
+      }
+    },
+    {
+      "id": "build-axes",
+      "label": "4개 이상의 덱 방향 축",
+      "ok": true,
+      "detail": "보상 카드 기준으로 최소 4개 이상의 빌드 축이 실제 카드 풀에 있어야 합니다.",
+      "evidence": [
+        {
+          "id": "charge",
+          "label": "전하",
+          "keywords": [
+            "charge",
+            "focus"
+          ],
+          "effects": [
+            "gainCharge",
+            "gainFocus",
+            "damageByCharge",
+            "spendChargeDamage",
+            "chargePerEnemy"
+          ],
+          "cards": 11,
+          "rewardCards": 10
+        },
+        {
+          "id": "mark",
+          "label": "표식",
+          "keywords": [
+            "mark",
+            "damage"
+          ],
+          "effects": [
+            "damage"
+          ],
+          "cards": 21,
+          "rewardCards": 18
+        },
+        {
+          "id": "virus",
+          "label": "바이러스",
+          "keywords": [
+            "virus",
+            "weak",
+            "vulnerable",
+            "frail"
+          ],
+          "effects": [
+            "apply",
+            "cleanse"
+          ],
+          "cards": 23,
+          "rewardCards": 21
+        },
+        {
+          "id": "ward",
+          "label": "방어/반격",
+          "keywords": [
+            "block",
+            "counter",
+            "plated"
+          ],
+          "effects": [
+            "block",
+            "blockPerHand"
+          ],
+          "cards": 13,
+          "rewardCards": 12
+        },
+        {
+          "id": "cycle",
+          "label": "덱 순환",
+          "keywords": [
+            "exhaust",
+            "temporary",
+            "retain"
+          ],
+          "effects": [
+            "draw",
+            "generate",
+            "discardRandom",
+            "resetHand",
+            "exhaustRandomHand",
+            "discountRandomHand",
+            "upgradeRandomHand"
+          ],
+          "cards": 26,
+          "rewardCards": 23
+        },
+        {
+          "id": "risk",
+          "label": "고위험 보상",
+          "keywords": [
+            "fragile"
+          ],
+          "effects": [
+            "gainEnergy",
+            "gainMaxEnergy",
+            "loseHp",
+            "loseMaxHp",
+            "gainGold"
+          ],
+          "cards": 10,
+          "rewardCards": 10
+        }
+      ]
+    },
+    {
+      "id": "relic-timings",
+      "label": "유물 발동 시점 다양성",
+      "ok": true,
+      "detail": "유물은 여러 발동 시점을 가져야 하며 보상 풀에 충분히 들어 있어야 합니다.",
+      "evidence": {
+        "timingCount": 14,
+        "timings": [
+          "전투 시작",
+          "보상",
+          "카드 사용",
+          "지속 피해",
+          "턴 시작",
+          "상점",
+          "소멸",
+          "방어",
+          "항상",
+          "획득",
+          "상태 부여",
+          "엘리트",
+          "공격",
+          "휴식"
+        ],
+        "rewardRelics": 30
+      }
+    },
+    {
+      "id": "enemy-boss-patterns",
+      "label": "적/보스 패턴 완성도",
+      "ok": true,
+      "detail": "보스는 단계 전환과 2단계 행동을 가져야 하고 적 풀이 충분해야 합니다.",
+      "evidence": {
+        "normal": 15,
+        "elite": 5,
+        "bosses": 3
+      }
+    },
+    {
+      "id": "events",
+      "label": "이벤트 선택지 리스크/보상",
+      "ok": true,
+      "detail": "모든 이벤트는 2개 이상의 설명 있는 선택지를 가져야 합니다.",
+      "evidence": {
+        "events": 20
+      }
+    },
+    {
+      "id": "route-choice",
+      "label": "첫 엘리트 강제 방지",
+      "ok": true,
+      "detail": "각 막의 첫 엘리트 직전에는 비엘리트 대안 경로가 남아야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "screens",
+      "label": "필수 화면과 안내",
+      "ok": true,
+      "detail": "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "settings-accessibility",
+      "label": "접근성/설정 항목",
+      "ok": true,
+      "detail": "음량, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "save-records",
+      "label": "저장/이어하기/기록 코드",
+      "ok": true,
+      "detail": "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "art-assets",
+      "label": "PNG 스프라이트/배경 아틀라스",
+      "ok": true,
+      "detail": "카드/적/전투 배경 아트는 PNG 아틀라스와 아틀라스 셀을 사용해야 합니다.",
+      "evidence": {
+        "spriteBytes": 2240984,
+        "cardBytes": 13631010,
+        "cardAtlasSize": {
+          "width": 2880,
+          "height": 2304
+        },
+        "arenaBytes": 642499,
+        "arenaPropBytes": 236441,
+        "eventBackdropBytes": 521663,
+        "eventBackdropSize": {
+          "width": 2304,
+          "height": 864
+        },
+        "enemyPortraitBytes": 1588968,
+        "combatSpriteBytes": 2160743,
+        "combatantCanvas": {
+          "width": 1024,
+          "height": 1536
+        },
+        "playerCombatantBytes": 718891,
+        "catalogerCombatantBytes": 1199394,
+        "algorithmCombatantBytes": 1260289,
+        "lastGateCombatantBytes": 1537157,
+        "bailiffCombatantBytes": 1095304,
+        "engineCombatantBytes": 1055484,
+        "knightCombatantBytes": 1078456,
+        "cantorCombatantBytes": 1337112,
+        "colossusCombatantBytes": 1123310,
+        "enemyCombatants": 23
+      }
+    },
+    {
+      "id": "no-card-enemy-svg-placeholders",
+      "label": "카드/적 SVG 플레이스홀더 없음",
+      "ok": true,
+      "detail": "카드와 적 아트는 임시 SVG 플레이스홀더가 아니어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "korean-copy",
+      "label": "한국어 우선 카피",
+      "ok": true,
+      "detail": "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "dist-build",
+      "label": "정적 빌드 산출물",
+      "ok": true,
+      "detail": "dist 폴더에 정적 실행 산출물이 있어야 합니다.",
+      "evidence": {}
+    },
+    {
+      "id": "balance-report",
+      "label": "밸런스 리포트 안정성",
+      "ok": true,
+      "detail": "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.",
+      "evidence": {
+        "totals": {
+          "runs": 108,
+          "wins": 63,
+          "winRate": 0.58,
+          "averageFloors": 18.85,
+          "averageSteps": 108.51,
+          "problemRuns": 0
+        },
+        "easiest": {
+          "difficulty": 0,
+          "difficultyName": "표층",
+          "runs": 18,
+          "wins": 16,
+          "averageFloors": 20.11,
+          "averageDeckSize": 24.39,
+          "averageRelics": 10.83,
+          "averageDamageTaken": 166.5,
+          "problemRuns": 0,
+          "floorBands": [
+            {
+              "id": "early",
+              "label": "초반 1-7층",
+              "runs": 1,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "middle",
+              "label": "중반 8-14층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "late",
+              "label": "후반 15-20층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "final",
+              "label": "최종 21층",
+              "runs": 17,
+              "wins": 16,
+              "winRate": 0.94
+            }
+          ],
+          "lossReasons": [
+            {
+              "label": "초반 성장 실패",
+              "count": 1
+            },
+            {
+              "label": "후반 체력 부족",
+              "count": 1
+            }
+          ],
+          "winRate": 0.8888888888888888
+        },
+        "hardest": {
+          "difficulty": 5,
+          "difficultyName": "최심층",
+          "runs": 18,
+          "wins": 7,
+          "averageFloors": 18.39,
+          "averageDeckSize": 20.94,
+          "averageRelics": 7.5,
+          "averageDamageTaken": 178.39,
+          "problemRuns": 0,
+          "floorBands": [
+            {
+              "id": "early",
+              "label": "초반 1-7층",
+              "runs": 1,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "middle",
+              "label": "중반 8-14층",
+              "runs": 4,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "late",
+              "label": "후반 15-20층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "final",
+              "label": "최종 21층",
+              "runs": 13,
+              "wins": 7,
+              "winRate": 0.54
+            }
+          ],
+          "lossReasons": [
+            {
+              "label": "중반 강적",
+              "count": 4
+            },
+            {
+              "label": "최종 보스",
+              "count": 4
+            },
+            {
+              "label": "상태 누적",
+              "count": 2
+            },
+            {
+              "label": "초반 성장 실패",
+              "count": 1
+            }
+          ],
+          "winRate": 0.3888888888888889
+        }
+      }
+    },
+    {
+      "id": "credits-license",
+      "label": "크레딧/라이선스 안내",
+      "ok": true,
+      "detail": "게임 정보 화면과 README에는 조작, 크레딧, 이용 안내, 저작권 안내가 명확히 들어 있어야 합니다.",
+      "evidence": {
+        "license": "UNLICENSED",
+        "requiredReleaseInfo": [
+          "핵심 조작",
+          "크레딧",
+          "이용 안내 · 라이선스",
+          "외부 저작권 IP",
+          "상용 이미지",
+          "외부 음악 파일"
+        ]
+      }
+    },
+    {
+      "id": "verified-flow-coverage",
+      "label": "끝까지 플레이 검증 근거",
+      "ok": true,
+      "detail": "README와 자동 테스트에는 새 런, 전투, 보상, 맵, 상점, 휴식, 보스, 승패, 저장 복구 검증 근거가 남아야 합니다.",
+      "evidence": {
+        "requiredFlowDocs": [
+          "새 런 시작",
+          "전투",
+          "보상 선택",
+          "맵 이동",
+          "상점",
+          "휴식",
+          "보스전",
+          "승리/패배",
+          "이어하기",
+          "저장 삭제 확인",
+          "콘솔 오류 없음"
+        ],
+        "requiredFlowTests": [
+          "assisted full-run smoke reaches the final summary without dead phases",
+          "shop, rest, final boss victory, and defeat flows are reachable",
+          "save slots recover the newest backup after an interrupted primary write",
+          "run summary surfaces replay-relevant build evidence"
+        ]
+      }
+    },
+    {
+      "id": "browser-qa-artifacts",
+      "label": "최신 브라우저 QA 산출물",
+      "ok": true,
+      "detail": "qa 폴더에는 현재 소스 변경 이후 다시 찍은 전투, 맵, 보상, 설정, 모바일, 코덱스 등 핵심 화면 브라우저 스크린샷이 있어야 합니다.",
+      "evidence": {
+        "required": [
+          "title",
+          "about",
+          "combat",
+          "card-hover",
+          "map",
+          "reward",
+          "reward-relics",
+          "event",
+          "shop",
+          "rest",
+          "summary-lost",
+          "summary-won",
+          "records",
+          "settings",
+          "mobile",
+          "codex"
+        ],
+        "sourceFreshAfter": "2026-05-18T14:43:43.715Z",
+        "files": [
+          {
+            "file": "browser-qa-about-refreshed.png",
+            "mtime": "2026-05-18T14:46:24.930Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-act-interlude-compact.png",
+            "mtime": "2026-05-18T08:45:40.674Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-act-interlude-one-shot.png",
+            "mtime": "2026-05-18T14:46:30.907Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-act-interlude-refreshed.png",
+            "mtime": "2026-05-18T14:46:28.546Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-boss-mechanic-phase.png",
+            "mtime": "2026-05-15T18:25:28.383Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-boss-phase-chip.png",
+            "mtime": "2026-05-17T22:26:39.092Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-boss-status-strip.png",
+            "mtime": "2026-05-18T14:47:01.161Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-codex-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:02.656Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-card-art-fx.png",
+            "mtime": "2026-05-17T23:12:55.008Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:17.697Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-card-frame.png",
+            "mtime": "2026-05-17T21:08:11.750Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:16.305Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-event-outcome.png",
+            "mtime": "2026-05-17T22:13:27.469Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-event-scene.png",
+            "mtime": "2026-05-18T00:09:22.540Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-intent-lane.png",
+            "mtime": "2026-05-17T22:46:55.665Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:13.704Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-pile-dock.png",
+            "mtime": "2026-05-17T21:17:23.825Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-refreshed.png",
+            "mtime": "2026-05-18T14:46:26.654Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-codex-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:13.468Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:40.890Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:10.372Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-reward-preview.png",
+            "mtime": "2026-05-17T23:04:08.939Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-reward-stage.png",
+            "mtime": "2026-05-17T23:57:02.546Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:27.210Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:40.951Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-shop-simplified.png",
+            "mtime": "2026-05-17T22:04:59.610Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:32.096Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex-victory-arena.png",
+            "mtime": "2026-05-17T23:27:30.617Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-codex.png",
+            "mtime": "2026-05-17T23:04:09.032Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:04.032Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-art-fx-live.png",
+            "mtime": "2026-05-17T23:17:26.678Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-art-fx-required.png",
+            "mtime": "2026-05-17T23:12:58.372Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-art-fx.png",
+            "mtime": "2026-05-17T23:11:22.682Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:21.186Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-frame-hover.png",
+            "mtime": "2026-05-17T21:10:08.831Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-frame.png",
+            "mtime": "2026-05-17T21:08:14.304Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-hover-compact-tooltip.png",
+            "mtime": "2026-05-17T21:01:21.838Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-hover-energy-label.png",
+            "mtime": "2026-05-18T00:24:03.528Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-card-hover.png",
+            "mtime": "2026-05-18T14:46:48.015Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-combat-card-labels.png",
+            "mtime": "2026-05-17T20:20:01.105Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-energy-sparks.png",
+            "mtime": "2026-05-18T00:36:41.056Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:21.305Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-event-outcome.png",
+            "mtime": "2026-05-17T22:13:33.143Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-event-scene.png",
+            "mtime": "2026-05-18T00:09:24.743Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-fx-player-source.png",
+            "mtime": "2026-05-17T20:41:51.413Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-hover-energy-after-label.png",
+            "mtime": "2026-05-17T20:36:05.333Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-intent-lane-required.png",
+            "mtime": "2026-05-17T22:46:57.938Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-intent-lane.png",
+            "mtime": "2026-05-17T22:45:34.533Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-live-fx-late-next.png",
+            "mtime": "2026-05-18T00:27:21.551Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-live-fx-next.png",
+            "mtime": "2026-05-18T00:27:20.116Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:15.837Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-pile-dock.png",
+            "mtime": "2026-05-17T21:17:26.532Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-pile-hover.png",
+            "mtime": "2026-05-17T21:17:28.958Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-pile-inspector.png",
+            "mtime": "2026-05-17T21:17:27.391Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-refreshed.png",
+            "mtime": "2026-05-18T14:46:46.886Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-combat-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:16.229Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:43.572Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:13.047Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-reward-preview.png",
+            "mtime": "2026-05-17T23:04:12.909Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-reward-stage.png",
+            "mtime": "2026-05-17T23:57:04.834Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:29.442Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:46.784Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-shop-simplified.png",
+            "mtime": "2026-05-17T22:05:05.275Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-status-tooltip.png",
+            "mtime": "2026-05-18T14:47:02.686Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-combat-target-preview.png",
+            "mtime": "2026-05-17T22:54:02.705Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-tooltip-compact.png",
+            "mtime": "2026-05-17T23:03:21.110Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-updated.png",
+            "mtime": "2026-05-17T23:03:54.231Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:35.532Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-combat-victory-arena.png",
+            "mtime": "2026-05-17T23:27:34.021Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-deck-selector-brief.png",
+            "mtime": "2026-05-17T18:25:00.216Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-deck-selector-remove-recommendation-viewport.png",
+            "mtime": "2026-05-17T22:28:43.095Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-deck-selector-remove-recommendation.png",
+            "mtime": "2026-05-17T22:26:48.672Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-deck-selector-upgrade-recommendation-viewport.png",
+            "mtime": "2026-05-17T22:28:41.721Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-deck-selector-upgrade-recommendation.png",
+            "mtime": "2026-05-17T22:26:47.088Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-distinct-art-sprites.png",
+            "mtime": "2026-05-15T18:41:32.357Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-end-turn-risk-after-click.png",
+            "mtime": "2026-05-18T00:43:47.222Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-end-turn-risk-preview.png",
+            "mtime": "2026-05-18T00:43:46.011Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-enemy-grouped-fx.png",
+            "mtime": "2026-05-18T14:47:05.228Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-enemy-threat-minimal.png",
+            "mtime": "2026-05-17T21:20:31.687Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-choice-click-final.png",
+            "mtime": "2026-05-17T22:17:33.041Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-choice-click.png",
+            "mtime": "2026-05-17T22:13:46.365Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:28.008Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-outcome-maxhp-final.png",
+            "mtime": "2026-05-17T22:17:30.162Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-outcome-maxhp.png",
+            "mtime": "2026-05-17T22:13:43.179Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-outcome-proof.png",
+            "mtime": "2026-05-17T22:17:35.185Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-outcome.png",
+            "mtime": "2026-05-17T22:13:40.749Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-event-refreshed.png",
+            "mtime": "2026-05-18T14:46:33.772Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-event-scene.png",
+            "mtime": "2026-05-18T00:24:04.983Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:03.122Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-after-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:36.849Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-after-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:37.898Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-card-art-fx.png",
+            "mtime": "2026-05-17T23:12:56.393Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:19.093Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-card-frame.png",
+            "mtime": "2026-05-17T21:08:12.852Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:18.519Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-event-outcome.png",
+            "mtime": "2026-05-17T22:13:30.033Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-event-scene.png",
+            "mtime": "2026-05-18T00:09:23.350Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-intent-lane.png",
+            "mtime": "2026-05-17T22:46:56.489Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:14.515Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-pile-dock.png",
+            "mtime": "2026-05-17T21:17:25.032Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-refreshed.png",
+            "mtime": "2026-05-18T14:46:44.352Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-map-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:14.624Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:42.041Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:11.530Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-reward-preview.png",
+            "mtime": "2026-05-17T23:04:10.541Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-reward-stage.png",
+            "mtime": "2026-05-17T23:57:03.363Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-route-preview.png",
+            "mtime": "2026-05-18T14:46:45.017Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-map-routes.png",
+            "mtime": "2026-05-17T23:03:52.922Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:28.038Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:43.663Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-shop-simplified.png",
+            "mtime": "2026-05-17T22:05:02.136Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:33.462Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map-victory-arena.png",
+            "mtime": "2026-05-17T23:27:31.998Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-map.png",
+            "mtime": "2026-05-17T23:03:52.771Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-after-energy-label.png",
+            "mtime": "2026-05-17T20:37:04.934Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-card-art-fx.png",
+            "mtime": "2026-05-17T23:13:01.559Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:24.475Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-card-frame.png",
+            "mtime": "2026-05-17T21:09:40.192Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-combat.png",
+            "mtime": "2026-05-17T23:04:10.533Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:25.834Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-event-outcome.png",
+            "mtime": "2026-05-17T22:13:38.292Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-event-scene.png",
+            "mtime": "2026-05-18T00:09:29.174Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-intent-lane.png",
+            "mtime": "2026-05-17T22:46:59.784Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:19.575Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-pile-dock.png",
+            "mtime": "2026-05-17T21:17:42.324Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-refreshed.png",
+            "mtime": "2026-05-18T14:47:05.946Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-mobile-reward-action-bar.png",
+            "mtime": "2026-05-17T21:28:12.072Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:31:14.794Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:52.033Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-reward-preview.png",
+            "mtime": "2026-05-17T23:04:16.426Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-reward-stage.png",
+            "mtime": "2026-05-17T23:57:08.983Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:31.310Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:52.240Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-shop-simplified.png",
+            "mtime": "2026-05-17T22:05:10.510Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:38.789Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-mobile-victory-arena.png",
+            "mtime": "2026-05-17T23:27:37.299Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-music-settings.png",
+            "mtime": "2026-05-15T18:52:20.772Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-records-refreshed.png",
+            "mtime": "2026-05-18T14:46:27.577Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-relic-feedback.png",
+            "mtime": "2026-05-15T17:58:39.620Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-responsive-combat-hud.png",
+            "mtime": "2026-05-17T23:03:54.883Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-responsive-hud.png",
+            "mtime": "2026-05-15T16:11:18.201Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-rest-polish.png",
+            "mtime": "2026-05-17T18:21:13.873Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-rest-refreshed.png",
+            "mtime": "2026-05-18T14:46:38.796Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-rest-remove-deferred-cost.png",
+            "mtime": "2026-05-15T18:15:58.395Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:35.948Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-action-card-selected.png",
+            "mtime": "2026-05-17T21:27:36.670Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:55.596Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-after-card-action-fixed.png",
+            "mtime": "2026-05-17T21:30:56.509Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:38.969Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-card-art-fx.png",
+            "mtime": "2026-05-17T23:12:59.766Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:22.548Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-card-frame.png",
+            "mtime": "2026-05-17T21:09:06.449Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-card-rarity.png",
+            "mtime": "2026-05-17T23:04:08.327Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-card-selected.png",
+            "mtime": "2026-05-18T14:46:41.638Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-reward-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:23.498Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-event-outcome.png",
+            "mtime": "2026-05-17T22:13:35.645Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-event-scene.png",
+            "mtime": "2026-05-18T00:09:28.057Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-hover-preview.png",
+            "mtime": "2026-05-17T23:04:14.359Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-intent-lane.png",
+            "mtime": "2026-05-17T22:46:58.791Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:18.432Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-pile-dock.png",
+            "mtime": "2026-05-17T21:17:39.519Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-post-victory-refreshed.png",
+            "mtime": "2026-05-18T14:46:59.929Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-reward-refreshed.png",
+            "mtime": "2026-05-18T14:46:59.554Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-reward-relics-refreshed.png",
+            "mtime": "2026-05-18T14:46:40.818Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-reward-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:36.977Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:30.285Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:49.451Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-shop-simplified.png",
+            "mtime": "2026-05-17T22:05:07.770Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-stage.png",
+            "mtime": "2026-05-18T00:24:04.306Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:36.919Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-reward-victory-arena.png",
+            "mtime": "2026-05-17T23:27:35.419Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-accessibility.png",
+            "mtime": "2026-05-17T23:04:08.451Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:02.287Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-card-art-fx.png",
+            "mtime": "2026-05-17T23:12:53.732Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:16.442Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-card-frame.png",
+            "mtime": "2026-05-17T21:08:11.374Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:14.835Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-event-outcome.png",
+            "mtime": "2026-05-17T22:13:25.944Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-event-scene.png",
+            "mtime": "2026-05-18T00:09:21.833Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-intent-lane.png",
+            "mtime": "2026-05-17T22:46:54.960Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:12.987Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-panel-high-contrast.png",
+            "mtime": "2026-05-17T23:04:08.567Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-pile-dock.png",
+            "mtime": "2026-05-17T21:17:23.411Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-refreshed.png",
+            "mtime": "2026-05-18T14:46:25.791Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-settings-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:13.056Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:40.472Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:09.913Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-reward-preview.png",
+            "mtime": "2026-05-17T23:04:07.435Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-reward-stage.png",
+            "mtime": "2026-05-17T23:57:01.826Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:26.515Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:39.445Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-shop-simplified.png",
+            "mtime": "2026-05-17T22:04:58.106Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:30.838Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-settings-victory-arena.png",
+            "mtime": "2026-05-17T23:27:29.377Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-checkout-sticky.png",
+            "mtime": "2026-05-17T21:58:57.742Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-checkout-top.png",
+            "mtime": "2026-05-17T21:58:54.892Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-polish.png",
+            "mtime": "2026-05-17T18:21:10.932Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-refreshed.png",
+            "mtime": "2026-05-18T14:46:36.481Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-shop-simplified-detail.png",
+            "mtime": "2026-05-17T22:06:06.594Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-simplified-sticky.png",
+            "mtime": "2026-05-17T22:05:18.342Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-shop-simplified.png",
+            "mtime": "2026-05-17T22:05:13.031Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-sound-combat.png",
+            "mtime": "2026-05-15T16:08:58.526Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-start-buttons-debug.png",
+            "mtime": "2026-05-17T20:23:53.952Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-status-minimal.png",
+            "mtime": "2026-05-17T21:35:05.981Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-summary-expanded.png",
+            "mtime": "2026-05-15T16:59:06.755Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-summary-lost-refreshed.png",
+            "mtime": "2026-05-18T14:46:42.512Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-summary-polish.png",
+            "mtime": "2026-05-17T18:55:24.067Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-summary-won-refreshed.png",
+            "mtime": "2026-05-18T14:46:43.437Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-summon.png",
+            "mtime": "2026-05-15T15:55:32.687Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-after-card-polish.png",
+            "mtime": "2026-05-17T20:19:56.385Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-after-energy-label.png",
+            "mtime": "2026-05-17T20:36:01.807Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-after-preview-fix.png",
+            "mtime": "2026-05-17T23:03:51.999Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-card-art-fx.png",
+            "mtime": "2026-05-17T23:12:52.414Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-card-art-panel-fresh.png",
+            "mtime": "2026-05-17T23:19:31.784Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-card-art-panel.png",
+            "mtime": "2026-05-17T23:17:15.131Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-card-frame.png",
+            "mtime": "2026-05-17T21:08:10.893Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-event-outcome-final.png",
+            "mtime": "2026-05-17T22:17:13.277Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-event-outcome.png",
+            "mtime": "2026-05-17T22:13:24.297Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-event-scene.png",
+            "mtime": "2026-05-18T00:09:21.071Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-intent-lane.png",
+            "mtime": "2026-05-17T22:46:54.716Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:12.211Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-pile-dock.png",
+            "mtime": "2026-05-17T21:17:22.893Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-refreshed.png",
+            "mtime": "2026-05-18T14:46:23.993Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-title-reward-action-bar.png",
+            "mtime": "2026-05-17T21:27:12.529Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-reward-action-fixed.png",
+            "mtime": "2026-05-17T21:30:39.946Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-reward-bar-final.png",
+            "mtime": "2026-05-17T21:35:09.392Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-reward-preview.png",
+            "mtime": "2026-05-17T23:04:05.510Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-reward-stage.png",
+            "mtime": "2026-05-17T23:57:01.021Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-selector-recommendation.png",
+            "mtime": "2026-05-17T22:31:26.292Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-shop-checkout.png",
+            "mtime": "2026-05-17T21:58:37.820Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-shop-simplified.png",
+            "mtime": "2026-05-17T22:04:56.450Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-victory-arena-final.png",
+            "mtime": "2026-05-17T23:30:29.542Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-title-victory-arena.png",
+            "mtime": "2026-05-17T23:27:28.068Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-before.png",
+            "mtime": "2026-05-17T20:20:05.061Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-enemy-action.png",
+            "mtime": "2026-05-17T20:20:07.806Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-enemy-cue-minimal.png",
+            "mtime": "2026-05-17T21:08:10.065Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-enemy-cue.png",
+            "mtime": "2026-05-17T20:20:06.175Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-player-cue-minimal.png",
+            "mtime": "2026-05-17T21:08:13.363Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-turn-player-cue.png",
+            "mtime": "2026-05-17T19:42:31.260Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-upgrade-service-disabled.png",
+            "mtime": "2026-05-15T18:09:25.078Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-victory-arena-coda.png",
+            "mtime": "2026-05-17T23:30:41.341Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-victory-coda-event-scene.png",
+            "mtime": "2026-05-18T00:09:31.029Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-victory-coda-no-relic-toast.png",
+            "mtime": "2026-05-17T23:43:21.456Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-victory-coda-reward-stage.png",
+            "mtime": "2026-05-17T23:57:10.908Z",
+            "fresh": false
+          },
+          {
+            "file": "browser-qa-victory-coda.png",
+            "mtime": "2026-05-18T14:46:56.547Z",
+            "fresh": true
+          }
+        ],
+        "freshFiles": [
+          "browser-qa-about-refreshed.png",
+          "browser-qa-act-interlude-one-shot.png",
+          "browser-qa-act-interlude-refreshed.png",
+          "browser-qa-boss-status-strip.png",
+          "browser-qa-codex-refreshed.png",
+          "browser-qa-combat-card-hover.png",
+          "browser-qa-combat-refreshed.png",
+          "browser-qa-combat-status-tooltip.png",
+          "browser-qa-enemy-grouped-fx.png",
+          "browser-qa-event-refreshed.png",
+          "browser-qa-map-refreshed.png",
+          "browser-qa-map-route-preview.png",
+          "browser-qa-mobile-refreshed.png",
+          "browser-qa-records-refreshed.png",
+          "browser-qa-rest-refreshed.png",
+          "browser-qa-reward-card-selected.png",
+          "browser-qa-reward-post-victory-refreshed.png",
+          "browser-qa-reward-refreshed.png",
+          "browser-qa-reward-relics-refreshed.png",
+          "browser-qa-settings-refreshed.png",
+          "browser-qa-shop-refreshed.png",
+          "browser-qa-summary-lost-refreshed.png",
+          "browser-qa-summary-won-refreshed.png",
+          "browser-qa-title-refreshed.png",
+          "browser-qa-victory-coda.png"
+        ],
+        "staleFiles": [
+          "browser-qa-act-interlude-compact.png",
+          "browser-qa-boss-mechanic-phase.png",
+          "browser-qa-boss-phase-chip.png",
+          "browser-qa-codex-after-energy-label.png",
+          "browser-qa-codex-card-art-fx.png",
+          "browser-qa-codex-card-art-panel.png",
+          "browser-qa-codex-card-frame.png",
+          "browser-qa-codex-event-outcome-final.png",
+          "browser-qa-codex-event-outcome.png",
+          "browser-qa-codex-event-scene.png",
+          "browser-qa-codex-intent-lane.png",
+          "browser-qa-codex-no-relic-toast.png",
+          "browser-qa-codex-pile-dock.png",
+          "browser-qa-codex-reward-action-bar.png",
+          "browser-qa-codex-reward-action-fixed.png",
+          "browser-qa-codex-reward-bar-final.png",
+          "browser-qa-codex-reward-preview.png",
+          "browser-qa-codex-reward-stage.png",
+          "browser-qa-codex-selector-recommendation.png",
+          "browser-qa-codex-shop-checkout.png",
+          "browser-qa-codex-shop-simplified.png",
+          "browser-qa-codex-victory-arena-final.png",
+          "browser-qa-codex-victory-arena.png",
+          "browser-qa-codex.png",
+          "browser-qa-combat-after-energy-label.png",
+          "browser-qa-combat-card-art-fx-live.png",
+          "browser-qa-combat-card-art-fx-required.png",
+          "browser-qa-combat-card-art-fx.png",
+          "browser-qa-combat-card-art-panel.png",
+          "browser-qa-combat-card-frame-hover.png",
+          "browser-qa-combat-card-frame.png",
+          "browser-qa-combat-card-hover-compact-tooltip.png",
+          "browser-qa-combat-card-hover-energy-label.png",
+          "browser-qa-combat-card-labels.png",
+          "browser-qa-combat-energy-sparks.png",
+          "browser-qa-combat-event-outcome-final.png",
+          "browser-qa-combat-event-outcome.png",
+          "browser-qa-combat-event-scene.png",
+          "browser-qa-combat-fx-player-source.png",
+          "browser-qa-combat-hover-energy-after-label.png",
+          "browser-qa-combat-intent-lane-required.png",
+          "browser-qa-combat-intent-lane.png",
+          "browser-qa-combat-live-fx-late-next.png",
+          "browser-qa-combat-live-fx-next.png",
+          "browser-qa-combat-no-relic-toast.png",
+          "browser-qa-combat-pile-dock.png",
+          "browser-qa-combat-pile-hover.png",
+          "browser-qa-combat-pile-inspector.png",
+          "browser-qa-combat-reward-action-bar.png",
+          "browser-qa-combat-reward-action-fixed.png",
+          "browser-qa-combat-reward-bar-final.png",
+          "browser-qa-combat-reward-preview.png",
+          "browser-qa-combat-reward-stage.png",
+          "browser-qa-combat-selector-recommendation.png",
+          "browser-qa-combat-shop-checkout.png",
+          "browser-qa-combat-shop-simplified.png",
+          "browser-qa-combat-target-preview.png",
+          "browser-qa-combat-tooltip-compact.png",
+          "browser-qa-combat-updated.png",
+          "browser-qa-combat-victory-arena-final.png",
+          "browser-qa-combat-victory-arena.png",
+          "browser-qa-deck-selector-brief.png",
+          "browser-qa-deck-selector-remove-recommendation-viewport.png",
+          "browser-qa-deck-selector-remove-recommendation.png",
+          "browser-qa-deck-selector-upgrade-recommendation-viewport.png",
+          "browser-qa-deck-selector-upgrade-recommendation.png",
+          "browser-qa-distinct-art-sprites.png",
+          "browser-qa-end-turn-risk-after-click.png",
+          "browser-qa-end-turn-risk-preview.png",
+          "browser-qa-enemy-threat-minimal.png",
+          "browser-qa-event-choice-click-final.png",
+          "browser-qa-event-choice-click.png",
+          "browser-qa-event-outcome-final.png",
+          "browser-qa-event-outcome-maxhp-final.png",
+          "browser-qa-event-outcome-maxhp.png",
+          "browser-qa-event-outcome-proof.png",
+          "browser-qa-event-outcome.png",
+          "browser-qa-event-scene.png",
+          "browser-qa-map-after-energy-label.png",
+          "browser-qa-map-after-reward-action-bar.png",
+          "browser-qa-map-after-reward-bar-final.png",
+          "browser-qa-map-card-art-fx.png",
+          "browser-qa-map-card-art-panel.png",
+          "browser-qa-map-card-frame.png",
+          "browser-qa-map-event-outcome-final.png",
+          "browser-qa-map-event-outcome.png",
+          "browser-qa-map-event-scene.png",
+          "browser-qa-map-intent-lane.png",
+          "browser-qa-map-no-relic-toast.png",
+          "browser-qa-map-pile-dock.png",
+          "browser-qa-map-reward-action-bar.png",
+          "browser-qa-map-reward-action-fixed.png",
+          "browser-qa-map-reward-bar-final.png",
+          "browser-qa-map-reward-preview.png",
+          "browser-qa-map-reward-stage.png",
+          "browser-qa-map-routes.png",
+          "browser-qa-map-selector-recommendation.png",
+          "browser-qa-map-shop-checkout.png",
+          "browser-qa-map-shop-simplified.png",
+          "browser-qa-map-victory-arena-final.png",
+          "browser-qa-map-victory-arena.png",
+          "browser-qa-map.png",
+          "browser-qa-mobile-after-energy-label.png",
+          "browser-qa-mobile-card-art-fx.png",
+          "browser-qa-mobile-card-art-panel.png",
+          "browser-qa-mobile-card-frame.png",
+          "browser-qa-mobile-combat.png",
+          "browser-qa-mobile-event-outcome-final.png",
+          "browser-qa-mobile-event-outcome.png",
+          "browser-qa-mobile-event-scene.png",
+          "browser-qa-mobile-intent-lane.png",
+          "browser-qa-mobile-no-relic-toast.png",
+          "browser-qa-mobile-pile-dock.png",
+          "browser-qa-mobile-reward-action-bar.png",
+          "browser-qa-mobile-reward-action-fixed.png",
+          "browser-qa-mobile-reward-bar-final.png",
+          "browser-qa-mobile-reward-preview.png",
+          "browser-qa-mobile-reward-stage.png",
+          "browser-qa-mobile-selector-recommendation.png",
+          "browser-qa-mobile-shop-checkout.png",
+          "browser-qa-mobile-shop-simplified.png",
+          "browser-qa-mobile-victory-arena-final.png",
+          "browser-qa-mobile-victory-arena.png",
+          "browser-qa-music-settings.png",
+          "browser-qa-relic-feedback.png",
+          "browser-qa-responsive-combat-hud.png",
+          "browser-qa-responsive-hud.png",
+          "browser-qa-rest-polish.png",
+          "browser-qa-rest-remove-deferred-cost.png",
+          "browser-qa-reward-action-bar.png",
+          "browser-qa-reward-action-card-selected.png",
+          "browser-qa-reward-action-fixed.png",
+          "browser-qa-reward-after-card-action-fixed.png",
+          "browser-qa-reward-after-energy-label.png",
+          "browser-qa-reward-card-art-fx.png",
+          "browser-qa-reward-card-art-panel.png",
+          "browser-qa-reward-card-frame.png",
+          "browser-qa-reward-card-rarity.png",
+          "browser-qa-reward-event-outcome-final.png",
+          "browser-qa-reward-event-outcome.png",
+          "browser-qa-reward-event-scene.png",
+          "browser-qa-reward-hover-preview.png",
+          "browser-qa-reward-intent-lane.png",
+          "browser-qa-reward-no-relic-toast.png",
+          "browser-qa-reward-pile-dock.png",
+          "browser-qa-reward-reward-bar-final.png",
+          "browser-qa-reward-selector-recommendation.png",
+          "browser-qa-reward-shop-checkout.png",
+          "browser-qa-reward-shop-simplified.png",
+          "browser-qa-reward-stage.png",
+          "browser-qa-reward-victory-arena-final.png",
+          "browser-qa-reward-victory-arena.png",
+          "browser-qa-settings-accessibility.png",
+          "browser-qa-settings-after-energy-label.png",
+          "browser-qa-settings-card-art-fx.png",
+          "browser-qa-settings-card-art-panel.png",
+          "browser-qa-settings-card-frame.png",
+          "browser-qa-settings-event-outcome-final.png",
+          "browser-qa-settings-event-outcome.png",
+          "browser-qa-settings-event-scene.png",
+          "browser-qa-settings-intent-lane.png",
+          "browser-qa-settings-no-relic-toast.png",
+          "browser-qa-settings-panel-high-contrast.png",
+          "browser-qa-settings-pile-dock.png",
+          "browser-qa-settings-reward-action-bar.png",
+          "browser-qa-settings-reward-action-fixed.png",
+          "browser-qa-settings-reward-bar-final.png",
+          "browser-qa-settings-reward-preview.png",
+          "browser-qa-settings-reward-stage.png",
+          "browser-qa-settings-selector-recommendation.png",
+          "browser-qa-settings-shop-checkout.png",
+          "browser-qa-settings-shop-simplified.png",
+          "browser-qa-settings-victory-arena-final.png",
+          "browser-qa-settings-victory-arena.png",
+          "browser-qa-shop-checkout-sticky.png",
+          "browser-qa-shop-checkout-top.png",
+          "browser-qa-shop-polish.png",
+          "browser-qa-shop-simplified-detail.png",
+          "browser-qa-shop-simplified-sticky.png",
+          "browser-qa-shop-simplified.png",
+          "browser-qa-sound-combat.png",
+          "browser-qa-start-buttons-debug.png",
+          "browser-qa-status-minimal.png",
+          "browser-qa-summary-expanded.png",
+          "browser-qa-summary-polish.png",
+          "browser-qa-summon.png",
+          "browser-qa-title-after-card-polish.png",
+          "browser-qa-title-after-energy-label.png",
+          "browser-qa-title-after-preview-fix.png",
+          "browser-qa-title-card-art-fx.png",
+          "browser-qa-title-card-art-panel-fresh.png",
+          "browser-qa-title-card-art-panel.png",
+          "browser-qa-title-card-frame.png",
+          "browser-qa-title-event-outcome-final.png",
+          "browser-qa-title-event-outcome.png",
+          "browser-qa-title-event-scene.png",
+          "browser-qa-title-intent-lane.png",
+          "browser-qa-title-no-relic-toast.png",
+          "browser-qa-title-pile-dock.png",
+          "browser-qa-title-reward-action-bar.png",
+          "browser-qa-title-reward-action-fixed.png",
+          "browser-qa-title-reward-bar-final.png",
+          "browser-qa-title-reward-preview.png",
+          "browser-qa-title-reward-stage.png",
+          "browser-qa-title-selector-recommendation.png",
+          "browser-qa-title-shop-checkout.png",
+          "browser-qa-title-shop-simplified.png",
+          "browser-qa-title-victory-arena-final.png",
+          "browser-qa-title-victory-arena.png",
+          "browser-qa-turn-before.png",
+          "browser-qa-turn-enemy-action.png",
+          "browser-qa-turn-enemy-cue-minimal.png",
+          "browser-qa-turn-enemy-cue.png",
+          "browser-qa-turn-player-cue-minimal.png",
+          "browser-qa-turn-player-cue.png",
+          "browser-qa-upgrade-service-disabled.png",
+          "browser-qa-victory-arena-coda.png",
+          "browser-qa-victory-coda-event-scene.png",
+          "browser-qa-victory-coda-no-relic-toast.png",
+          "browser-qa-victory-coda-reward-stage.png"
+        ],
+        "requiredFresh": [
+          {
+            "id": "title",
+            "matched": [
+              "browser-qa-title-refreshed.png"
+            ]
+          },
+          {
+            "id": "about",
+            "matched": [
+              "browser-qa-about-refreshed.png"
+            ]
+          },
+          {
+            "id": "combat",
+            "matched": [
+              "browser-qa-combat-card-hover.png",
+              "browser-qa-combat-refreshed.png",
+              "browser-qa-combat-status-tooltip.png"
+            ]
+          },
+          {
+            "id": "card-hover",
+            "matched": [
+              "browser-qa-combat-card-hover.png"
+            ]
+          },
+          {
+            "id": "map",
+            "matched": [
+              "browser-qa-map-refreshed.png",
+              "browser-qa-map-route-preview.png"
+            ]
+          },
+          {
+            "id": "reward",
+            "matched": [
+              "browser-qa-reward-card-selected.png",
+              "browser-qa-reward-post-victory-refreshed.png",
+              "browser-qa-reward-refreshed.png",
+              "browser-qa-reward-relics-refreshed.png"
+            ]
+          },
+          {
+            "id": "reward-relics",
+            "matched": [
+              "browser-qa-reward-relics-refreshed.png"
+            ]
+          },
+          {
+            "id": "event",
+            "matched": [
+              "browser-qa-event-refreshed.png"
+            ]
+          },
+          {
+            "id": "shop",
+            "matched": [
+              "browser-qa-shop-refreshed.png"
+            ]
+          },
+          {
+            "id": "rest",
+            "matched": [
+              "browser-qa-rest-refreshed.png"
+            ]
+          },
+          {
+            "id": "summary-lost",
+            "matched": [
+              "browser-qa-summary-lost-refreshed.png"
+            ]
+          },
+          {
+            "id": "summary-won",
+            "matched": [
+              "browser-qa-summary-won-refreshed.png"
+            ]
+          },
+          {
+            "id": "records",
+            "matched": [
+              "browser-qa-records-refreshed.png"
+            ]
+          },
+          {
+            "id": "settings",
+            "matched": [
+              "browser-qa-settings-refreshed.png"
+            ]
+          },
+          {
+            "id": "mobile",
+            "matched": [
+              "browser-qa-mobile-refreshed.png"
+            ]
+          },
+          {
+            "id": "codex",
+            "matched": [
+              "browser-qa-codex-refreshed.png"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "docs",
+      "label": "README 산출물 설명",
+      "ok": true,
+      "detail": "README는 실행 방법, 콘텐츠 목록, 시스템 설명, 검증 플로우, 검증 산출물, 남은 우선순위를 포함해야 합니다.",
+      "evidence": {}
+    }
+  ]
+}
