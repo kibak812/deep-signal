@@ -5531,6 +5531,9 @@ dd,
     radial-gradient(ellipse at 50% 100%, rgba(125, 211, 252, 0.08), transparent 68%);
   padding: 9px 10px 8px;
   pointer-events: none;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
   box-shadow: 0 -14px 38px rgba(0, 0, 0, 0.26);
   backdrop-filter: blur(8px);
 }
@@ -5792,7 +5795,7 @@ dd,
 }
 
 .hand-zone .game-card[data-action="play-card"] {
-  touch-action: none;
+  touch-action: pan-x;
 }
 
 .hand-zone .game-card + .game-card {
@@ -22481,13 +22484,14 @@ input[type="range"] {
     padding: 7px;
     gap: 7px;
     scrollbar-width: thin;
+    scroll-padding-inline: 8px;
     scroll-snap-type: x proximity;
   }
 
   .combat-play-panel {
     left: 8px;
     right: 88px;
-    bottom: calc(var(--hand-bottom) + var(--hand-zone-height) + var(--play-panel-gap) + 68px);
+    bottom: calc(var(--hand-bottom) + var(--hand-zone-height) + var(--play-panel-gap) + 86px);
     width: auto;
     grid-template-columns: 1fr;
     gap: 6px;
@@ -22513,7 +22517,7 @@ input[type="range"] {
   }
 
   .combat-pile-dock .pile {
-    min-height: 27px;
+    min-height: 34px;
     padding: 3px 2px;
   }
 
@@ -22749,6 +22753,28 @@ input[type="range"] {
     width: 74px;
     height: 74px;
     font-size: 0.78rem;
+  }
+
+  .end-turn span {
+    top: 8px;
+    right: 8px;
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.58rem;
+  }
+
+  .end-turn strong {
+    max-width: 54px;
+    overflow: hidden;
+    font-size: 0.76rem;
+    line-height: 1.05;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .end-turn small {
+    max-width: 56px;
+    font-size: 0.56rem;
   }
 
   .enemy-target-marker {

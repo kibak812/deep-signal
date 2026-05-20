@@ -258,6 +258,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-summary-won-refreshed\.png/);
   assert.match(readme, /browser-qa-records-refreshed\.png/);
   assert.match(readme, /browser-qa-about-refreshed\.png/);
+  assert.match(readme, /browser-qa-mobile-combat-refreshed\.png/);
+  assert.match(readme, /browser-qa-mobile-combat-refreshed\.json/);
   assert.match(readme, /다시 캡처해야 출시 감사가 통과합니다/);
   assert.match(readme, /드래그 시 카드에서 대상까지 이어지는 조준선/);
   assert.match(readme, /크레딧/);
@@ -278,6 +280,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /summary-lost/);
   assert.match(auditSource, /summary-won/);
   assert.match(auditSource, /records/);
+  assert.match(auditSource, /mobile-combat/);
   assert.match(auditSource, /requiredReleaseInfo/);
   assert.match(auditSource, /requiredFlowDocs/);
   assert.match(auditSource, /requiredFlowTests/);
@@ -289,6 +292,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-summary-lost-refreshed\.png/);
   assert.match(captureSource, /browser-qa-summary-won-refreshed\.png/);
   assert.match(captureSource, /browser-qa-records-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-mobile-combat-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-mobile-combat-refreshed\.json/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.png/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.json/);
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
@@ -300,6 +305,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /await navigate\(cdp, baseUrl\);\s*await waitForSelector\(cdp, "\.title-screen"\);/);
   assert.match(captureSource, /titleScreen: Boolean\(document\.querySelector\("\.title-screen"\)\)/);
   assert.match(captureSource, /combatBoard: Boolean\(document\.querySelector\("\.combat-board"\)\)/);
+  assert.match(captureSource, /function stageMobileCombatFixture\(cdp\)/);
+  assert.match(captureSource, /function assertMobileCombatTouchUx\(cdp\)/);
+  assert.match(captureSource, /await assertMobileCombatTouchUx\(cdp\);/);
+  assert.match(captureSource, /Mobile combat touch UX failed/);
+  assert.match(captureSource, /canScrollHand/);
+  assert.match(captureSource, /touchRailReady/);
   assert.match(captureSource, /function stageRewardFixture\(cdp\)/);
   assert.match(captureSource, /function stageSummaryFixture\(cdp, outcome\)/);
   assert.match(captureSource, /function stageRecordsFixture\(cdp\)/);
@@ -1975,6 +1986,13 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(styleSource, /margin-left:\s*calc\(-1 \* var\(--hand-overlap, 0px\)\)/);
   assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-x:\s*auto/);
   assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-y:\s*hidden/);
+  assert.match(styleSource, /\.hand-zone[\s\S]*touch-action:\s*pan-x/);
+  assert.match(styleSource, /\.hand-zone[\s\S]*overscroll-behavior-x:\s*contain/);
+  assert.match(styleSource, /\.hand-zone[\s\S]*-webkit-overflow-scrolling:\s*touch/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action="play-card"\][\s\S]*touch-action:\s*pan-x/);
+  assert.match(mainSource, /Math\.abs\(dx\) > Math\.abs\(dy\) \* 1\.15/);
+  assert.match(mainSource, /clearPointerCardDrag\(\);[\s\S]*return;[\s\S]*pointerCardDrag\.card\.setPointerCapture\?\.\(event\.pointerId\)/);
+  assert.match(mainSource, /releasePointerCapture\?\.\(pointerCardDrag\.pointerId\)/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*--hand-zone-height:\s*262px/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*padding-bottom:\s*calc\(var\(--hand-zone-height\) \+ var\(--hand-bottom\) \+ 52px\)/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-mission-strip[\s\S]*flex:\s*1 1 360px/);
@@ -2016,16 +2034,18 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-forecast[\s\S]*grid-template-columns:\s*1fr/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.forecast-secondary[\s\S]*display:\s*none/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.turn-plan[\s\S]*display:\s*none/);
-  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-play-panel[\s\S]*bottom:\s*calc\(var\(--hand-bottom\) \+ var\(--hand-zone-height\) \+ var\(--play-panel-gap\) \+ 68px\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-play-panel[\s\S]*bottom:\s*calc\(var\(--hand-bottom\) \+ var\(--hand-zone-height\) \+ var\(--play-panel-gap\) \+ 86px\)/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-play-panel[\s\S]*grid-template-columns:\s*1fr/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-resource-stack[\s\S]*grid-template-columns:\s*minmax\(96px, 124px\) minmax\(0, 1fr\)/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-pile-dock \.pile-row[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-pile-dock \.pile[\s\S]*min-height:\s*34px/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-resource-stack\.fx-target::after/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*content:\s*attr\(data-fx-label\)/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-action-fx,[\s\S]*\.combat-action-fx\.fx-self[\s\S]*display:\s*none/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-energy-panel[\s\S]*grid-template-columns:\s*42px minmax\(0, 1fr\)/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.hand-zone \.game-card[\s\S]*width:\s*124px/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.hand-zone \.game-card p[\s\S]*display:\s*none/);
+  assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.hand-zone[\s\S]*scroll-padding-inline:\s*8px/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*scroll-snap-type:\s*x proximity/);
 });
 
@@ -2265,7 +2285,9 @@ test("combat cards support touch and pen drag targeting", () => {
   assert.match(mainSource, /let combatPreviewTargetUid = null/);
   assert.match(mainSource, /function clearPointerCardDrag\(\)/);
   assert.match(mainSource, /playCardWithFx\(state\.run, drag\.uid, Number\(enemy\.dataset\.id\)\)/);
-  assert.match(styleSource, /\.hand-zone \.game-card\[data-action="play-card"\][\s\S]*touch-action:\s*none/);
+  assert.match(mainSource, /Math\.abs\(dx\) > Math\.abs\(dy\) \* 1\.15/);
+  assert.match(mainSource, /pointerCardDrag\.card\.setPointerCapture\?\.\(event\.pointerId\)/);
+  assert.match(styleSource, /\.hand-zone \.game-card\[data-action="play-card"\][\s\S]*touch-action:\s*pan-x/);
   assert.match(styleSource, /\.enemy-card\.drop-ready/);
   assert.match(styleSource, /\.combat-card-preview-rail\.preview-drag/);
 });

@@ -1,0 +1,145 @@
+{
+  "ok": true,
+  "mobileViewport": true,
+  "noPageOverflow": true,
+  "scrollWidth": 390,
+  "bodyScrollWidth": 397,
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "handInViewport": true,
+  "canScrollHand": true,
+  "didScrollHand": true,
+  "cardsReadable": true,
+  "controlsVisible": true,
+  "noCriticalOverlap": true,
+  "touchRailReady": true,
+  "combatReadable": true,
+  "handStyle": {
+    "overflowX": "auto",
+    "touchAction": "pan-x",
+    "overscrollBehaviorX": "contain"
+  },
+  "cardTouchAction": "pan-x",
+  "boxes": {
+    "hand": {
+      "left": 8,
+      "top": 633,
+      "right": 302,
+      "bottom": 836,
+      "width": 294,
+      "height": 203
+    },
+    "endTurn": {
+      "left": 308,
+      "top": 750,
+      "right": 382,
+      "bottom": 824,
+      "width": 74,
+      "height": 74
+    },
+    "resource": {
+      "left": 8,
+      "top": 530,
+      "right": 302,
+      "bottom": 620,
+      "width": 294,
+      "height": 90
+    },
+    "energy": {
+      "left": 138,
+      "top": 530,
+      "right": 228,
+      "bottom": 620,
+      "width": 90,
+      "height": 90
+    },
+    "playPanel": {
+      "left": 8,
+      "top": 534,
+      "right": 302,
+      "bottom": 534,
+      "width": 294,
+      "height": 0
+    },
+    "targetAssist": {
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0
+    },
+    "enemyLine": {
+      "left": 8,
+      "top": 186,
+      "right": 382,
+      "bottom": 276,
+      "width": 374,
+      "height": 90
+    }
+  },
+  "cardCount": 7,
+  "cardBoxes": [
+    {
+      "left": 13,
+      "top": 640,
+      "right": 139,
+      "bottom": 830,
+      "width": 126,
+      "height": 190
+    },
+    {
+      "left": 91,
+      "top": 640,
+      "right": 217,
+      "bottom": 830,
+      "width": 126,
+      "height": 190
+    },
+    {
+      "left": 166,
+      "top": 641,
+      "right": 291,
+      "bottom": 829,
+      "width": 125,
+      "height": 189
+    }
+  ],
+  "maxCardRight": 595,
+  "pileBoxes": [
+    {
+      "left": 11,
+      "top": 534,
+      "right": 69,
+      "bottom": 574,
+      "width": 58,
+      "height": 40
+    },
+    {
+      "left": 72,
+      "top": 534,
+      "right": 129,
+      "bottom": 574,
+      "width": 58,
+      "height": 40
+    },
+    {
+      "left": 11,
+      "top": 577,
+      "right": 69,
+      "bottom": 617,
+      "width": 58,
+      "height": 40
+    },
+    {
+      "left": 72,
+      "top": 577,
+      "right": 129,
+      "bottom": 617,
+      "width": 58,
+      "height": 40
+    }
+  ]
+}

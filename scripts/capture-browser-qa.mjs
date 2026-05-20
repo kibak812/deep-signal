@@ -197,9 +197,17 @@ try {
 
   const groupedEnemyFx = await captureGroupedEnemyFx(cdp);
 
+  await stageMobileCombatFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await setViewport(cdp, 390, 844, true);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await assertMobileCombatTouchUx(cdp);
+  await capture(cdp, "browser-qa-mobile-combat-refreshed.png");
+  await clearSavedRun(cdp);
+
   await navigate(cdp, baseUrl);
   await waitForSelector(cdp, ".title-screen");
-  await setViewport(cdp, 390, 844, true);
   await wait(250);
   await capture(cdp, "browser-qa-mobile-refreshed.png");
 
@@ -525,6 +533,48 @@ async function stageEnergyLockedHandFixture(cdp) {
     run.combat.drawPile = [];
     run.combat.discardPile = [];
     run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, energy: run.combat.energy, hand: run.combat.hand.length };
+  })()`);
+}
+
+async function stageMobileCombatFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-mobile-combat-touch", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA mobile combat fixture node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA mobile combat fixture combat not started");
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [
+      { uid: 7801, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7802, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7803, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7804, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7805, cardId: "rill_cut", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7806, cardId: "signal_jab", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7807, cardId: "coral_guard", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [
+      { uid: 7811, cardId: "archive_dust", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7812, cardId: "drift_scan", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7813, cardId: "current_siphon", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7814, cardId: "floodgate", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.discardPile = [
+      { uid: 7821, cardId: "static_psalm", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7822, cardId: "brass_knuckle", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.exhaustPile = [
+      { uid: 7831, cardId: "emergency_seal", upgraded: false, temporary: false, costMod: 0 }
+    ];
     run.updatedAt = Date.now();
     const payload = JSON.stringify(run);
     localStorage.setItem("abyssalArchive.save.v1", payload);
@@ -1093,6 +1143,115 @@ async function assertCardHoverLayout(cdp) {
     };
   })()`);
   if (!result.ok) throw new Error(`Card hover layout failed: ${JSON.stringify(result)}`);
+}
+
+async function assertMobileCombatTouchUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const rect = (element) => {
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return {
+        left: Math.round(box.left),
+        top: Math.round(box.top),
+        right: Math.round(box.right),
+        bottom: Math.round(box.bottom),
+        width: Math.round(box.width),
+        height: Math.round(box.height)
+      };
+    };
+    const overlaps = (left, right, gap = 0) => {
+      if (!left || !right) return false;
+      return left.right + gap > right.left && left.left < right.right + gap && left.bottom + gap > right.top && left.top < right.bottom + gap;
+    };
+    const board = document.querySelector(".combat-board");
+    const hand = document.querySelector(".hand-zone");
+    const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const endTurn = document.querySelector(".end-turn");
+    const resource = document.querySelector(".combat-resource-stack");
+    const energy = document.querySelector(".combat-energy-panel");
+    const playPanel = document.querySelector(".combat-play-panel");
+    const targetAssist = document.querySelector(".target-assist");
+    const enemyLine = document.querySelector(".enemy-line");
+    const enemies = [...document.querySelectorAll(".enemy-card:not(.dead)")];
+    const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
+    const handBox = rect(hand);
+    const endBox = rect(endTurn);
+    const resourceBox = rect(resource);
+    const energyBox = rect(energy);
+    const playBox = rect(playPanel);
+    const targetBox = rect(targetAssist);
+    const enemyLineBox = rect(enemyLine);
+    const cardBoxes = cards.map(rect);
+    const pileBoxes = piles.map(rect);
+    const firstScrollLeft = hand?.scrollLeft ?? 0;
+    const canScrollHand = Boolean(hand && hand.scrollWidth > hand.clientWidth + 24);
+    if (hand) hand.scrollLeft = hand.scrollWidth;
+    const didScrollHand = Boolean(hand && hand.scrollLeft > firstScrollLeft + 8);
+    if (hand) hand.scrollLeft = 0;
+    const handStyle = hand ? getComputedStyle(hand) : null;
+    const cardStyle = cards[0] ? getComputedStyle(cards[0]) : null;
+    const maxCardRight = Math.max(0, ...cardBoxes.map((box) => box?.right ?? 0));
+    const mobileViewport = window.matchMedia("(max-width: 680px)").matches;
+    const noPageOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    const handInViewport = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight && handBox.height >= 180);
+    const cardsReadable = cardBoxes.length >= 7 && cardBoxes.every((box) => box && box.width >= 118 && box.width <= 132 && box.height >= 184 && box.bottom <= window.innerHeight + 2);
+    const controlsVisible = Boolean(
+      endBox &&
+      resourceBox &&
+      energyBox &&
+      playBox &&
+      endBox.width >= 70 &&
+      endBox.height >= 70 &&
+      endBox.right <= window.innerWidth &&
+      endBox.bottom <= window.innerHeight &&
+      energyBox.height >= 42 &&
+      pileBoxes.length === 4 &&
+      pileBoxes.every((box) => box && box.height >= 32)
+    );
+    const noCriticalOverlap =
+      !overlaps(handBox, endBox, 2) &&
+      !overlaps(resourceBox, endBox, 2) &&
+      !overlaps(playBox, endBox, 2) &&
+      !overlaps(playBox, handBox, 6) &&
+      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
+    const touchRailReady =
+      handStyle?.overflowX === "auto" &&
+      handStyle?.overscrollBehaviorX === "contain" &&
+      (handStyle?.touchAction ?? "").includes("pan-x") &&
+      (cardStyle?.touchAction ?? "").includes("pan-x");
+    const combatReadable = Boolean(board && enemyLineBox && enemyLineBox.top >= 0 && enemies.length >= 1);
+    return {
+      ok: mobileViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable,
+      mobileViewport,
+      noPageOverflow,
+      scrollWidth: document.documentElement.scrollWidth,
+      bodyScrollWidth: document.body.scrollWidth,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      handInViewport,
+      canScrollHand,
+      didScrollHand,
+      cardsReadable,
+      controlsVisible,
+      noCriticalOverlap,
+      touchRailReady,
+      combatReadable,
+      handStyle: {
+        overflowX: handStyle?.overflowX ?? "",
+        touchAction: handStyle?.touchAction ?? "",
+        overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
+      },
+      cardTouchAction: cardStyle?.touchAction ?? "",
+      boxes: { hand: handBox, endTurn: endBox, resource: resourceBox, energy: energyBox, playPanel: playBox, targetAssist: targetBox, enemyLine: enemyLineBox },
+      cardCount: cards.length,
+      cardBoxes: cardBoxes.slice(0, 3),
+      maxCardRight,
+      pileBoxes
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Mobile combat touch UX failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-mobile-combat-refreshed.json"), JSON.stringify(evidence, null, 2));
 }
 
 async function assertCombatRiskSingleSource(cdp) {

@@ -180,6 +180,7 @@ async function main() {
     { id: "records", match: /browser-qa-records/ },
     { id: "settings", match: /browser-qa-settings/ },
     { id: "mobile", match: /browser-qa-mobile/ },
+    { id: "mobile-combat", match: /browser-qa-mobile-combat/ },
     { id: "codex", match: /browser-qa-codex/ }
   ];
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);

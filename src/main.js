@@ -927,18 +927,24 @@ app.addEventListener("pointerdown", (event) => {
     startY: event.clientY,
     active: false
   };
-  card.setPointerCapture?.(event.pointerId);
 });
 
 app.addEventListener("pointermove", (event) => {
   syncCardHoverFromPointer(event);
   if (!pointerCardDrag || pointerCardDrag.pointerId !== event.pointerId) return;
-  const distance = Math.hypot(event.clientX - pointerCardDrag.startX, event.clientY - pointerCardDrag.startY);
+  const dx = event.clientX - pointerCardDrag.startX;
+  const dy = event.clientY - pointerCardDrag.startY;
+  const distance = Math.hypot(dx, dy);
   if (!pointerCardDrag.active && distance < 10) return;
   if (!pointerCardDrag.active) {
+    if (event.pointerType === "touch" && Math.abs(dx) > Math.abs(dy) * 1.15) {
+      clearPointerCardDrag();
+      return;
+    }
     pointerCardDrag.active = true;
     pointerCardDrag.card.classList.add("dragging");
     document.body.classList.add("dragging-card");
+    pointerCardDrag.card.setPointerCapture?.(event.pointerId);
   }
   event.preventDefault();
   highlightPointerDropTarget(event.clientX, event.clientY);
@@ -1815,6 +1821,9 @@ function enemyCardAtPoint(x, y) {
 }
 
 function clearPointerCardDrag() {
+  if (pointerCardDrag?.card && pointerCardDrag.pointerId != null && pointerCardDrag.card.hasPointerCapture?.(pointerCardDrag.pointerId)) {
+    pointerCardDrag.card.releasePointerCapture?.(pointerCardDrag.pointerId);
+  }
   pointerCardDrag?.card?.classList.remove("dragging");
   pointerCardDrag = null;
   document.body.classList.remove("dragging-card");
