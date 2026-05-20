@@ -1396,7 +1396,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /다음 런 브리핑/);
   assert.match(mainSource, /function summaryRetryBriefLine\(summary\)/);
   assert.match(mainSource, /function summaryRetryBriefChips\(summary, replaySeed, nextDifficulty = null\)/);
-  assert.match(mainSource, /같은 시드에서 첫 보상 바꿔보기/);
+  assert.match(mainSource, /같은 시드에서 첫 선택 바꿔보기/);
   assert.match(mainSource, /function renderSummaryFocusStrip\(summary, verdict\)/);
   assert.match(mainSource, /function summaryBuildShortNote\(summary\)/);
   assert.match(mainSource, /class="summary-path-strip \$\{summary\.won \? "won" : "lost"\}"/);
@@ -1431,7 +1431,17 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /class="summary-replay-prompt \$\{prompt\.tone\}"/);
   assert.match(mainSource, /class="summary-next-steps"/);
   assert.match(mainSource, /첫 세 보상 안에 하나만 고르기/);
-  assert.match(mainSource, /상태 누적을 끊을 수단이 필요했습니다/);
+  assert.match(mainSource, /function summaryStoppedAct\(summary\)/);
+  assert.match(mainSource, /function summaryFailureProfile\(summary\)/);
+  assert.match(mainSource, /function summaryFailureCause\(profile\)/);
+  assert.match(mainSource, /function summaryFailureAdvice\(summary, profile = summaryFailureProfile\(summary\)\)/);
+  assert.match(mainSource, /profile\.stoppedType === "boss"/);
+  assert.match(mainSource, /보스 전 정비 먼저 보기/);
+  assert.match(mainSource, /엘리트 도전이 조금 빨랐습니다/);
+  assert.match(mainSource, /이벤트 리스크가 크게 돌아왔습니다/);
+  assert.match(mainSource, /덱이 두꺼워져 핵심 카드가 늦었습니다/);
+  assert.match(mainSource, /상점·휴식 경로 먼저 보기/);
+  assert.match(mainSource, /해로운 상태를 지울 수단이 부족했습니다/);
   assert.match(mainSource, /첫 세 보상 안에 주력 정하기/);
   assert.match(mainSource, /function renderSummaryRoute\(summary\)/);
   assert.match(mainSource, /function renderRouteActSummary\(act\)/);

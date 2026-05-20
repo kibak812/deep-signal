@@ -8181,6 +8181,7 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   const focus = summaryBuildLine(summary, "주력 미정");
   const headlineFocus = summaryPrimaryBuildText(summary, "선택한 방향");
   const firstStep = summaryNextRunSteps(summary)[0];
+  const failureAdvice = summary.won ? null : summaryFailureAdvice(summary);
   const stats = [
     { label: "결과", value: summary.won ? "완주" : "실패" },
     { label: "지점", value: summary.won ? `${summary.floors ?? 0}층 완주` : stop },
@@ -8197,25 +8198,18 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   }
   return {
     label: "실패 지점",
-    title: `${stop}에서 흐름이 끊겼습니다`,
+    title: `${stop}에서 멈췄습니다`,
     detail: firstStep?.detail ?? "첫 보상에서 주력을 빨리 정하고, 맞지 않는 카드는 과감히 넘기세요.",
-    action: replaySeed ? "같은 시드에서 첫 보상 바꿔보기" : "새 런에서 첫 보상부터 좁히기",
+    action: replaySeed ? failureAdvice?.action ?? "같은 시드에서 첫 선택 바꿔보기" : "새 런에서 첫 선택부터 바꾸기",
     stats
   };
 }
 
 function summaryRetryBriefLine(summary) {
-  const reason = summary.reason ?? "";
   if (summary.won) {
     return `${summaryPrimaryBuildText(summary, "핵심 카드")} 선택은 유지하고, 역할이 겹치는 카드만 줄이세요.`;
   }
-  if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(reason)) {
-    return "상태가 쌓이기 전에 정화, 약화, 빠른 처치 중 하나를 먼저 챙기세요.";
-  }
-  if (/공격|체력이 0/.test(reason)) {
-    return "큰 공격 턴을 넘길 방어와 약화를 1막에서 먼저 확보하세요.";
-  }
-  return "첫 보상에서 방향을 좁히고, 맞지 않는 카드는 과감히 넘기세요.";
+  return summaryFailureAdvice(summary).brief;
 }
 
 function summaryRetryBriefChips(summary, replaySeed, nextDifficulty = null) {
@@ -8356,6 +8350,7 @@ function summaryReplayPrompt(summary, replaySeed, nextDifficulty = null) {
   const firstPlan = summaryPlanItems(summary)[0] ?? summaryNextRunSteps(summary)[0];
   const stop = summaryStopPoint(summary);
   const direction = summaryPrimaryBuildText(summary, "첫 핵심 카드");
+  const failureAdvice = summary.won ? null : summaryFailureAdvice(summary);
   if (summary.won) {
     return {
       tone: "strong",
@@ -8370,7 +8365,7 @@ function summaryReplayPrompt(summary, replaySeed, nextDifficulty = null) {
   }
   return {
     tone: firstPlan?.tone ?? "steady",
-    title: `${stop}에서 다른 첫 선택 보기`,
+    title: `${stop}에서 ${failureAdvice?.retryTitle ?? "다른 선택 보기"}`,
     detail: `${firstPlan?.detail ?? "첫 보상에서 주력을 빨리 정하세요."} 같은 시드로 들어가면 어느 선택이 달랐는지 비교하기 쉽습니다.`,
     chips: [
       { label: "목표", value: firstPlan?.title ?? "첫 방향 정하기" },
@@ -8386,6 +8381,270 @@ function summaryStopPoint(summary) {
     .at(-1)?.stoppedAt;
   if (stopped) return `${stopped.floor}층 ${nodeTypeLabel(stopped.type)}`;
   return `${summary.floors ?? 0}층`;
+}
+
+function summaryStoppedAct(summary) {
+  return (summary.route?.acts ?? []).filter((act) => act.stoppedAt).at(-1) ?? null;
+}
+
+function summaryFailureProfile(summary) {
+  const stoppedAct = summaryStoppedAct(summary);
+  const stoppedAt = stoppedAct?.stoppedAt ?? null;
+  const stoppedType = stoppedAt?.type ?? "";
+  const floor = stoppedAt?.floor ?? summary.floors ?? 0;
+  const fights = Math.max(1, summary.fights ?? 1);
+  const damagePerFight = Math.round((summary.damageTaken ?? 0) / fights);
+  const deckSize = summary.deckSize ?? 0;
+  const removed = summary.cardsRemoved ?? 0;
+  const shops = summary.route?.shops ?? 0;
+  const rests = summary.route?.rests ?? 0;
+  const tags = summary.build ?? [];
+  const profile = {
+    reason: summary.reason ?? "",
+    stoppedAct,
+    stoppedAt,
+    stoppedType,
+    stopLabel: stoppedAt ? `${floor}층 ${nodeTypeLabel(stoppedType)}` : `${floor}층`,
+    actLabel: stoppedAct?.act ? `${stoppedAct.act}막` : "이번 런",
+    floor,
+    fights,
+    damagePerFight,
+    deckSize,
+    removed,
+    shops,
+    rests,
+    tags,
+    bosses: summary.bossesDefeated ?? 0
+  };
+  return { ...profile, cause: summaryFailureCause(profile) };
+}
+
+function summaryFailureCause(profile) {
+  if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(profile.reason)) return "status";
+  if (profile.stoppedType === "boss" || profile.stoppedAct?.boss === "reached") return "boss";
+  if (profile.stoppedType === "elite") return "elite";
+  if (profile.stoppedType === "event") return "event";
+  if (/공격|체력이 0/.test(profile.reason) || profile.damagePerFight >= 14) return "survival";
+  if (profile.deckSize >= 26 && profile.removed <= 1) return "deck";
+  if (profile.shops + profile.rests <= 1 && profile.floor >= 10) return "route";
+  return "direction";
+}
+
+function summaryFailureAdvice(summary, profile = summaryFailureProfile(summary)) {
+  if (profile.cause === "status") {
+    return {
+      tone: "warning",
+      title: "해로운 상태를 지울 수단이 부족했습니다",
+      detail: "감염과 저주가 손패를 막기 전에 전투를 끝내거나, 정화와 약화로 피해를 끊어야 합니다.",
+      brief: "감염·저주가 보이면 정화, 약화, 빠른 처치 중 하나를 먼저 챙기세요.",
+      action: "상태 대처 카드 먼저 찾기",
+      retryTitle: "상태 대처부터 바꿔보기",
+      chips: ["정화", "약화", "빠른 처치"],
+      plan: {
+        tone: "warning",
+        label: "초반 선택",
+        title: "정화와 약화 먼저 확보",
+        detail: "첫 상점이나 보상에서 정화, 약화, 빠른 처치 중 하나를 우선하세요. 해로운 카드가 쌓이기 전에 전투를 짧게 끝내는 것이 핵심입니다."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "해로운 상태가 손패를 막음",
+        detail: "정화, 약화, 빠른 처치 카드의 우선순위를 올리면 바이러스와 저주의 누적 피해를 끊을 수 있습니다."
+      },
+      steps: [
+        { tone: "warning", title: "상태 대처 카드 확보", detail: "정화, 약화, 빠른 처치 중 하나를 첫 구역에서 찾습니다." },
+        { tone: "strong", title: "전투를 짧게 끝내기", detail: "상태를 쌓는 적은 방어만 하지 말고 마무리 피해를 우선합니다." },
+        { tone: "steady", title: "상점에서는 제거 먼저", detail: "저주나 상태 카드가 늘면 구매보다 카드 제거를 먼저 씁니다." }
+      ]
+    };
+  }
+  if (profile.cause === "boss") {
+    return {
+      tone: "danger",
+      title: `${profile.actLabel} 보스전 준비가 부족했습니다`,
+      detail: "보스전까지 도달했습니다. 다음에는 보스 직전 경로에서 체력, 방어, 큰 피해 카드 중 빈 역할을 먼저 채우세요.",
+      brief: "보스 직전에는 새 카드보다 회복, 방어, 큰 피해 카드 중 부족한 것부터 보세요.",
+      action: "보스 전 정비 먼저 보기",
+      retryTitle: "보스 전 선택 바꿔보기",
+      chips: ["보스 전 정비", "회복", "큰 피해"],
+      plan: {
+        tone: "danger",
+        label: "보스 준비",
+        title: "보스 전 정비를 먼저 보기",
+        detail: "보스 직전 체력이 절반 아래라면 강화보다 회복을, 피해가 부족하면 큰 공격 카드나 취약 부여를 먼저 고르세요."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "보스전까지 갔지만 마지막 준비가 부족함",
+        detail: "다음 런에서는 보스 직전의 상점과 휴식에서 체력, 방어, 큰 피해 중 가장 비어 있는 역할을 하나만 확실히 채우세요."
+      },
+      steps: [
+        { tone: "danger", title: "보스 전 체력 확인", detail: "체력이 절반 아래면 강화보다 회복이나 안전 경로를 먼저 봅니다." },
+        { tone: "strong", title: "큰 피해 카드 남기기", detail: "2막 이후에는 보스 체력을 끝낼 카드 1장을 덱 안에 확실히 둡니다." },
+        { tone: "warning", title: "방어·약화 보강", detail: "큰 공격 예고를 넘길 방어 카드와 약화 카드의 가치를 더 높게 봅니다." }
+      ]
+    };
+  }
+  if (profile.cause === "elite") {
+    return {
+      tone: "warning",
+      title: "엘리트 도전이 조금 빨랐습니다",
+      detail: "유물 보상은 크지만 방어와 체력이 갖춰지기 전에는 손실이 더 큽니다. 다음에는 첫 엘리트 전에 생존 카드를 먼저 보세요.",
+      brief: "방어와 체력이 갖춰지기 전에는 엘리트보다 상점·휴식 경로가 안정적입니다.",
+      action: "첫 엘리트 타이밍 늦추기",
+      retryTitle: "엘리트 전 경로 바꿔보기",
+      chips: ["엘리트 타이밍", "방어", "휴식"],
+      plan: {
+        tone: "warning",
+        label: "경로 선택",
+        title: "첫 엘리트 전에 생존 카드 확보",
+        detail: "방어 카드 2장, 약화 카드 1장, 체력 절반 이상 중 둘 이상이 갖춰졌을 때 엘리트를 노리세요."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "준비 전 엘리트에서 체력 손실",
+        detail: "초반에는 유물보다 생존이 먼저입니다. 방어와 약화가 부족하면 엘리트 대신 상점이나 휴식 경로를 택하세요."
+      },
+      steps: [
+        { tone: "warning", title: "첫 엘리트 늦추기", detail: "방어와 약화가 부족하면 엘리트보다 상점이나 휴식 경로를 고릅니다." },
+        { tone: "steady", title: "체력 절반 이상 유지", detail: "엘리트 직전 체력이 낮으면 회복을 먼저 선택합니다." },
+        { tone: "strong", title: "유물은 준비 뒤에", detail: "첫 유물은 강하지만, 받을 피해를 줄일 수 있을 때 가치가 커집니다." }
+      ]
+    };
+  }
+  if (profile.cause === "event") {
+    return {
+      tone: "warning",
+      title: "이벤트 리스크가 크게 돌아왔습니다",
+      detail: "체력 지불이나 저주 선택은 덱이 준비됐을 때만 이득입니다. 체력이 낮으면 안전한 보상이나 상점 제거를 우선하세요.",
+      brief: "체력이 낮을 때는 체력 지불·저주 선택보다 안전한 보상과 제거를 우선하세요.",
+      action: "위험 이벤트 보수적으로 고르기",
+      retryTitle: "이벤트 선택 바꿔보기",
+      chips: ["체력 지불 주의", "저주 제거", "안전 보상"],
+      plan: {
+        tone: "warning",
+        label: "이벤트 선택",
+        title: "체력 지불은 여유 있을 때만",
+        detail: "체력이 절반 아래라면 체력 지불 보상보다 안전한 선택을 고르고, 저주를 받았다면 다음 상점에서 제거를 먼저 쓰세요."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "이벤트 선택이 체력과 덱을 흔듦",
+        detail: "좋은 보상이라도 체력 지불과 저주는 다음 전투를 어렵게 만듭니다. 다음에는 현재 체력과 제거 기회를 먼저 계산하세요."
+      },
+      steps: [
+        { tone: "warning", title: "체력 지불 줄이기", detail: "체력이 절반 아래일 때는 위험 보상보다 안전한 선택을 고릅니다." },
+        { tone: "steady", title: "저주를 받으면 제거 예약", detail: "저주나 상태 카드를 받았다면 다음 상점에서 제거를 먼저 봅니다." },
+        { tone: "strong", title: "강한 보상은 준비 뒤에", detail: "회복 경로가 보일 때만 큰 리스크 보상을 선택하세요." }
+      ]
+    };
+  }
+  if (profile.cause === "survival") {
+    return {
+      tone: "danger",
+      title: "예고 피해를 버틸 카드가 부족했습니다",
+      detail: `전투당 평균 피해가 ${profile.damagePerFight}였습니다. 다음에는 1막에서 방어 카드와 약화 카드를 먼저 확보하세요.`,
+      brief: "큰 공격 턴을 넘길 방어와 약화를 1막에서 먼저 확보하세요.",
+      action: "방어·약화 먼저 챙기기",
+      retryTitle: "방어 선택부터 바꿔보기",
+      chips: ["방어", "약화", "생존 유물"],
+      plan: {
+        tone: "danger",
+        label: "초반 선택",
+        title: "큰 공격 턴을 넘길 방어 확보",
+        detail: "1막에서 방어 카드 2장, 약화 카드 1장, 첫 턴 생존 유물 중 최소 하나를 챙기면 엘리트와 보스가 훨씬 안정됩니다."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "예고 피해를 넘기지 못함",
+        detail: "다음 런에서는 방어 카드 2장 이상, 약화 부여, 첫 턴 생존 유물을 더 높게 평가해 큰 공격 턴을 통과하세요."
+      },
+      steps: [
+        { tone: "danger", title: "큰 공격 턴 대비", detail: "방어 카드 2장과 약화 1장을 1막 안에 목표로 합니다." },
+        { tone: "steady", title: "보스 전 체력 확인", detail: "체력이 낮으면 강화보다 회복을 고르는 편이 안정적입니다." },
+        { tone: "warning", title: "엘리트는 준비 뒤에", detail: "초반 방어가 부족하면 엘리트보다 상점이나 휴식 경로를 택합니다." }
+      ]
+    };
+  }
+  if (profile.cause === "deck") {
+    return {
+      tone: "warning",
+      title: "덱이 두꺼워져 핵심 카드가 늦었습니다",
+      detail: `최종 덱이 ${profile.deckSize}장이었습니다. 다음에는 보상 스킵과 카드 제거로 핵심 카드를 더 자주 뽑게 만드세요.`,
+      brief: "덱이 커질수록 핵심 카드가 늦게 옵니다. 상점에서는 구매보다 제거를 먼저 보세요.",
+      action: "덱 제거 먼저 해보기",
+      retryTitle: "덱 정리부터 바꿔보기",
+      chips: ["카드 제거", "보상 스킵", "카드 뽑기"],
+      plan: {
+        tone: "warning",
+        label: "덱 손질",
+        title: "제거 2회 이상 노리기",
+        detail: `최종 덱이 ${profile.deckSize}장이었습니다. 상점과 휴식의 카드 제거를 한 번씩 더 쓰면 핵심 카드가 빨리 돌아옵니다.`
+      },
+      threat: {
+        label: "위험 신호",
+        title: "핵심 카드가 늦게 잡힘",
+        detail: "카드가 많으면 좋은 조합도 손패에 늦게 들어옵니다. 다음에는 맞지 않는 보상을 넘기고 제거를 먼저 쓰세요."
+      },
+      steps: [
+        { tone: "warning", title: "카드 제거 먼저", detail: "상점에 들르면 구매 전 제거부터 계산합니다." },
+        { tone: "steady", title: "안 맞는 보상 넘기기", detail: "주력과 맞지 않는 카드는 좋아 보여도 스킵합니다." },
+        { tone: "strong", title: "카드 뽑기 보강", detail: "덱이 24장을 넘으면 추가 뽑기 카드의 가치가 크게 올라갑니다." }
+      ]
+    };
+  }
+  if (profile.cause === "route") {
+    return {
+      tone: "warning",
+      title: "정비 없이 너무 깊게 들어갔습니다",
+      detail: "상점과 휴식은 약한 선택이 아니라 런을 이어 주는 안전장치입니다. 체력이나 덱이 흔들리면 경로부터 바꾸세요.",
+      brief: "체력이나 덱이 흔들릴 때는 전투 보상보다 상점·휴식 경로를 먼저 잡으세요.",
+      action: "상점·휴식 경로 먼저 보기",
+      retryTitle: "경로 선택 바꿔보기",
+      chips: ["상점", "휴식", "카드 제거"],
+      plan: {
+        tone: "warning",
+        label: "경로 선택",
+        title: "상점·휴식 경로 확보",
+        detail: "체력이 낮거나 덱이 커졌다면 다음 전투 보상보다 상점과 휴식 경로를 우선해 회복, 강화, 제거 중 하나를 해결하세요."
+      },
+      threat: {
+        label: "위험 신호",
+        title: "정비 기회가 부족함",
+        detail: "상점과 휴식은 빌드를 다듬는 구간입니다. 다음 런에서는 위험 전투 전에 정비 지점을 하나 더 끼워 넣으세요."
+      },
+      steps: [
+        { tone: "warning", title: "정비 지점 먼저 보기", detail: "다음 선택에서 상점이나 휴식이 보이면 체력과 덱 상태를 먼저 확인합니다." },
+        { tone: "steady", title: "회복·강화 중 하나 선택", detail: "체력이 낮으면 회복, 핵심 카드가 있으면 강화가 우선입니다." },
+        { tone: "strong", title: "상점에서는 제거 계산", detail: "구매 전에 제거로 덱이 얼마나 빨라지는지 먼저 봅니다." }
+      ]
+    };
+  }
+  return {
+    tone: "steady",
+    title: "카드 방향이 늦게 정해졌습니다",
+    detail: "첫 세 번의 보상 안에 전하, 표식, 바이러스, 반격 중 하나를 정하고 맞지 않는 카드는 넘겨 보세요.",
+    brief: "첫 보상부터 카드 방향을 하나로 좁히고, 맞지 않는 카드는 과감히 넘기세요.",
+    action: "첫 보상부터 방향 좁히기",
+    retryTitle: "첫 보상 바꿔보기",
+    chips: ["방향 선택", "보상 스킵", "덱 정리"],
+    plan: {
+      tone: "steady",
+      label: "초반 선택",
+      title: "첫 세 보상 안에 주력 정하기",
+      detail: "전하, 표식, 바이러스, 반격 중 하나를 고르고 맞지 않는 보상은 넘겨 핵심 카드를 더 자주 보세요."
+    },
+    threat: {
+      label: "위험 신호",
+      title: "중반 전환점에서 힘이 부족함",
+      detail: "주력을 하나로 좁히고, 지금 덱과 맞지 않는 보상은 과감히 넘겨 핵심 카드를 더 자주 보세요."
+    },
+    steps: [
+      { tone: "steady", title: "첫 세 보상 안에 하나만 고르기", detail: "전하, 표식, 바이러스, 반격 중 하나만 먼저 잡습니다." },
+      { tone: "warning", title: "안 맞는 카드는 넘기기", detail: "지금 방향과 다른 카드는 좋아 보여도 스킵합니다." },
+      { tone: "strong", title: "큰 피해 카드 확보", detail: "2막 전에는 보스 체력을 끝낼 공격 수단을 정합니다." }
+    ]
+  };
 }
 
 function renderSummaryRunHook(summary) {
@@ -8424,7 +8683,6 @@ function renderSummaryRunHook(summary) {
 
 function summaryRunHook(summary) {
   const build = summaryPrimaryBuildText(summary, "핵심 카드");
-  const reason = summary.reason ?? "";
   if (summary.won) {
     return {
       tone: "strong",
@@ -8433,32 +8691,16 @@ function summaryRunHook(summary) {
       chips: [`덱 ${summary.deckSize ?? "?"}장`, `보스 ${summary.bossesDefeated ?? 0}`, `체력 ${summary.hp ?? 0}/${summary.maxHp ?? "?"}`]
     };
   }
-  if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(reason)) {
-    return {
-      tone: "warning",
-      title: "상태 누적을 끊을 수단이 필요했습니다",
-      detail: "다음 런에서는 정화, 약화, 빠른 처치 중 하나를 첫 구역에서 확보하세요. 상태가 쌓이기 전에 전투를 끝내는 편이 안전합니다.",
-      chips: ["정화", "약화", "빠른 처치"]
-    };
-  }
-  if (/공격|체력이 0/.test(reason)) {
-    return {
-      tone: "danger",
-      title: "큰 공격 턴을 버티지 못했습니다",
-      detail: "방어 카드 2장, 약화 카드 1장, 첫 턴 생존 유물 중 하나만 빨리 잡아도 엘리트와 보스전이 훨씬 편해집니다.",
-      chips: ["방어", "약화", "생존 유물"]
-    };
-  }
+  const advice = summaryFailureAdvice(summary);
   return {
-    tone: "steady",
-    title: "핵심 카드가 늦게 모였습니다",
-    detail: "첫 세 번의 보상 안에 전하, 표식, 바이러스, 반격 중 하나를 정하고 맞지 않는 카드는 넘겨 보세요.",
-    chips: ["방향 선택", "보상 스킵", "덱 정리"]
+    tone: advice.tone,
+    title: advice.title,
+    detail: advice.detail,
+    chips: advice.chips
   };
 }
 
 function summaryNextRunSteps(summary) {
-  const reason = summary.reason ?? "";
   if (summary.won) {
     return [
       {
@@ -8478,61 +8720,7 @@ function summaryNextRunSteps(summary) {
       }
     ];
   }
-  if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(reason)) {
-    return [
-      {
-        tone: "warning",
-        title: "상태를 지울 카드 확보",
-        detail: "정화, 약화, 빠른 처치 중 하나를 첫 구역에서 찾습니다."
-      },
-      {
-        tone: "strong",
-        title: "전투를 짧게 끝내기",
-        detail: "상태가 쌓이는 적은 방어만 하지 말고 마무리 피해를 우선합니다."
-      },
-      {
-        tone: "steady",
-        title: "상점에서는 제거 먼저",
-        detail: "저주나 상태 카드가 늘면 구매보다 카드 제거를 먼저 씁니다."
-      }
-    ];
-  }
-  if (/공격|체력이 0/.test(reason)) {
-    return [
-      {
-        tone: "danger",
-        title: "큰 공격 턴 대비",
-        detail: "방어 카드 2장과 약화 1장을 1막 안에 목표로 합니다."
-      },
-      {
-        tone: "steady",
-        title: "보스 전 체력 확인",
-        detail: "체력이 낮으면 강화보다 회복을 고르는 편이 안정적입니다."
-      },
-      {
-        tone: "warning",
-        title: "엘리트는 준비 뒤에",
-        detail: "초반 방어가 부족하면 엘리트보다 상점이나 휴식 경로를 택합니다."
-      }
-    ];
-  }
-  return [
-    {
-      tone: "steady",
-        title: "첫 세 보상 안에 하나만 고르기",
-      detail: "전하, 표식, 바이러스, 반격 중 하나만 먼저 잡습니다."
-    },
-    {
-      tone: "warning",
-      title: "안 맞는 카드는 넘기기",
-      detail: "지금 방향과 다른 카드는 좋아 보여도 스킵합니다."
-    },
-    {
-      tone: "strong",
-      title: "마무리 카드 확보",
-      detail: "2막 전에는 보스 체력을 끝낼 공격 수단을 정합니다."
-    }
-  ];
+  return summaryFailureAdvice(summary).steps;
 }
 
 function renderSummaryRoute(summary) {
@@ -8761,7 +8949,6 @@ function renderSummaryPlan(summary) {
 }
 
 function summaryPlanItems(summary) {
-  const reason = summary.reason ?? "";
   const tags = summary.build ?? [];
   const items = [];
   if (summary.won) {
@@ -8771,27 +8958,8 @@ function summaryPlanItems(summary) {
       title: "핵심 카드를 더 일찍 정하기",
       detail: `${summaryPrimaryBuildText(summary, "핵심 방향")} 카드가 보이면 첫 세 번의 보상 안에 같은 계열 2장을 모아 보세요.`
     });
-  } else if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(reason)) {
-    items.push({
-      tone: "warning",
-      label: "초반 선택",
-      title: "정화와 약화를 먼저 확보",
-      detail: "첫 상점이나 보상에서 정화, 약화, 빠른 처치 중 하나를 우선하세요. 감염이 쌓이기 전에 전투를 짧게 끝내는 것이 핵심입니다."
-    });
-  } else if (/공격|체력이 0/.test(reason)) {
-    items.push({
-      tone: "danger",
-      label: "초반 선택",
-      title: "큰 공격 턴을 넘길 방어 확보",
-      detail: "1막에서 방어 카드 2장, 약화 카드 1장, 첫 턴 생존 유물 중 최소 하나를 챙기면 엘리트와 보스가 훨씬 안정됩니다."
-    });
   } else {
-    items.push({
-      tone: "steady",
-      label: "초반 선택",
-      title: "첫 세 보상 안에 주력 정하기",
-      detail: "전하, 표식, 바이러스, 반격 중 하나를 고르고 맞지 않는 보상은 넘겨 핵심 카드를 더 자주 보세요."
-    });
+    items.push(summaryFailureAdvice(summary).plan);
   }
 
   if ((summary.deckSize ?? 0) >= 24) {
@@ -8850,7 +9018,6 @@ function summaryPlanItems(summary) {
 }
 
 function summaryThreatRead(summary) {
-  const reason = summary.reason ?? "";
   if (summary.won) {
     return {
       label: "완주 진단",
@@ -8858,32 +9025,7 @@ function summaryThreatRead(summary) {
       detail: `보스 ${summary.bossesDefeated ?? 0}명을 넘겼습니다. 같은 방향으로 난이도를 올리거나, 덱을 ${summary.deckSize}장보다 조금 줄여 핵심 카드를 더 자주 뽑아 보세요.`
     };
   }
-  if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(reason)) {
-    return {
-      label: "위험 신호",
-      title: "해로운 상태가 덱을 갉아먹음",
-      detail: "정화, 약화, 빠른 처치 카드의 우선순위를 올리면 바이러스와 저주의 누적 피해를 끊을 수 있습니다."
-    };
-  }
-  if (/공격|체력이 0/.test(reason)) {
-    return {
-      label: "위험 신호",
-      title: "예고 피해를 넘기지 못함",
-      detail: "다음 런에서는 방어 카드 2장 이상, 약화 부여, 첫 턴 생존 유물을 더 높게 평가해 큰 공격 턴을 통과하세요."
-    };
-  }
-  if ((summary.floors ?? 0) <= 7) {
-    return {
-      label: "위험 신호",
-      title: "초반 성장 전에 보스에게 밀림",
-      detail: "1막에서는 엘리트보다 안정 전투와 휴식 가치를 높이고, 공격 2장과 방어 1장을 먼저 보강하는 편이 안전합니다."
-    };
-  }
-  return {
-    label: "위험 신호",
-    title: "중반 전환점에서 신호 손실",
-    detail: "주력을 하나로 좁히고, 지금 덱과 맞지 않는 보상은 과감히 넘겨 핵심 카드를 더 자주 보세요."
-  };
+  return summaryFailureAdvice(summary).threat;
 }
 
 function summaryDeckRead(summary) {
