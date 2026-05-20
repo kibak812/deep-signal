@@ -8041,7 +8041,7 @@ function renderSummary(run) {
     <section class="summary-layout">
       <div class="summary-panel ${summary.won ? "won" : "lost"}">
         ${summaryOpening}
-        ${renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty)}
+        ${renderSummaryActions(summary, replaySeed, replayDifficulty, nextDifficulty, verdict)}
         <div class="summary-command-panel" aria-label="다음 런 바로가기">
           ${renderSummaryReplayPrompt(summary, replaySeed, nextDifficulty)}
           ${renderSummaryNextRail(summary)}
@@ -8087,13 +8087,18 @@ function renderSummary(run) {
 
 function renderSummaryIntro(summary, run) {
   return `
-    <div class="summary-intro">
-      <div>
+    <section class="summary-intro ${summary.won ? "won" : "lost"}" aria-label="런 종료 장면">
+      <div class="summary-intro-copy">
         <h2>${summary.won ? "심해 코어 회수" : "신호가 끊겼습니다"}</h2>
         <p>${summary.reason}</p>
+        ${renderSummaryMeta(summary, run)}
       </div>
-      ${renderSummaryMeta(summary, run)}
-    </div>
+      <div class="summary-intro-stage" aria-hidden="true">
+        <span class="summary-failure-diver"></span>
+        <span class="summary-failure-signal"></span>
+        <span class="summary-failure-floor"></span>
+      </div>
+    </section>
   `;
 }
 
@@ -8139,14 +8144,48 @@ function renderSummaryFinale(summary, defeatedBosses, replaySeed, nextDifficulty
   `;
 }
 
-function renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty = null) {
+function renderSummaryActions(summary, replaySeed, replayDifficulty, nextDifficulty = null, verdict = summaryVerdict(summary, replaySeed, nextDifficulty)) {
+  const primary =
+    !summary.won && replaySeed
+      ? {
+          action: "replay-seed",
+          attrs: `data-id="${replaySeed}" data-difficulty="${replayDifficulty}"`,
+          eyebrow: "추천",
+          label: "같은 시드 재도전",
+          detail: verdict.action
+        }
+      : summary.won && nextDifficulty
+        ? {
+            action: "start-next-difficulty",
+            attrs: `data-difficulty="${nextDifficulty.id}"`,
+            eyebrow: "다음 도전",
+            label: nextDifficulty.name,
+            detail: "같은 빌드가 더 깊은 층에서도 통하는지 확인"
+          }
+        : {
+            action: "new-run",
+            attrs: "",
+            eyebrow: summary.won ? "기록 갱신" : "새 시작",
+            label: summary.won ? "새 런으로 기록 갱신" : "다른 런 시작",
+            detail: verdict.action
+          };
+  const secondaryButtons = [
+    primary.action !== "new-run" ? `<button data-action="new-run">다른 런 시작</button>` : "",
+    summary.won && nextDifficulty && primary.action !== "start-next-difficulty" ? `<button data-action="start-next-difficulty" data-difficulty="${nextDifficulty.id}">${nextDifficulty.name} 도전</button>` : "",
+    replaySeed && primary.action !== "replay-seed" ? `<button data-action="replay-seed" data-id="${replaySeed}" data-difficulty="${replayDifficulty}">같은 시드 재도전</button>` : "",
+    `<button data-action="screen" data-id="records">기록 보기</button>`,
+    `<button data-action="back-title">시작 화면</button>`
+  ].filter(Boolean);
   return `
-    <div class="summary-actions" aria-label="런 종료 후 바로 할 수 있는 행동">
-      <button class="primary" data-action="new-run">다른 런 시작</button>
-      ${nextDifficulty ? `<button class="primary ghost" data-action="start-next-difficulty" data-difficulty="${nextDifficulty.id}">${nextDifficulty.name} 도전</button>` : ""}
-      ${replaySeed ? `<button data-action="replay-seed" data-id="${replaySeed}" data-difficulty="${replayDifficulty}">같은 시드 재도전</button>` : ""}
-      <button data-action="screen" data-id="records">기록 보기</button>
-      <button data-action="back-title">시작 화면</button>
+    <div class="summary-actions ${summary.won ? "won" : "lost"}" aria-label="런 종료 후 바로 할 수 있는 행동">
+      <button class="primary summary-action-main" data-action="${primary.action}" ${primary.attrs}>
+        <span>${primary.eyebrow}</span>
+        <strong>${primary.label}</strong>
+        <small>${primary.detail}</small>
+      </button>
+      <div class="summary-action-secondary">
+        ${secondaryButtons.join("")}
+      </div>
     </div>
   `;
 }

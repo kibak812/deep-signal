@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-20T16:54:00.077Z",
+  "generatedAt": "2026-05-20T17:13:16.952Z",
   "summary": {
     "passed": 21,
     "failed": 0,
@@ -499,11 +499,11 @@
           "mobile",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-20T16:50:43.188Z",
+        "sourceFreshAfter": "2026-05-20T17:10:15.580Z",
         "files": [
           {
             "file": "browser-qa-about-refreshed.png",
-            "mtime": "2026-05-20T16:52:08.555Z",
+            "mtime": "2026-05-20T17:11:23.199Z",
             "fresh": true
           },
           {
@@ -513,12 +513,12 @@
           },
           {
             "file": "browser-qa-act-interlude-one-shot.png",
-            "mtime": "2026-05-20T16:52:14.023Z",
+            "mtime": "2026-05-20T17:11:28.766Z",
             "fresh": true
           },
           {
             "file": "browser-qa-act-interlude-refreshed.png",
-            "mtime": "2026-05-20T16:52:11.677Z",
+            "mtime": "2026-05-20T17:11:26.437Z",
             "fresh": true
           },
           {
@@ -533,7 +533,7 @@
           },
           {
             "file": "browser-qa-boss-status-strip.png",
-            "mtime": "2026-05-20T16:53:33.629Z",
+            "mtime": "2026-05-20T17:12:48.306Z",
             "fresh": true
           },
           {
@@ -588,7 +588,7 @@
           },
           {
             "file": "browser-qa-codex-refreshed.png",
-            "mtime": "2026-05-20T16:52:10.031Z",
+            "mtime": "2026-05-20T17:11:24.758Z",
             "fresh": true
           },
           {
@@ -693,7 +693,7 @@
           },
           {
             "file": "browser-qa-combat-card-hover.png",
-            "mtime": "2026-05-20T16:52:31.742Z",
+            "mtime": "2026-05-20T17:11:46.412Z",
             "fresh": true
           },
           {
@@ -703,7 +703,7 @@
           },
           {
             "file": "browser-qa-combat-energy-locked.png",
-            "mtime": "2026-05-20T16:52:34.453Z",
+            "mtime": "2026-05-20T17:11:49.041Z",
             "fresh": true
           },
           {
@@ -778,7 +778,7 @@
           },
           {
             "file": "browser-qa-combat-refreshed.png",
-            "mtime": "2026-05-20T16:52:30.451Z",
+            "mtime": "2026-05-20T17:11:45.132Z",
             "fresh": true
           },
           {
@@ -823,7 +823,7 @@
           },
           {
             "file": "browser-qa-combat-status-tooltip.png",
-            "mtime": "2026-05-20T16:53:35.360Z",
+            "mtime": "2026-05-20T17:12:50.052Z",
             "fresh": true
           },
           {
@@ -893,7 +893,7 @@
           },
           {
             "file": "browser-qa-enemy-grouped-fx.png",
-            "mtime": "2026-05-20T16:53:37.861Z",
+            "mtime": "2026-05-20T17:12:52.559Z",
             "fresh": true
           },
           {
@@ -938,7 +938,7 @@
           },
           {
             "file": "browser-qa-event-refreshed.png",
-            "mtime": "2026-05-20T16:52:16.856Z",
+            "mtime": "2026-05-20T17:11:31.518Z",
             "fresh": true
           },
           {
@@ -1008,7 +1008,7 @@
           },
           {
             "file": "browser-qa-map-refreshed.png",
-            "mtime": "2026-05-20T16:52:27.890Z",
+            "mtime": "2026-05-20T17:11:42.485Z",
             "fresh": true
           },
           {
@@ -1038,7 +1038,7 @@
           },
           {
             "file": "browser-qa-map-route-preview.png",
-            "mtime": "2026-05-20T16:52:28.623Z",
+            "mtime": "2026-05-20T17:11:43.234Z",
             "fresh": true
           },
           {
@@ -1133,7 +1133,7 @@
           },
           {
             "file": "browser-qa-mobile-refreshed.png",
-            "mtime": "2026-05-20T16:53:38.427Z",
+            "mtime": "2026-05-20T17:12:53.138Z",
             "fresh": true
           },
           {
@@ -1193,7 +1193,7 @@
           },
           {
             "file": "browser-qa-records-refreshed.png",
-            "mtime": "2026-05-20T16:52:10.775Z",
+            "mtime": "2026-05-20T17:11:25.503Z",
             "fresh": true
           },
           {
@@ -1218,7 +1218,7 @@
           },
           {
             "file": "browser-qa-rest-refreshed.png",
-            "mtime": "2026-05-20T16:52:21.904Z",
+            "mtime": "2026-05-20T17:11:36.528Z",
             "fresh": true
           },
           {
@@ -1273,7 +1273,7 @@
           },
           {
             "file": "browser-qa-reward-card-selected.png",
-            "mtime": "2026-05-20T16:52:25.206Z",
+            "mtime": "2026-05-20T17:11:39.853Z",
             "fresh": true
           },
           {
@@ -1323,7 +1323,7 @@
           },
           {
             "file": "browser-qa-reward-relics-refreshed.png",
-            "mtime": "2026-05-20T16:52:24.390Z",
+            "mtime": "2026-05-20T17:11:39.037Z",
             "fresh": true
           },
           {
@@ -1423,7 +1423,7 @@
           },
           {
             "file": "browser-qa-settings-refreshed.png",
-            "mtime": "2026-05-20T16:52:09.306Z",
+            "mtime": "2026-05-20T17:11:23.935Z",
             "fresh": true
           },
           {
@@ -1493,7 +1493,7 @@
           },
           {
             "file": "browser-qa-shop-refreshed.png",
-            "mtime": "2026-05-20T16:52:19.600Z",
+            "mtime": "2026-05-20T17:11:34.269Z",
             "fresh": true
           },
           {
@@ -1533,7 +1533,7 @@
           },
           {
             "file": "browser-qa-summary-lost-refreshed.png",
-            "mtime": "2026-05-20T16:52:26.050Z",
+            "mtime": "2026-05-20T17:11:40.610Z",
             "fresh": true
           },
           {
@@ -1543,7 +1543,7 @@
           },
           {
             "file": "browser-qa-summary-won-refreshed.png",
-            "mtime": "2026-05-20T16:52:26.973Z",
+            "mtime": "2026-05-20T17:11:41.566Z",
             "fresh": true
           },
           {
@@ -1618,7 +1618,7 @@
           },
           {
             "file": "browser-qa-title-refreshed.png",
-            "mtime": "2026-05-20T16:52:07.726Z",
+            "mtime": "2026-05-20T17:11:22.370Z",
             "fresh": true
           },
           {

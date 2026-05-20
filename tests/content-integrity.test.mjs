@@ -1385,8 +1385,12 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /class="summary-finale-core"/);
   assert.match(mainSource, /function renderSummarySnapshot\(summary, defeatedBosses\)/);
   assert.match(mainSource, /function renderSummaryVerdict\(summary, replaySeed, nextDifficulty = null, verdict = summaryVerdict\(summary, replaySeed, nextDifficulty\)\)/);
-  assert.match(mainSource, /function renderSummaryActions\(replaySeed, replayDifficulty, nextDifficulty = null\)/);
+  assert.match(mainSource, /function renderSummaryActions\(summary, replaySeed, replayDifficulty, nextDifficulty = null, verdict = summaryVerdict\(summary, replaySeed, nextDifficulty\)\)/);
   assert.match(mainSource, /aria-label="런 종료 후 바로 할 수 있는 행동"/);
+  assert.match(mainSource, /summary-action-main/);
+  assert.match(mainSource, /class="summary-intro \$\{summary\.won \? "won" : "lost"\}"/);
+  assert.match(mainSource, /class="summary-intro-stage"/);
+  assert.match(mainSource, /class="summary-failure-diver"/);
   assert.match(mainSource, /function summaryVerdict\(summary, replaySeed, nextDifficulty = null\)/);
   assert.match(mainSource, /function renderSummaryPathStrip\(summary\)/);
   assert.match(mainSource, /function renderSummaryPathAct\(act\)/);
@@ -1463,8 +1467,8 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /data-action="start-next-difficulty"/);
   assert.match(mainSource, /다음 런 작전/);
   assert.match(mainSource, /먼저 보강할 것|초반 선택/);
-  assert.ok(mainSource.indexOf("renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty)") < mainSource.indexOf("renderSummaryPathStrip(summary)"));
-  assert.ok(mainSource.indexOf("renderSummaryActions(replaySeed, replayDifficulty, nextDifficulty)") < mainSource.indexOf("renderSummaryReplayPrompt(summary, replaySeed, nextDifficulty)"));
+  assert.ok(mainSource.indexOf("renderSummaryActions(summary, replaySeed, replayDifficulty, nextDifficulty, verdict)") < mainSource.indexOf("renderSummaryPathStrip(summary)"));
+  assert.ok(mainSource.indexOf("renderSummaryActions(summary, replaySeed, replayDifficulty, nextDifficulty, verdict)") < mainSource.indexOf("renderSummaryReplayPrompt(summary, replaySeed, nextDifficulty)"));
   assert.match(styleSource, /\.summary-collections/);
   assert.match(styleSource, /\.summary-finale/);
   assert.match(styleSource, /url\("\.\.\/public\/assets\/combatants\/player-echo-diver\.png"\)/);
@@ -1517,6 +1521,9 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(styleSource, /\.summary-plan/);
   assert.match(styleSource, /\.summary-actions[\s\S]*border:\s*1px solid rgba\(125, 211, 252, 0\.22\)/);
   assert.match(styleSource, /\.summary-actions \.primary[\s\S]*min-width:\s*156px/);
+  assert.match(styleSource, /\.summary-intro-stage/);
+  assert.match(styleSource, /url\("\.\.\/public\/assets\/combatants\/player-echo-diver\.png"\)/);
+  assert.match(styleSource, /\.summary-action-main small[\s\S]*text-overflow:\s*ellipsis/);
   assert.match(styleSource, /\.primary\.ghost/);
   assert.match(captureSource, /summary-finale-stage/);
   assert.match(captureSource, /player-echo-diver/);
