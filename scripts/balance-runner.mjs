@@ -151,12 +151,23 @@ function chooseMapNode(run) {
 function nodeScore(run, node, hpRatio) {
   const deckScore = deckStrength(run);
   const difficulty = Number(run.difficulty ?? 0);
+  const bossPrep = bossPrepContext(run);
+  const prices = shopServicePrices(run);
   const firstElite = node.type === "elite" && node.act === 1 && run.stats.elitesKilled === 0;
   const actOneElite = node.type === "elite" && node.act === 1;
   const requiredHp = firstElite ? 0.78 + Math.min(0.12, difficulty * 0.03) : actOneElite ? 0.72 : 0.62;
   const requiredDeck = firstElite ? 22 + difficulty * 3 : actOneElite ? 24 : 20;
   const earlyElitePenalty = actOneElite
     ? (hpRatio < requiredHp ? -28 - difficulty * 3 : 0) + (deckScore < requiredDeck ? -18 - difficulty * 2 : 0)
+    : 0;
+  const bossPrepScore = bossPrep && node.act === bossPrep.act
+    ? {
+        rest: bossPrep.needsHp ? 32 : bossPrep.needsRole ? 18 : bossPrep.needsDeckSpeed ? 14 : 0,
+        shop: bossPrep.needsHp && run.player.gold >= prices.heal ? 22 : bossPrep.needsDeckSpeed && run.player.gold >= prices.remove ? 18 : bossPrep.needsRole && run.player.gold >= prices.upgrade ? 14 : 0,
+        elite: bossPrep.missing.length >= 2 ? -16 : 0,
+        event: bossPrep.needsHp ? -8 : 0,
+        combat: bossPrep.needsHp ? -6 : 0
+      }[node.type] ?? 0
     : 0;
   const base = {
     boss: 100,
@@ -166,7 +177,7 @@ function nodeScore(run, node, hpRatio) {
     event: hpRatio > 0.5 ? 22 : 12,
     combat: 18
   }[node.type] ?? 0;
-  return base + earlyElitePenalty + node.act * 1.5 + (node.type === "elite" ? run.player.relics.length : 0);
+  return base + bossPrepScore + earlyElitePenalty + node.act * 1.5 + (node.type === "elite" ? run.player.relics.length : 0);
 }
 
 function pilotCombat(run) {
@@ -315,7 +326,10 @@ function chooseReward(run) {
   const scored = run.reward.cards.map((cardId) => ({ cardId, score: rewardCardScore(run, cardId) })).sort((left, right) => right.score - left.score);
   const best = scored[0];
   const deckSize = run.player.deck.length;
-  const threshold = deckSize < 16 ? 0 : deckSize < 24 ? 5 : 9;
+  const bossPrep = bossPrepContext(run);
+  const threshold = bossPrep?.missing.length
+    ? deckSize < 24 ? 3 : 7
+    : deckSize < 16 ? 0 : deckSize < 24 ? 5 : 9;
   if (best && best.score >= threshold) chooseRewardCard(run, best.cardId);
   else skipReward(run);
   if (run.phase === "reward" && run.reward?.relicChoices?.length && !run.reward.selectedRelicId) {
@@ -376,15 +390,15 @@ function rewardCardScore(run, cardId) {
 }
 
 function bossPreparationBonus(run, card) {
-  const context = bossContext(run);
+  const context = bossPrepContext(run) ?? bossContext(run);
   if (!context || context.act < 2 || context.distance > 3) return 0;
   const deckCards = run.player.deck.map((cardInstance) => getCard(cardInstance));
-  const finalActBonus = context.act >= 3 ? 1.2 : 1;
+  const finalActBonus = context.act >= 3 ? 1.55 : 1;
   let bonus = 0;
-  if (deckCards.filter(cardSupportsStatusControl).length < 2 && cardSupportsStatusControl(card)) bonus += 4.2 * finalActBonus;
-  if (deckCards.filter(cardSupportsDefense).length < 6 && cardSupportsDefense(card)) bonus += 3.8 * finalActBonus;
-  if (deckCards.filter(cardSupportsFinish).length < 7 && cardSupportsFinish(card)) bonus += 3.2 * finalActBonus;
-  if (deckCards.filter(cardSupportsFlow).length < 4 && cardSupportsFlow(card)) bonus += 2.2;
+  if ((context.needsStatusControl ?? deckCards.filter(cardSupportsStatusControl).length < 2) && cardSupportsStatusControl(card)) bonus += 4.8 * finalActBonus;
+  if ((context.needsDefense ?? deckCards.filter(cardSupportsDefense).length < 6) && cardSupportsDefense(card)) bonus += 4.3 * finalActBonus;
+  if ((context.needsFinish ?? deckCards.filter(cardSupportsFinish).length < 7) && cardSupportsFinish(card)) bonus += 3.7 * finalActBonus;
+  if ((context.needsDeckSpeed ?? deckCards.filter(cardSupportsFlow).length < 4) && cardSupportsFlow(card)) bonus += 2.8;
   return bonus;
 }
 
@@ -394,6 +408,55 @@ function bossContext(run) {
   const act = currentNode?.act ?? Math.floor(row / 7) + 1;
   const bossRow = act * 7 - 1;
   return { act, distance: Math.max(0, bossRow - row) };
+}
+
+function bossPrepContext(run) {
+  const context = bossContext(run);
+  if (!context || context.act < 2 || context.distance > 3) return null;
+  const cards = run.player.deck.map((cardInstance) => getCard(cardInstance));
+  const finalAct = context.act >= 3;
+  const close = context.distance <= 1;
+  const hpRatio = run.player.hp / Math.max(1, run.player.maxHp);
+  const defense = cards.filter(cardSupportsDefense).length;
+  const finish = cards.filter(cardSupportsFinish).length;
+  const statusControl = cards.filter(cardSupportsStatusControl).length;
+  const flow = cards.filter(cardSupportsFlow).length;
+  const deckSize = cards.length;
+  const hpTarget = finalAct ? (close ? 0.78 : 0.68) : close ? 0.68 : 0.58;
+  const defenseTarget = finalAct ? 7 : 5;
+  const finishTarget = finalAct ? 8 : 6;
+  const statusTarget = finalAct ? 3 : 2;
+  const flowTarget = deckSize >= 25 || finalAct ? 4 : 3;
+  const needsHp = hpRatio < hpTarget;
+  const needsDefense = defense < defenseTarget;
+  const needsFinish = finish < finishTarget;
+  const needsStatusControl = statusControl < statusTarget;
+  const needsDeckSpeed = deckSize >= 25 || flow < flowTarget;
+  const missing = [
+    needsHp ? "체력" : "",
+    needsDefense ? "방어" : "",
+    needsFinish ? "마무리" : "",
+    needsStatusControl ? "정화·약화" : "",
+    needsDeckSpeed ? "카드 뽑기" : ""
+  ].filter(Boolean);
+  return {
+    ...context,
+    finalAct,
+    close,
+    hpRatio,
+    deckSize,
+    defense,
+    finish,
+    statusControl,
+    flow,
+    needsHp,
+    needsDefense,
+    needsFinish,
+    needsStatusControl,
+    needsDeckSpeed,
+    needsRole: needsDefense || needsFinish || needsStatusControl,
+    missing
+  };
 }
 
 function cardSupportsDefense(card) {
@@ -486,6 +549,21 @@ function eventEffectScore(run, effect) {
 
 function pilotShop(run) {
   const prices = shopServicePrices(run);
+  const bossPrep = bossPrepContext(run);
+  if (bossPrep?.missing.length && bossPrep.distance <= 2) {
+    if (bossPrep.needsHp && run.player.gold >= prices.heal && run.player.hp < run.player.maxHp) {
+      buyShopHeal(run);
+      return;
+    }
+    if (bossPrep.needsDeckSpeed && run.player.gold >= prices.remove && removableCard(run)) {
+      requestShopRemove(run);
+      return;
+    }
+    if (bossPrep.needsRole && run.player.gold >= prices.upgrade && hasUpgradeableCards(run)) {
+      requestShopUpgrade(run);
+      return;
+    }
+  }
   if (run.player.hp / run.player.maxHp < 0.64 && run.player.gold >= prices.heal && run.player.hp < run.player.maxHp) {
     buyShopHeal(run);
     return;
@@ -526,6 +604,21 @@ function shopRelicScore(relicId) {
 
 function pilotRest(run) {
   const hpRatio = run.player.hp / run.player.maxHp;
+  const bossPrep = bossPrepContext(run);
+  if (bossPrep?.missing.length && bossPrep.distance <= 1) {
+    if (bossPrep.needsHp && run.player.hp < run.player.maxHp) {
+      chooseRest(run, "heal");
+      return;
+    }
+    if (bossPrep.needsRole && hasUpgradeableCards(run)) {
+      chooseRest(run, "upgrade");
+      return;
+    }
+    if (bossPrep.needsDeckSpeed && hpRatio > 0.62 && removableCard(run)) {
+      chooseRest(run, "remove");
+      return;
+    }
+  }
   if (hpRatio < 0.68) {
     chooseRest(run, "heal");
     return;

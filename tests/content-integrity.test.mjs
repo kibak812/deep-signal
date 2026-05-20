@@ -396,6 +396,22 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /Victory coda duplicated before reward/);
 });
 
+test("balance pilot prepares intentionally before late bosses", () => {
+  const balanceSource = readFileSync(new URL("../scripts/balance-runner.mjs", import.meta.url), "utf8");
+  assert.match(balanceSource, /function bossPrepContext\(run\)/);
+  assert.match(balanceSource, /const hpTarget = finalAct \? \(close \? 0\.78 : 0\.68\) : close \? 0\.68 : 0\.58/);
+  assert.match(balanceSource, /needsDefense/);
+  assert.match(balanceSource, /needsFinish/);
+  assert.match(balanceSource, /needsStatusControl/);
+  assert.match(balanceSource, /needsDeckSpeed/);
+  assert.match(balanceSource, /bossPrepScore/);
+  assert.match(balanceSource, /bossPrep\.needsHp && run\.player\.gold >= prices\.heal/);
+  assert.match(balanceSource, /bossPrep\.needsDeckSpeed && run\.player\.gold >= prices\.remove/);
+  assert.match(balanceSource, /bossPrep\.needsRole && run\.player\.gold >= prices\.upgrade/);
+  assert.match(balanceSource, /bossPrep\?\.missing\.length[\s\S]*deckSize < 24 \? 3 : 7/);
+  assert.match(balanceSource, /context\.act >= 3 \? 1\.55 : 1/);
+});
+
 test("all card data references implemented effects, statuses, and generated cards", () => {
   for (const card of CARDS) {
     assert.ok(card.name && card.text, `${card.id} needs name and text`);

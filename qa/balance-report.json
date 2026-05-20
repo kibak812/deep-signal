@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-18T14:01:47.555Z",
+  "generatedAt": "2026-05-20T18:34:31.365Z",
   "runs": [
     {
       "seed": "balance-01-d0",
@@ -50,7 +50,7 @@
       ],
       "steps": 139,
       "problems": [],
-      "durationMs": 12
+      "durationMs": 14
     },
     {
       "seed": "balance-02-d0",
@@ -61,15 +61,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 42,
+      "hp": 36,
       "maxHp": 92,
       "deckSize": 27,
       "relics": 10,
-      "gold": 543,
+      "gold": 540,
       "fights": 15,
       "elites": 2,
-      "damageDealt": 1186,
-      "damageTaken": 152,
+      "damageDealt": 1203,
+      "damageTaken": 158,
       "build": [
         "mark",
         "ward",
@@ -112,15 +112,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 32,
+      "hp": 48,
       "maxHp": 98,
-      "deckSize": 22,
-      "relics": 12,
-      "gold": 188,
+      "deckSize": 23,
+      "relics": 11,
+      "gold": 106,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1168,
-      "damageTaken": 165,
+      "damageDealt": 1153,
+      "damageTaken": 149,
       "build": [
         "mark",
         "ward",
@@ -150,9 +150,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 107,
+      "steps": 110,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d0",
@@ -163,14 +163,14 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 54,
+      "hp": 84,
       "maxHp": 97,
       "deckSize": 25,
       "relics": 11,
-      "gold": 306,
+      "gold": 309,
       "fights": 14,
       "elites": 1,
-      "damageDealt": 1094,
+      "damageDealt": 1113,
       "damageTaken": 109,
       "build": [
         "ward",
@@ -201,7 +201,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 112,
+      "steps": 111,
       "problems": [],
       "durationMs": 3
     },
@@ -214,20 +214,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 8,
+      "hp": 22,
       "maxHp": 92,
-      "deckSize": 24,
-      "relics": 10,
-      "gold": 99,
+      "deckSize": 22,
+      "relics": 8,
+      "gold": 112,
       "fights": 10,
       "elites": 1,
-      "damageDealt": 1074,
-      "damageTaken": 237,
+      "damageDealt": 1072,
+      "damageTaken": 225,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "virus"
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -252,9 +252,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 122,
+      "steps": 126,
       "problems": [],
-      "durationMs": 8
+      "durationMs": 3
     },
     {
       "seed": "balance-06-d0",
@@ -265,20 +265,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 64,
-      "maxHp": 78,
-      "deckSize": 30,
+      "hp": 35,
+      "maxHp": 80,
+      "deckSize": 29,
       "relics": 13,
       "gold": 185,
       "fights": 13,
       "elites": 3,
       "damageDealt": 1194,
-      "damageTaken": 107,
+      "damageTaken": 136,
       "build": [
         "ward",
         "mark",
-        "cycle",
-        "charge"
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -356,7 +356,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 6
     },
     {
       "seed": "balance-08-d0",
@@ -407,7 +407,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d0",
@@ -418,15 +418,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 47,
+      "hp": 28,
       "maxHp": 92,
-      "deckSize": 26,
-      "relics": 12,
-      "gold": 310,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1173,
-      "damageTaken": 158,
+      "deckSize": 24,
+      "relics": 7,
+      "gold": 69,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1186,
+      "damageTaken": 171,
       "build": [
         "ward",
         "mark",
@@ -452,11 +452,11 @@
         "16:combat",
         "17:combat",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 122,
+      "steps": 129,
       "problems": [],
       "durationMs": 3
     },
@@ -469,19 +469,19 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 63,
+      "hp": 50,
       "maxHp": 98,
-      "deckSize": 28,
+      "deckSize": 26,
       "relics": 13,
-      "gold": 123,
+      "gold": 71,
       "fights": 14,
       "elites": 2,
-      "damageDealt": 1209,
-      "damageTaken": 169,
+      "damageDealt": 1195,
+      "damageTaken": 182,
       "build": [
         "ward",
-        "mark",
         "virus",
+        "mark",
         "charge"
       ],
       "route": [
@@ -507,7 +507,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 121,
+      "steps": 124,
       "problems": [],
       "durationMs": 3
     },
@@ -520,20 +520,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 53,
-      "maxHp": 92,
-      "deckSize": 21,
-      "relics": 13,
-      "gold": 233,
+      "hp": 69,
+      "maxHp": 104,
+      "deckSize": 20,
+      "relics": 11,
+      "gold": 121,
       "fights": 10,
       "elites": 1,
-      "damageDealt": 928,
-      "damageTaken": 122,
+      "damageDealt": 898,
+      "damageTaken": 111,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "charge"
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -558,9 +558,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 83,
+      "steps": 86,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d0",
@@ -571,20 +571,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 11,
+      "hp": 64,
       "maxHp": 92,
-      "deckSize": 24,
-      "relics": 11,
-      "gold": 336,
-      "fights": 14,
-      "elites": 1,
-      "damageDealt": 1328,
-      "damageTaken": 119,
+      "deckSize": 23,
+      "relics": 10,
+      "gold": 111,
+      "fights": 13,
+      "elites": 0,
+      "damageDealt": 1231,
+      "damageTaken": 66,
       "build": [
         "ward",
         "mark",
         "charge",
-        "virus"
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -605,13 +605,13 @@
         "16:combat",
         "17:combat",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-13-d0",
@@ -622,15 +622,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 55,
+      "hp": 7,
       "maxHp": 92,
-      "deckSize": 27,
-      "relics": 12,
-      "gold": 149,
-      "fights": 15,
-      "elites": 3,
-      "damageDealt": 1473,
-      "damageTaken": 165,
+      "deckSize": 26,
+      "relics": 9,
+      "gold": 121,
+      "fights": 14,
+      "elites": 2,
+      "damageDealt": 1283,
+      "damageTaken": 208,
       "build": [
         "ward",
         "mark",
@@ -649,7 +649,7 @@
         "9:event",
         "10:combat",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -660,9 +660,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 134,
+      "steps": 135,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-14-d0",
@@ -673,20 +673,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 6,
-      "maxHp": 96,
-      "deckSize": 28,
+      "hp": 26,
+      "maxHp": 105,
+      "deckSize": 25,
       "relics": 12,
-      "gold": 184,
+      "gold": 171,
       "fights": 14,
       "elites": 2,
-      "damageDealt": 1161,
-      "damageTaken": 249,
+      "damageDealt": 1128,
+      "damageTaken": 210,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "cycle",
-        "virus"
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -711,9 +711,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 118,
+      "steps": 117,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d0",
@@ -759,18 +759,18 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 7,
+      "hp": 41,
       "maxHp": 97,
       "deckSize": 25,
-      "relics": 12,
-      "gold": 84,
+      "relics": 11,
+      "gold": 79,
       "fights": 14,
       "elites": 1,
-      "damageDealt": 1255,
-      "damageTaken": 235,
+      "damageDealt": 1252,
+      "damageTaken": 201,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "charge",
         "cycle"
       ],
@@ -797,33 +797,33 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 122,
+      "steps": 123,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-17-d0",
       "difficulty": 0,
       "difficultyName": "표층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 69,
-      "maxHp": 93,
-      "deckSize": 24,
-      "relics": 12,
-      "gold": 95,
-      "fights": 11,
+      "bossesDefeated": 2,
+      "hp": 0,
+      "maxHp": 92,
+      "deckSize": 23,
+      "relics": 10,
+      "gold": 151,
+      "fights": 12,
       "elites": 1,
-      "damageDealt": 983,
-      "damageTaken": 153,
+      "damageDealt": 992,
+      "damageTaken": 166,
       "build": [
         "ward",
         "mark",
-        "cycle",
-        "charge"
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -837,20 +837,20 @@
         "9:combat",
         "10:event",
         "11:event",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
         "16:event",
         "17:event",
-        "18:shop",
-        "19:shop",
+        "18:combat",
+        "19:elite",
         "20:rest",
         "21:boss"
       ],
-      "steps": 124,
+      "steps": 123,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-18-d0",
@@ -901,7 +901,7 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-01-d1",
@@ -912,19 +912,19 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 22,
+      "hp": 39,
       "maxHp": 105,
-      "deckSize": 23,
+      "deckSize": 21,
       "relics": 8,
-      "gold": 545,
-      "fights": 11,
-      "elites": 2,
-      "damageDealt": 1098,
-      "damageTaken": 169,
+      "gold": 186,
+      "fights": 10,
+      "elites": 1,
+      "damageDealt": 1007,
+      "damageTaken": 134,
       "build": [
         "mark",
         "ward",
-        "cycle",
+        "charge",
         "virus"
       ],
       "route": [
@@ -939,7 +939,7 @@
         "9:combat",
         "10:event",
         "11:event",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -950,9 +950,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 100,
+      "steps": 98,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d1",
@@ -1009,24 +1009,24 @@
       "seed": "balance-03-d1",
       "difficulty": 1,
       "difficultyName": "냉수층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 3,
+      "floors": 14,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 98,
-      "deckSize": 25,
-      "relics": 10,
-      "gold": 98,
-      "fights": 11,
-      "elites": 1,
-      "damageDealt": 1129,
-      "damageTaken": 257,
+      "maxHp": 92,
+      "deckSize": 16,
+      "relics": 5,
+      "gold": 17,
+      "fights": 7,
+      "elites": 0,
+      "damageDealt": 531,
+      "damageTaken": 128,
       "build": [
-        "cycle",
         "mark",
         "ward",
+        "cycle",
         "charge"
       ],
       "route": [
@@ -1041,18 +1041,11 @@
         "9:combat",
         "10:combat",
         "11:event",
-        "12:elite",
+        "12:shop",
         "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:event",
-        "17:event",
-        "18:combat",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "14:boss"
       ],
-      "steps": 117,
+      "steps": 81,
       "problems": [],
       "durationMs": 2
     },
@@ -1060,25 +1053,25 @@
       "seed": "balance-04-d1",
       "difficulty": 1,
       "difficultyName": "냉수층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 22,
       "maxHp": 92,
-      "deckSize": 23,
-      "relics": 9,
-      "gold": 15,
+      "deckSize": 24,
+      "relics": 8,
+      "gold": 83,
       "fights": 11,
       "elites": 1,
-      "damageDealt": 1044,
-      "damageTaken": 217,
+      "damageDealt": 1123,
+      "damageTaken": 213,
       "build": [
         "mark",
         "ward",
-        "charge",
-        "cycle"
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -1103,7 +1096,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 100,
+      "steps": 108,
       "problems": [],
       "durationMs": 2
     },
@@ -1213,25 +1206,25 @@
       "seed": "balance-07-d1",
       "difficulty": 1,
       "difficultyName": "냉수층",
-      "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 66,
       "maxHp": 103,
-      "deckSize": 25,
-      "relics": 6,
-      "gold": 25,
+      "deckSize": 23,
+      "relics": 9,
+      "gold": 77,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 966,
-      "damageTaken": 195,
+      "damageDealt": 1059,
+      "damageTaken": 105,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "virus"
+        "virus",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -1256,7 +1249,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 109,
+      "steps": 111,
       "problems": [],
       "durationMs": 3
     },
@@ -1272,12 +1265,12 @@
       "hp": 0,
       "maxHp": 92,
       "deckSize": 18,
-      "relics": 5,
-      "gold": 24,
+      "relics": 4,
+      "gold": 44,
       "fights": 8,
       "elites": 0,
       "damageDealt": 653,
-      "damageTaken": 165,
+      "damageTaken": 176,
       "build": [
         "mark",
         "ward",
@@ -1300,9 +1293,9 @@
         "13:rest",
         "14:boss"
       ],
-      "steps": 102,
+      "steps": 103,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 1
     },
     {
       "seed": "balance-09-d1",
@@ -1364,15 +1357,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 42,
+      "hp": 46,
       "maxHp": 102,
-      "deckSize": 23,
-      "relics": 13,
-      "gold": 62,
+      "deckSize": 24,
+      "relics": 10,
+      "gold": 96,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1228,
-      "damageTaken": 120,
+      "damageDealt": 1117,
+      "damageTaken": 146,
       "build": [
         "ward",
         "mark",
@@ -1402,9 +1395,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 110,
+      "steps": 111,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-11-d1",
@@ -1466,20 +1459,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 0,
+      "hp": 54,
       "maxHp": 103,
-      "deckSize": 30,
-      "relics": 9,
-      "gold": 144,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1235,
-      "damageTaken": 262,
+      "deckSize": 25,
+      "relics": 8,
+      "gold": 146,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1174,
+      "damageTaken": 156,
       "build": [
         "ward",
         "mark",
-        "cycle",
-        "charge"
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -1493,7 +1486,7 @@
         "9:event",
         "10:event",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -1504,9 +1497,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 117,
+      "steps": 116,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-13-d1",
@@ -1517,20 +1510,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 35,
-      "maxHp": 92,
-      "deckSize": 29,
-      "relics": 11,
-      "gold": 134,
+      "hp": 43,
+      "maxHp": 98,
+      "deckSize": 23,
+      "relics": 9,
+      "gold": 118,
       "fights": 13,
-      "elites": 2,
-      "damageDealt": 1293,
-      "damageTaken": 247,
+      "elites": 1,
+      "damageDealt": 1141,
+      "damageTaken": 197,
       "build": [
         "ward",
-        "mark",
         "charge",
-        "cycle"
+        "mark",
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -1544,20 +1537,20 @@
         "9:event",
         "10:combat",
         "11:rest",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
         "16:event",
-        "17:shop",
+        "17:combat",
         "18:combat",
         "19:event",
         "20:rest",
         "21:boss"
       ],
-      "steps": 131,
+      "steps": 128,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 2
     },
     {
       "seed": "balance-14-d1",
@@ -1568,15 +1561,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 11,
+      "hp": 24,
       "maxHp": 92,
-      "deckSize": 26,
-      "relics": 9,
-      "gold": 118,
+      "deckSize": 25,
+      "relics": 8,
+      "gold": 99,
       "fights": 11,
       "elites": 0,
-      "damageDealt": 1221,
-      "damageTaken": 176,
+      "damageDealt": 1218,
+      "damageTaken": 163,
       "build": [
         "ward",
         "mark",
@@ -1606,7 +1599,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 109,
+      "steps": 110,
       "problems": [],
       "durationMs": 3
     },
@@ -1615,19 +1608,19 @@
       "difficulty": 1,
       "difficultyName": "냉수층",
       "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "reason": "체력이 0이 되었습니다.",
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
       "maxHp": 96,
-      "deckSize": 24,
-      "relics": 6,
-      "gold": 242,
-      "fights": 11,
-      "elites": 1,
-      "damageDealt": 993,
-      "damageTaken": 222,
+      "deckSize": 23,
+      "relics": 5,
+      "gold": 14,
+      "fights": 10,
+      "elites": 0,
+      "damageDealt": 959,
+      "damageTaken": 213,
       "build": [
         "ward",
         "mark",
@@ -1653,11 +1646,11 @@
         "16:combat",
         "17:combat",
         "18:event",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 111,
+      "steps": 114,
       "problems": [],
       "durationMs": 2
     },
@@ -1671,19 +1664,19 @@
       "floors": 21,
       "bossesDefeated": 3,
       "hp": 37,
-      "maxHp": 92,
-      "deckSize": 26,
+      "maxHp": 96,
+      "deckSize": 24,
       "relics": 11,
-      "gold": 364,
+      "gold": 109,
       "fights": 13,
-      "elites": 3,
-      "damageDealt": 1357,
-      "damageTaken": 159,
+      "elites": 2,
+      "damageDealt": 1290,
+      "damageTaken": 155,
       "build": [
         "mark",
         "ward",
         "charge",
-        "cycle"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -1703,14 +1696,14 @@
         "15:combat",
         "16:event",
         "17:event",
-        "18:rest",
-        "19:elite",
+        "18:combat",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 113,
+      "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-17-d1",
@@ -1721,15 +1714,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 11,
+      "hp": 43,
       "maxHp": 92,
       "deckSize": 24,
       "relics": 11,
-      "gold": 161,
+      "gold": 195,
       "fights": 11,
       "elites": 1,
-      "damageDealt": 1120,
-      "damageTaken": 153,
+      "damageDealt": 1198,
+      "damageTaken": 143,
       "build": [
         "ward",
         "mark",
@@ -1759,7 +1752,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 104,
+      "steps": 106,
       "problems": [],
       "durationMs": 2
     },
@@ -1772,20 +1765,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 23,
+      "hp": 6,
       "maxHp": 100,
       "deckSize": 25,
       "relics": 9,
-      "gold": 204,
+      "gold": 99,
       "fights": 13,
       "elites": 0,
       "damageDealt": 1133,
-      "damageTaken": 166,
+      "damageTaken": 183,
       "build": [
         "mark",
         "ward",
         "charge",
-        "cycle"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -1818,23 +1811,23 @@
       "seed": "balance-01-d2",
       "difficulty": 2,
       "difficultyName": "무광층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
-      "maxHp": 92,
-      "deckSize": 24,
-      "relics": 10,
-      "gold": 74,
+      "bossesDefeated": 3,
+      "hp": 64,
+      "maxHp": 102,
+      "deckSize": 25,
+      "relics": 11,
+      "gold": 119,
       "fights": 12,
       "elites": 2,
-      "damageDealt": 1517,
-      "damageTaken": 217,
+      "damageDealt": 1398,
+      "damageTaken": 163,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "charge",
         "cycle"
       ],
@@ -1861,7 +1854,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 135,
+      "steps": 124,
       "problems": [],
       "durationMs": 2
     },
@@ -1903,7 +1896,7 @@
       ],
       "steps": 62,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-03-d2",
@@ -1965,20 +1958,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 41,
-      "maxHp": 86,
-      "deckSize": 24,
-      "relics": 9,
-      "gold": 97,
-      "fights": 11,
-      "elites": 1,
-      "damageDealt": 1085,
-      "damageTaken": 119,
+      "hp": 33,
+      "maxHp": 90,
+      "deckSize": 20,
+      "relics": 7,
+      "gold": 131,
+      "fights": 9,
+      "elites": 0,
+      "damageDealt": 1004,
+      "damageTaken": 131,
       "build": [
-        "mark",
         "ward",
-        "charge",
-        "cycle"
+        "mark",
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -1992,7 +1985,7 @@
         "9:event",
         "10:combat",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -2003,9 +1996,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 114,
+      "steps": 120,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-05-d2",
@@ -2056,7 +2049,7 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-06-d2",
@@ -2099,20 +2092,20 @@
       "seed": "balance-07-d2",
       "difficulty": 2,
       "difficultyName": "무광층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 30,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 100,
-      "deckSize": 26,
-      "relics": 9,
-      "gold": 97,
+      "deckSize": 24,
+      "relics": 7,
+      "gold": 32,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1136,
-      "damageTaken": 177,
+      "damageDealt": 1089,
+      "damageTaken": 194,
       "build": [
         "mark",
         "charge",
@@ -2155,20 +2148,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 41,
+      "hp": 50,
       "maxHp": 98,
-      "deckSize": 26,
-      "relics": 12,
-      "gold": 62,
+      "deckSize": 25,
+      "relics": 11,
+      "gold": 82,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1187,
-      "damageTaken": 155,
+      "damageDealt": 1183,
+      "damageTaken": 146,
       "build": [
         "mark",
         "ward",
         "charge",
-        "cycle"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -2193,9 +2186,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 110,
+      "steps": 113,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-09-d2",
@@ -2206,15 +2199,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 48,
+      "hp": 44,
       "maxHp": 104,
-      "deckSize": 28,
-      "relics": 11,
-      "gold": 145,
+      "deckSize": 24,
+      "relics": 10,
+      "gold": 106,
       "fights": 14,
       "elites": 1,
-      "damageDealt": 1276,
-      "damageTaken": 126,
+      "damageDealt": 1279,
+      "damageTaken": 130,
       "build": [
         "ward",
         "mark",
@@ -2244,7 +2237,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 112,
+      "steps": 117,
       "problems": [],
       "durationMs": 2
     },
@@ -2308,19 +2301,19 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 53,
+      "hp": 60,
       "maxHp": 96,
       "deckSize": 24,
-      "relics": 8,
-      "gold": 474,
-      "fights": 13,
-      "elites": 2,
-      "damageDealt": 1288,
-      "damageTaken": 184,
+      "relics": 7,
+      "gold": 89,
+      "fights": 12,
+      "elites": 1,
+      "damageDealt": 1209,
+      "damageTaken": 165,
       "build": [
         "ward",
-        "charge",
         "mark",
+        "charge",
         "cycle"
       ],
       "route": [
@@ -2342,13 +2335,13 @@
         "16:combat",
         "17:combat",
         "18:event",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 123,
+      "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d2",
@@ -2359,18 +2352,18 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 60,
+      "hp": 48,
       "maxHp": 92,
-      "deckSize": 25,
-      "relics": 14,
-      "gold": 246,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1416,
-      "damageTaken": 181,
+      "deckSize": 23,
+      "relics": 12,
+      "gold": 264,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1233,
+      "damageTaken": 183,
       "build": [
-        "ward",
         "mark",
+        "ward",
         "charge",
         "cycle"
       ],
@@ -2386,7 +2379,7 @@
         "9:combat",
         "10:combat",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -2397,7 +2390,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 124,
+      "steps": 117,
       "problems": [],
       "durationMs": 2
     },
@@ -2405,23 +2398,23 @@
       "seed": "balance-13-d2",
       "difficulty": 2,
       "difficultyName": "무광층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 37,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 92,
-      "deckSize": 26,
-      "relics": 9,
-      "gold": 246,
-      "fights": 13,
-      "elites": 2,
-      "damageDealt": 1242,
-      "damageTaken": 183,
+      "deckSize": 24,
+      "relics": 7,
+      "gold": 20,
+      "fights": 12,
+      "elites": 1,
+      "damageDealt": 1078,
+      "damageTaken": 205,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "cycle",
         "charge"
       ],
@@ -2444,13 +2437,13 @@
         "16:rest",
         "17:combat",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 124,
+      "steps": 118,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-14-d2",
@@ -2461,15 +2454,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 58,
+      "hp": 72,
       "maxHp": 92,
       "deckSize": 24,
       "relics": 9,
-      "gold": 107,
+      "gold": 96,
       "fights": 12,
       "elites": 0,
       "damageDealt": 1137,
-      "damageTaken": 78,
+      "damageTaken": 64,
       "build": [
         "ward",
         "mark",
@@ -2512,18 +2505,18 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 25,
+      "hp": 18,
       "maxHp": 92,
       "deckSize": 23,
-      "relics": 12,
-      "gold": 77,
+      "relics": 10,
+      "gold": 61,
       "fights": 10,
       "elites": 0,
-      "damageDealt": 1041,
-      "damageTaken": 139,
+      "damageDealt": 1044,
+      "damageTaken": 146,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "charge",
         "cycle"
       ],
@@ -2550,7 +2543,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 99,
+      "steps": 103,
       "problems": [],
       "durationMs": 2
     },
@@ -2563,15 +2556,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 0,
+      "hp": 10,
       "maxHp": 92,
-      "deckSize": 26,
+      "deckSize": 25,
       "relics": 10,
-      "gold": 383,
+      "gold": 379,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1270,
-      "damageTaken": 186,
+      "damageDealt": 1266,
+      "damageTaken": 176,
       "build": [
         "mark",
         "ward",
@@ -2603,26 +2596,26 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-17-d2",
       "difficulty": 2,
       "difficultyName": "무광층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 7,
       "maxHp": 97,
-      "deckSize": 23,
-      "relics": 8,
-      "gold": 40,
+      "deckSize": 24,
+      "relics": 9,
+      "gold": 112,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1119,
-      "damageTaken": 174,
+      "damageDealt": 1152,
+      "damageTaken": 195,
       "build": [
         "ward",
         "mark",
@@ -2652,7 +2645,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 146,
+      "steps": 147,
       "problems": [],
       "durationMs": 2
     },
@@ -2689,26 +2682,26 @@
       ],
       "steps": 27,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "seed": "balance-01-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 5,
       "maxHp": 87,
-      "deckSize": 25,
+      "deckSize": 24,
       "relics": 8,
-      "gold": 50,
+      "gold": 118,
       "fights": 13,
       "elites": 1,
-      "damageDealt": 1265,
-      "damageTaken": 271,
+      "damageDealt": 1329,
+      "damageTaken": 282,
       "build": [
         "ward",
         "mark",
@@ -2738,7 +2731,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 140,
+      "steps": 145,
       "problems": [],
       "durationMs": 2
     },
@@ -2746,25 +2739,25 @@
       "seed": "balance-02-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
-      "maxHp": 77,
-      "deckSize": 23,
+      "bossesDefeated": 3,
+      "hp": 11,
+      "maxHp": 83,
+      "deckSize": 24,
       "relics": 8,
-      "gold": 43,
+      "gold": 93,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1109,
-      "damageTaken": 183,
+      "damageDealt": 1148,
+      "damageTaken": 208,
       "build": [
         "mark",
         "ward",
-        "charge",
-        "cycle"
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -2791,26 +2784,26 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-03-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 17,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 87,
-      "deckSize": 22,
-      "relics": 11,
-      "gold": 88,
+      "deckSize": 21,
+      "relics": 10,
+      "gold": 37,
       "fights": 11,
       "elites": 0,
-      "damageDealt": 1062,
-      "damageTaken": 127,
+      "damageDealt": 1008,
+      "damageTaken": 144,
       "build": [
         "mark",
         "ward",
@@ -2840,9 +2833,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 113,
+      "steps": 108,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d3",
@@ -2890,25 +2883,25 @@
       "seed": "balance-05-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 71,
-      "maxHp": 87,
-      "deckSize": 29,
-      "relics": 9,
-      "gold": 151,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1368,
-      "damageTaken": 136,
+      "bossesDefeated": 2,
+      "hp": 0,
+      "maxHp": 93,
+      "deckSize": 25,
+      "relics": 8,
+      "gold": 125,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1183,
+      "damageTaken": 188,
       "build": [
-        "ward",
         "charge",
+        "ward",
         "mark",
-        "virus"
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -2922,7 +2915,7 @@
         "9:combat",
         "10:event",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -2933,7 +2926,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 137,
+      "steps": 141,
       "problems": [],
       "durationMs": 2
     },
@@ -2972,7 +2965,7 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-07-d3",
@@ -2983,15 +2976,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 42,
+      "hp": 36,
       "maxHp": 95,
-      "deckSize": 26,
-      "relics": 13,
-      "gold": 101,
+      "deckSize": 25,
+      "relics": 11,
+      "gold": 106,
       "fights": 14,
       "elites": 0,
-      "damageDealt": 1506,
-      "damageTaken": 219,
+      "damageDealt": 1490,
+      "damageTaken": 225,
       "build": [
         "mark",
         "ward",
@@ -3021,7 +3014,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 128,
+      "steps": 130,
       "problems": [],
       "durationMs": 2
     },
@@ -3030,19 +3023,19 @@
       "difficulty": 3,
       "difficultyName": "압력층",
       "won": false,
-      "reason": "산호 엔진의 공격으로 쓰러졌습니다.",
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 19,
+      "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
       "maxHp": 87,
       "deckSize": 24,
-      "relics": 6,
-      "gold": 38,
+      "relics": 4,
+      "gold": 27,
       "fights": 11,
       "elites": 0,
-      "damageDealt": 1003,
-      "damageTaken": 217,
+      "damageDealt": 1089,
+      "damageTaken": 202,
       "build": [
         "ward",
         "mark",
@@ -3068,11 +3061,13 @@
         "16:combat",
         "17:shop",
         "18:combat",
-        "19:elite"
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 143,
+      "steps": 149,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d3",
@@ -3110,23 +3105,23 @@
       "seed": "balance-10-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
+      "bossesDefeated": 3,
       "hp": 0,
       "maxHp": 87,
       "deckSize": 26,
-      "relics": 8,
-      "gold": 68,
+      "relics": 7,
+      "gold": 116,
       "fights": 14,
       "elites": 0,
-      "damageDealt": 1356,
-      "damageTaken": 229,
+      "damageDealt": 1353,
+      "damageTaken": 228,
       "build": [
-        "cycle",
         "ward",
+        "cycle",
         "mark",
         "charge"
       ],
@@ -3153,7 +3148,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 116,
+      "steps": 124,
       "problems": [],
       "durationMs": 2
     },
@@ -3161,25 +3156,25 @@
       "seed": "balance-11-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 44,
       "maxHp": 87,
       "deckSize": 22,
       "relics": 10,
-      "gold": 467,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1346,
-      "damageTaken": 164,
+      "gold": 115,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1415,
+      "damageTaken": 117,
       "build": [
-        "ward",
         "mark",
-        "cycle",
-        "charge"
+        "ward",
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -3200,11 +3195,11 @@
         "16:combat",
         "17:combat",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 121,
+      "steps": 126,
       "problems": [],
       "durationMs": 2
     },
@@ -3263,25 +3258,25 @@
       "seed": "balance-13-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
-      "floors": 14,
-      "bossesDefeated": 1,
-      "hp": 0,
-      "maxHp": 83,
-      "deckSize": 20,
-      "relics": 6,
-      "gold": 275,
-      "fights": 8,
-      "elites": 1,
-      "damageDealt": 768,
-      "damageTaken": 141,
+      "floors": 21,
+      "bossesDefeated": 3,
+      "hp": 55,
+      "maxHp": 79,
+      "deckSize": 25,
+      "relics": 8,
+      "gold": 123,
+      "fights": 11,
+      "elites": 0,
+      "damageDealt": 1202,
+      "damageTaken": 83,
       "build": [
         "ward",
-        "charge",
+        "cycle",
         "mark",
-        "cycle"
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -3295,13 +3290,20 @@
         "9:combat",
         "10:combat",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
-        "14:boss"
+        "14:boss",
+        "15:combat",
+        "16:combat",
+        "17:combat",
+        "18:event",
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 84,
+      "steps": 119,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-14-d3",
@@ -3352,26 +3354,26 @@
       ],
       "steps": 161,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d3",
       "difficulty": 3,
       "difficultyName": "압력층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 28,
       "maxHp": 87,
-      "deckSize": 24,
+      "deckSize": 25,
       "relics": 8,
-      "gold": 32,
+      "gold": 71,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1273,
-      "damageTaken": 245,
+      "damageDealt": 1314,
+      "damageTaken": 217,
       "build": [
         "mark",
         "ward",
@@ -3401,7 +3403,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 139,
+      "steps": 146,
       "problems": [],
       "durationMs": 2
     },
@@ -3414,15 +3416,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 5,
+      "hp": 46,
       "maxHp": 87,
-      "deckSize": 24,
-      "relics": 7,
-      "gold": 102,
+      "deckSize": 23,
+      "relics": 6,
+      "gold": 91,
       "fights": 10,
       "elites": 0,
-      "damageDealt": 1008,
-      "damageTaken": 168,
+      "damageDealt": 984,
+      "damageTaken": 153,
       "build": [
         "mark",
         "ward",
@@ -3452,7 +3454,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 95,
+      "steps": 93,
       "problems": [],
       "durationMs": 2
     },
@@ -3461,24 +3463,24 @@
       "difficulty": 3,
       "difficultyName": "압력층",
       "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 97,
-      "deckSize": 19,
-      "relics": 8,
-      "gold": 41,
+      "maxHp": 93,
+      "deckSize": 20,
+      "relics": 7,
+      "gold": 76,
       "fights": 9,
       "elites": 1,
-      "damageDealt": 784,
-      "damageTaken": 248,
+      "damageDealt": 920,
+      "damageTaken": 243,
       "build": [
         "ward",
+        "cycle",
         "mark",
-        "charge",
-        "cycle"
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -3503,7 +3505,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 117,
+      "steps": 125,
       "problems": [],
       "durationMs": 2
     },
@@ -3516,20 +3518,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 16,
-      "maxHp": 96,
-      "deckSize": 25,
-      "relics": 11,
-      "gold": 133,
-      "fights": 12,
-      "elites": 1,
-      "damageDealt": 1149,
-      "damageTaken": 185,
+      "hp": 57,
+      "maxHp": 87,
+      "deckSize": 23,
+      "relics": 7,
+      "gold": 87,
+      "fights": 11,
+      "elites": 0,
+      "damageDealt": 1146,
+      "damageTaken": 140,
       "build": [
-        "cycle",
         "ward",
         "mark",
-        "virus"
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -3543,7 +3545,7 @@
         "9:event",
         "10:combat",
         "11:event",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -3556,7 +3558,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-01-d4",
@@ -3598,7 +3600,7 @@
       ],
       "steps": 100,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-02-d4",
@@ -3646,14 +3648,14 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 8,
+      "hp": 29,
       "maxHp": 89,
-      "deckSize": 24,
+      "deckSize": 23,
       "relics": 11,
-      "gold": 75,
+      "gold": 72,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1230,
+      "damageDealt": 1220,
       "damageTaken": 177,
       "build": [
         "ward",
@@ -3684,7 +3686,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 112,
+      "steps": 113,
       "problems": [],
       "durationMs": 2
     },
@@ -3692,25 +3694,25 @@
       "seed": "balance-04-d4",
       "difficulty": 4,
       "difficultyName": "무호흡층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 8,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 84,
-      "deckSize": 23,
-      "relics": 13,
-      "gold": 113,
-      "fights": 12,
-      "elites": 1,
-      "damageDealt": 1344,
-      "damageTaken": 181,
+      "deckSize": 21,
+      "relics": 6,
+      "gold": 42,
+      "fights": 11,
+      "elites": 0,
+      "damageDealt": 994,
+      "damageTaken": 166,
       "build": [
         "ward",
-        "cycle",
         "mark",
-        "risk"
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -3724,7 +3726,7 @@
         "9:event",
         "10:event",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -3735,9 +3737,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 130,
+      "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-05-d4",
@@ -3788,7 +3790,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "seed": "balance-06-d4",
@@ -3832,31 +3834,31 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-07-d4",
       "difficulty": 4,
       "difficultyName": "무호흡층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
-      "maxHp": 74,
-      "deckSize": 28,
-      "relics": 8,
-      "gold": 71,
-      "fights": 14,
-      "elites": 1,
-      "damageDealt": 1405,
-      "damageTaken": 211,
+      "bossesDefeated": 3,
+      "hp": 45,
+      "maxHp": 84,
+      "deckSize": 26,
+      "relics": 9,
+      "gold": 85,
+      "fights": 13,
+      "elites": 0,
+      "damageDealt": 1476,
+      "damageTaken": 86,
       "build": [
         "mark",
         "ward",
         "cycle",
-        "charge"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -3870,7 +3872,7 @@
         "9:combat",
         "10:combat",
         "11:combat",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
@@ -3881,9 +3883,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 101,
+      "steps": 108,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-08-d4",
@@ -3924,7 +3926,7 @@
       ],
       "steps": 100,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-09-d4",
@@ -3935,19 +3937,19 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 14,
-      "maxHp": 85,
-      "deckSize": 26,
-      "relics": 13,
-      "gold": 639,
-      "fights": 15,
-      "elites": 2,
-      "damageDealt": 1414,
-      "damageTaken": 196,
+      "hp": 46,
+      "maxHp": 84,
+      "deckSize": 25,
+      "relics": 12,
+      "gold": 90,
+      "fights": 14,
+      "elites": 1,
+      "damageDealt": 1308,
+      "damageTaken": 131,
       "build": [
         "ward",
-        "mark",
         "cycle",
+        "mark",
         "charge"
       ],
       "route": [
@@ -3969,13 +3971,13 @@
         "16:event",
         "17:event",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 109,
+      "steps": 117,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-10-d4",
@@ -4012,7 +4014,7 @@
       ],
       "steps": 46,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-11-d4",
@@ -4063,7 +4065,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d4",
@@ -4132,8 +4134,8 @@
       "gold": 65,
       "fights": 10,
       "elites": 1,
-      "damageDealt": 1064,
-      "damageTaken": 183,
+      "damageDealt": 1027,
+      "damageTaken": 185,
       "build": [
         "mark",
         "ward",
@@ -4159,13 +4161,13 @@
         "16:combat",
         "17:shop",
         "18:event",
-        "19:shop",
+        "19:rest",
         "20:rest",
         "21:boss"
       ],
-      "steps": 93,
+      "steps": 94,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-14-d4",
@@ -4179,16 +4181,16 @@
       "hp": 0,
       "maxHp": 90,
       "deckSize": 25,
-      "relics": 8,
-      "gold": 56,
-      "fights": 14,
+      "relics": 9,
+      "gold": 72,
+      "fights": 15,
       "elites": 2,
-      "damageDealt": 1231,
-      "damageTaken": 248,
+      "damageDealt": 1339,
+      "damageTaken": 255,
       "build": [
         "ward",
-        "charge",
         "mark",
+        "charge",
         "cycle"
       ],
       "route": [
@@ -4207,16 +4209,16 @@
         "13:rest",
         "14:boss",
         "15:combat",
-        "16:event",
+        "16:combat",
         "17:combat",
         "18:shop",
         "19:elite",
         "20:rest",
         "21:boss"
       ],
-      "steps": 168,
+      "steps": 171,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "seed": "balance-15-d4",
@@ -4227,20 +4229,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 65,
+      "hp": 48,
       "maxHp": 90,
-      "deckSize": 24,
-      "relics": 12,
-      "gold": 388,
-      "fights": 14,
-      "elites": 2,
-      "damageDealt": 1562,
-      "damageTaken": 125,
+      "deckSize": 23,
+      "relics": 11,
+      "gold": 72,
+      "fights": 13,
+      "elites": 1,
+      "damageDealt": 1463,
+      "damageTaken": 142,
       "build": [
         "mark",
         "ward",
-        "virus",
-        "charge"
+        "charge",
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -4261,13 +4263,13 @@
         "16:combat",
         "17:event",
         "18:combat",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 128,
+      "steps": 129,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-16-d4",
@@ -4315,23 +4317,23 @@
       "seed": "balance-17-d4",
       "difficulty": 4,
       "difficultyName": "무호흡층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 7,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 84,
-      "deckSize": 25,
-      "relics": 10,
-      "gold": 275,
+      "deckSize": 24,
+      "relics": 9,
+      "gold": 135,
       "fights": 12,
       "elites": 2,
-      "damageDealt": 1297,
-      "damageTaken": 225,
+      "damageDealt": 1138,
+      "damageTaken": 254,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "cycle",
         "virus"
       ],
@@ -4358,9 +4360,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 107,
+      "steps": 104,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d4",
@@ -4416,19 +4418,19 @@
       "floors": 14,
       "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 82,
-      "deckSize": 20,
-      "relics": 4,
-      "gold": 251,
+      "maxHp": 80,
+      "deckSize": 18,
+      "relics": 6,
+      "gold": 179,
       "fights": 9,
-      "elites": 0,
-      "damageDealt": 775,
-      "damageTaken": 152,
+      "elites": 1,
+      "damageDealt": 910,
+      "damageTaken": 180,
       "build": [
-        "ward",
         "mark",
+        "ward",
         "cycle",
-        "charge"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -4442,11 +4444,11 @@
         "9:combat",
         "10:combat",
         "11:combat",
-        "12:combat",
+        "12:elite",
         "13:rest",
         "14:boss"
       ],
-      "steps": 87,
+      "steps": 90,
       "problems": [],
       "durationMs": 1
     },
@@ -4454,25 +4456,25 @@
       "seed": "balance-02-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 25,
-      "maxHp": 88,
-      "deckSize": 24,
-      "relics": 8,
-      "gold": 84,
-      "fights": 9,
-      "elites": 1,
-      "damageDealt": 1051,
-      "damageTaken": 179,
+      "floors": 14,
+      "bossesDefeated": 1,
+      "hp": 0,
+      "maxHp": 86,
+      "deckSize": 18,
+      "relics": 4,
+      "gold": 69,
+      "fights": 5,
+      "elites": 0,
+      "damageDealt": 467,
+      "damageTaken": 126,
       "build": [
-        "ward",
         "mark",
+        "ward",
         "charge",
-        "virus"
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -4486,20 +4488,13 @@
         "9:combat",
         "10:event",
         "11:event",
-        "12:elite",
+        "12:rest",
         "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:event",
-        "17:combat",
-        "18:event",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "14:boss"
       ],
-      "steps": 102,
+      "steps": 68,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-03-d5",
@@ -4510,20 +4505,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 39,
-      "maxHp": 82,
+      "hp": 34,
+      "maxHp": 80,
       "deckSize": 24,
-      "relics": 11,
-      "gold": 77,
-      "fights": 13,
+      "relics": 10,
+      "gold": 70,
+      "fights": 14,
       "elites": 0,
-      "damageDealt": 1451,
-      "damageTaken": 121,
+      "damageDealt": 1617,
+      "damageTaken": 162,
       "build": [
-        "mark",
         "ward",
-        "charge",
-        "virus"
+        "mark",
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -4543,38 +4538,38 @@
         "15:combat",
         "16:combat",
         "17:combat",
-        "18:event",
+        "18:combat",
         "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 114,
+      "steps": 120,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 2,
+      "floors": 14,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 95,
-      "deckSize": 22,
-      "relics": 9,
-      "gold": 10,
-      "fights": 10,
+      "maxHp": 80,
+      "deckSize": 17,
+      "relics": 5,
+      "gold": 30,
+      "fights": 8,
       "elites": 0,
-      "damageDealt": 1231,
-      "damageTaken": 173,
+      "damageDealt": 681,
+      "damageTaken": 152,
       "build": [
         "mark",
+        "cycle",
         "ward",
-        "charge",
-        "cycle"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -4587,45 +4582,38 @@
         "8:combat",
         "9:combat",
         "10:event",
-        "11:event",
+        "11:combat",
         "12:shop",
         "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:event",
-        "17:combat",
-        "18:event",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "14:boss"
       ],
-      "steps": 124,
+      "steps": 81,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-05-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
-      "maxHp": 88,
-      "deckSize": 21,
-      "relics": 6,
-      "gold": 11,
+      "bossesDefeated": 3,
+      "hp": 22,
+      "maxHp": 86,
+      "deckSize": 23,
+      "relics": 8,
+      "gold": 59,
       "fights": 10,
       "elites": 0,
-      "damageDealt": 1142,
-      "damageTaken": 215,
+      "damageDealt": 1224,
+      "damageTaken": 200,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "charge"
+        "virus",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -4650,7 +4638,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 99,
+      "steps": 104,
       "problems": [],
       "durationMs": 1
     },
@@ -4659,24 +4647,24 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "reason": "녹 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 2,
+      "floors": 12,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 96,
-      "deckSize": 21,
-      "relics": 8,
-      "gold": 51,
-      "fights": 10,
+      "maxHp": 94,
+      "deckSize": 18,
+      "relics": 5,
+      "gold": 55,
+      "fights": 6,
       "elites": 0,
-      "damageDealt": 1138,
-      "damageTaken": 262,
+      "damageDealt": 462,
+      "damageTaken": 144,
       "build": [
-        "mark",
         "ward",
-        "charge",
-        "cycle"
+        "mark",
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -4690,44 +4678,35 @@
         "9:event",
         "10:shop",
         "11:combat",
-        "12:shop",
-        "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:combat",
-        "17:event",
-        "18:combat",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "12:elite"
       ],
-      "steps": 143,
+      "steps": 74,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-07-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 2,
+      "floors": 14,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 80,
-      "deckSize": 21,
-      "relics": 6,
-      "gold": 49,
-      "fights": 12,
+      "maxHp": 84,
+      "deckSize": 17,
+      "relics": 5,
+      "gold": 24,
+      "fights": 8,
       "elites": 0,
-      "damageDealt": 1187,
-      "damageTaken": 238,
+      "damageDealt": 721,
+      "damageTaken": 166,
       "build": [
         "mark",
         "ward",
         "cycle",
-        "virus"
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -4743,18 +4722,11 @@
         "11:combat",
         "12:shop",
         "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:combat",
-        "17:shop",
-        "18:combat",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "14:boss"
       ],
-      "steps": 118,
+      "steps": 73,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-08-d5",
@@ -4765,20 +4737,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 49,
-      "maxHp": 87,
-      "deckSize": 22,
-      "relics": 13,
-      "gold": 353,
-      "fights": 13,
-      "elites": 2,
-      "damageDealt": 1392,
-      "damageTaken": 158,
+      "hp": 61,
+      "maxHp": 80,
+      "deckSize": 23,
+      "relics": 10,
+      "gold": 75,
+      "fights": 11,
+      "elites": 0,
+      "damageDealt": 1466,
+      "damageTaken": 113,
       "build": [
-        "ward",
-        "cycle",
         "mark",
-        "charge"
+        "ward",
+        "charge",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -4792,18 +4764,18 @@
         "9:combat",
         "10:combat",
         "11:event",
-        "12:elite",
+        "12:shop",
         "13:rest",
         "14:boss",
         "15:combat",
         "16:combat",
         "17:event",
         "18:rest",
-        "19:elite",
+        "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 105,
+      "steps": 107,
       "problems": [],
       "durationMs": 2
     },
@@ -4816,20 +4788,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 29,
-      "maxHp": 82,
-      "deckSize": 24,
-      "relics": 11,
-      "gold": 280,
+      "hp": 49,
+      "maxHp": 93,
+      "deckSize": 26,
+      "relics": 9,
+      "gold": 100,
       "fights": 13,
-      "elites": 1,
-      "damageDealt": 1404,
-      "damageTaken": 147,
+      "elites": 0,
+      "damageDealt": 1424,
+      "damageTaken": 153,
       "build": [
-        "ward",
         "mark",
-        "cycle",
-        "charge"
+        "ward",
+        "charge",
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -4849,38 +4821,38 @@
         "15:combat",
         "16:combat",
         "17:combat",
-        "18:rest",
-        "19:elite",
+        "18:shop",
+        "19:combat",
         "20:rest",
         "21:boss"
       ],
-      "steps": 123,
+      "steps": 113,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-10-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 34,
-      "maxHp": 82,
-      "deckSize": 23,
-      "relics": 10,
-      "gold": 102,
-      "fights": 12,
-      "elites": 1,
-      "damageDealt": 1281,
-      "damageTaken": 122,
+      "bossesDefeated": 2,
+      "hp": 0,
+      "maxHp": 88,
+      "deckSize": 21,
+      "relics": 11,
+      "gold": 203,
+      "fights": 11,
+      "elites": 2,
+      "damageDealt": 1303,
+      "damageTaken": 210,
       "build": [
         "ward",
         "mark",
-        "virus",
-        "cycle"
+        "charge",
+        "risk"
       ],
       "route": [
         "1:combat",
@@ -4898,38 +4870,38 @@
         "13:rest",
         "14:boss",
         "15:combat",
-        "16:combat",
-        "17:shop",
-        "18:combat",
-        "19:shop",
+        "16:rest",
+        "17:event",
+        "18:event",
+        "19:elite",
         "20:rest",
         "21:boss"
       ],
-      "steps": 110,
+      "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-11-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 2,
+      "floors": 14,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 87,
-      "deckSize": 20,
-      "relics": 5,
-      "gold": 45,
-      "fights": 9,
+      "maxHp": 80,
+      "deckSize": 17,
+      "relics": 3,
+      "gold": 38,
+      "fights": 6,
       "elites": 0,
-      "damageDealt": 1028,
-      "damageTaken": 292,
+      "damageDealt": 646,
+      "damageTaken": 173,
       "build": [
-        "mark",
         "charge",
+        "mark",
         "ward",
         "cycle"
       ],
@@ -4947,16 +4919,9 @@
         "11:shop",
         "12:event",
         "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:combat",
-        "17:event",
-        "18:event",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "14:boss"
       ],
-      "steps": 123,
+      "steps": 87,
       "problems": [],
       "durationMs": 1
     },
@@ -4965,19 +4930,19 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "체력이 0이 되었습니다.",
+      "reason": "랜턴 집게의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 9,
-      "bossesDefeated": 1,
+      "floors": 17,
+      "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 82,
-      "deckSize": 15,
-      "relics": 4,
-      "gold": 120,
-      "fights": 6,
+      "maxHp": 80,
+      "deckSize": 23,
+      "relics": 7,
+      "gold": 70,
+      "fights": 12,
       "elites": 0,
-      "damageDealt": 486,
-      "damageTaken": 112,
+      "damageDealt": 1000,
+      "damageTaken": 184,
       "build": [
         "mark",
         "ward",
@@ -4993,9 +4958,17 @@
         "6:rest",
         "7:boss",
         "8:combat",
-        "9:combat"
+        "9:combat",
+        "10:combat",
+        "11:combat",
+        "12:shop",
+        "13:rest",
+        "14:boss",
+        "15:combat",
+        "16:combat",
+        "17:combat"
       ],
-      "steps": 57,
+      "steps": 94,
       "problems": [],
       "durationMs": 1
     },
@@ -5004,24 +4977,24 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "익사한 페이지의 공격으로 쓰러졌습니다.",
+      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 7,
-      "bossesDefeated": 0,
+      "floors": 14,
+      "bossesDefeated": 1,
       "hp": 0,
-      "maxHp": 82,
-      "deckSize": 13,
-      "relics": 3,
-      "gold": 8,
-      "fights": 4,
+      "maxHp": 80,
+      "deckSize": 19,
+      "relics": 4,
+      "gold": 3,
+      "fights": 7,
       "elites": 0,
-      "damageDealt": 320,
-      "damageTaken": 82,
+      "damageDealt": 658,
+      "damageTaken": 125,
       "build": [
         "mark",
         "ward",
-        "charge",
-        "cycle"
+        "cycle",
+        "charge"
       ],
       "route": [
         "1:combat",
@@ -5030,11 +5003,18 @@
         "4:combat",
         "5:shop",
         "6:rest",
-        "7:boss"
+        "7:boss",
+        "8:combat",
+        "9:combat",
+        "10:event",
+        "11:shop",
+        "12:rest",
+        "13:rest",
+        "14:boss"
       ],
-      "steps": 39,
+      "steps": 84,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-14-d5",
@@ -5046,14 +5026,14 @@
       "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 86,
-      "deckSize": 21,
-      "relics": 6,
-      "gold": 27,
+      "maxHp": 80,
+      "deckSize": 22,
+      "relics": 7,
+      "gold": 41,
       "fights": 9,
       "elites": 0,
-      "damageDealt": 1201,
-      "damageTaken": 210,
+      "damageDealt": 1099,
+      "damageTaken": 221,
       "build": [
         "ward",
         "mark",
@@ -5083,7 +5063,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 119,
+      "steps": 104,
       "problems": [],
       "durationMs": 2
     },
@@ -5092,19 +5072,19 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 14,
-      "bossesDefeated": 1,
+      "floors": 21,
+      "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 82,
-      "deckSize": 17,
-      "relics": 4,
-      "gold": 63,
-      "fights": 6,
+      "maxHp": 84,
+      "deckSize": 20,
+      "relics": 6,
+      "gold": 50,
+      "fights": 10,
       "elites": 0,
-      "damageDealt": 621,
-      "damageTaken": 165,
+      "damageDealt": 1431,
+      "damageTaken": 265,
       "build": [
         "ward",
         "mark",
@@ -5125,11 +5105,18 @@
         "11:combat",
         "12:shop",
         "13:rest",
-        "14:boss"
+        "14:boss",
+        "15:combat",
+        "16:event",
+        "17:combat",
+        "18:combat",
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 90,
+      "steps": 129,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-16-d5",
@@ -5140,20 +5127,20 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 48,
-      "maxHp": 82,
+      "hp": 17,
+      "maxHp": 80,
       "deckSize": 25,
       "relics": 9,
-      "gold": 211,
+      "gold": 154,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1449,
-      "damageTaken": 233,
+      "damageDealt": 1522,
+      "damageTaken": 287,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "virus"
+        "virus",
+        "cycle"
       ],
       "route": [
         "1:combat",
@@ -5178,7 +5165,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 104,
+      "steps": 108,
       "problems": [],
       "durationMs": 2
     },
@@ -5186,25 +5173,25 @@
       "seed": "balance-17-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": false,
-      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
-      "floors": 14,
-      "bossesDefeated": 1,
-      "hp": 0,
-      "maxHp": 82,
-      "deckSize": 19,
-      "relics": 7,
-      "gold": 12,
-      "fights": 8,
+      "floors": 21,
+      "bossesDefeated": 3,
+      "hp": 24,
+      "maxHp": 84,
+      "deckSize": 25,
+      "relics": 10,
+      "gold": 73,
+      "fights": 12,
       "elites": 0,
-      "damageDealt": 638,
-      "damageTaken": 142,
+      "damageDealt": 1223,
+      "damageTaken": 171,
       "build": [
         "mark",
         "ward",
         "cycle",
-        "charge"
+        "virus"
       ],
       "route": [
         "1:combat",
@@ -5220,9 +5207,16 @@
         "11:event",
         "12:shop",
         "13:rest",
-        "14:boss"
+        "14:boss",
+        "15:combat",
+        "16:combat",
+        "17:rest",
+        "18:combat",
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 79,
+      "steps": 107,
       "problems": [],
       "durationMs": 1
     },
@@ -5230,20 +5224,20 @@
       "seed": "balance-18-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "제로 스퀴드의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 61,
-      "maxHp": 90,
-      "deckSize": 25,
-      "relics": 11,
-      "gold": 61,
-      "fights": 13,
+      "floors": 10,
+      "bossesDefeated": 1,
+      "hp": 0,
+      "maxHp": 88,
+      "deckSize": 17,
+      "relics": 4,
+      "gold": 141,
+      "fights": 7,
       "elites": 0,
-      "damageDealt": 1623,
-      "damageTaken": 208,
+      "damageDealt": 666,
+      "damageTaken": 121,
       "build": [
         "ward",
         "mark",
@@ -5260,30 +5254,19 @@
         "7:boss",
         "8:combat",
         "9:combat",
-        "10:combat",
-        "11:combat",
-        "12:shop",
-        "13:rest",
-        "14:boss",
-        "15:combat",
-        "16:combat",
-        "17:combat",
-        "18:event",
-        "19:shop",
-        "20:rest",
-        "21:boss"
+        "10:combat"
       ],
-      "steps": 178,
+      "steps": 87,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     }
   ],
   "totals": {
     "runs": 108,
-    "wins": 63,
-    "winRate": 0.58,
-    "averageFloors": 18.85,
-    "averageSteps": 108.51,
+    "wins": 65,
+    "winRate": 0.6,
+    "averageFloors": 18.69,
+    "averageSteps": 107.58,
     "problemRuns": 0
   },
   "byDifficulty": [
@@ -5291,11 +5274,11 @@
       "difficulty": 0,
       "difficultyName": "표층",
       "runs": 18,
-      "wins": 16,
+      "wins": 15,
       "averageFloors": 20.11,
-      "averageDeckSize": 24.39,
-      "averageRelics": 10.83,
-      "averageDamageTaken": 166.5,
+      "averageDeckSize": 23.67,
+      "averageRelics": 9.89,
+      "averageDamageTaken": 163.83,
       "problemRuns": 0,
       "floorBands": [
         {
@@ -5323,77 +5306,73 @@
           "id": "final",
           "label": "최종 21층",
           "runs": 17,
-          "wins": 16,
+          "wins": 15,
+          "winRate": 0.88
+        }
+      ],
+      "lossReasons": [
+        {
+          "label": "후반 체력 부족",
+          "count": 2
+        },
+        {
+          "label": "초반 성장 실패",
+          "count": 1
+        }
+      ],
+      "winRate": 0.8333333333333334
+    },
+    {
+      "difficulty": 1,
+      "difficultyName": "냉수층",
+      "runs": 18,
+      "wins": 15,
+      "averageFloors": 20.22,
+      "averageDeckSize": 23.06,
+      "averageRelics": 8.39,
+      "averageDamageTaken": 158,
+      "problemRuns": 0,
+      "floorBands": [
+        {
+          "id": "early",
+          "label": "초반 1-7층",
+          "runs": 0,
+          "wins": 0,
+          "winRate": 0
+        },
+        {
+          "id": "middle",
+          "label": "중반 8-14층",
+          "runs": 2,
+          "wins": 0,
+          "winRate": 0
+        },
+        {
+          "id": "late",
+          "label": "후반 15-20층",
+          "runs": 0,
+          "wins": 0,
+          "winRate": 0
+        },
+        {
+          "id": "final",
+          "label": "최종 21층",
+          "runs": 16,
+          "wins": 15,
           "winRate": 0.94
         }
       ],
       "lossReasons": [
         {
-          "label": "초반 성장 실패",
-          "count": 1
+          "label": "중반 강적",
+          "count": 2
         },
         {
           "label": "후반 체력 부족",
           "count": 1
         }
       ],
-      "winRate": 0.8888888888888888
-    },
-    {
-      "difficulty": 1,
-      "difficultyName": "냉수층",
-      "runs": 18,
-      "wins": 14,
-      "averageFloors": 20.61,
-      "averageDeckSize": 24.5,
-      "averageRelics": 9.06,
-      "averageDamageTaken": 180,
-      "problemRuns": 0,
-      "floorBands": [
-        {
-          "id": "early",
-          "label": "초반 1-7층",
-          "runs": 0,
-          "wins": 0,
-          "winRate": 0
-        },
-        {
-          "id": "middle",
-          "label": "중반 8-14층",
-          "runs": 1,
-          "wins": 0,
-          "winRate": 0
-        },
-        {
-          "id": "late",
-          "label": "후반 15-20층",
-          "runs": 0,
-          "wins": 0,
-          "winRate": 0
-        },
-        {
-          "id": "final",
-          "label": "최종 21층",
-          "runs": 17,
-          "wins": 14,
-          "winRate": 0.82
-        }
-      ],
-      "lossReasons": [
-        {
-          "label": "최종 보스",
-          "count": 2
-        },
-        {
-          "label": "상태 누적",
-          "count": 1
-        },
-        {
-          "label": "중반 강적",
-          "count": 1
-        }
-      ],
-      "winRate": 0.7777777777777778
+      "winRate": 0.8333333333333334
     },
     {
       "difficulty": 2,
@@ -5401,9 +5380,9 @@
       "runs": 18,
       "wins": 12,
       "averageFloors": 18.72,
-      "averageDeckSize": 22.78,
-      "averageRelics": 8.72,
-      "averageDamageTaken": 154.61,
+      "averageDeckSize": 22,
+      "averageRelics": 8.11,
+      "averageDamageTaken": 153.44,
       "problemRuns": 0,
       "floorBands": [
         {
@@ -5459,11 +5438,11 @@
       "difficulty": 3,
       "difficultyName": "압력층",
       "runs": 18,
-      "wins": 6,
-      "averageFloors": 18.17,
-      "averageDeckSize": 22.22,
-      "averageRelics": 7.67,
-      "averageDamageTaken": 189.11,
+      "wins": 10,
+      "averageFloors": 18.67,
+      "averageDeckSize": 22.11,
+      "averageRelics": 7.06,
+      "averageDamageTaken": 183.39,
       "problemRuns": 0,
       "floorBands": [
         {
@@ -5476,58 +5455,54 @@
         {
           "id": "middle",
           "label": "중반 8-14층",
-          "runs": 2,
+          "runs": 1,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "late",
           "label": "후반 15-20층",
-          "runs": 1,
+          "runs": 0,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "final",
           "label": "최종 21층",
-          "runs": 13,
-          "wins": 6,
-          "winRate": 0.46
+          "runs": 15,
+          "wins": 10,
+          "winRate": 0.67
         }
       ],
       "lossReasons": [
         {
           "label": "최종 보스",
-          "count": 4
-        },
-        {
-          "label": "후반 체력 부족",
-          "count": 3
+          "count": 5
         },
         {
           "label": "상태 누적",
-          "count": 2
+          "count": 1
         },
         {
           "label": "중반 강적",
-          "count": 2
+          "count": 1
         },
         {
           "label": "초반 성장 실패",
           "count": 1
         }
       ],
-      "winRate": 0.3333333333333333
+      "winRate": 0.5555555555555556
     },
     {
       "difficulty": 4,
       "difficultyName": "무호흡층",
       "runs": 18,
-      "wins": 8,
+      "wins": 7,
       "averageFloors": 17.11,
-      "averageDeckSize": 21.67,
-      "averageRelics": 8.72,
-      "averageDamageTaken": 171.61,
+      "averageDeckSize": 21.22,
+      "averageRelics": 8.28,
+      "averageDamageTaken": 163.28,
       "problemRuns": 0,
       "floorBands": [
         {
@@ -5555,8 +5530,8 @@
           "id": "final",
           "label": "최종 21층",
           "runs": 11,
-          "wins": 8,
-          "winRate": 0.73
+          "wins": 7,
+          "winRate": 0.64
         }
       ],
       "lossReasons": [
@@ -5575,105 +5550,105 @@
         {
           "label": "초반 성장 실패",
           "count": 1
+        },
+        {
+          "label": "후반 체력 부족",
+          "count": 1
         }
       ],
-      "winRate": 0.4444444444444444
+      "winRate": 0.3888888888888889
     },
     {
       "difficulty": 5,
       "difficultyName": "최심층",
       "runs": 18,
-      "wins": 7,
-      "averageFloors": 18.39,
-      "averageDeckSize": 20.94,
-      "averageRelics": 7.5,
-      "averageDamageTaken": 178.39,
+      "wins": 6,
+      "averageFloors": 17.33,
+      "averageDeckSize": 20.72,
+      "averageRelics": 6.83,
+      "averageDamageTaken": 175.17,
       "problemRuns": 0,
       "floorBands": [
         {
           "id": "early",
           "label": "초반 1-7층",
-          "runs": 1,
+          "runs": 0,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "middle",
           "label": "중반 8-14층",
-          "runs": 4,
+          "runs": 8,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "late",
           "label": "후반 15-20층",
-          "runs": 0,
+          "runs": 1,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "final",
           "label": "최종 21층",
-          "runs": 13,
-          "wins": 7,
-          "winRate": 0.54
+          "runs": 9,
+          "wins": 6,
+          "winRate": 0.67
         }
       ],
       "lossReasons": [
         {
           "label": "중반 강적",
-          "count": 4
+          "count": 8
         },
         {
           "label": "최종 보스",
-          "count": 4
-        },
-        {
-          "label": "상태 누적",
           "count": 2
         },
         {
-          "label": "초반 성장 실패",
-          "count": 1
+          "label": "후반 체력 부족",
+          "count": 2
         }
       ],
-      "winRate": 0.3888888888888889
+      "winRate": 0.3333333333333333
     }
   ],
   "lossReasons": [
     {
-      "label": "최종 보스",
-      "count": 15
+      "label": "중반 강적",
+      "count": 16
     },
     {
-      "label": "중반 강적",
+      "label": "최종 보스",
       "count": 12
     },
     {
-      "label": "상태 누적",
+      "label": "후반 체력 부족",
       "count": 7
     },
     {
       "label": "초반 성장 실패",
-      "count": 6
+      "count": 5
     },
     {
-      "label": "후반 체력 부족",
-      "count": 5
+      "label": "상태 누적",
+      "count": 3
     }
   ],
   "floorBands": [
     {
       "id": "early",
       "label": "초반 1-7층",
-      "runs": 8,
+      "runs": 7,
       "wins": 0,
       "winRate": 0
     },
     {
       "id": "middle",
       "label": "중반 8-14층",
-      "runs": 13,
+      "runs": 17,
       "wins": 0,
       "winRate": 0
     },
@@ -5687,110 +5662,101 @@
     {
       "id": "final",
       "label": "최종 21층",
-      "runs": 86,
-      "wins": 63,
-      "winRate": 0.73
+      "runs": 83,
+      "wins": 65,
+      "winRate": 0.78
     }
   ],
   "buildTags": [
     {
       "tag": "mark",
       "runs": 108,
-      "wins": 63,
-      "averageFloors": 18.85,
-      "averageDeckSize": 22.75,
-      "averageRelics": 8.75,
-      "winRate": 0.58
+      "wins": 65,
+      "averageFloors": 18.69,
+      "averageDeckSize": 22.13,
+      "averageRelics": 8.09,
+      "winRate": 0.6
     },
     {
       "tag": "ward",
       "runs": 108,
-      "wins": 63,
-      "averageFloors": 18.85,
-      "averageDeckSize": 22.75,
-      "averageRelics": 8.75,
-      "winRate": 0.58
-    },
-    {
-      "tag": "cycle",
-      "runs": 96,
-      "wins": 54,
-      "averageFloors": 18.92,
-      "averageDeckSize": 22.73,
-      "averageRelics": 8.74,
-      "winRate": 0.56
+      "wins": 65,
+      "averageFloors": 18.69,
+      "averageDeckSize": 22.13,
+      "averageRelics": 8.09,
+      "winRate": 0.6
     },
     {
       "tag": "charge",
-      "runs": 92,
-      "wins": 50,
-      "averageFloors": 18.59,
-      "averageDeckSize": 22.5,
-      "averageRelics": 8.55,
-      "winRate": 0.54
+      "runs": 94,
+      "wins": 55,
+      "averageFloors": 18.61,
+      "averageDeckSize": 21.98,
+      "averageRelics": 7.96,
+      "winRate": 0.59
+    },
+    {
+      "tag": "cycle",
+      "runs": 93,
+      "wins": 53,
+      "averageFloors": 18.67,
+      "averageDeckSize": 22.09,
+      "averageRelics": 7.97,
+      "winRate": 0.57
     },
     {
       "tag": "virus",
-      "runs": 26,
-      "wins": 21,
-      "averageFloors": 19.77,
-      "averageDeckSize": 23.88,
-      "averageRelics": 9.42,
+      "runs": 27,
+      "wins": 22,
+      "averageFloors": 19.3,
+      "averageDeckSize": 23,
+      "averageRelics": 8.96,
       "winRate": 0.81
     },
     {
       "tag": "risk",
       "runs": 2,
-      "wins": 1,
+      "wins": 0,
       "averageFloors": 16,
-      "averageDeckSize": 20.5,
-      "averageRelics": 9.5,
-      "winRate": 0.5
+      "averageDeckSize": 19.5,
+      "averageRelics": 8.5,
+      "winRate": 0
     }
   ],
   "primaryBuilds": [
     {
       "tag": "mark",
-      "runs": 56,
-      "wins": 31,
-      "averageFloors": 18.2,
-      "averageDeckSize": 22.05,
-      "averageRelics": 8.27,
-      "winRate": 0.55
+      "runs": 53,
+      "wins": 33,
+      "averageFloors": 17.79,
+      "averageDeckSize": 21.49,
+      "averageRelics": 7.81,
+      "winRate": 0.62
     },
     {
       "tag": "ward",
-      "runs": 48,
-      "wins": 29,
-      "averageFloors": 19.44,
-      "averageDeckSize": 23.33,
-      "averageRelics": 9.31,
+      "runs": 52,
+      "wins": 31,
+      "averageFloors": 19.62,
+      "averageDeckSize": 22.75,
+      "averageRelics": 8.52,
       "winRate": 0.6
     },
     {
-      "tag": "cycle",
-      "runs": 3,
-      "wins": 2,
-      "averageFloors": 21,
-      "averageDeckSize": 25.33,
-      "averageRelics": 9.67,
-      "winRate": 0.67
-    },
-    {
       "tag": "charge",
-      "runs": 1,
+      "runs": 3,
       "wins": 1,
-      "averageFloors": 21,
-      "averageDeckSize": 26,
-      "averageRelics": 6,
-      "winRate": 1
+      "averageFloors": 18.67,
+      "averageDeckSize": 22.67,
+      "averageRelics": 5.67,
+      "winRate": 0.33
     }
   ],
   "recommendations": [
     {
       "tone": "steady",
       "area": "주요 사망 원인",
-      "text": "최종 보스 사망이 15건입니다. 관련 적 의도, 보상 카드, 휴식/상점 선택지를 우선 점검하세요."
+      "text": "중반 강적 사망이 16건입니다. 관련 적 의도, 보상 카드, 휴식/상점 선택지를 우선 점검하세요."
     }
   ]
 }
