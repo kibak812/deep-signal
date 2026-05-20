@@ -296,9 +296,9 @@ export const ENEMIES = [
     phaseAt: 0.45,
     moves: [
       { id: "compile", label: "낡은 조립", intent: "증폭 1, 방어 12", type: "defend", block: 12, self: [{ status: "strength", amount: 1 }] },
-      { id: "overflow", label: "넘침", intent: "공격 16", type: "attack", damage: 16 },
+      { id: "overflow", label: "넘침", intent: "공격 14", type: "attack", damage: 14 },
       { id: "leak", label: "기억 누수", intent: "바이러스 2", type: "debuff", applyToPlayer: [{ status: "virus", amount: 2 }] },
-      { id: "phase_crash", phase: 2, label: "심층 충돌", intent: "공격 9 x2, 취약 1", type: "attack", damage: 9, hits: 2, applyToPlayer: [{ status: "vulnerable", amount: 1 }] }
+      { id: "phase_crash", phase: 2, label: "심층 충돌", intent: "공격 8 x2, 취약 1", type: "attack", damage: 8, hits: 2, applyToPlayer: [{ status: "vulnerable", amount: 1 }] }
     ]
   }),
   enemy({
@@ -306,18 +306,18 @@ export const ENEMIES = [
     name: "마지막 문 성가대",
     tier: "boss",
     act: 3,
-    hp: [230, 260],
+    hp: [305, 350],
     sprite: "lastgate",
     description: "데이터 심해의 마지막 문을 지키는 최종 보스.",
-    mechanic: "바이러스, 큰 방어벽, 소환, 연속 강공격이 차례로 몰아칩니다. 2단계부터는 약화와 소환이 겹쳐 방어와 마무리 피해가 모두 필요합니다.",
+    mechanic: "바이러스로 시간을 빼앗고, 방어벽과 소환수로 본체를 지킵니다. 2단계부터는 소환 뒤 연속 공격이 옵니다. 본체를 쓰러뜨리면 전투가 끝납니다.",
     phaseName: "종말 레퀴엠",
     phaseAt: 0.5,
     moves: [
       { id: "intonation", label: "개문 선율", intent: "바이러스 3", type: "debuff", applyToPlayer: [{ status: "virus", amount: 3 }] },
-      { id: "choir_wall", label: "합창벽", intent: "방어 21, 증폭 1", type: "defend", block: 21, self: [{ status: "strength", amount: 1 }] },
-      { id: "gate_slam", label: "문 낙하", intent: "공격 22", type: "attack", damage: 22 },
-      { id: "gate_call", phase: 2, label: "문지기 호출", intent: "소환, 약화 1", type: "summon", summon: [{ enemyId: "mirror_jelly", count: 1, hpScale: 0.7 }], applyToPlayer: [{ status: "weak", amount: 1 }] },
-      { id: "phase_requiem", phase: 2, label: "종말 레퀴엠", intent: "공격 7 x4", type: "attack", damage: 7, hits: 4 }
+      { id: "choir_wall", label: "합창벽", intent: "방어 28", type: "defend", block: 28 },
+      { id: "gate_slam", label: "문 낙하", intent: "공격 21", type: "attack", damage: 21 },
+      { id: "gate_call", phase: 2, label: "문지기 호출", intent: "소환", type: "summon", summon: [{ enemyId: "mirror_jelly", count: 1, hpScale: 0.7 }] },
+      { id: "phase_requiem", phase: 2, label: "종말 레퀴엠", intent: "공격 4 x4", type: "attack", damage: 4, hits: 4 }
     ]
   })
 ];

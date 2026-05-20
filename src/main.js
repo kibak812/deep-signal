@@ -5464,7 +5464,8 @@ function renderBossCurtain(boss) {
   const phaseTwo = (enemy.phase ?? 1) >= 2;
   const move = enemy.nextMove;
   const intentText = enemyIntentReadout(move);
-  const label = `보스전 상황: ${enemy.name}. ${phaseTwo ? template.phaseName : template.mechanic}. 현재 의도 ${intentText}. ${enemy.phase ?? 1}단계. 2단계 전환 체력 ${threshold} 이하`;
+  const objective = bossObjectiveText(template, "aria");
+  const label = `보스전 상황: ${enemy.name}. ${phaseTwo ? template.phaseName : template.mechanic}. ${objective}. 현재 의도 ${intentText}. ${enemy.phase ?? 1}단계. 2단계 전환 체력 ${threshold} 이하`;
   return `
     <section class="boss-curtain ${phaseTwo ? "phase-two" : ""} sr-only" aria-label="${label}" title="${label}" aria-live="${phaseTwo ? "assertive" : "polite"}">
       <div class="boss-curtain-title">
@@ -5473,6 +5474,7 @@ function renderBossCurtain(boss) {
         <p>${phaseTwo ? template.phaseName : template.mechanic}</p>
       </div>
       <dl class="boss-curtain-readout">
+        <div><dt>목표</dt><dd>${objective}</dd></div>
         <div><dt>현재 의도</dt><dd>${intentText}</dd></div>
         <div><dt>단계</dt><dd>${enemy.phase ?? 1}단계</dd></div>
         <div><dt>전환 체력</dt><dd>${threshold} 이하</dd></div>
@@ -5493,11 +5495,14 @@ function renderBossStatusStrip(boss) {
   const intentValue = enemyIntentCompactValue(move);
   const intentIcon = enemyIntentIconLabel(move);
   const phaseLabel = phaseTwo ? template.phaseName : "1단계";
-  const aria = `${enemy.name}. ${phaseLabel}. 현재 의도 ${enemyIntentReadout(move)}. 2단계 전환 체력 ${threshold} 이하. 현재 체력 ${enemy.hp}/${enemy.maxHp}`;
+  const objective = bossObjectiveText(template);
+  const objectiveAria = bossObjectiveText(template, "aria");
+  const aria = `${enemy.name}. ${phaseLabel}. ${objectiveAria}. 현재 의도 ${enemyIntentReadout(move)}. 2단계 전환 체력 ${threshold} 이하. 현재 체력 ${enemy.hp}/${enemy.maxHp}`;
   return `
     <section class="boss-status-strip ${phaseTwo ? "phase-two" : ""}" style="--boss-hp:${hpPercent}%; --boss-threshold:${thresholdPercent}%;" aria-label="${aria}">
       <span>보스</span>
       <strong>${enemy.name}</strong>
+      <b class="boss-objective" title="${objectiveAria}">${objective}</b>
       <div class="boss-status-meter" aria-hidden="true"><i></i><b></b></div>
       <em>${phaseLabel}</em>
       <small title="${enemyIntentReadout(move)}"><b aria-hidden="true">${intentIcon}</b><span>${intentLabel}</span><i>${intentValue}</i></small>
@@ -6320,16 +6325,23 @@ function enemyIntentCompactValue(move = {}) {
 function renderBossMechanic(enemy, template) {
   if (!template || template.tier !== "boss") return "";
   const threshold = Math.round(enemy.maxHp * (template.phaseAt ?? 0));
+  const objective = bossObjectiveText(template);
   return `
     <div class="boss-mechanic">
       <strong>특징</strong>
       <span>${template.mechanic}</span>
+      <small class="boss-objective">${objective}</small>
       <div class="boss-phase">
         <em>${enemy.phase ?? 1}단계${(enemy.phase ?? 1) >= 2 ? ` · ${template.phaseName}` : ""}</em>
         <small>2단계 전환 체력 ${threshold} 이하</small>
       </div>
     </div>
   `;
+}
+
+function bossObjectiveText(template, mode = "short") {
+  if (!template || template.tier !== "boss") return "";
+  return mode === "aria" ? "보스 본체를 쓰러뜨리면 전투가 끝납니다" : "목표: 본체 처치";
 }
 
 function renderEnemySprite(enemy, template) {
@@ -8257,7 +8269,7 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   }
   return {
     label: "실패 지점",
-    title: `${stop}에서 멈췄습니다`,
+    title: failureAdvice?.title ?? `${stop}에서 멈췄습니다`,
     detail: firstStep?.detail ?? "첫 보상에서 주력을 빨리 정하고, 맞지 않는 카드는 과감히 넘기세요.",
     action: replaySeed ? failureAdvice?.action ?? "같은 시드에서 첫 선택 바꿔보기" : "새 런에서 첫 선택부터 바꾸기",
     stats
@@ -8473,12 +8485,15 @@ function summaryFailureProfile(summary) {
     shops,
     rests,
     tags,
-    bosses: summary.bossesDefeated ?? 0
+    bosses: summary.bossesDefeated ?? 0,
+    finalCombat: summary.finalCombat ?? null,
+    finalBoss: summaryFinalBossLoss(summary, stoppedAct, stoppedAt)
   };
   return { ...profile, cause: summaryFailureCause(profile) };
 }
 
 function summaryFailureCause(profile) {
+  if (profile.finalBoss) return "finalBoss";
   if (/상태 피해|바이러스|사망한 편지|젖은 의심/.test(profile.reason)) return "status";
   if (profile.stoppedType === "boss" || profile.stoppedAct?.boss === "reached") return "boss";
   if (profile.stoppedType === "elite") return "elite";
@@ -8487,6 +8502,15 @@ function summaryFailureCause(profile) {
   if (profile.deckSize >= 26 && profile.removed <= 1) return "deck";
   if (profile.shops + profile.rests <= 1 && profile.floor >= 10) return "route";
   return "direction";
+}
+
+function summaryFinalBossLoss(summary, stoppedAct = summaryStoppedAct(summary), stoppedAt = stoppedAct?.stoppedAt ?? null) {
+  return Boolean(
+    !summary.won &&
+      (summary.finalCombat?.bossId === "last_gate_choir" ||
+        summary.finalCombat?.bossName === "마지막 문 성가대" ||
+        (stoppedAct?.act === 3 && stoppedAt?.type === "boss"))
+  );
 }
 
 function summaryFailureAdvice(summary, profile = summaryFailureProfile(summary)) {
@@ -8516,6 +8540,9 @@ function summaryFailureAdvice(summary, profile = summaryFailureProfile(summary))
         { tone: "steady", title: "상점에서는 제거 먼저", detail: "저주나 상태 카드가 늘면 구매보다 카드 제거를 먼저 씁니다." }
       ]
     };
+  }
+  if (profile.cause === "finalBoss") {
+    return summaryFinalBossAdvice(profile);
   }
   if (profile.cause === "boss") {
     return {
@@ -8704,6 +8731,161 @@ function summaryFailureAdvice(summary, profile = summaryFailureProfile(summary))
       { tone: "strong", title: "큰 피해 카드 확보", detail: "2막 전에는 보스 체력을 끝낼 공격 수단을 정합니다." }
     ]
   };
+}
+
+function summaryFinalBossAdvice(profile) {
+  const cue = summaryFinalBossCue(profile.finalCombat);
+  const bossState = summaryFinalBossStateText(profile.finalCombat);
+  return {
+    tone: "danger",
+    title: cue.title,
+    detail: `${cue.detail} ${bossState}`,
+    brief: cue.brief,
+    action: cue.action,
+    retryTitle: cue.retryTitle,
+    chips: cue.chips,
+    plan: {
+      tone: "danger",
+      label: "최종 보스",
+      title: cue.planTitle,
+      detail: cue.planDetail
+    },
+    threat: {
+      label: "마지막 문",
+      title: cue.threatTitle,
+      detail: cue.threatDetail
+    },
+    steps: cue.steps
+  };
+}
+
+function summaryFinalBossCue(finalCombat = {}) {
+  const hpRatio = finalCombat?.bossMaxHp ? (finalCombat.bossHp ?? 0) / Math.max(1, finalCombat.bossMaxHp) : 1;
+  const move = finalCombat?.bossMove ?? "";
+  const forecast = finalCombat?.forecast ?? {};
+  const virus = finalCombat?.playerStatuses?.virus ?? 0;
+  if (hpRatio <= 0.18) {
+    return {
+      title: "마지막 한 턴의 마무리 피해가 부족했습니다",
+      detail: "본체 체력이 얼마 남지 않았습니다. 다음에는 큰 공격 카드, 취약, 전하 소모 카드를 같은 턴에 잡는 쪽을 우선하세요.",
+      brief: "최종 보스전에서는 본체를 끝낼 카드와 그 카드를 찾을 뽑기 수단을 함께 챙기세요.",
+      action: "마무리 피해와 카드 뽑기 보강",
+      retryTitle: "본체 마무리 루트 다시 짜기",
+      chips: ["본체 집중", "큰 피해", "카드 뽑기"],
+      planTitle: "마무리 카드를 손패에 모으기",
+      planDetail: "최종 보스 직전에는 새 시너지보다 큰 피해 카드, 비용 감소, 추가 뽑기를 우선해 본체 체력을 한 번에 밀 수 있게 만드세요.",
+      threatTitle: "본체 체력이 낮은데 끝내지 못함",
+      threatDetail: "소환수가 남아도 본체만 쓰러뜨리면 전투가 끝납니다. 마무리 턴에는 소환수보다 본체 피해를 먼저 계산하세요.",
+      steps: [
+        { tone: "danger", title: "본체 마무리 카드 확보", detail: "큰 피해 카드나 전하를 쓰는 공격을 최종 보스 전까지 1장 이상 준비합니다." },
+        { tone: "strong", title: "그 카드를 찾을 수단 붙이기", detail: "추가 뽑기, 보존, 비용 감소가 있어야 마무리 턴에 핵심 카드가 손패에 옵니다." },
+        { tone: "warning", title: "소환수보다 본체 계산", detail: "본체 처치가 보이면 소환수 정리보다 보스 체력 계산을 먼저 합니다." }
+      ]
+    };
+  }
+  if (move === "gate_slam" || ((finalCombat?.playerHp ?? 99) <= 12 && (forecast.incomingDamage ?? 0) > 0)) {
+    return {
+      title: "문 낙하를 맞을 체력이 남지 않았습니다",
+      detail: "마지막 문은 레퀴엠만큼 단타 공격도 위험합니다. 보스 직전에는 강화보다 회복, 단타 방어, 약화 중 하나를 먼저 계산하세요.",
+      brief: "최종 보스 전 체력이 낮으면 강화보다 회복이나 단타 방어 수단을 우선하세요.",
+      action: "보스 전 회복·단타 방어 챙기기",
+      retryTitle: "마지막 휴식 선택 바꿔보기",
+      chips: ["회복", "단타 방어", "약화"],
+      planTitle: "문 낙하를 버틸 체력 남기기",
+      planDetail: "마지막 구역에서 체력이 낮다면 핵심 카드 강화보다 회복을 먼저 보고, 한 번에 20 이상 막는 카드나 약화 부여를 함께 준비하세요.",
+      threatTitle: "단타 공격을 맞을 여유가 부족함",
+      threatDetail: "문 낙하는 예고가 선명한 공격입니다. 보스 직전 체력이 낮으면 큰 피해 카드보다 회복과 방어 선택의 가치가 올라갑니다.",
+      steps: [
+        { tone: "danger", title: "보스 전 체력 먼저 보기", detail: "최종 보스 직전 체력이 낮으면 강화보다 회복이나 안전 경로를 우선합니다." },
+        { tone: "warning", title: "단타 방어 카드 남기기", detail: "한 번에 20 이상 막을 카드나 도금 유물이 있으면 문 낙하 턴을 넘기기 쉽습니다." },
+        { tone: "strong", title: "약화로 큰 공격 줄이기", detail: "약화 1만 있어도 단타 피해가 줄어 다음 턴 마무리 기회가 생깁니다." }
+      ]
+    };
+  }
+  if (move === "gate_call" || (forecast.summons ?? 0) > 0 || (finalCombat?.enemyCount ?? 1) >= 2) {
+    return {
+      title: "소환수에 시선이 갈 때 본체 피해가 끊겼습니다",
+      detail: "마지막 문은 소환수로 시간을 벌지만, 승리 조건은 본체 처치입니다. 다음에는 소환수 정리와 본체 피해 중 어느 쪽이 빠른지 먼저 비교하세요.",
+      brief: "소환 턴에는 본체 처치 각이 있는지 먼저 보고, 없을 때만 소환수를 정리하세요.",
+      action: "소환 턴 본체 피해 먼저 계산",
+      retryTitle: "소환 턴 판단 바꿔보기",
+      chips: ["소환수", "본체 처치", "턴 계산"],
+      planTitle: "소환 턴에도 본체 피해 유지",
+      planDetail: "다단 공격, 광역 피해, 취약 부여처럼 소환수 정리와 본체 피해를 동시에 해결하는 카드를 더 높게 보세요.",
+      threatTitle: "소환으로 본체 마무리 시간이 늘어남",
+      threatDetail: "본체 처치가 가까우면 소환수를 모두 지우는 것보다 본체를 끝내는 편이 안전합니다.",
+      steps: [
+        { tone: "danger", title: "본체 처치 각 먼저 보기", detail: "소환수가 나와도 보스 체력을 먼저 계산합니다." },
+        { tone: "strong", title: "광역·다단 피해 확보", detail: "소환수와 본체를 함께 누를 수 있는 공격을 1장 이상 준비합니다." },
+        { tone: "warning", title: "긴 전투 대비 정화", detail: "소환 때문에 전투가 길어질 때를 대비해 바이러스 정화 수단을 챙깁니다." }
+      ]
+    };
+  }
+  if (move === "phase_requiem" || (forecast.incomingDamage ?? 0) >= 20) {
+    return {
+      title: "레퀴엠 턴을 넘길 방어가 부족했습니다",
+      detail: "2단계 연속 공격은 방어와 약화가 함께 있어야 안정적으로 넘길 수 있습니다.",
+      brief: "최종 보스 전에는 큰 방어 카드와 약화 카드 중 하나를 반드시 남겨두세요.",
+      action: "레퀴엠 대비 방어·약화 챙기기",
+      retryTitle: "2단계 방어 턴 다시 준비",
+      chips: ["방어", "약화", "2단계"],
+      planTitle: "큰 공격 턴을 넘길 카드 남기기",
+      planDetail: "마지막 문 2단계에서는 공격 카드만으로 밀기 어렵습니다. 도금, 큰 방어, 약화 중 하나를 마무리 카드와 함께 잡으세요.",
+      threatTitle: "2단계 연속 공격에 체력 손실",
+      threatDetail: "레퀴엠 턴은 한 번만 넘겨도 마무리 기회가 생깁니다. 방어와 약화를 마지막 구역에서 더 높게 평가하세요.",
+      steps: [
+        { tone: "danger", title: "큰 방어 카드 확보", detail: "한 턴에 18 이상 막을 수 있는 카드나 도금 유물을 준비합니다." },
+        { tone: "warning", title: "약화로 연타 줄이기", detail: "약화 1만 있어도 연속 공격의 체력 손실이 크게 줄어듭니다." },
+        { tone: "strong", title: "막은 다음 바로 마무리", detail: "방어 턴 다음에 본체를 끝낼 공격 카드를 손패에 남겨둡니다." }
+      ]
+    };
+  }
+  if (virus >= 2) {
+    return {
+      title: "바이러스가 최종 보스전 시간을 빼앗았습니다",
+      detail: "마지막 문은 긴 전투에서 손패와 체력을 동시에 갉아먹습니다. 정화나 빠른 마무리 중 하나가 필요했습니다.",
+      brief: "바이러스가 쌓이면 정화 카드나 빠른 마무리 피해를 먼저 챙기세요.",
+      action: "정화와 빠른 마무리 보강",
+      retryTitle: "바이러스 관리부터 바꿔보기",
+      chips: ["정화", "바이러스", "빠른 마무리"],
+      planTitle: "정화 수단을 보스 전까지 확보",
+      planDetail: "최종 구역에서는 방어만큼 정화가 중요합니다. 정화가 없으면 전투를 짧게 끝낼 피해 카드를 더 높게 보세요.",
+      threatTitle: "바이러스가 손패와 체력을 갉음",
+      threatDetail: "바이러스를 지우거나 보스 체력을 빠르게 밀어야 장기전 손실을 줄일 수 있습니다.",
+      steps: [
+        { tone: "warning", title: "정화 카드 확보", detail: "정화 카드가 보이면 보스 전까지 최소 1장 챙깁니다." },
+        { tone: "strong", title: "전투를 짧게 끝내기", detail: "정화가 부족하면 큰 피해와 취약으로 본체 체력을 빨리 밀어야 합니다." },
+        { tone: "steady", title: "덱을 너무 두껍게 만들지 않기", detail: "정화 카드가 덱 안에 있어도 늦게 오면 의미가 줄어듭니다." }
+      ]
+    };
+  }
+  return {
+    title: "마지막 문 2단계에서 힘이 조금 모자랐습니다",
+    detail: "최종 보스전까지 도달했습니다. 다음에는 방어, 정화, 본체 마무리 피해 중 비어 있는 역할 하나를 더 일찍 채우세요.",
+    brief: "최종 보스 전에는 방어, 정화, 본체 마무리 중 빈 역할을 하나만 확실히 채우세요.",
+    action: "최종 보스 역할 하나 보강",
+    retryTitle: "마지막 구역 선택 바꿔보기",
+    chips: ["방어", "정화", "마무리"],
+    planTitle: "빈 역할 하나를 확실히 채우기",
+    planDetail: "마지막 구역 보상은 새 방향보다 부족한 역할을 채우는 선택이 더 안전합니다.",
+    threatTitle: "최종 보스 요구를 하나 덜 채움",
+    threatDetail: "마지막 문은 방어, 정화, 본체 마무리를 모두 시험합니다. 부족한 하나를 먼저 보강하세요.",
+    steps: [
+      { tone: "danger", title: "빈 역할 하나 고르기", detail: "방어, 정화, 마무리 피해 중 가장 약한 역할을 먼저 확인합니다." },
+      { tone: "strong", title: "본체 처치 조건 기억", detail: "본체를 쓰러뜨리면 전투가 끝나므로 마무리 피해를 가장 먼저 계산합니다." },
+      { tone: "warning", title: "마지막 상점은 정비 우선", detail: "새 카드보다 제거, 회복, 핵심 카드 강화가 더 큰 차이를 냅니다." }
+    ]
+  };
+}
+
+function summaryFinalBossStateText(finalCombat = {}) {
+  if (!finalCombat?.bossName) return "";
+  const hp =
+    Number.isFinite(finalCombat.bossHp) && Number.isFinite(finalCombat.bossMaxHp)
+      ? `당시 ${finalCombat.bossName} 체력은 ${Math.max(0, finalCombat.bossHp)}/${finalCombat.bossMaxHp}였습니다.`
+      : `${finalCombat.bossName}전에서 멈췄습니다.`;
+  const intent = finalCombat.bossIntent ? ` 예고는 ${finalCombat.bossIntent}였습니다.` : "";
+  return `${hp}${intent}`;
 }
 
 function renderSummaryRunHook(summary) {

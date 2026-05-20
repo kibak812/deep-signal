@@ -128,6 +128,8 @@ try {
   await clickText(cdp, "이어하기");
   await waitForSelector(cdp, ".summary-layout");
   await assertSummaryActionsVisible(cdp);
+  await waitForText(cdp, "문 낙하를 맞을 체력이 남지 않았습니다");
+  await waitForText(cdp, "보스 전 회복·단타 방어 챙기기");
   await capture(cdp, "browser-qa-summary-lost-refreshed.png");
   await clearSavedRun(cdp);
 
@@ -815,6 +817,7 @@ async function stageGroupedEnemyFxFixture(cdp) {
 
 async function stageSummaryFixture(cdp, outcome) {
   const won = outcome === "won";
+  const route = summaryFixtureRouteLiteral(won, !won);
   await evaluate(cdp, `(async () => {
     const { newRun } = await import("./src/engine/game.js");
     const run = newRun({ seed: ${JSON.stringify(`qa-summary-${outcome}`)}, difficulty: ${won ? 2 : 1} });
@@ -833,18 +836,18 @@ async function stageSummaryFixture(cdp, outcome) {
     run.player.relics = ["salted_compass", "cracked_anchor", "mnemonic_shell", "salvaged_lens", "map_of_silt", "diver_medal"].slice(0, ${won ? 6 : 4});
     run.player.hp = ${won ? 41 : 0};
     run.player.gold = ${won ? 164 : 77};
-    const route = ${summaryFixtureRouteLiteral(won)};
+    const route = ${route};
     run.stats = {
       ...run.stats,
-      floors: ${won ? 21 : 12},
-      fights: ${won ? 13 : 8},
-      elitesKilled: ${won ? 4 : 1},
+      floors: ${won ? 21 : 21},
+      fights: ${won ? 13 : 13},
+      elitesKilled: ${won ? 4 : 3},
       cardsAdded: ${won ? 11 : 7},
       cardsRemoved: ${won ? 3 : 1},
-      enemiesKilled: ${won ? 29 : 15},
-      damageDealt: ${won ? 1184 : 493},
-      damageTaken: ${won ? 116 : 148},
-      bossesKilled: ${won ? 3 : 1},
+      enemiesKilled: ${won ? 29 : 27},
+      damageDealt: ${won ? 1184 : 1108},
+      damageTaken: ${won ? 116 : 172},
+      bossesKilled: ${won ? 3 : 2},
       relicsFound: run.player.relics.length
     };
     run.phase = "summary";
@@ -856,26 +859,27 @@ async function stageSummaryFixture(cdp, outcome) {
     run.currentNodeId = null;
     run.summary = {
       won: ${won},
-      reason: ${JSON.stringify(won ? "마지막 문 성가대를 넘어 심해 코어를 회수했습니다." : "대분류자 칼리스의 큰 공격을 막지 못했습니다.")},
+      reason: ${JSON.stringify(won ? "마지막 문 성가대를 넘어 심해 코어를 회수했습니다." : "마지막 문 성가대의 문 낙하를 버티지 못했습니다.")},
       seed: run.seed,
       difficultyId: ${won ? 2 : 1},
       difficulty: ${JSON.stringify(won ? "무광층" : "냉수층")},
       durationSeconds: ${won ? 3184 : 1438},
-      floors: ${won ? 21 : 12},
-      bossesDefeated: ${won ? 3 : 1},
-      killedBosses: ${won ? JSON.stringify(["대분류자 칼리스", "침몰 알고리즘", "마지막 문 성가대"]) : JSON.stringify(["대분류자 칼리스"])},
+      floors: ${won ? 21 : 21},
+      bossesDefeated: ${won ? 3 : 2},
+      killedBosses: ${won ? JSON.stringify(["대분류자 칼리스", "침몰 알고리즘", "마지막 문 성가대"]) : JSON.stringify(["대분류자 칼리스", "침몰 알고리즘"])},
       hp: ${won ? 41 : 0},
       maxHp: run.player.maxHp,
-      fights: ${won ? 13 : 8},
-      elitesKilled: ${won ? 4 : 1},
+      fights: ${won ? 13 : 13},
+      elitesKilled: ${won ? 4 : 3},
       cardsAdded: ${won ? 11 : 7},
       cardsRemoved: ${won ? 3 : 1},
       deckSize: run.player.deck.length,
       relics: run.player.relics.length,
       gold: run.player.gold,
-      killed: ${won ? 29 : 15},
-      damageDealt: ${won ? 1184 : 493},
-      damageTaken: ${won ? 116 : 148},
+      killed: ${won ? 29 : 27},
+      damageDealt: ${won ? 1184 : 1108},
+      damageTaken: ${won ? 116 : 172},
+      finalCombat: ${won ? "null" : JSON.stringify(summaryFinalBossFixture())},
       route,
       build: ${won ? JSON.stringify(["mark", "ward", "cycle"]) : JSON.stringify(["virus", "ward"])}
     };
@@ -974,7 +978,7 @@ async function stageRecordsFixture(cdp) {
   })()`);
 }
 
-function summaryFixtureRouteLiteral(won) {
+function summaryFixtureRouteLiteral(won, finalBossLoss = false) {
   const route = won
     ? {
         totalFloors: 21,
@@ -989,6 +993,20 @@ function summaryFixtureRouteLiteral(won) {
           { act: 3, floors: 7, combat: 3, elite: 1, event: 2, shop: 1, rest: 1, boss: 1, lastFloor: 21, stoppedAt: { floor: 21, type: "boss", completed: true }, boss: "defeated" }
         ]
       }
+    : finalBossLoss
+      ? {
+          totalFloors: 21,
+          elites: 3,
+          events: 4,
+          shops: 2,
+          rests: 3,
+          bosses: 2,
+          acts: [
+            { act: 1, floors: 7, combat: 4, elite: 1, event: 1, shop: 0, rest: 1, boss: 1, lastFloor: 7, stoppedAt: { floor: 7, type: "boss", completed: true }, boss: "defeated" },
+            { act: 2, floors: 7, combat: 3, elite: 1, event: 1, shop: 1, rest: 1, boss: 1, lastFloor: 14, stoppedAt: { floor: 14, type: "boss", completed: true }, boss: "defeated" },
+            { act: 3, floors: 7, combat: 3, elite: 1, event: 2, shop: 1, rest: 1, boss: 1, lastFloor: 21, stoppedAt: { floor: 21, type: "boss", completed: false }, boss: "reached" }
+          ]
+        }
     : {
         totalFloors: 12,
         elites: 1,
@@ -1003,6 +1021,39 @@ function summaryFixtureRouteLiteral(won) {
         ]
       };
   return JSON.stringify(route);
+}
+
+function summaryFinalBossFixture() {
+  return {
+    type: "boss",
+    turn: 13,
+    enemyCount: 2,
+    bossId: "last_gate_choir",
+    bossName: "마지막 문 성가대",
+    bossHp: 92,
+    bossMaxHp: 350,
+    bossBlock: 0,
+    bossPhase: 2,
+    bossMove: "gate_slam",
+    bossIntent: "공격 21",
+    focusEnemyId: "last_gate_choir",
+    focusEnemyName: "마지막 문 성가대",
+    focusEnemyTier: "boss",
+    playerHp: 0,
+    playerBlock: 0,
+    playerStatuses: { virus: 1 },
+    forecast: {
+      incomingDamage: 25,
+      blockedDamage: 0,
+      hpLoss: 25,
+      incomingStatuses: [],
+      enemyBlock: 0,
+      enemyHealing: 0,
+      enemyBuffs: [],
+      summons: 0,
+      attackIntents: 1
+    }
+  };
 }
 
 async function clearRecords(cdp) {
@@ -1877,24 +1928,34 @@ async function assertBossStatusStrip(cdp) {
     const boss = document.querySelector(".enemy-card:has(.enemy-sprite.tier-boss)");
     const meter = strip?.querySelector(".boss-status-meter");
     const intent = strip?.querySelector("small");
+    const objective = strip?.querySelector(".boss-objective");
     const stripBox = strip?.getBoundingClientRect();
     const bossBox = boss?.getBoundingClientRect();
+    const objectiveBox = objective?.getBoundingClientRect();
+    const meterBox = meter?.getBoundingClientRect();
+    const intentBox = intent?.getBoundingClientRect();
     const style = strip ? getComputedStyle(strip) : null;
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const aria = strip?.getAttribute("aria-label") ?? "";
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
+    const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
     const ok =
       Boolean(strip) &&
       Boolean(boss) &&
       Boolean(meter) &&
       Boolean(intent) &&
+      Boolean(objective) &&
       text.includes("보스") &&
+      text.includes("목표: 본체 처치") &&
       /1단계|레퀴엠|침몰|문/.test(text) &&
+      aria.includes("보스 본체를 쓰러뜨리면 전투가 끝납니다") &&
       aria.includes("현재 의도") &&
       aria.includes("전환 체력") &&
       Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36) &&
       (!bossBox || stripBox.bottom < bossBox.bottom) &&
       style?.pointerEvents === "none" &&
+      !overlaps(objectiveBox, meterBox) &&
+      !overlaps(objectiveBox, intentBox) &&
       !overflow;
     return {
       ok,
@@ -1904,9 +1965,13 @@ async function assertBossStatusStrip(cdp) {
       hasBoss: Boolean(boss),
       hasMeter: Boolean(meter),
       hasIntent: Boolean(intent),
+      hasObjective: Boolean(objective),
       stripTop: stripBox ? Math.round(stripBox.top) : null,
       stripBottom: stripBox ? Math.round(stripBox.bottom) : null,
       bossBottom: bossBox ? Math.round(bossBox.bottom) : null,
+      objectiveBox: objectiveBox ? { x: Math.round(objectiveBox.x), y: Math.round(objectiveBox.y), width: Math.round(objectiveBox.width), height: Math.round(objectiveBox.height) } : null,
+      meterBox: meterBox ? { x: Math.round(meterBox.x), y: Math.round(meterBox.y), width: Math.round(meterBox.width), height: Math.round(meterBox.height) } : null,
+      intentBox: intentBox ? { x: Math.round(intentBox.x), y: Math.round(intentBox.y), width: Math.round(intentBox.width), height: Math.round(intentBox.height) } : null,
       pointerEvents: style?.pointerEvents ?? "",
       scrollWidth: document.documentElement.scrollWidth,
       viewportWidth: window.innerWidth

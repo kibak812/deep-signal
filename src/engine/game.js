@@ -763,7 +763,7 @@ export function playCard(run, uid, targetUid = null) {
   }
 
   removeDeadEnemies(run);
-  if (getAliveEnemies(run).length === 0) {
+  if (combatVictoryAchieved(run)) {
     return winCombat(run);
   }
   return touch(run);
@@ -802,7 +802,7 @@ export function endTurn(run) {
   }
 
   removeDeadEnemies(run);
-  if (getAliveEnemies(run).length === 0) {
+  if (combatVictoryAchieved(run)) {
     return winCombat(run);
   }
 
@@ -1312,6 +1312,15 @@ function summonEnemies(run, summons, summoner) {
       addLog(run, `${summoner.name}: ${summoned.name} 소환.`, "enemy");
     }
   }
+}
+
+function combatVictoryAchieved(run) {
+  const combat = run.combat;
+  if (!combat) return false;
+  const alive = getAliveEnemies(run);
+  if (alive.length === 0) return true;
+  if (combat.type !== "boss") return false;
+  return !alive.some((enemy) => ENEMY_BY_ID[enemy.templateId]?.tier === "boss");
 }
 
 function chooseEnemyIntent(run, enemy, initial = false) {
@@ -2071,9 +2080,45 @@ function buildSummary(run, won, reason) {
     killed: run.stats.enemiesKilled,
     damageDealt: run.stats.damageDealt,
     damageTaken: run.stats.damageTaken,
+    finalCombat: summarizeFinalCombat(run),
     route: summarizeRoute(run),
     build: summarizeBuild(run)
   };
+}
+
+function summarizeFinalCombat(run) {
+  if (!run.combat) return null;
+  const aliveEnemies = getAliveEnemies(run);
+  const boss =
+    aliveEnemies.find((enemy) => ENEMY_BY_ID[enemy.templateId]?.tier === "boss") ??
+    run.combat.enemies.find((enemy) => ENEMY_BY_ID[enemy.templateId]?.tier === "boss") ??
+    null;
+  const focusEnemy = boss ?? aliveEnemies[0] ?? run.combat.enemies[0] ?? null;
+  const template = focusEnemy ? ENEMY_BY_ID[focusEnemy.templateId] : null;
+  return {
+    type: run.combat.type,
+    turn: run.combat.turn,
+    enemyCount: aliveEnemies.length,
+    bossId: boss?.templateId ?? null,
+    bossName: boss?.name ?? null,
+    bossHp: boss?.hp ?? null,
+    bossMaxHp: boss?.maxHp ?? null,
+    bossBlock: boss?.block ?? null,
+    bossPhase: boss?.phase ?? null,
+    bossMove: boss?.nextMove?.id ?? null,
+    bossIntent: boss?.nextMove?.intent ?? "",
+    focusEnemyId: focusEnemy?.templateId ?? null,
+    focusEnemyName: focusEnemy?.name ?? null,
+    focusEnemyTier: template?.tier ?? null,
+    playerHp: run.player.hp,
+    playerBlock: run.player.block,
+    playerStatuses: summarizePositiveStatuses(run.player.statuses),
+    forecast: enemyIntentForecast(run)
+  };
+}
+
+function summarizePositiveStatuses(statuses = {}) {
+  return Object.fromEntries(Object.entries(statuses).filter(([, value]) => value > 0));
 }
 
 function summarizeRoute(run) {

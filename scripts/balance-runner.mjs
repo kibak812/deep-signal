@@ -36,6 +36,15 @@ const COMBAT_TURN_LIMITS = {
   elite: 36,
   boss: 44
 };
+const FINAL_BOSS_TIMELINE_LIMIT = 8;
+const FINAL_BOSS_MOVE_LABELS = {
+  intonation: "개문 선율",
+  choir_wall: "합창벽",
+  gate_slam: "문 낙하",
+  gate_call: "문지기 호출",
+  phase_requiem: "종말 레퀴엠",
+  unknown: "알 수 없음"
+};
 
 export function runBalanceSuite({
   seeds = DEFAULT_SEEDS,
@@ -56,10 +65,13 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
   const route = [];
   const problems = [];
   const startedAt = Date.now();
+  let finalBossSnapshot = null;
+  const finalBossTimeline = [];
 
   let steps = 0;
   while (run.phase !== "summary" && steps < maxSteps) {
     steps += 1;
+    if (isFinalBossCombat(run)) finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
     const before = stateFingerprint(run);
     try {
       pilotStep(run, route);
@@ -67,6 +79,7 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
       problems.push(`exception:${error.message}`);
       break;
     }
+    if (isFinalBossCombat(run)) finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
     const after = stateFingerprint(run);
     if (after === before && !run.selector) {
       problems.push(`stalled:${run.phase}:${run.currentNodeId ?? "none"}`);
@@ -80,6 +93,7 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
 
   if (steps >= maxSteps && run.phase !== "summary") problems.push("max-steps");
 
+  const finalBossTimelineReport = finalBossSnapshot && !run.summary?.won ? finalBossTimeline.map(stripFinalBossTimelineKey) : [];
   return {
     seed,
     difficulty,
@@ -99,11 +113,19 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
     damageDealt: run.stats.damageDealt,
     damageTaken: run.stats.damageTaken,
     build: run.summary?.build ?? topBuildTags(run),
+    roleProfile: deckRoleProfile(run),
+    finalBoss: finalBossSnapshot,
+    finalBossTimeline: finalBossTimelineReport,
     route,
     steps,
     problems,
     durationMs: Date.now() - startedAt
   };
+}
+
+function stripFinalBossTimelineKey(entry) {
+  const { stateKey, ...reportEntry } = entry;
+  return reportEntry;
 }
 
 function pilotStep(run, route) {
@@ -155,10 +177,20 @@ function nodeScore(run, node, hpRatio) {
   const prices = shopServicePrices(run);
   const firstElite = node.type === "elite" && node.act === 1 && run.stats.elitesKilled === 0;
   const actOneElite = node.type === "elite" && node.act === 1;
-  const requiredHp = firstElite ? 0.78 + Math.min(0.12, difficulty * 0.03) : actOneElite ? 0.72 : 0.62;
-  const requiredDeck = firstElite ? 22 + difficulty * 3 : actOneElite ? 24 : 20;
+  const actTwoElite = node.type === "elite" && node.act === 2;
+  const requiredHp = firstElite
+    ? 0.78 + Math.min(0.12, difficulty * 0.03)
+    : actOneElite
+      ? 0.72
+      : actTwoElite
+        ? 0.72 + Math.min(0.1, difficulty * 0.018)
+        : 0.62;
+  const requiredDeck = firstElite ? 22 + difficulty * 3 : actOneElite ? 24 : actTwoElite ? 27 + difficulty * 2 : 20;
   const earlyElitePenalty = actOneElite
     ? (hpRatio < requiredHp ? -28 - difficulty * 3 : 0) + (deckScore < requiredDeck ? -18 - difficulty * 2 : 0)
+    : 0;
+  const midElitePenalty = actTwoElite
+    ? (hpRatio < requiredHp ? -22 - difficulty * 3 : 0) + (deckScore < requiredDeck ? -14 - difficulty * 2 : 0)
     : 0;
   const bossPrepScore = bossPrep && node.act === bossPrep.act
     ? {
@@ -177,7 +209,7 @@ function nodeScore(run, node, hpRatio) {
     event: hpRatio > 0.5 ? 22 : 12,
     combat: 18
   }[node.type] ?? 0;
-  return base + bossPrepScore + earlyElitePenalty + node.act * 1.5 + (node.type === "elite" ? run.player.relics.length : 0);
+  return base + bossPrepScore + earlyElitePenalty + midElitePenalty + node.act * 1.5 + (node.type === "elite" ? run.player.relics.length : 0);
 }
 
 function pilotCombat(run) {
@@ -395,7 +427,7 @@ function bossPreparationBonus(run, card) {
   const deckCards = run.player.deck.map((cardInstance) => getCard(cardInstance));
   const finalActBonus = context.act >= 3 ? 1.55 : 1;
   let bonus = 0;
-  if ((context.needsStatusControl ?? deckCards.filter(cardSupportsStatusControl).length < 2) && cardSupportsStatusControl(card)) bonus += 4.8 * finalActBonus;
+  if ((context.needsStatusControl ?? deckCards.filter(cardSupportsStatusControl).length < 2) && cardSupportsStatusControl(card)) bonus += (cardSupportsCleanse(card) ? 6.2 : 4.8) * finalActBonus;
   if ((context.needsDefense ?? deckCards.filter(cardSupportsDefense).length < 6) && cardSupportsDefense(card)) bonus += 4.3 * finalActBonus;
   if ((context.needsFinish ?? deckCards.filter(cardSupportsFinish).length < 7) && cardSupportsFinish(card)) bonus += 3.7 * finalActBonus;
   if ((context.needsDeckSpeed ?? deckCards.filter(cardSupportsFlow).length < 4) && cardSupportsFlow(card)) bonus += 2.8;
@@ -420,17 +452,19 @@ function bossPrepContext(run) {
   const defense = cards.filter(cardSupportsDefense).length;
   const finish = cards.filter(cardSupportsFinish).length;
   const statusControl = cards.filter(cardSupportsStatusControl).length;
+  const cleanse = cards.filter(cardSupportsCleanse).length;
   const flow = cards.filter(cardSupportsFlow).length;
   const deckSize = cards.length;
-  const hpTarget = finalAct ? (close ? 0.78 : 0.68) : close ? 0.68 : 0.58;
+  const hpTarget = finalAct ? (close ? 0.82 : 0.72) : close ? 0.72 : 0.62;
   const defenseTarget = finalAct ? 7 : 5;
   const finishTarget = finalAct ? 8 : 6;
   const statusTarget = finalAct ? 3 : 2;
+  const cleanseTarget = finalAct ? 2 : 1;
   const flowTarget = deckSize >= 25 || finalAct ? 4 : 3;
   const needsHp = hpRatio < hpTarget;
   const needsDefense = defense < defenseTarget;
   const needsFinish = finish < finishTarget;
-  const needsStatusControl = statusControl < statusTarget;
+  const needsStatusControl = statusControl < statusTarget || cleanse < cleanseTarget;
   const needsDeckSpeed = deckSize >= 25 || flow < flowTarget;
   const missing = [
     needsHp ? "체력" : "",
@@ -448,6 +482,7 @@ function bossPrepContext(run) {
     defense,
     finish,
     statusControl,
+    cleanse,
     flow,
     needsHp,
     needsDefense,
@@ -477,9 +512,13 @@ function cardSupportsFinish(card) {
 
 function cardSupportsStatusControl(card) {
   return (
-    collectEffects(card.effects ?? []).some((effect) => effect.op === "cleanse" || effect.op === "heal") ||
+    cardSupportsCleanse(card) ||
     card.keywords?.some((keyword) => ["weak", "vulnerable", "frail", "plated"].includes(keyword))
   );
+}
+
+function cardSupportsCleanse(card) {
+  return collectEffects(card.effects ?? []).some((effect) => effect.op === "cleanse" || effect.op === "heal");
 }
 
 function cardSupportsFlow(card) {
@@ -636,9 +675,14 @@ function pilotRest(run) {
 
 function selectDeckCard(run) {
   if (run.selector.mode === "upgrade") {
+    const bossPrep = bossPrepContext(run);
     return run.player.deck
       .filter((card) => isUpgradeableCard(card))
-      .map((card) => ({ card, score: rewardCardScore(run, card.cardId) + (card.cardId === "pulse_lance" ? 2 : 0) }))
+      .map((card) => {
+        const template = getCard(card);
+        const cleanseUpgrade = bossPrep?.needsStatusControl && cardSupportsCleanse(template) ? 7 : 0;
+        return { card, score: rewardCardScore(run, card.cardId) + cleanseUpgrade + (card.cardId === "pulse_lance" ? 2 : 0) };
+      })
       .sort((left, right) => right.score - left.score)[0]?.card ?? run.player.deck[0];
   }
   return removableCard(run) ?? run.player.deck[0];
@@ -714,6 +758,98 @@ function collectEffects(effects) {
     if (effect.effects) collected.push(...collectEffects(effect.effects));
   }
   return collected;
+}
+
+function isFinalBossCombat(run) {
+  return Boolean(run.combat?.enemies.some((enemy) => enemy.templateId === "last_gate_choir"));
+}
+
+function finalBossCombatSnapshot(run) {
+  const boss = run.combat?.enemies.find((enemy) => enemy.templateId === "last_gate_choir");
+  if (!boss) return null;
+  const move = boss.nextMove ?? {};
+  return {
+    turn: run.combat.turn,
+    playerHp: run.player.hp,
+    playerBlock: run.player.block,
+    playerStatuses: compactStatuses(run.player.statuses),
+    incomingDamage: expectedIncomingDamage(run),
+    bossHp: boss.hp,
+    bossMaxHp: boss.maxHp,
+    bossBlock: boss.block,
+    bossPhase: boss.phase,
+    bossMove: move.id ?? null,
+    bossIntent: move.intent ?? "",
+    hand: run.combat.hand.map((card) => getCard(card).id),
+    drawPile: run.combat.drawPile.length,
+    discardPile: run.combat.discardPile.length,
+    exhaustPile: run.combat.exhaustPile.length,
+    roles: deckRoleProfile(run)
+  };
+}
+
+function recordFinalBossSnapshot(run, timeline) {
+  const snapshot = finalBossCombatSnapshot(run);
+  if (!snapshot) return null;
+  const entry = finalBossTimelineEntry(snapshot);
+  const stateKey = finalBossSnapshotKey(entry);
+  if (timeline.at(-1)?.stateKey !== stateKey) {
+    timeline.push({ ...entry, stateKey });
+    if (timeline.length > FINAL_BOSS_TIMELINE_LIMIT) timeline.shift();
+  }
+  return snapshot;
+}
+
+function finalBossTimelineEntry(snapshot) {
+  return {
+    turn: snapshot.turn,
+    playerHp: snapshot.playerHp,
+    playerBlock: snapshot.playerBlock,
+    playerStatuses: snapshot.playerStatuses,
+    incomingDamage: snapshot.incomingDamage,
+    bossHp: snapshot.bossHp,
+    bossMaxHp: snapshot.bossMaxHp,
+    bossBlock: snapshot.bossBlock,
+    bossPhase: snapshot.bossPhase,
+    bossMove: snapshot.bossMove ?? "unknown",
+    bossIntent: snapshot.bossIntent,
+    hand: snapshot.hand.slice(0, 7),
+    drawPile: snapshot.drawPile,
+    discardPile: snapshot.discardPile,
+    exhaustPile: snapshot.exhaustPile
+  };
+}
+
+function finalBossSnapshotKey(snapshot) {
+  return [
+    snapshot.turn,
+    snapshot.playerHp,
+    snapshot.playerBlock,
+    snapshot.incomingDamage,
+    snapshot.bossHp,
+    snapshot.bossMaxHp,
+    snapshot.bossBlock,
+    snapshot.bossPhase,
+    snapshot.bossMove,
+    snapshot.hand.join("|"),
+    JSON.stringify(snapshot.playerStatuses)
+  ].join(":");
+}
+
+function compactStatuses(statuses = {}) {
+  return Object.fromEntries(Object.entries(statuses).filter(([, value]) => value > 0));
+}
+
+function deckRoleProfile(run) {
+  const cards = run.player.deck.map((cardInstance) => getCard(cardInstance));
+  return {
+    defense: cards.filter(cardSupportsDefense).length,
+    finish: cards.filter(cardSupportsFinish).length,
+    statusControl: cards.filter(cardSupportsStatusControl).length,
+    cleanse: cards.filter(cardSupportsCleanse).length,
+    flow: cards.filter(cardSupportsFlow).length,
+    upgraded: run.player.deck.filter((card) => card.upgraded).length
+  };
 }
 
 function deckCounts(run) {
@@ -838,6 +974,7 @@ function summarizeRuns(runs) {
   const floorBands = aggregateFloorBands(runs);
   const buildTags = aggregateBuildTags(runs);
   const primaryBuilds = aggregatePrimaryBuilds(runs);
+  const finalBossAnalysis = aggregateFinalBossAnalysis(runs);
 
   return {
     generatedAt: new Date().toISOString(),
@@ -848,7 +985,8 @@ function summarizeRuns(runs) {
     floorBands,
     buildTags,
     primaryBuilds,
-    recommendations: balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds })
+    finalBossAnalysis,
+    recommendations: balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, finalBossAnalysis })
   };
 }
 
@@ -902,6 +1040,7 @@ function aggregateLossReasons(runs) {
 function lossReasonBucket(run) {
   if (run.problems.length) return "진행 문제";
   const reason = run.reason ?? "";
+  if (run.finalBoss) return "최종 보스";
   if (/상태 피해|바이러스|균열|취약|약화|저주|젖은 의심|사망한 편지/.test(reason)) return "상태 누적";
   if (/마지막 문 성가대/.test(reason)) return "최종 보스";
   if (/공격|체력이 0|쓰러졌습니다/.test(reason)) {
@@ -976,13 +1115,130 @@ function aggregatePrimaryBuilds(runs) {
     .sort((left, right) => right.runs - left.runs || right.winRate - left.winRate || left.tag.localeCompare(right.tag));
 }
 
+function aggregateFinalBossAnalysis(runs) {
+  const reached = runs.filter((run) => run.finalBoss);
+  const wins = reached.filter((run) => run.won);
+  const losses = reached.filter((run) => !run.won);
+  const lossMoves = rankedMoveEntries(losses);
+  const closeLosses = losses.filter(isCloseFinalBossLoss);
+  const timelineLosses = losses.filter((run) => run.finalBossTimeline?.length);
+  const requiemLosses = losses.filter((run) => finalBossMoveSeen(run, "phase_requiem")).length;
+  const summonWindowLosses = losses.filter((run) => finalBossMoveSeen(run, "gate_call")).length;
+  const lowHpEntryLosses = losses.filter((run) => (run.finalBossTimeline?.[0]?.playerHp ?? run.finalBoss?.playerHp ?? Infinity) <= 18).length;
+  return {
+    reached: reached.length,
+    wins: wins.length,
+    losses: losses.length,
+    winRate: reached.length ? round(wins.length / reached.length) : 0,
+    lossMoves,
+    closeLosses: closeLosses.length,
+    closeLossExamples: closeLosses.slice(0, 5).map(finalBossLossExample),
+    requiemLosses,
+    summonWindowLosses,
+    lowHpEntryLosses,
+    timelineCoverage: losses.length ? round(timelineLosses.length / losses.length) : 0,
+    roleAverages: {
+      wins: averageFinalBossRoles(wins),
+      losses: averageFinalBossRoles(losses)
+    },
+    timelineSamples: losses.slice(0, 4).map(finalBossTimelineSample),
+    primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses })
+  };
+}
+
+function rankedMoveEntries(runs) {
+  return rankedEntries(
+    runs.reduce((groups, run) => {
+      const move = run.finalBoss?.bossMove ?? "unknown";
+      groups[move] = (groups[move] ?? 0) + 1;
+      return groups;
+    }, {})
+  ).map((entry) => ({
+    move: entry.label,
+    label: finalBossMoveName(entry.label),
+    count: entry.count
+  }));
+}
+
+function isCloseFinalBossLoss(run) {
+  const boss = run.finalBoss;
+  if (!boss) return false;
+  return boss.bossHp <= 70 || boss.bossHp / Math.max(1, boss.bossMaxHp ?? 350) <= 0.2;
+}
+
+function finalBossMoveSeen(run, moveId) {
+  return run.finalBoss?.bossMove === moveId || run.finalBossTimeline?.some((entry) => entry.bossMove === moveId);
+}
+
+function finalBossLossExample(run) {
+  return {
+    seed: run.seed,
+    difficultyName: run.difficultyName,
+    bossHp: run.finalBoss?.bossHp ?? null,
+    bossMove: finalBossMoveName(run.finalBoss?.bossMove ?? "unknown"),
+    playerHp: run.finalBoss?.playerHp ?? run.hp,
+    incomingDamage: run.finalBoss?.incomingDamage ?? 0,
+    hand: run.finalBoss?.hand?.slice(0, 7) ?? [],
+    roles: run.finalBoss?.roles ?? run.roleProfile
+  };
+}
+
+function finalBossTimelineSample(run) {
+  return {
+    seed: run.seed,
+    difficultyName: run.difficultyName,
+    final: finalBossLossExample(run),
+    turns: (run.finalBossTimeline ?? []).slice(-5).map(compactFinalBossTimelineEntry)
+  };
+}
+
+function compactFinalBossTimelineEntry(entry) {
+  return {
+    turn: entry.turn,
+    playerHp: entry.playerHp,
+    playerBlock: entry.playerBlock,
+    incomingDamage: entry.incomingDamage,
+    bossHp: entry.bossHp,
+    bossMaxHp: entry.bossMaxHp,
+    bossBlock: entry.bossBlock,
+    bossPhase: entry.bossPhase,
+    bossMove: finalBossMoveName(entry.bossMove),
+    hand: entry.hand
+  };
+}
+
+function averageFinalBossRoles(runs) {
+  const keys = ["defense", "finish", "statusControl", "cleanse", "flow", "upgraded"];
+  if (!runs.length) return Object.fromEntries(keys.map((key) => [key, 0]));
+  return Object.fromEntries(
+    keys.map((key) => [
+      key,
+      round(runs.reduce((sum, run) => sum + (run.finalBoss?.roles?.[key] ?? run.roleProfile?.[key] ?? 0), 0) / runs.length)
+    ])
+  );
+}
+
+function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses }) {
+  if (!losses.length) return "현재 표본에서는 최종 보스 패배가 없습니다.";
+  if (requiemLosses >= Math.max(3, losses.length * 0.35)) return "종말 레퀴엠 턴을 버티는 방어 카드와 정화 수단을 먼저 확인하세요.";
+  if (closeLosses.length >= Math.max(3, losses.length * 0.25)) return "본체 체력이 낮게 남는 패배가 많아 마무리 카드 접근성을 먼저 확인하세요.";
+  if (summonWindowLosses >= Math.max(3, losses.length * 0.25)) return "문지기 호출 이후 본체를 계속 때릴 수 있는 선택지가 충분한지 확인하세요.";
+  if (lowHpEntryLosses >= Math.max(3, losses.length * 0.25)) return "최종 보스 입장 전 회복과 카드 제거 선택이 충분히 열려 있는지 확인하세요.";
+  const topMove = lossMoves[0]?.label ?? "마지막 행동";
+  return `${topMove}에서 패배가 가장 많습니다. 해당 행동 전후의 방어와 마무리 선택지를 확인하세요.`;
+}
+
+function finalBossMoveName(moveId) {
+  return FINAL_BOSS_MOVE_LABELS[moveId] ?? moveId ?? FINAL_BOSS_MOVE_LABELS.unknown;
+}
+
 function rankedEntries(source) {
   return Object.entries(source)
     .map(([label, count]) => ({ label, count }))
     .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
 }
 
-function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds }) {
+function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, finalBossAnalysis }) {
   const recommendations = [];
   if (totals.problemRuns > 0) {
     recommendations.push({
@@ -1020,6 +1276,18 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
       tone: topLoss.label === "진행 문제" ? "danger" : "steady",
       area: "주요 사망 원인",
       text: `${topLoss.label} 사망이 ${topLoss.count}건입니다. 관련 적 의도, 보상 카드, 휴식/상점 선택지를 우선 점검하세요.`
+    });
+  }
+  if (finalBossAnalysis?.losses > 0) {
+    const moveSummary = finalBossAnalysis.lossMoves
+      .slice(0, 3)
+      .map((entry) => `${entry.label} ${entry.count}건`)
+      .join(", ");
+    const closeSummary = finalBossAnalysis.closeLosses > 0 ? ` 본체 체력이 낮게 남은 패배는 ${finalBossAnalysis.closeLosses}건입니다.` : "";
+    recommendations.push({
+      tone: "steady",
+      area: "최종 보스",
+      text: `최종 보스 도달 ${finalBossAnalysis.reached}런 중 ${finalBossAnalysis.losses}패입니다. 패배 직전 행동은 ${moveSummary || "표본 부족"}입니다.${closeSummary} ${finalBossAnalysis.primaryIssue}`
     });
   }
   const earlyLossBand = floorBands.find((band) => band.id === "early");
@@ -1085,6 +1353,7 @@ async function main() {
         floorBands: report.floorBands,
         buildTags: report.buildTags.slice(0, 8),
         primaryBuilds: report.primaryBuilds.slice(0, 8),
+        finalBossAnalysis: report.finalBossAnalysis,
         recommendations: report.recommendations,
         reportPath: "qa/balance-report.json"
       },

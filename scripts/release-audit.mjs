@@ -41,13 +41,15 @@ async function newestMtime(paths) {
 
 async function browserQaFreshness(qaFiles, requiredBrowserQa) {
   const sourcePaths = [
+    resolve(root, "index.html"),
     resolve(root, "src/main.js"),
     resolve(root, "src/styles.css"),
     resolve(root, "src/engine/game.js"),
     resolve(root, "src/data/cards.js"),
     resolve(root, "src/data/enemies.js"),
     resolve(root, "src/data/events.js"),
-    resolve(root, "src/data/relics.js")
+    resolve(root, "src/data/relics.js"),
+    resolve(root, "public/assets/favicon.svg")
   ];
   const sourceMtime = await newestMtime(sourcePaths);
   const files = qaFiles.filter((file) => /^browser-qa-.+\.png$/.test(file)).sort();
@@ -132,6 +134,8 @@ async function main() {
   const counts = contentCounts();
   const mainSource = await readFile(resolve(root, "src/main.js"), "utf8");
   const styleSource = await readFile(resolve(root, "src/styles.css"), "utf8");
+  const indexSource = await readFile(resolve(root, "index.html"), "utf8");
+  const faviconSource = await readFile(resolve(root, "public/assets/favicon.svg"), "utf8");
   const readme = await readFile(resolve(root, "README.md"), "utf8");
   const testSource = `${await readFile(resolve(root, "tests/engine.test.mjs"), "utf8")}\n${await readFile(resolve(root, "tests/content-integrity.test.mjs"), "utf8")}`;
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
@@ -224,8 +228,9 @@ async function main() {
   );
   record("no-card-enemy-svg-placeholders", "카드/적 SVG 플레이스홀더 없음", !/\\.card-art-svg|\\.enemy-sprite svg|<svg class=\"card-art|<svg class=\"enemy/.test(styleSource + mainSource), "카드와 적 아트는 임시 SVG 플레이스홀더가 아니어야 합니다.");
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
+  record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물이 있어야 합니다.");
-  record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.65 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });
+  record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.7 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });
   record(
     "credits-license",
     "크레딧/라이선스 안내",

@@ -244,6 +244,13 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const readme = readFileSync(new URL("../README.md", import.meta.url), "utf8");
   const auditSource = readFileSync(new URL("../scripts/release-audit.mjs", import.meta.url), "utf8");
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
+  const indexSource = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const faviconSource = readFileSync(new URL("../public/assets/favicon.svg", import.meta.url), "utf8");
+  assert.match(indexSource, /rel="icon"[^>]+favicon\.svg/);
+  assert.match(indexSource, /theme-color/);
+  assert.match(faviconSource, /딥 시그널/);
+  assert.doesNotMatch(styleSource, /url\("\.\/public\/assets\//);
   assert.match(readme, /## 검증 산출물/);
   assert.match(readme, /qa\/release-audit\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
@@ -272,6 +279,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /staleFiles/);
   assert.match(auditSource, /현재 소스 변경 이후 다시 찍은/);
   assert.match(auditSource, /credits-license/);
+  assert.match(auditSource, /distribution-polish/);
+  assert.match(auditSource, /favicon\.svg/);
   assert.match(auditSource, /verified-flow-coverage/);
   assert.match(auditSource, /requiredBrowserQa/);
   assert.match(auditSource, /card-hover/);
@@ -290,6 +299,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-about-refreshed\.png/);
   assert.match(captureSource, /browser-qa-reward-relics-refreshed\.png/);
   assert.match(captureSource, /browser-qa-summary-lost-refreshed\.png/);
+  assert.match(captureSource, /문 낙하를 맞을 체력이 남지 않았습니다/);
+  assert.match(captureSource, /보스 전 회복·단타 방어 챙기기/);
+  assert.match(captureSource, /bossMove:\s*"gate_slam"/);
   assert.match(captureSource, /browser-qa-summary-won-refreshed\.png/);
   assert.match(captureSource, /browser-qa-records-refreshed\.png/);
   assert.match(captureSource, /browser-qa-mobile-combat-refreshed\.png/);
@@ -399,17 +411,40 @@ test("release documentation lists QA artifacts and current combat feedback", () 
 test("balance pilot prepares intentionally before late bosses", () => {
   const balanceSource = readFileSync(new URL("../scripts/balance-runner.mjs", import.meta.url), "utf8");
   assert.match(balanceSource, /function bossPrepContext\(run\)/);
-  assert.match(balanceSource, /const hpTarget = finalAct \? \(close \? 0\.78 : 0\.68\) : close \? 0\.68 : 0\.58/);
+  assert.match(balanceSource, /const hpTarget = finalAct \? \(close \? 0\.82 : 0\.72\) : close \? 0\.72 : 0\.62/);
   assert.match(balanceSource, /needsDefense/);
   assert.match(balanceSource, /needsFinish/);
   assert.match(balanceSource, /needsStatusControl/);
   assert.match(balanceSource, /needsDeckSpeed/);
+  assert.match(balanceSource, /const cleanse = cards\.filter\(cardSupportsCleanse\)\.length/);
+  assert.match(balanceSource, /const cleanseTarget = finalAct \? 2 : 1/);
+  assert.match(balanceSource, /statusControl < statusTarget \|\| cleanse < cleanseTarget/);
+  assert.match(balanceSource, /const actTwoElite = node\.type === "elite" && node\.act === 2/);
+  assert.match(balanceSource, /actTwoElite \? 27 \+ difficulty \* 2 : 20/);
+  assert.match(balanceSource, /const midElitePenalty = actTwoElite/);
   assert.match(balanceSource, /bossPrepScore/);
+  assert.match(balanceSource, /cardSupportsCleanse\(card\) \? 6\.2 : 4\.8/);
+  assert.match(balanceSource, /bossPrep\?\.needsStatusControl && cardSupportsCleanse\(template\) \? 7 : 0/);
   assert.match(balanceSource, /bossPrep\.needsHp && run\.player\.gold >= prices\.heal/);
   assert.match(balanceSource, /bossPrep\.needsDeckSpeed && run\.player\.gold >= prices\.remove/);
   assert.match(balanceSource, /bossPrep\.needsRole && run\.player\.gold >= prices\.upgrade/);
   assert.match(balanceSource, /bossPrep\?\.missing\.length[\s\S]*deckSize < 24 \? 3 : 7/);
   assert.match(balanceSource, /context\.act >= 3 \? 1\.55 : 1/);
+  assert.match(balanceSource, /let finalBossSnapshot = null/);
+  assert.match(balanceSource, /const finalBossTimeline = \[\]/);
+  assert.match(balanceSource, /function recordFinalBossSnapshot\(run, timeline\)/);
+  assert.match(balanceSource, /function finalBossTimelineEntry\(snapshot\)/);
+  assert.match(balanceSource, /function finalBossSnapshotKey\(snapshot\)/);
+  assert.match(balanceSource, /function finalBossCombatSnapshot\(run\)/);
+  assert.match(balanceSource, /roleProfile: deckRoleProfile\(run\)/);
+  assert.match(balanceSource, /finalBoss: finalBossSnapshot/);
+  assert.match(balanceSource, /finalBossTimeline/);
+  assert.match(balanceSource, /function aggregateFinalBossAnalysis\(runs\)/);
+  assert.match(balanceSource, /lossMoves/);
+  assert.match(balanceSource, /timelineSamples/);
+  assert.match(balanceSource, /primaryIssue/);
+  assert.match(balanceSource, /최종 보스 도달/);
+  assert.match(balanceSource, /if \(run\.finalBoss\) return "최종 보스"/);
 });
 
 test("all card data references implemented effects, statuses, and generated cards", () => {
@@ -491,10 +526,14 @@ test("enemy pressure spikes stay readable across the run", () => {
   assert.ok(playerStatus(move("viral_cantor", "infect"), "virus") <= 4, "elite infection should not decide a run by itself");
   assert.ok(playerStatus(move("viral_cantor", "choir_call"), "virus") <= 2, "summon turns should leave room to stabilize");
   assert.ok(selfStatus(move("drowned_algorithm", "compile"), "strength") <= 1, "act 2 boss scaling should ramp gradually");
+  assert.ok(totalDamage(move("drowned_algorithm", "overflow")) <= 14, "act 2 boss heavy hit should test block without deciding the run alone");
   assert.ok(playerStatus(move("drowned_algorithm", "leak"), "virus") <= 3, "act 2 boss 바이러스 should be a plan, not a cliff");
-  assert.ok(totalDamage(move("drowned_algorithm", "phase_crash")) <= 22, "act 2 phase attack should stay blockable with a real deck");
+  assert.ok(totalDamage(move("drowned_algorithm", "phase_crash")) <= 20, "act 2 phase attack should stay blockable with a real deck");
   assert.ok(playerStatus(move("last_gate_choir", "intonation"), "virus") <= 4, "final boss opening 바이러스 should be threatening but readable");
-  assert.ok(totalDamage(move("last_gate_choir", "phase_requiem")) <= 32, "final boss finisher should test defense without erasing medium decks");
+  assert.ok(totalDamage(move("last_gate_choir", "gate_slam")) <= 21, "final boss heavy attack should leave room for a prepared block turn");
+  assert.equal(playerStatus(move("last_gate_choir", "gate_call"), "weak"), 0, "final boss summon turn should not also weaken the finisher turn");
+  assert.equal(selfStatus(move("last_gate_choir", "choir_wall"), "strength"), 0, "final boss wall should stall the fight without turning later multi-hits into sudden one-turn kills");
+  assert.ok(totalDamage(move("last_gate_choir", "phase_requiem")) <= 24, "final boss finisher should test defense without erasing medium decks");
 });
 
 test("event choices are actionable and reference valid content", () => {
@@ -1429,6 +1468,10 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(engineSource, /function buildEffectOps\(effects = \[\]\)/);
   assert.match(engineSource, /scores\[concept\.id\] \+= keywordHits \* 2 \+ effectHits/);
   assert.doesNotMatch(engineSource, /scores\[template\.type\]/);
+  assert.match(engineSource, /finalCombat: summarizeFinalCombat\(run\)/);
+  assert.match(engineSource, /function summarizeFinalCombat\(run\)/);
+  assert.match(engineSource, /bossId: boss\?\.templateId/);
+  assert.match(engineSource, /forecast: enemyIntentForecast\(run\)/);
   assert.match(mainSource, /class="summary-meta"/);
   assert.match(mainSource, /function renderSummaryFinale\(summary, defeatedBosses, replaySeed, nextDifficulty = null, verdict = summaryVerdict\(summary, replaySeed, nextDifficulty\)\)/);
   assert.match(mainSource, /function renderSummaryIntro\(summary, run\)/);
@@ -1494,7 +1537,17 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /function summaryStoppedAct\(summary\)/);
   assert.match(mainSource, /function summaryFailureProfile\(summary\)/);
   assert.match(mainSource, /function summaryFailureCause\(profile\)/);
+  assert.match(mainSource, /function summaryFinalBossLoss\(summary, stoppedAct = summaryStoppedAct\(summary\), stoppedAt = stoppedAct\?\.stoppedAt \?\? null\)/);
   assert.match(mainSource, /function summaryFailureAdvice\(summary, profile = summaryFailureProfile\(summary\)\)/);
+  assert.match(mainSource, /function summaryFinalBossAdvice\(profile\)/);
+  assert.match(mainSource, /function summaryFinalBossCue\(finalCombat = \{\}\)/);
+  assert.match(mainSource, /function summaryFinalBossStateText\(finalCombat = \{\}\)/);
+  assert.match(mainSource, /마지막 한 턴의 마무리 피해가 부족했습니다/);
+  assert.match(mainSource, /본체 피해 중 어느 쪽이 빠른지 먼저 비교하세요/);
+  assert.match(mainSource, /문 낙하를 맞을 체력이 남지 않았습니다/);
+  assert.match(mainSource, /보스 전 회복·단타 방어 챙기기/);
+  assert.match(mainSource, /레퀴엠 턴을 넘길 방어가 부족했습니다/);
+  assert.match(mainSource, /본체를 쓰러뜨리면 전투가 끝납니다/);
   assert.match(mainSource, /profile\.stoppedType === "boss"/);
   assert.match(mainSource, /보스 전 정비 먼저 보기/);
   assert.match(mainSource, /엘리트 도전이 조금 빨랐습니다/);
@@ -1619,9 +1672,14 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(mainSource, /arena-depth-\$\{depth\}/);
   assert.match(mainSource, /arena-motif-signal/);
   assert.match(mainSource, /function renderBossMechanic\(enemy, template\)/);
+  assert.match(mainSource, /function bossObjectiveText\(template, mode = "short"\)/);
   assert.match(mainSource, /class="boss-mechanic"/);
+  assert.match(mainSource, /class="boss-objective"/);
+  assert.match(mainSource, /목표: 본체 처치/);
+  assert.match(mainSource, /보스 본체를 쓰러뜨리면 전투가 끝납니다/);
   assert.match(mainSource, /2단계 전환 체력/);
   assert.match(styleSource, /\.boss-mechanic/);
+  assert.match(styleSource, /\.boss-objective/);
   assert.match(styleSource, /\.boss-phase/);
   assert.match(styleSource, /\.boss-curtain/);
   assert.match(styleSource, /\.sr-only[\s\S]*clip:\s*rect\(0 0 0 0\)/);

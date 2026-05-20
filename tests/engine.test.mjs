@@ -823,6 +823,56 @@ test("shop, rest, final boss victory, and defeat flows are reachable", () => {
   assert.equal(typeof winRun.summary.maxHp, "number");
   assert.equal(typeof winRun.summary.fights, "number");
   assert.equal(typeof winRun.summary.cardsAdded, "number");
+
+  const bossMinionRun = newRun({ seed: "boss-minion-clear", difficulty: 0 });
+  const bossNode = bossMinionRun.map.flat().find((node) => node.type === "boss" && node.act === 3);
+  bossMinionRun.availableNodeIds = [bossNode.id];
+  enterNode(bossMinionRun, bossNode.id);
+  const boss = bossMinionRun.combat.enemies[0];
+  bossMinionRun.combat.enemies.push({
+    uid: 9001,
+    templateId: "mirror_jelly",
+    name: "거울 해파리",
+    maxHp: 24,
+    hp: 24,
+    block: 0,
+    statuses: {},
+    phase: 1,
+    moveCursor: 0,
+    nextMove: { id: "sting", label: "반사 침", intent: "공격 9", type: "attack", damage: 9 },
+    summoned: true
+  });
+  boss.hp = 1;
+  boss.block = 0;
+  bossMinionRun.combat.hand = [{ uid: 2002, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 }];
+  bossMinionRun.combat.energy = 3;
+  playCard(bossMinionRun, 2002, boss.uid);
+  assert.equal(bossMinionRun.phase, "reward");
+  assert.ok(bossMinionRun.reward.cards.length >= 3);
+
+  const finalBossLossRun = newRun({ seed: "final-boss-loss-summary", difficulty: 0 });
+  const finalBossLossNode = finalBossLossRun.map.flat().find((node) => node.type === "boss" && node.act === 3);
+  finalBossLossRun.availableNodeIds = [finalBossLossNode.id];
+  enterNode(finalBossLossRun, finalBossLossNode.id);
+  const lastGate = finalBossLossRun.combat.enemies.find((enemy) => enemy.templateId === "last_gate_choir");
+  assert.ok(lastGate);
+  finalBossLossRun.player.hp = 1;
+  finalBossLossRun.player.block = 0;
+  finalBossLossRun.combat.hand = [];
+  lastGate.hp = 34;
+  lastGate.block = 0;
+  lastGate.phase = 2;
+  lastGate.nextMove = { id: "phase_requiem", label: "종말 레퀴엠", intent: "공격 4 x4", type: "attack", damage: 4, hits: 4 };
+  endTurn(finalBossLossRun);
+  assert.equal(finalBossLossRun.phase, "summary");
+  assert.equal(finalBossLossRun.summary.won, false);
+  assert.equal(finalBossLossRun.summary.finalCombat.bossId, "last_gate_choir");
+  assert.equal(finalBossLossRun.summary.finalCombat.bossHp, 34);
+  assert.equal(finalBossLossRun.summary.finalCombat.bossMove, "phase_requiem");
+  assert.equal(finalBossLossRun.summary.finalCombat.forecast.incomingDamage, 16);
+  assert.equal(finalBossLossRun.summary.route.acts[2].stoppedAt.type, "boss");
+  assert.equal(finalBossLossRun.summary.route.acts[2].stoppedAt.completed, false);
+
   assert.equal(typeof winRun.summary.cardsRemoved, "number");
   assert.equal(winRun.summary.route.acts.length, 3);
   assert.equal(winRun.summary.route.acts[2].boss, "defeated");
@@ -1340,6 +1390,11 @@ test("balance report highlights death causes, floor bands, and build performance
   assert.ok(report.buildTags.every((entry) => typeof entry.winRate === "number"));
   assert.ok(report.primaryBuilds.length > 0);
   assert.ok(report.primaryBuilds.every((entry) => entry.runs >= entry.wins));
+  assert.equal(typeof report.finalBossAnalysis.reached, "number");
+  assert.ok(Array.isArray(report.finalBossAnalysis.lossMoves));
+  assert.ok(Array.isArray(report.finalBossAnalysis.timelineSamples));
+  assert.equal(typeof report.finalBossAnalysis.primaryIssue, "string");
+  assert.ok(report.runs.every((run) => Array.isArray(run.finalBossTimeline)));
   assert.ok(report.byDifficulty.every((entry) => Array.isArray(entry.lossReasons)));
   assert.ok(report.byDifficulty.every((entry) => entry.floorBands.some((band) => band.id === "early")));
   assert.ok(report.recommendations.length > 0);

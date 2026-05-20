@@ -21,8 +21,8 @@ export const DIFFICULTIES = [
     id: 0,
     name: "표층",
     text: "처음 내려가기 좋은 난이도입니다. 적 피해가 조금 낮습니다.",
-    enemyHp: 0.98,
-    enemyDamage: 0.93,
+    enemyHp: 1,
+    enemyDamage: 0.95,
     gold: 1,
     playerMaxHp: 0
   },
@@ -65,10 +65,10 @@ export const DIFFICULTIES = [
   {
     id: 5,
     name: "최심층",
-    text: "적 체력 +32%, 적 피해 +20%, 보상 크레딧 -20%, 시작 최대 체력 -12.",
+    text: "적 체력 +32%, 적 피해 +20%, 보상 크레딧 -20%, 시작 최대 체력 -14.",
     enemyHp: 1.32,
     enemyDamage: 1.2,
     gold: 0.8,
-    playerMaxHp: -12
+    playerMaxHp: -14
   }
 ];
