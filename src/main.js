@@ -711,6 +711,12 @@ app.addEventListener("click", (event) => {
     playTone("danger");
     return;
   }
+  if (action === "play-card" && target.getAttribute("aria-disabled") === "true") {
+    event.preventDefault();
+    playTone("danger");
+    showCombatCardPreview(target, null, "hover");
+    return;
+  }
   if (shouldIgnoreRepeatedAction(action, id, index, run)) return;
   if (action === "enter-node") {
     clearCombatFx();
@@ -900,7 +906,7 @@ app.addEventListener("drop", (event) => {
 app.addEventListener("pointerdown", (event) => {
   if (event.pointerType === "mouse" || event.button > 0) return;
   const card = event.target.closest("[data-action='play-card']");
-  if (!card || card.disabled || state.screen !== "game" || state.run?.phase !== "combat") return;
+  if (!card || card.disabled || card.getAttribute("aria-disabled") === "true" || state.screen !== "game" || state.run?.phase !== "combat") return;
   hideCardPortalTooltip();
   pointerCardDrag = {
     pointerId: event.pointerId,
@@ -1039,6 +1045,11 @@ function handleCombatHotkey(event) {
     const card = run.combat.hand[cardIndex];
     if (card) {
       if (event.repeat || shouldIgnoreRepeatedAction("play-card", card.uid, cardIndex, run)) return true;
+      const preview = cardPlayPreview(run, card);
+      if (!preview.playable) {
+        playTone("danger");
+        return true;
+      }
       playCardWithFx(run, card.uid);
       afterMutation("play-card");
     } else {
@@ -1075,6 +1086,9 @@ function combatCardHotkeyIndex(event) {
 
 function playCardWithFx(run, uid, targetUid = null) {
   if (!run?.combat || run.phase !== "combat") return run;
+  const cardInstance = run.combat.hand.find((card) => card.uid === uid);
+  const preview = cardPlayPreview(run, cardInstance, targetUid);
+  if (!preview.playable) return playCard(run, uid, targetUid);
   clearCombatTurnCue();
   cardTooltipSuppressUntil = Date.now() + combatFxDuration() + 900;
   hideCardPortalTooltip();
@@ -4808,7 +4822,8 @@ function renderCombat(run) {
               run,
               combat,
               playable,
-              disabledReason: turnLocked ? "상대 턴에는 사용할 수 없음" : "에너지 부족",
+              hardDisabled: turnLocked,
+              disabledReason: turnLocked ? "상대 턴에는 사용할 수 없음" : "전하 부족",
               hotkey: handHotkeyLabel(index),
               recommended: !turnLocked && card.uid === recommendedCardUid
             });
@@ -5529,7 +5544,7 @@ function renderCombatEnergyPanel(combat) {
       <span aria-hidden="true">⚡</span>
       <strong><b>${combat.energy}</b><small>/${combat.maxEnergy}</small></strong>
       <div class="energy-pips">${pips}</div>
-      <em>${playableCount ? `지금 낼 수 있는 카드 ${playableCount}장` : "에너지 부족"}</em>
+      <em>${playableCount ? `지금 낼 수 있는 카드 ${playableCount}장` : "전하 부족"}</em>
     </section>
   `;
 }
@@ -10495,7 +10510,10 @@ function renderCard(cardInstance, options = {}) {
   const preview = Boolean(options.compact && !options.action);
   const action = options.action ?? (preview ? "" : "play-card");
   const data = action ? `data-action="${action}" data-id="${options.id ?? cardInstance.uid}" data-card-id="${card.id}"` : `data-card-id="${card.id}"`;
-  const disabled = action && options.playable === false ? "disabled" : "";
+  const hardDisabled = action && (options.hardDisabled === true || (action !== "play-card" && options.playable === false));
+  const softDisabled = action === "play-card" && options.playable === false && !hardDisabled;
+  const disabled = hardDisabled ? "disabled" : "";
+  const ariaDisabled = softDisabled ? `aria-disabled="true"` : "";
   const draggable = action === "play-card" && options.playable !== false ? `draggable="true"` : "";
   const rarity = card.rarity === "starter" ? "common" : card.rarity;
   const cost = options.combat ? cardCost(cardInstance, options.combat) : card.cost;
@@ -10507,7 +10525,7 @@ function renderCard(cardInstance, options = {}) {
   const playPreview = action === "play-card" && options.run ? cardPlayPreview(options.run, cardInstance) : null;
   const shortcutAttr = action === "play-card" && options.hotkey ? `aria-keyshortcuts="${options.hotkey}"` : "";
   const recommended = options.recommended === true;
-  const disabledReason = options.disabledReason ?? "에너지 부족";
+  const disabledReason = options.disabledReason ?? "전하 부족";
   const energyClass = action === "play-card" ? (options.playable === false ? "energy-locked" : "energy-ready") : "";
   const recommendationLabel = recommended ? (options.recommendationLabel ?? (action === "play-card" ? "추천" : "")) : "";
   const actionAria = options.ariaLabel
@@ -10518,7 +10536,7 @@ function renderCard(cardInstance, options = {}) {
   const visibleKeywords = (card.keywords ?? []).slice(0, 2);
   const hiddenKeywordCount = Math.max(0, (card.keywords ?? []).length - visibleKeywords.length);
   return `
-    <${tag} class="game-card ${card.type} rarity-${rarity} ${cardInstance.upgraded ? "upgraded" : ""} ${options.compact ? "compact" : ""} ${preview ? "preview" : ""} ${recommended ? "recommended" : ""} ${energyClass}" ${data} ${disabled} ${draggable} ${shortcutAttr} ${actionAria || previewAttrs}>
+    <${tag} class="game-card ${card.type} rarity-${rarity} ${cardInstance.upgraded ? "upgraded" : ""} ${options.compact ? "compact" : ""} ${preview ? "preview" : ""} ${recommended ? "recommended" : ""} ${energyClass}" ${data} ${disabled} ${ariaDisabled} ${draggable} ${shortcutAttr} ${actionAria || previewAttrs}>
       <div class="card-cost">${cost >= 90 ? "-" : cost}</div>
       ${options.hotkey ? `<div class="card-hotkey" aria-hidden="true">${options.hotkey}</div>` : ""}
       ${recommendationLabel ? `<em class="card-recommendation">${recommendationLabel}</em>` : ""}
@@ -10555,7 +10573,7 @@ function renderCard(cardInstance, options = {}) {
   `;
 }
 
-function cardPlayAriaLabel(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "에너지 부족") {
+function cardPlayAriaLabel(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "전하 부족") {
   const parts = [
     `${card.name}${cardInstance.upgraded ? "+" : ""}`,
     `비용 ${cost >= 90 ? "사용 불가" : cost}`,

@@ -391,7 +391,7 @@ export function cardPlayPreview(run, cardInstance, targetUid = null) {
   preview.playable = !card.unplayable && cost <= combat.energy && (!requiresTarget(card) || Boolean(target));
 
   if (card.unplayable) preview.warnings.push("사용 불가");
-  if (cost > combat.energy) preview.warnings.push(`에너지 ${cost - combat.energy} 부족`);
+  if (cost > combat.energy) preview.warnings.push(`전하 ${cost - combat.energy} 부족`);
   if (requiresTarget(card) && !target) preview.warnings.push("대상 필요");
 
   const addRelicPreview = (relicId) => {

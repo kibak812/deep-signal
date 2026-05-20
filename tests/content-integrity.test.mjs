@@ -745,6 +745,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function combatFxDuration\(\)/);
   assert.match(mainSource, /let cardTooltipSuppressUntil = 0/);
   assert.match(mainSource, /function playCardWithFx\(run, uid, targetUid = null\)[\s\S]*cardTooltipSuppressUntil = Date\.now\(\) \+ combatFxDuration\(\) \+ 900;[\s\S]*hideCardPortalTooltip\(\);[\s\S]*clearCombatCardPreview\(\);/);
+  assert.match(mainSource, /function playCardWithFx\(run, uid, targetUid = null\)[\s\S]*const preview = cardPlayPreview\(run, cardInstance, targetUid\);[\s\S]*if \(!preview\.playable\) return playCard\(run, uid, targetUid\);/);
   assert.match(mainSource, /function setCombatFx\(fx\)/);
   assert.match(mainSource, /function clearCombatFx\(\)/);
   assert.match(mainSource, /function finishCombatCardFx\(run, before\)/);
@@ -815,9 +816,15 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
   assert.match(mainSource, /aria-live="assertive"/);
   assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
-  assert.match(mainSource, /disabledReason:\s*turnLocked \? "상대 턴에는 사용할 수 없음" : "에너지 부족"/);
+  assert.match(mainSource, /disabledReason:\s*turnLocked \? "상대 턴에는 사용할 수 없음" : "전하 부족"/);
+  assert.match(mainSource, /hardDisabled:\s*turnLocked/);
+  assert.match(mainSource, /const hardDisabled = action && \(options\.hardDisabled === true \|\| \(action !== "play-card" && options\.playable === false\)\)/);
+  assert.match(mainSource, /const softDisabled = action === "play-card" && options\.playable === false && !hardDisabled/);
+  assert.match(mainSource, /const ariaDisabled = softDisabled \? `aria-disabled="true"` : ""/);
+  assert.match(mainSource, /target\.getAttribute\("aria-disabled"\) === "true"[\s\S]*showCombatCardPreview\(target, null, "hover"\)/);
+  assert.match(mainSource, /card\.disabled \|\| card\.getAttribute\("aria-disabled"\) === "true"/);
   assert.match(mainSource, /recommended:\s*!turnLocked && card\.uid === recommendedCardUid/);
-  assert.match(mainSource, /function cardPlayAriaLabel\(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "에너지 부족"\)/);
+  assert.match(mainSource, /function cardPlayAriaLabel\(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "전하 부족"\)/);
   assert.match(mainSource, /aria-label="\$\{cardPlayAriaLabel\(card, cardInstance, cost, playPreview, recommended, options\.playable !== false, disabledReason\)\}"/);
   assert.match(mainSource, /if \(recommended\) parts\.push\("추천 카드"\)/);
   assert.match(mainSource, /parts\.push\(playable \? "사용 가능" : disabledReason\)/);

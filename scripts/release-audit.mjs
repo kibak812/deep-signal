@@ -168,6 +168,7 @@ async function main() {
     { id: "about", match: /browser-qa-about/ },
     { id: "combat", match: /browser-qa-combat|browser-qa-responsive-combat/ },
     { id: "card-hover", match: /browser-qa-combat-card-hover/ },
+    { id: "energy-locked-card", match: /browser-qa-combat-energy-locked/ },
     { id: "map", match: /browser-qa-map/ },
     { id: "reward", match: /browser-qa-reward/ },
     { id: "reward-relics", match: /browser-qa-reward-relics/ },

@@ -159,6 +159,17 @@ try {
   await assertCardHoverLayout(cdp);
   await capture(cdp, "browser-qa-combat-card-hover.png");
 
+  await stageEnergyLockedHandFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await assertEnergyLockedHandUx(cdp);
+  await wait(950);
+  await hoverSelector(cdp, ".hand-zone .game-card.energy-locked[aria-disabled='true']", { x: 0.5, y: 0.18 });
+  await assertEnergyLockedHandHover(cdp);
+  await capture(cdp, "browser-qa-combat-energy-locked.png");
+  await clearSavedRun(cdp);
+
   const reachedReward = await playUntilReward(cdp);
   if (reachedReward) {
     await assertSingleRewardSurface(cdp);
@@ -493,6 +504,34 @@ async function stageStatusTooltipFixture(cdp) {
   })()`);
 }
 
+async function stageEnergyLockedHandFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-energy-locked-hand", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA energy locked fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA energy locked fixture combat not started");
+    run.combat.turn = "player";
+    run.combat.energy = 0;
+    run.combat.hand = [
+      { uid: 7701, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7702, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7703, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7704, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, energy: run.combat.energy, hand: run.combat.hand.length };
+  })()`);
+}
+
 async function captureGroupedEnemyFx(cdp) {
   const fixture = await stageGroupedEnemyFxFixture(cdp);
   await navigate(cdp, baseUrl);
@@ -547,6 +586,109 @@ async function captureGroupedEnemyFx(cdp) {
   await capture(cdp, "browser-qa-enemy-grouped-fx.png");
   await clearSavedRun(cdp);
   return evidence;
+}
+
+async function assertEnergyLockedHandUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const board = document.querySelector(".combat-board");
+    const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const paidCards = cards.filter((card) => !/제로 핀/.test(card.getAttribute("aria-label") ?? ""));
+    const zeroPin = cards.find((card) => /제로 핀/.test(card.getAttribute("aria-label") ?? ""));
+    const softLockedPaidCards = paidCards.filter((card) => card.getAttribute("aria-disabled") === "true");
+    const hardDisabledCards = cards.filter((card) => card.disabled);
+    const energyText = document.querySelector(".combat-energy-panel")?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const labels = cards.map((card) => card.getAttribute("aria-label") ?? "");
+    const paidReasons = paidCards.map((card) => card.getAttribute("aria-label") ?? "");
+    const ok =
+      Boolean(board) &&
+      !board.classList.contains("turn-locked") &&
+      cards.length === 4 &&
+      paidCards.length === 3 &&
+      softLockedPaidCards.length === paidCards.length &&
+      hardDisabledCards.length === 0 &&
+      Boolean(zeroPin) &&
+      zeroPin.getAttribute("aria-disabled") !== "true" &&
+      !zeroPin.disabled &&
+      paidReasons.every((label) => /전하 부족/.test(label)) &&
+      labels.some((label) => /사용 가능/.test(label)) &&
+      /0\\s*\\/\\s*3/.test(energyText);
+    return {
+      ok,
+      cardCount: cards.length,
+      paidCardCount: paidCards.length,
+      softLockedPaidCards: softLockedPaidCards.length,
+      hardDisabledCards: hardDisabledCards.length,
+      zeroPinPlayable: Boolean(zeroPin && zeroPin.getAttribute("aria-disabled") !== "true" && !zeroPin.disabled),
+      paidReasons,
+      labels,
+      energyText,
+      turnLocked: board?.classList.contains("turn-locked") ?? false
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Energy locked hand UX failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-combat-energy-locked.json"), JSON.stringify(evidence, null, 2));
+}
+
+async function assertEnergyLockedHandHover(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const tooltip = document.querySelector(".card-portal-tooltip:not([hidden])");
+    const rail = document.querySelector(".combat-card-preview-rail:not([hidden])");
+    const card = document.querySelector(".hand-zone .game-card.energy-locked[aria-disabled='true']");
+    const portal = document.querySelector(".card-portal-tooltip");
+    const previewRail = document.querySelector(".combat-card-preview-rail");
+    const appRoot = document.querySelector("#app");
+    const tooltipBox = tooltip?.getBoundingClientRect();
+    const cardBox = card?.getBoundingClientRect();
+    const hitTarget = cardBox ? document.elementFromPoint(cardBox.left + cardBox.width * 0.5, cardBox.top + cardBox.height * 0.18) : null;
+    const railText = rail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const cardRaised =
+      Boolean(cardBox) &&
+      cardBox.top >= 0 &&
+      cardBox.bottom <= window.innerHeight - 4 &&
+      cardBox.height <= 286;
+    const tooltipReadable =
+      Boolean(tooltipBox) &&
+      tooltipBox.left >= 2 &&
+      tooltipBox.top >= 2 &&
+      tooltipBox.right <= window.innerWidth - 2 &&
+      tooltipBox.bottom <= window.innerHeight - 2 &&
+      tooltipBox.width >= 320 &&
+      Boolean(tooltip?.querySelector(".tooltip-rules")?.innerText.trim());
+    const ok =
+      Boolean(card) &&
+      Boolean(tooltip) &&
+      Boolean(rail) &&
+      tooltipReadable &&
+      cardRaised &&
+      /사용 불가|전하 부족|전하/.test(railText);
+    return {
+      ok,
+      railText,
+      tooltipReadable,
+      cardRaised,
+      cardDisabled: card?.disabled ?? null,
+      cardAriaDisabled: card?.getAttribute("aria-disabled") ?? "",
+      cardHasTooltip: Boolean(card?.querySelector(".tooltip")),
+      appContainsCard: Boolean(card && appRoot?.contains(card)),
+      focused: document.activeElement === card,
+      activeElement: document.activeElement?.className ?? document.activeElement?.tagName ?? "",
+      combatFxCount: document.querySelectorAll(".combat-action-fx").length,
+      boardClass: document.querySelector(".combat-board")?.className ?? "",
+      portalHidden: portal?.hidden ?? null,
+      portalTextLength: portal?.innerText?.length ?? 0,
+      previewRailHidden: previewRail?.hidden ?? null,
+      previewRailTextLength: previewRail?.innerText?.length ?? 0,
+      hitTargetClass: hitTarget?.className ?? hitTarget?.tagName ?? "",
+      hitTargetText: hitTarget?.textContent?.replace(/\\s+/g, " ").trim().slice(0, 80) ?? "",
+      cardBox: cardBox ? { top: Math.round(cardBox.top), bottom: Math.round(cardBox.bottom), height: Math.round(cardBox.height) } : null,
+      tooltipBox: tooltipBox ? { left: Math.round(tooltipBox.left), top: Math.round(tooltipBox.top), right: Math.round(tooltipBox.right), bottom: Math.round(tooltipBox.bottom), width: Math.round(tooltipBox.width) } : null
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Energy locked hand hover failed: ${JSON.stringify(evidence)}`);
+  }
 }
 
 async function assertStatusTooltipUx(cdp) {
@@ -858,6 +1000,13 @@ async function hoverSelector(cdp, selector, ratio = { x: 0.5, y: 0.5 }) {
     return { left: box.left, top: box.top, width: box.width, height: box.height };
   })(${JSON.stringify(selector)})`);
   if (!rect) throw new Error(`Selector not found for hover: ${selector}`);
+  await cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseMoved",
+    x: 4,
+    y: 4,
+    button: "none"
+  });
+  await wait(80);
   const x = rect.left + rect.width * ratio.x;
   const y = rect.top + rect.height * ratio.y;
   await cdp.send("Input.dispatchMouseEvent", {
