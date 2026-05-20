@@ -508,6 +508,8 @@ async function captureGroupedEnemyFx(cdp) {
     const visibleSparkCount = [...document.querySelectorAll(".entity-hit-sparks i")]
       .filter((spark) => getComputedStyle(spark).display !== "none").length;
     const fixtureHasMultiHit = ${JSON.stringify(fixture)}.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
+    const handCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const handLabels = handCards.map((card) => card.getAttribute("aria-label") ?? "");
     return {
       fixture: ${JSON.stringify(fixture)},
       grouped: fx?.classList.contains("fx-grouped") ?? false,
@@ -520,10 +522,25 @@ async function captureGroupedEnemyFx(cdp) {
       fixtureHasMultiHit,
       duplicateFxCount: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length,
       duplicatedBeamHidden: beamStyle?.display === "none",
-      visibleSparkCount
+      visibleSparkCount,
+      lockedBoard: document.querySelector(".combat-board")?.classList.contains("turn-locked") ?? false,
+      handCardCount: handCards.length,
+      disabledHandCards: handCards.filter((card) => card.disabled).length,
+      lockedHandLabels: handLabels.filter((label) => /상대 턴에는 사용할 수 없음/.test(label)).length,
+      unlockedHandLabels: handLabels.filter((label) => /사용 가능/.test(label)).length
     };
   })()`);
-  if (!evidence.grouped || !evidence.actorCount || !evidence.duplicatedBeamHidden || evidence.visibleSparkCount > 1 || (evidence.fixtureHasMultiHit && (!evidence.hitCount || !evidence.chipText.includes("×")))) {
+  if (
+    !evidence.grouped ||
+    !evidence.actorCount ||
+    !evidence.duplicatedBeamHidden ||
+    evidence.visibleSparkCount > 1 ||
+    !evidence.lockedBoard ||
+    evidence.disabledHandCards !== evidence.handCardCount ||
+    evidence.lockedHandLabels !== evidence.handCardCount ||
+    evidence.unlockedHandLabels !== 0 ||
+    (evidence.fixtureHasMultiHit && (!evidence.hitCount || !evidence.chipText.includes("×")))
+  ) {
     throw new Error(`Grouped enemy FX missing: ${JSON.stringify(evidence)}`);
   }
   await writeFile(resolve(qaDir, "browser-qa-enemy-grouped-fx.json"), JSON.stringify(evidence, null, 2));

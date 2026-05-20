@@ -4800,7 +4800,20 @@ function renderCombat(run) {
       ${renderCombatResourceDock(run)}
       ${renderCombatPlayPanel(run, recommendedCardUid)}
       <div class="hand-zone" style="${handLayoutStyle(combat.hand.length)}" aria-label="손패 ${combat.hand.length}장">
-        ${combat.hand.map((card, index) => renderCard(card, { run, combat, playable: cardCost(card, combat) <= combat.energy, hotkey: handHotkeyLabel(index), recommended: card.uid === recommendedCardUid })).join("")}
+        ${combat.hand
+          .map((card, index) => {
+            const energyReady = cardCost(card, combat) <= combat.energy;
+            const playable = !turnLocked && energyReady;
+            return renderCard(card, {
+              run,
+              combat,
+              playable,
+              disabledReason: turnLocked ? "상대 턴에는 사용할 수 없음" : "에너지 부족",
+              hotkey: handHotkeyLabel(index),
+              recommended: !turnLocked && card.uid === recommendedCardUid
+            });
+          })
+          .join("")}
       </div>
       <button class="end-turn ${turnLocked ? "is-locked" : ""} risk-${endTurnPreview.tone}" data-action="end-turn" aria-keyshortcuts="E Space" aria-label="${turnLocked ? "상대 턴 진행 중" : "턴 종료"}" title="${turnLocked ? "상대 행동을 처리하는 중입니다." : endTurnPreview.detail}" ${turnLocked ? "disabled" : ""}>
         <span class="end-turn-key" aria-hidden="true">${endTurnKey}</span>
@@ -10494,12 +10507,13 @@ function renderCard(cardInstance, options = {}) {
   const playPreview = action === "play-card" && options.run ? cardPlayPreview(options.run, cardInstance) : null;
   const shortcutAttr = action === "play-card" && options.hotkey ? `aria-keyshortcuts="${options.hotkey}"` : "";
   const recommended = options.recommended === true;
+  const disabledReason = options.disabledReason ?? "에너지 부족";
   const energyClass = action === "play-card" ? (options.playable === false ? "energy-locked" : "energy-ready") : "";
   const recommendationLabel = recommended ? (options.recommendationLabel ?? (action === "play-card" ? "추천" : "")) : "";
   const actionAria = options.ariaLabel
     ? `aria-label="${options.ariaLabel}"`
     : action === "play-card"
-      ? `aria-label="${cardPlayAriaLabel(card, cardInstance, cost, playPreview, recommended, options.playable !== false)}"`
+      ? `aria-label="${cardPlayAriaLabel(card, cardInstance, cost, playPreview, recommended, options.playable !== false, disabledReason)}"`
       : "";
   const visibleKeywords = (card.keywords ?? []).slice(0, 2);
   const hiddenKeywordCount = Math.max(0, (card.keywords ?? []).length - visibleKeywords.length);
@@ -10541,14 +10555,14 @@ function renderCard(cardInstance, options = {}) {
   `;
 }
 
-function cardPlayAriaLabel(card, cardInstance, cost, preview, recommended = false, playable = true) {
+function cardPlayAriaLabel(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "에너지 부족") {
   const parts = [
     `${card.name}${cardInstance.upgraded ? "+" : ""}`,
     `비용 ${cost >= 90 ? "사용 불가" : cost}`,
     `${rarityLabel(card.rarity)} ${typeLabel(card.type)}`
   ];
   if (recommended) parts.push("추천 카드");
-  parts.push(playable ? "사용 가능" : "에너지 부족");
+  parts.push(playable ? "사용 가능" : disabledReason);
   if (preview) parts.push(cardPreviewAriaSummary(preview));
   parts.push(card.text);
   return parts.filter(Boolean).join(". ");

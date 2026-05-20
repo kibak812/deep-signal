@@ -815,9 +815,12 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
   assert.match(mainSource, /aria-live="assertive"/);
   assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
-  assert.match(mainSource, /function cardPlayAriaLabel\(card, cardInstance, cost, preview, recommended = false, playable = true\)/);
-  assert.match(mainSource, /aria-label="\$\{cardPlayAriaLabel\(card, cardInstance, cost, playPreview, recommended, options\.playable !== false\)\}"/);
+  assert.match(mainSource, /disabledReason:\s*turnLocked \? "상대 턴에는 사용할 수 없음" : "에너지 부족"/);
+  assert.match(mainSource, /recommended:\s*!turnLocked && card\.uid === recommendedCardUid/);
+  assert.match(mainSource, /function cardPlayAriaLabel\(card, cardInstance, cost, preview, recommended = false, playable = true, disabledReason = "에너지 부족"\)/);
+  assert.match(mainSource, /aria-label="\$\{cardPlayAriaLabel\(card, cardInstance, cost, playPreview, recommended, options\.playable !== false, disabledReason\)\}"/);
   assert.match(mainSource, /if \(recommended\) parts\.push\("추천 카드"\)/);
+  assert.match(mainSource, /parts\.push\(playable \? "사용 가능" : disabledReason\)/);
   assert.match(styleSource, /\.hand-zone \.card-recommendation::before/);
   assert.match(styleSource, /content:\s*"★"/);
   assert.match(mainSource, /class="combat-mission-strip \$\{progress\.tone\} node-\$\{nodeType\}"/);

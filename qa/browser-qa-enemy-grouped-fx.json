@@ -21,5 +21,10 @@
   "fixtureHasMultiHit": true,
   "duplicateFxCount": 1,
   "duplicatedBeamHidden": true,
-  "visibleSparkCount": 1
+  "visibleSparkCount": 1,
+  "lockedBoard": true,
+  "handCardCount": 5,
+  "disabledHandCards": 5,
+  "lockedHandLabels": 5,
+  "unlockedHandLabels": 0
 }
