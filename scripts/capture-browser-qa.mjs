@@ -62,6 +62,7 @@ try {
   await navigate(cdp, baseUrl);
   await clickText(cdp, "설정");
   await waitForText(cdp, "접근성");
+  await assertSettingsAudioUx(cdp);
   await capture(cdp, "browser-qa-settings-refreshed.png");
 
   await navigate(cdp, baseUrl);
@@ -1482,6 +1483,48 @@ async function assertAboutReleaseInfo(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`About release info failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertSettingsAudioUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const panel = document.querySelector(".settings-panel");
+    const soundGroup = document.querySelector(".settings-group[aria-label='사운드 설정']");
+    const effectRange = document.querySelector("input[data-setting='volume']");
+    const musicRange = document.querySelector("input[data-setting='musicVolume']");
+    const previewSound = document.querySelector("button[data-action='preview-sound']");
+    const previewMusic = document.querySelector("button[data-action='preview-music']");
+    const outputs = [...document.querySelectorAll("[data-setting-value]")].map((output) => output.textContent.trim());
+    const actionBox = document.querySelector(".settings-inline-actions");
+    const panelBox = panel?.getBoundingClientRect();
+    const actionBoxStyle = actionBox ? getComputedStyle(actionBox) : null;
+    const ok =
+      Boolean(panel) &&
+      Boolean(soundGroup) &&
+      effectRange?.getAttribute("aria-label") === "효과음" &&
+      musicRange?.getAttribute("aria-label") === "배경음" &&
+      Boolean(previewSound) &&
+      Boolean(previewMusic) &&
+      previewSound?.textContent.includes("미리듣기") &&
+      previewMusic?.textContent.includes("배경음") &&
+      outputs.some((text) => /%$/.test(text)) &&
+      actionBoxStyle?.display === "flex" &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2 &&
+      Boolean(panelBox && panelBox.width <= window.innerWidth);
+    return {
+      ok,
+      effectValue: effectRange?.value ?? null,
+      musicValue: musicRange?.value ?? null,
+      previewSound: previewSound?.textContent.trim() ?? "",
+      previewMusic: previewMusic?.textContent.trim() ?? "",
+      outputs,
+      actionDisplay: actionBoxStyle?.display ?? "",
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Settings audio UX failed: ${JSON.stringify(result)}`);
   }
 }
 

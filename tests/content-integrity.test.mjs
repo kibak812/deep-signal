@@ -1020,6 +1020,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function renderEntityImpactRing\(mode, uid = null\)/);
   assert.match(mainSource, /renderSettingRange\("textScale", "텍스트 크기"/);
   assert.match(mainSource, /renderSettingRange\("musicVolume", "배경음"/);
+  assert.match(mainSource, /data-action="preview-sound"/);
+  assert.match(mainSource, /data-action="preview-music"/);
   assert.match(mainSource, /data-setting-value="\$\{key\}"/);
   assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}"/);
   assert.match(mainSource, /function renderSettingRange\(key, label, detail, min, max, step\)/);
@@ -1312,6 +1314,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.settings-grid/);
   assert.match(styleSource, /\.settings-group/);
   assert.match(styleSource, /\.settings-control-line/);
+  assert.match(styleSource, /\.settings-inline-actions/);
   assert.match(styleSource, /\.settings-switch/);
   assert.match(styleSource, /\.tactical-advisor/);
   assert.match(styleSource, /\.advisor-chips/);
@@ -1348,6 +1351,13 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /if \(event\.isTrusted\) ensureAudio\(\)/);
   assert.match(mainSource, /state\.audio\.resume\(\)\.then/);
   assert.match(mainSource, /state\.audio\.state !== "running"/);
+  assert.match(mainSource, /function effectVolume\(\)/);
+  assert.match(mainSource, /function musicVolume\(\)/);
+  assert.match(mainSource, /function audioOutputEnabled\(\)/);
+  assert.match(mainSource, /const MUSIC_GAIN_SCALE = 0\.35/);
+  assert.match(mainSource, /if \(!audioOutputEnabled\(\)\)/);
+  assert.match(mainSource, /effectVolume\(\) <= 0/);
+  assert.match(mainSource, /if \(musicVolume\(\) <= 0 \|\| !themeName\)/);
   assert.match(mainSource, /deferredTone = soundCueForEndTurn\(run\)/);
   assert.match(mainSource, /const endTurnTone = soundCueForEndTurn\(run\)/);
   assert.match(mainSource, /function soundCueForEndTurn\(run\)/);
@@ -1371,6 +1381,7 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /theme\.motif/);
   assert.match(mainSource, /function playMusicVoice\(frequency, start, duration, type, amount/);
   assert.match(mainSource, /musicVolume:\s*0\.28/);
+  assert.match(mainSource, /musicVolume\(\) \* MUSIC_GAIN_SCALE \* theme\.gain/);
   assert.match(mainSource, /document\.body\.dataset\.musicTheme/);
   assert.match(mainSource, /state\.music\.timer = window\.setInterval\(scheduleMusic/);
 });

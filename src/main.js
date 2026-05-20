@@ -627,6 +627,17 @@ app.addEventListener("click", (event) => {
     render();
     return;
   }
+  if (action === "preview-sound") {
+    ensureAudio();
+    playTone(id || "attackCard");
+    return;
+  }
+  if (action === "preview-music") {
+    ensureAudio();
+    syncMusic();
+    playTone("button");
+    return;
+  }
   if (action === "delete-save") {
     requestDeleteSave();
     return;
@@ -9815,6 +9826,10 @@ function renderSettings() {
             <h2>사운드</h2>
             ${renderSettingRange("volume", "효과음", "카드, 피해, 버튼, 승패", 0, 1, 0.05)}
             ${renderSettingRange("musicVolume", "배경음", "메뉴, 전투, 보스, 보상", 0, 1, 0.05)}
+            <div class="settings-inline-actions" aria-label="사운드 미리듣기">
+              <button type="button" data-action="preview-sound" data-id="attackCard">효과음 미리듣기</button>
+              <button type="button" data-action="preview-music">배경음 켜기</button>
+            </div>
           </section>
           <section class="settings-group" aria-label="화면 설정">
             <h2>화면</h2>
@@ -12259,7 +12274,8 @@ function refreshSettingsSaveNotice() {
 function formatSettingValue(key) {
   const raw = state.settings[key];
   const value = Number(raw);
-  if (key === "volume" || key === "musicVolume") return `${Math.round((Number.isFinite(value) ? value : 0) * 100)}%`;
+  if (key === "volume") return `${Math.round(effectVolume() * 100)}%`;
+  if (key === "musicVolume") return `${Math.round(musicVolume() * 100)}%`;
   if (key === "motionSpeed") return `${motionScale().toFixed(1)}x`;
   if (key === "textScale") return `${Math.round(textScale() * 100)}%`;
   return String(raw ?? "");
@@ -12365,8 +12381,24 @@ function clearTabOnlyStorageNotice(scope) {
   if (state.saveNotice?.title === `${scope} 저장 불가`) state.saveNotice = null;
 }
 
+const MUSIC_GAIN_SCALE = 0.35;
+
+function effectVolume() {
+  const value = Number(state.settings.volume);
+  return Number.isFinite(value) ? clamp(value, 0, 1) : 0;
+}
+
+function musicVolume() {
+  const value = Number(state.settings.musicVolume);
+  return Number.isFinite(value) ? clamp(value, 0, 1) : 0;
+}
+
+function audioOutputEnabled() {
+  return effectVolume() > 0 || musicVolume() > 0;
+}
+
 function ensureAudio() {
-  if (state.settings.volume <= 0) {
+  if (!audioOutputEnabled()) {
     stopMusic();
     return;
   }
@@ -12383,7 +12415,7 @@ function ensureAudio() {
 }
 
 function playTone(kind) {
-  if (!state.audio || state.audio.state !== "running" || state.settings.volume <= 0) return;
+  if (!state.audio || state.audio.state !== "running" || effectVolume() <= 0) return;
   const now = state.audio.currentTime;
   const cue = SOUND_CUES[kind] ?? SOUND_CUES.button;
   cue.notes.forEach((note, index) => {
@@ -12699,7 +12731,7 @@ function syncMusic() {
   const themeName = currentMusicTheme();
   document.body.dataset.musicTheme = themeName ?? "silent";
   if (!state.audio) return;
-  if (state.settings.volume <= 0 || state.settings.musicVolume <= 0 || !themeName) {
+  if (musicVolume() <= 0 || !themeName) {
     stopMusic();
     return;
   }
@@ -12766,7 +12798,7 @@ function updateMusicGain() {
 }
 
 function musicGainFor(theme) {
-  return Math.max(0.0001, state.settings.volume * state.settings.musicVolume * theme.gain);
+  return Math.max(0.0001, musicVolume() * MUSIC_GAIN_SCALE * theme.gain);
 }
 
 function scheduleMusic() {
@@ -12865,7 +12897,7 @@ function playOscillator(frequency, start, duration, type, volume) {
   oscillator.frequency.setValueAtTime(frequency, start);
   oscillator.type = type;
   gain.gain.setValueAtTime(0.0001, start);
-  gain.gain.exponentialRampToValueAtTime(state.settings.volume * volume, start + 0.012);
+  gain.gain.exponentialRampToValueAtTime(effectVolume() * volume, start + 0.012);
   gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
   oscillator.connect(gain);
   gain.connect(state.audio.destination);
@@ -12883,7 +12915,7 @@ function playNoise(start, volume) {
   const source = state.audio.createBufferSource();
   const gain = state.audio.createGain();
   source.buffer = buffer;
-  gain.gain.setValueAtTime(state.settings.volume * volume, start);
+  gain.gain.setValueAtTime(effectVolume() * volume, start);
   gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);
   source.connect(gain);
   gain.connect(state.audio.destination);

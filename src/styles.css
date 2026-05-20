@@ -19340,6 +19340,21 @@ dd,
   text-align: center;
 }
 
+.settings-inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.settings-inline-actions button {
+  min-height: 34px;
+  padding: 7px 12px;
+  border-color: rgba(112, 231, 255, 0.34);
+  background: rgba(112, 231, 255, 0.09);
+  color: var(--text);
+  font-size: 0.82rem;
+}
+
 .settings-switch {
   grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
@@ -20306,6 +20321,7 @@ input[type="range"] {
 .high-contrast .panel,
 .high-contrast .settings-group,
 .high-contrast .settings-switch,
+.high-contrast .settings-inline-actions button,
 .high-contrast .settings-control-line output,
 .high-contrast .map-copy,
 .high-contrast .map-board,
