@@ -267,6 +267,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-about-refreshed\.png/);
   assert.match(readme, /browser-qa-mobile-combat-refreshed\.png/);
   assert.match(readme, /browser-qa-mobile-combat-refreshed\.json/);
+  assert.match(readme, /browser-qa-tablet-combat-refreshed\.png/);
+  assert.match(readme, /browser-qa-tablet-combat-refreshed\.json/);
   assert.match(readme, /다시 캡처해야 출시 감사가 통과합니다/);
   assert.match(readme, /드래그 시 카드에서 대상까지 이어지는 조준선/);
   assert.match(readme, /크레딧/);
@@ -290,6 +292,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /summary-won/);
   assert.match(auditSource, /records/);
   assert.match(auditSource, /mobile-combat/);
+  assert.match(auditSource, /tablet-combat/);
   assert.match(auditSource, /requiredReleaseInfo/);
   assert.match(auditSource, /requiredFlowDocs/);
   assert.match(auditSource, /requiredFlowTests/);
@@ -306,6 +309,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-records-refreshed\.png/);
   assert.match(captureSource, /browser-qa-mobile-combat-refreshed\.png/);
   assert.match(captureSource, /browser-qa-mobile-combat-refreshed\.json/);
+  assert.match(captureSource, /browser-qa-tablet-combat-refreshed\.png/);
+  assert.match(captureSource, /browser-qa-tablet-combat-refreshed\.json/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.png/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.json/);
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
@@ -321,6 +326,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function assertMobileCombatTouchUx\(cdp\)/);
   assert.match(captureSource, /await assertMobileCombatTouchUx\(cdp\);/);
   assert.match(captureSource, /Mobile combat touch UX failed/);
+  assert.match(captureSource, /setViewport\(cdp, 820, 1180, true\)/);
+  assert.match(captureSource, /function assertTabletCombatUx\(cdp\)/);
+  assert.match(captureSource, /await assertTabletCombatUx\(cdp\);/);
+  assert.match(captureSource, /Tablet combat UX failed/);
   assert.match(captureSource, /canScrollHand/);
   assert.match(captureSource, /touchRailReady/);
   assert.match(captureSource, /function stageRewardFixture\(cdp\)/);
@@ -413,10 +422,13 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /function bossPrepContext\(run\)/);
   assert.match(balanceSource, /const hpTarget = finalAct \? \(close \? 0\.82 : 0\.72\) : close \? 0\.72 : 0\.62/);
   assert.match(balanceSource, /needsDefense/);
+  assert.match(balanceSource, /needsBurstDefense/);
   assert.match(balanceSource, /needsFinish/);
   assert.match(balanceSource, /needsStatusControl/);
   assert.match(balanceSource, /needsDeckSpeed/);
   assert.match(balanceSource, /const cleanse = cards\.filter\(cardSupportsCleanse\)\.length/);
+  assert.match(balanceSource, /const burstDefense = cards\.filter\(cardSupportsBurstDefense\)\.length/);
+  assert.match(balanceSource, /const burstDefenseTarget = finalAct \? \(close \? 3 : 2\) : 1/);
   assert.match(balanceSource, /const cleanseTarget = finalAct \? 2 : 1/);
   assert.match(balanceSource, /statusControl < statusTarget \|\| cleanse < cleanseTarget/);
   assert.match(balanceSource, /const actTwoElite = node\.type === "elite" && node\.act === 2/);
@@ -424,7 +436,11 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /const midElitePenalty = actTwoElite/);
   assert.match(balanceSource, /bossPrepScore/);
   assert.match(balanceSource, /cardSupportsCleanse\(card\) \? 6\.2 : 4\.8/);
-  assert.match(balanceSource, /bossPrep\?\.needsStatusControl && cardSupportsCleanse\(template\) \? 7 : 0/);
+  assert.match(balanceSource, /function cardSupportsBurstDefense\(card\)/);
+  assert.match(balanceSource, /function cardDefenseProfile\(card\)/);
+  assert.match(balanceSource, /context\.needsBurstDefense[\s\S]*cardSupportsBurstDefense\(card\)/);
+  assert.match(balanceSource, /bossPrep\?\.needsStatusControl && cardSupportsCleanse\(upgradedTemplate\) \? 7 : 0/);
+  assert.match(balanceSource, /bossPrep\?\.needsBurstDefense && cardSupportsBurstDefense\(upgradedTemplate\) \? 8 : 0/);
   assert.match(balanceSource, /bossPrep\.needsHp && run\.player\.gold >= prices\.heal/);
   assert.match(balanceSource, /bossPrep\.needsDeckSpeed && run\.player\.gold >= prices\.remove/);
   assert.match(balanceSource, /bossPrep\.needsRole && run\.player\.gold >= prices\.upgrade/);
@@ -442,6 +458,8 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /function aggregateFinalBossAnalysis\(runs\)/);
   assert.match(balanceSource, /lossMoves/);
   assert.match(balanceSource, /timelineSamples/);
+  assert.match(balanceSource, /lowBurstDefenseLosses/);
+  assert.match(balanceSource, /burstDefense/);
   assert.match(balanceSource, /primaryIssue/);
   assert.match(balanceSource, /최종 보스 도달/);
   assert.match(balanceSource, /if \(run\.finalBoss\) return "최종 보스"/);
@@ -1745,8 +1763,13 @@ test("boss approach briefing checks survival and deck readiness", () => {
   assert.match(mainSource, /function bossReadinessRequirements\(run, boss, distance, cards = run\.player\.deck\.map\(effectiveCard\)\)/);
   assert.match(mainSource, /const finalBoss = boss\?\.id === "last_gate_choir" \|\| boss\?\.act >= 3/);
   assert.match(mainSource, /const extraPressure = \(finalBoss \? 2 : lateBoss \? 1 : 0\) \+ \(close \? 1 : 0\) \+ \(difficulty >= 4 \? 1 : 0\)/);
+  assert.match(mainSource, /const burstDefenseCards = cards\.filter\(\(card\) => cardSupportsBurstDefense\(card\)\)\.length/);
+  assert.match(mainSource, /requirements\.finalBoss[\s\S]*readinessMetric\("큰 방어"/);
+  assert.match(mainSource, /function cardSupportsBurstDefense\(card\)/);
+  assert.match(mainSource, /function cardDefenseProfile\(card\)/);
   assert.match(mainSource, /function bossReadinessAction\(weakLabels, requirements, distance\)/);
   assert.match(mainSource, /다음 선택은 회복이나 안전 경로를 먼저 보세요/);
+  assert.match(mainSource, /문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 카드/);
   assert.match(mainSource, /2단계 전환 전에 큰 피해 카드를 남겨 두세요/);
   assert.match(mainSource, /function bossHorizonTags\(boss, readiness = null\)/);
   assert.match(mainSource, /missing\.map\(\(label\) => `\$\{label\} 보강`\)\.slice\(0, 3\)/);
@@ -2688,6 +2711,9 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /function rewardCardInsight\(run, cardId\)/);
   assert.match(mainSource, /function rewardRoleNeed\(run, card\)/);
   assert.match(mainSource, /function rewardBossPreparationNeed\(run, card\)/);
+  assert.match(mainSource, /if \(\/보스 대비\|보스전\/\.test\(insight\.label \?\? ""\)\)/);
+  assert.match(mainSource, /\^보스 대비.*rewardCardRoleLabel\(card\)/);
+  assert.match(mainSource, /if \(\/큰 방어\/\.test\(label\)\) return "큰 방어"/);
   assert.match(mainSource, /scoreBonus/);
   assert.match(mainSource, /function rewardComparisonChips\(run, cardId\)/);
   assert.match(mainSource, /function rewardRelicChoices\(reward\)/);
@@ -2704,6 +2730,11 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /받지 않기와 비교/);
   assert.match(mainSource, /마무리 보강/);
   assert.match(mainSource, /정화·약화 보강/);
+  assert.match(mainSource, /if \(cardSupportsBurstDefense\(card\)\) return "큰 방어"/);
+  assert.match(mainSource, /weak\.has\("큰 방어"\) && cardSupportsBurstDefense\(card\)/);
+  assert.match(mainSource, /보스 대비 큰 방어/);
+  assert.match(mainSource, /문 낙하와 레퀴엠을 넘길 방어, 약화, 도금 수단/);
+  assert.match(mainSource, /scoreBonus:\s*20/);
   assert.match(mainSource, /보스 대비 방어/);
   assert.match(mainSource, /보스 대비 정화/);
   assert.match(mainSource, /aria-label="카드 보상 받지 않기/);

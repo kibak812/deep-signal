@@ -174,6 +174,7 @@ async function main() {
     { id: "card-hover", match: /browser-qa-combat-card-hover/ },
     { id: "energy-locked-card", match: /browser-qa-combat-energy-locked/ },
     { id: "map", match: /browser-qa-map/ },
+    { id: "final-boss-readiness", match: /browser-qa-final-boss-readiness/ },
     { id: "reward", match: /browser-qa-reward/ },
     { id: "reward-relics", match: /browser-qa-reward-relics/ },
     { id: "event", match: /browser-qa-event/ },
@@ -185,6 +186,7 @@ async function main() {
     { id: "settings", match: /browser-qa-settings/ },
     { id: "mobile", match: /browser-qa-mobile/ },
     { id: "mobile-combat", match: /browser-qa-mobile-combat/ },
+    { id: "tablet-combat", match: /browser-qa-tablet-combat/ },
     { id: "codex", match: /browser-qa-codex/ }
   ];
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);

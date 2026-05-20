@@ -151,6 +151,18 @@ try {
   await assertMapPreviewFocus(cdp);
   await capture(cdp, "browser-qa-map-route-preview.png");
 
+  await stageFinalBossReadinessFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".map-layout");
+  await waitForText(cdp, "큰 방어");
+  await assertFinalBossReadinessUx(cdp);
+  await capture(cdp, "browser-qa-final-boss-readiness.png");
+  await clearSavedRun(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "새 런 시작");
+  await waitForSelector(cdp, ".map-layout");
+
   await clickSelector(cdp, ".map-node.combat.available, .map-node.available");
   await waitForSelector(cdp, ".combat-board");
   await assertCombatRiskSingleSource(cdp);
@@ -206,6 +218,15 @@ try {
   await waitForSelector(cdp, ".combat-board");
   await assertMobileCombatTouchUx(cdp);
   await capture(cdp, "browser-qa-mobile-combat-refreshed.png");
+  await clearSavedRun(cdp);
+
+  await stageMobileCombatFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await setViewport(cdp, 820, 1180, true);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await assertTabletCombatUx(cdp);
+  await capture(cdp, "browser-qa-tablet-combat-refreshed.png");
   await clearSavedRun(cdp);
 
   await navigate(cdp, baseUrl);
@@ -452,6 +473,27 @@ async function stageBossFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return { phase: run.phase, boss: run.combat.enemies[0].name };
+  })()`);
+}
+
+async function stageFinalBossReadinessFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-final-boss-readiness", difficulty: 4 });
+    const boss = run.map.flat().find((item) => item.type === "boss" && item.act === 3);
+    if (!boss) throw new Error("QA final boss readiness node not found");
+    run.phase = "map";
+    run.currentNodeId = null;
+    run.currentRow = boss.row;
+    run.availableNodeIds = [boss.id];
+    run.stats.floors = boss.row + 1;
+    run.player.hp = Math.min(run.player.maxHp, 48);
+    run.player.deck = run.player.deck.filter((card) => !["floodgate", "null_pin"].includes(card.cardId));
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, boss: boss.id, hp: run.player.hp, deck: run.player.deck.length };
   })()`);
 }
 
@@ -1305,6 +1347,121 @@ async function assertMobileCombatTouchUx(cdp) {
   await writeFile(resolve(qaDir, "browser-qa-mobile-combat-refreshed.json"), JSON.stringify(evidence, null, 2));
 }
 
+async function assertTabletCombatUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const rect = (element) => {
+      if (!element) return null;
+      const box = element.getBoundingClientRect();
+      return {
+        left: Math.round(box.left),
+        top: Math.round(box.top),
+        right: Math.round(box.right),
+        bottom: Math.round(box.bottom),
+        width: Math.round(box.width),
+        height: Math.round(box.height)
+      };
+    };
+    const overlaps = (left, right, gap = 0) => {
+      if (!left || !right) return false;
+      return left.right + gap > right.left && left.left < right.right + gap && left.bottom + gap > right.top && left.top < right.bottom + gap;
+    };
+    const hand = document.querySelector(".hand-zone");
+    const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const board = document.querySelector(".combat-board");
+    const command = document.querySelector(".combat-command-row");
+    const resource = document.querySelector(".combat-resource-stack");
+    const energy = document.querySelector(".combat-energy-panel");
+    const playPanel = document.querySelector(".combat-play-panel");
+    const endTurn = document.querySelector(".end-turn");
+    const enemyLine = document.querySelector(".enemy-line");
+    const targetAssist = document.querySelector(".target-assist");
+    const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
+    const handBox = rect(hand);
+    const commandBox = rect(command);
+    const resourceBox = rect(resource);
+    const energyBox = rect(energy);
+    const playBox = rect(playPanel);
+    const endBox = rect(endTurn);
+    const enemyLineBox = rect(enemyLine);
+    const targetBox = rect(targetAssist);
+    const pileBoxes = piles.map(rect);
+    const cardBoxes = cards.map(rect);
+    const tabletViewport = window.matchMedia("(min-width: 681px) and (max-width: 1040px)").matches;
+    const noPageOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    const firstScrollLeft = hand?.scrollLeft ?? 0;
+    const canScrollHand = Boolean(hand && hand.scrollWidth > hand.clientWidth + 24);
+    if (hand) hand.scrollLeft = hand.scrollWidth;
+    const didScrollHand = Boolean(hand && hand.scrollLeft > firstScrollLeft + 8);
+    if (hand) hand.scrollLeft = 0;
+    const handStyle = hand ? getComputedStyle(hand) : null;
+    const cardStyle = cards[0] ? getComputedStyle(cards[0]) : null;
+    const handInViewport = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight && handBox.height >= 230);
+    const cardsReadable = cardBoxes.length >= 7 && cardBoxes.every((box) => box && box.width >= 124 && box.width <= 170 && box.height >= 190 && box.bottom <= window.innerHeight + 2);
+    const commandCompact = !commandBox || commandBox.width <= 1 || (commandBox.top >= 0 && commandBox.right <= window.innerWidth);
+    const playPanelReady = Boolean(playBox && playBox.width >= 320 && playBox.left >= 0 && playBox.right <= window.innerWidth);
+    const controlsVisible = Boolean(
+      resourceBox &&
+      energyBox &&
+      playPanelReady &&
+      endBox &&
+      commandCompact &&
+      resourceBox.width >= 88 &&
+      resourceBox.left >= 0 &&
+      resourceBox.bottom <= window.innerHeight &&
+      energyBox.height >= 48 &&
+      endBox.width >= 80 &&
+      endBox.height >= 72 &&
+      endBox.right <= window.innerWidth &&
+      endBox.bottom <= window.innerHeight &&
+      pileBoxes.length === 4 &&
+      pileBoxes.every((box) => box && box.height >= 32)
+    );
+    const noCriticalOverlap =
+      !overlaps(handBox, endBox, 2) &&
+      !overlaps(resourceBox, endBox, 2) &&
+      !overlaps(playBox, endBox, 2) &&
+      !overlaps(playBox, handBox, 6) &&
+      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
+    const touchRailReady =
+      handStyle?.overflowX === "auto" &&
+      handStyle?.overscrollBehaviorX === "contain" &&
+      (handStyle?.touchAction ?? "").includes("pan-x") &&
+      (cardStyle?.touchAction ?? "").includes("pan-x");
+    const combatReadable = Boolean(board && enemyLineBox && enemyLineBox.top >= 0 && enemyLineBox.bottom <= window.innerHeight && document.querySelector(".enemy-card:not(.dead)"));
+    return {
+      ok: tabletViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable,
+      tabletViewport,
+      noPageOverflow,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewport: { width: window.innerWidth, height: window.innerHeight },
+      handInViewport,
+      canScrollHand,
+      didScrollHand,
+      cardsReadable,
+      controlsVisible,
+      commandCompact,
+      playPanelReady,
+      noCriticalOverlap,
+      touchRailReady,
+      combatReadable,
+      handStyle: {
+        overflowX: handStyle?.overflowX ?? "",
+        touchAction: handStyle?.touchAction ?? "",
+        overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
+      },
+      cardTouchAction: cardStyle?.touchAction ?? "",
+      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, enemyLine: enemyLineBox, targetAssist: targetBox },
+      cardCount: cards.length,
+      cardBoxes: cardBoxes.slice(0, 3),
+      pileBoxes
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Tablet combat UX failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-tablet-combat-refreshed.json"), JSON.stringify(evidence, null, 2));
+}
+
 async function assertCombatRiskSingleSource(cdp) {
   const result = await evaluate(cdp, `(() => {
     const command = document.querySelector(".combat-board .combat-command-row");
@@ -1979,6 +2136,30 @@ async function assertBossStatusStrip(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Boss status strip failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertFinalBossReadinessUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const horizon = document.querySelector(".map-horizon");
+    const horizonText = horizon?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const tags = [...document.querySelectorAll(".map-horizon-boss i")].map((item) => item.innerText.replace(/\\s+/g, " ").trim());
+    const bigDefense = tags.find((text) => text.includes("큰 방어"));
+    const ok =
+      Boolean(horizon) &&
+      horizonText.includes("마지막 문 성가대") &&
+      horizonText.includes("큰 방어") &&
+      horizonText.includes("보스층") &&
+      Boolean(bigDefense);
+    return {
+      ok,
+      horizonText,
+      tags,
+      hasHorizon: Boolean(horizon)
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Final boss readiness failed: ${JSON.stringify(result)}`);
   }
 }
 

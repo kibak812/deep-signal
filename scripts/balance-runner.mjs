@@ -424,10 +424,11 @@ function rewardCardScore(run, cardId) {
 function bossPreparationBonus(run, card) {
   const context = bossPrepContext(run) ?? bossContext(run);
   if (!context || context.act < 2 || context.distance > 3) return 0;
-  const deckCards = run.player.deck.map((cardInstance) => getCard(cardInstance));
+  const deckCards = run.player.deck.map((cardInstance) => effectiveCard(cardInstance));
   const finalActBonus = context.act >= 3 ? 1.55 : 1;
   let bonus = 0;
   if ((context.needsStatusControl ?? deckCards.filter(cardSupportsStatusControl).length < 2) && cardSupportsStatusControl(card)) bonus += (cardSupportsCleanse(card) ? 6.2 : 4.8) * finalActBonus;
+  if ((context.needsBurstDefense ?? false) && cardSupportsBurstDefense(card)) bonus += 5.8 * finalActBonus;
   if ((context.needsDefense ?? deckCards.filter(cardSupportsDefense).length < 6) && cardSupportsDefense(card)) bonus += 4.3 * finalActBonus;
   if ((context.needsFinish ?? deckCards.filter(cardSupportsFinish).length < 7) && cardSupportsFinish(card)) bonus += 3.7 * finalActBonus;
   if ((context.needsDeckSpeed ?? deckCards.filter(cardSupportsFlow).length < 4) && cardSupportsFlow(card)) bonus += 2.8;
@@ -445,11 +446,12 @@ function bossContext(run) {
 function bossPrepContext(run) {
   const context = bossContext(run);
   if (!context || context.act < 2 || context.distance > 3) return null;
-  const cards = run.player.deck.map((cardInstance) => getCard(cardInstance));
+  const cards = run.player.deck.map((cardInstance) => effectiveCard(cardInstance));
   const finalAct = context.act >= 3;
   const close = context.distance <= 1;
   const hpRatio = run.player.hp / Math.max(1, run.player.maxHp);
   const defense = cards.filter(cardSupportsDefense).length;
+  const burstDefense = cards.filter(cardSupportsBurstDefense).length;
   const finish = cards.filter(cardSupportsFinish).length;
   const statusControl = cards.filter(cardSupportsStatusControl).length;
   const cleanse = cards.filter(cardSupportsCleanse).length;
@@ -457,18 +459,21 @@ function bossPrepContext(run) {
   const deckSize = cards.length;
   const hpTarget = finalAct ? (close ? 0.82 : 0.72) : close ? 0.72 : 0.62;
   const defenseTarget = finalAct ? 7 : 5;
+  const burstDefenseTarget = finalAct ? (close ? 3 : 2) : 1;
   const finishTarget = finalAct ? 8 : 6;
   const statusTarget = finalAct ? 3 : 2;
   const cleanseTarget = finalAct ? 2 : 1;
   const flowTarget = deckSize >= 25 || finalAct ? 4 : 3;
   const needsHp = hpRatio < hpTarget;
   const needsDefense = defense < defenseTarget;
+  const needsBurstDefense = finalAct && burstDefense < burstDefenseTarget;
   const needsFinish = finish < finishTarget;
   const needsStatusControl = statusControl < statusTarget || cleanse < cleanseTarget;
   const needsDeckSpeed = deckSize >= 25 || flow < flowTarget;
   const missing = [
     needsHp ? "체력" : "",
-    needsDefense ? "방어" : "",
+    needsBurstDefense ? "큰 방어" : "",
+    !needsBurstDefense && needsDefense ? "방어" : "",
     needsFinish ? "마무리" : "",
     needsStatusControl ? "정화·약화" : "",
     needsDeckSpeed ? "카드 뽑기" : ""
@@ -480,18 +485,36 @@ function bossPrepContext(run) {
     hpRatio,
     deckSize,
     defense,
+    burstDefense,
     finish,
     statusControl,
     cleanse,
     flow,
     needsHp,
     needsDefense,
+    needsBurstDefense,
     needsFinish,
     needsStatusControl,
     needsDeckSpeed,
-    needsRole: needsDefense || needsFinish || needsStatusControl,
+    needsRole: needsDefense || needsBurstDefense || needsFinish || needsStatusControl,
     missing
   };
+}
+
+function cardSupportsBurstDefense(card) {
+  const profile = cardDefenseProfile(card);
+  return profile.block >= 11 || profile.weak >= 1 || profile.plated >= 2;
+}
+
+function cardDefenseProfile(card) {
+  const profile = { block: 0, weak: 0, plated: 0 };
+  for (const effect of collectEffects(card.effects ?? [])) {
+    if (effect.op === "block") profile.block += effect.amount ?? 0;
+    if (effect.op === "blockPerHand") profile.block += (effect.amount ?? 0) * 5;
+    if (effect.op === "gainStatus" && effect.target === "self" && effect.status === "plated") profile.plated += effect.amount ?? 0;
+    if (effect.op === "apply" && effect.status === "weak" && ["enemy", "allEnemies"].includes(effect.target)) profile.weak += effect.amount ?? 0;
+  }
+  return profile;
 }
 
 function cardSupportsDefense(card) {
@@ -680,8 +703,10 @@ function selectDeckCard(run) {
       .filter((card) => isUpgradeableCard(card))
       .map((card) => {
         const template = getCard(card);
-        const cleanseUpgrade = bossPrep?.needsStatusControl && cardSupportsCleanse(template) ? 7 : 0;
-        return { card, score: rewardCardScore(run, card.cardId) + cleanseUpgrade + (card.cardId === "pulse_lance" ? 2 : 0) };
+        const upgradedTemplate = effectiveCard({ ...card, upgraded: true });
+        const cleanseUpgrade = bossPrep?.needsStatusControl && cardSupportsCleanse(upgradedTemplate) ? 7 : 0;
+        const burstDefenseUpgrade = bossPrep?.needsBurstDefense && cardSupportsBurstDefense(upgradedTemplate) ? 8 : 0;
+        return { card, score: rewardCardScore(run, card.cardId) + cleanseUpgrade + burstDefenseUpgrade + (card.cardId === "pulse_lance" ? 2 : 0) };
       })
       .sort((left, right) => right.score - left.score)[0]?.card ?? run.player.deck[0];
   }
@@ -841,9 +866,10 @@ function compactStatuses(statuses = {}) {
 }
 
 function deckRoleProfile(run) {
-  const cards = run.player.deck.map((cardInstance) => getCard(cardInstance));
+  const cards = run.player.deck.map((cardInstance) => effectiveCard(cardInstance));
   return {
     defense: cards.filter(cardSupportsDefense).length,
+    burstDefense: cards.filter(cardSupportsBurstDefense).length,
     finish: cards.filter(cardSupportsFinish).length,
     statusControl: cards.filter(cardSupportsStatusControl).length,
     cleanse: cards.filter(cardSupportsCleanse).length,
@@ -1125,6 +1151,7 @@ function aggregateFinalBossAnalysis(runs) {
   const requiemLosses = losses.filter((run) => finalBossMoveSeen(run, "phase_requiem")).length;
   const summonWindowLosses = losses.filter((run) => finalBossMoveSeen(run, "gate_call")).length;
   const lowHpEntryLosses = losses.filter((run) => (run.finalBossTimeline?.[0]?.playerHp ?? run.finalBoss?.playerHp ?? Infinity) <= 18).length;
+  const lowBurstDefenseLosses = losses.filter((run) => (run.finalBoss?.roles?.burstDefense ?? run.roleProfile?.burstDefense ?? 0) < 2).length;
   return {
     reached: reached.length,
     wins: wins.length,
@@ -1136,13 +1163,14 @@ function aggregateFinalBossAnalysis(runs) {
     requiemLosses,
     summonWindowLosses,
     lowHpEntryLosses,
+    lowBurstDefenseLosses,
     timelineCoverage: losses.length ? round(timelineLosses.length / losses.length) : 0,
     roleAverages: {
       wins: averageFinalBossRoles(wins),
       losses: averageFinalBossRoles(losses)
     },
     timelineSamples: losses.slice(0, 4).map(finalBossTimelineSample),
-    primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses })
+    primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses })
   };
 }
 
@@ -1208,7 +1236,7 @@ function compactFinalBossTimelineEntry(entry) {
 }
 
 function averageFinalBossRoles(runs) {
-  const keys = ["defense", "finish", "statusControl", "cleanse", "flow", "upgraded"];
+  const keys = ["defense", "burstDefense", "finish", "statusControl", "cleanse", "flow", "upgraded"];
   if (!runs.length) return Object.fromEntries(keys.map((key) => [key, 0]));
   return Object.fromEntries(
     keys.map((key) => [
@@ -1218,8 +1246,9 @@ function averageFinalBossRoles(runs) {
   );
 }
 
-function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses }) {
+function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses }) {
   if (!losses.length) return "현재 표본에서는 최종 보스 패배가 없습니다.";
+  if (lowBurstDefenseLosses >= Math.max(3, losses.length * 0.3)) return "문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 수단을 먼저 확인하세요.";
   if (requiemLosses >= Math.max(3, losses.length * 0.35)) return "종말 레퀴엠 턴을 버티는 방어 카드와 정화 수단을 먼저 확인하세요.";
   if (closeLosses.length >= Math.max(3, losses.length * 0.25)) return "본체 체력이 낮게 남는 패배가 많아 마무리 카드 접근성을 먼저 확인하세요.";
   if (summonWindowLosses >= Math.max(3, losses.length * 0.25)) return "문지기 호출 이후 본체를 계속 때릴 수 있는 선택지가 충분한지 확인하세요.";

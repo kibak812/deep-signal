@@ -1,0 +1,153 @@
+{
+  "ok": true,
+  "tabletViewport": true,
+  "noPageOverflow": true,
+  "scrollWidth": 820,
+  "viewport": {
+    "width": 820,
+    "height": 1180
+  },
+  "handInViewport": true,
+  "canScrollHand": true,
+  "didScrollHand": true,
+  "cardsReadable": true,
+  "controlsVisible": true,
+  "commandCompact": true,
+  "playPanelReady": true,
+  "noCriticalOverlap": true,
+  "touchRailReady": true,
+  "combatReadable": true,
+  "handStyle": {
+    "overflowX": "auto",
+    "touchAction": "pan-x",
+    "overscrollBehaviorX": "contain"
+  },
+  "cardTouchAction": "pan-x",
+  "boxes": {
+    "hand": {
+      "left": 116,
+      "top": 928,
+      "right": 704,
+      "bottom": 1172,
+      "width": 588,
+      "height": 244
+    },
+    "command": {
+      "left": 17,
+      "top": 105,
+      "right": 18,
+      "bottom": 106,
+      "width": 1,
+      "height": 1
+    },
+    "resource": {
+      "left": 10,
+      "top": 972,
+      "right": 104,
+      "bottom": 1160,
+      "width": 94,
+      "height": 188
+    },
+    "energy": {
+      "left": 10,
+      "top": 1070,
+      "right": 100,
+      "bottom": 1160,
+      "width": 90,
+      "height": 90
+    },
+    "playPanel": {
+      "left": 190,
+      "top": 910,
+      "right": 630,
+      "bottom": 910,
+      "width": 440,
+      "height": 0
+    },
+    "endTurn": {
+      "left": 716,
+      "top": 1070,
+      "right": 808,
+      "bottom": 1162,
+      "width": 92,
+      "height": 92
+    },
+    "enemyLine": {
+      "left": 292,
+      "top": 146,
+      "right": 786,
+      "bottom": 583,
+      "width": 494,
+      "height": 437
+    },
+    "targetAssist": {
+      "left": 0,
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "width": 0,
+      "height": 0
+    }
+  },
+  "cardCount": 7,
+  "cardBoxes": [
+    {
+      "left": 116,
+      "top": 941,
+      "right": 263,
+      "bottom": 1165,
+      "width": 147,
+      "height": 224
+    },
+    {
+      "left": 216,
+      "top": 941,
+      "right": 363,
+      "bottom": 1165,
+      "width": 147,
+      "height": 224
+    },
+    {
+      "left": 312,
+      "top": 942,
+      "right": 457,
+      "bottom": 1164,
+      "width": 145,
+      "height": 223
+    }
+  ],
+  "pileBoxes": [
+    {
+      "left": 10,
+      "top": 972,
+      "right": 54,
+      "bottom": 1014,
+      "width": 44,
+      "height": 42
+    },
+    {
+      "left": 60,
+      "top": 972,
+      "right": 104,
+      "bottom": 1014,
+      "width": 44,
+      "height": 42
+    },
+    {
+      "left": 10,
+      "top": 1020,
+      "right": 54,
+      "bottom": 1062,
+      "width": 44,
+      "height": 42
+    },
+    {
+      "left": 60,
+      "top": 1020,
+      "right": 104,
+      "bottom": 1062,
+      "width": 44,
+      "height": 42
+    }
+  ]
+}
