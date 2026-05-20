@@ -1611,6 +1611,14 @@ test("boss approach briefing checks survival and deck readiness", () => {
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   assert.match(mainSource, /function renderBossReadiness\(readiness\)/);
   assert.match(mainSource, /function bossReadiness\(run, boss, distance\)/);
+  assert.match(mainSource, /function bossReadinessRequirements\(run, boss, distance, cards = run\.player\.deck\.map\(effectiveCard\)\)/);
+  assert.match(mainSource, /const finalBoss = boss\?\.id === "last_gate_choir" \|\| boss\?\.act >= 3/);
+  assert.match(mainSource, /const extraPressure = \(finalBoss \? 2 : lateBoss \? 1 : 0\) \+ \(close \? 1 : 0\) \+ \(difficulty >= 4 \? 1 : 0\)/);
+  assert.match(mainSource, /function bossReadinessAction\(weakLabels, requirements, distance\)/);
+  assert.match(mainSource, /다음 선택은 회복이나 안전 경로를 먼저 보세요/);
+  assert.match(mainSource, /2단계 전환 전에 큰 피해 카드를 남겨 두세요/);
+  assert.match(mainSource, /function bossHorizonTags\(boss, readiness = null\)/);
+  assert.match(mainSource, /missing\.map\(\(label\) => `\$\{label\} 보강`\)\.slice\(0, 3\)/);
   assert.match(mainSource, /function cardSupportsDefense\(card\)/);
   assert.match(mainSource, /function cardSupportsFinish\(card\)/);
   assert.match(mainSource, /function cardSupportsStatusControl\(card\)/);
@@ -1620,6 +1628,7 @@ test("boss approach briefing checks survival and deck readiness", () => {
   assert.match(mainSource, /정화·약화/);
   assert.match(mainSource, /카드 뽑기/);
   assert.match(mainSource, /먼저 보강할 것/);
+  assert.match(mainSource, /action,\s*metrics/);
   assert.match(mainSource, /distance <= 3 \? bossReadiness/);
   assert.match(styleSource, /\.boss-readiness/);
   assert.match(styleSource, /\.boss-readiness-list/);

@@ -4284,7 +4284,7 @@ function renderMapHorizon(run, progress, routeChoices = [], routeAdvice = null) 
   const hpTone = hpRatio <= 0.42 ? "danger" : hpRatio <= 0.62 ? "warning" : "steady";
   const deck = run.player.deck.length;
   const nextLabel = recommendedNode ? `${recommendedNode.row + 1}층 · ${nodeTypeLabel(recommendedNode.type)}` : "경로 선택";
-  const focusTags = bossFocusTags(boss);
+  const focusTags = bossHorizonTags(boss, progress.readiness);
   return `
     <section class="map-horizon ${progress.tone}" aria-label="현재 진행 목표">
       <div class="map-horizon-main">
@@ -4313,6 +4313,12 @@ function bossFocusTags(boss) {
   if (/소환|졸개/.test(text)) tags.push("소환 대응");
   if (/방어|방어벽/.test(text)) tags.push("방어벽 돌파");
   return tags.length ? tags.slice(0, 3) : ["체력 유지", "마무리 피해", "방어 준비"];
+}
+
+function bossHorizonTags(boss, readiness = null) {
+  const missing = bossReadinessMissing(readiness);
+  if (missing.length) return missing.map((label) => `${label} 보강`).slice(0, 3);
+  return bossFocusTags(boss);
 }
 
 function renderMapDecisionPanel(run, routeChoices, routeAdvice = null) {
@@ -11502,26 +11508,81 @@ function bossReadiness(run, boss, distance) {
   const finishCards = cards.filter((card) => cardSupportsFinish(card)).length;
   const statusCards = cards.filter((card) => cardSupportsStatusControl(card)).length;
   const flowCards = cards.filter((card) => cardSupportsFlow(card)).length;
-  const needsStatusControl = /바이러스|취약|약화|균열/.test(bossText);
+  const requirements = bossReadinessRequirements(run, boss, distance, cards);
   const metrics = [
-    readinessMetric("체력", `${run.player.hp}/${run.player.maxHp}`, hpRatio >= 0.68 ? "strong" : hpRatio >= 0.48 ? "steady" : hpRatio >= 0.32 ? "warning" : "danger"),
-    readinessMetric("방어", `${defenseCards}장`, defenseCards >= 6 ? "strong" : defenseCards >= 4 ? "steady" : "warning"),
-    readinessMetric("마무리", `${finishCards}장`, finishCards >= 7 ? "strong" : finishCards >= 5 ? "steady" : "warning"),
-    readinessMetric("정화·약화", `${statusCards}장`, statusCards >= 2 ? "strong" : statusCards >= 1 ? "steady" : needsStatusControl ? "danger" : "warning"),
-    readinessMetric("카드 뽑기", `${flowCards}장`, flowCards >= 5 ? "strong" : flowCards >= 3 ? "steady" : "warning")
+    readinessMetric("체력", `${run.player.hp}/${run.player.maxHp}`, bossHpReadinessTone(hpRatio, requirements.hp)),
+    readinessMetric("방어", `${defenseCards}/${requirements.defense.steady}장`, countReadinessTone(defenseCards, requirements.defense)),
+    readinessMetric("마무리", `${finishCards}/${requirements.finish.steady}장`, countReadinessTone(finishCards, requirements.finish)),
+    readinessMetric("정화·약화", `${statusCards}/${requirements.status.steady}장`, countReadinessTone(statusCards, requirements.status)),
+    readinessMetric("카드 뽑기", `${flowCards}/${requirements.flow.steady}장`, countReadinessTone(flowCards, requirements.flow))
   ];
   const weakLabels = metrics.filter((metric) => metric.tone === "danger" || metric.tone === "warning").map((metric) => metric.label);
   const tone = metrics.some((metric) => metric.tone === "danger") ? "danger" : weakLabels.length >= 2 ? "warning" : "strong";
   const distanceText = distance === 0 ? `${boss.name} 전투 중` : `${boss.name}까지 ${distance}층`;
+  const action = bossReadinessAction(weakLabels, requirements, distance);
   const detail = weakLabels.length
-    ? `먼저 보강할 것: ${weakLabels.slice(0, 3).join(", ")}. 상점, 휴식, 보상에서 챙기세요.`
+    ? `먼저 보강할 것: ${weakLabels.slice(0, 3).join(", ")}. ${action}`
     : "생존과 마무리 수단이 고르게 갖춰져 있습니다.";
   return {
     tone,
     title: distanceText,
     detail,
+    action,
     metrics
   };
+}
+
+function bossReadinessRequirements(run, boss, distance, cards = run.player.deck.map(effectiveCard)) {
+  const bossText = boss?.mechanic ?? "";
+  const finalBoss = boss?.id === "last_gate_choir" || boss?.act >= 3;
+  const lateBoss = boss?.act >= 2;
+  const close = distance <= 1;
+  const difficulty = Number(run.difficulty ?? 0);
+  const deckSize = cards.length;
+  const needsStatusControl = /바이러스|취약|약화|균열/.test(bossText);
+  const extraPressure = (finalBoss ? 2 : lateBoss ? 1 : 0) + (close ? 1 : 0) + (difficulty >= 4 ? 1 : 0);
+  const defenseSteady = 4 + Math.min(3, extraPressure);
+  const finishSteady = 5 + Math.min(3, extraPressure);
+  const flowSteady = deckSize >= 26 ? 5 : deckSize >= 22 || finalBoss ? 4 : 3;
+  const statusSteady = needsStatusControl ? (finalBoss ? 3 : 2) : 1;
+  return {
+    hp: {
+      strong: finalBoss ? 0.78 : lateBoss ? 0.72 : 0.68,
+      steady: finalBoss ? 0.58 : lateBoss ? 0.52 : 0.48,
+      danger: finalBoss ? 0.38 : 0.32
+    },
+    defense: { strong: defenseSteady + 2, steady: defenseSteady, danger: Math.max(2, defenseSteady - 3) },
+    finish: { strong: finishSteady + 2, steady: finishSteady, danger: Math.max(3, finishSteady - 3) },
+    status: { strong: statusSteady + 1, steady: statusSteady, danger: needsStatusControl ? 1 : 0 },
+    flow: { strong: flowSteady + 1, steady: flowSteady, danger: Math.max(1, flowSteady - 2) },
+    finalBoss,
+    close,
+    deckSize
+  };
+}
+
+function bossHpReadinessTone(hpRatio, requirement) {
+  if (hpRatio >= requirement.strong) return "strong";
+  if (hpRatio >= requirement.steady) return "steady";
+  if (hpRatio >= requirement.danger) return "warning";
+  return "danger";
+}
+
+function countReadinessTone(count, requirement) {
+  if (count >= requirement.strong) return "strong";
+  if (count >= requirement.steady) return "steady";
+  if (count <= requirement.danger) return "danger";
+  return "warning";
+}
+
+function bossReadinessAction(weakLabels, requirements, distance) {
+  if (!weakLabels.length) return "지금 흐름을 유지하고 보스전에서는 2단계 전환 전 손패를 아끼세요.";
+  if (weakLabels.includes("체력")) return "다음 선택은 회복이나 안전 경로를 먼저 보세요.";
+  if (weakLabels.includes("방어")) return "방어, 약화, 도금 카드나 방어 유물을 우선하세요.";
+  if (weakLabels.includes("정화·약화")) return "정화 카드나 적을 약화시키는 카드를 한 장 더 찾으세요.";
+  if (weakLabels.includes("카드 뽑기") || requirements.deckSize >= 26) return "제거, 카드 뽑기, 보존 카드로 필요한 카드를 더 자주 보세요.";
+  if (weakLabels.includes("마무리")) return distance === 0 ? "2단계 전환 전에 큰 피해 카드를 남겨 두세요." : "큰 피해, 표식, 바이러스처럼 보스를 끝낼 수단을 챙기세요.";
+  return "상점, 휴식, 보상에서 빈 역할 하나만 분명히 채우세요.";
 }
 
 function readinessMetric(label, value, tone) {
