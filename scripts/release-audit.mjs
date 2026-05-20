@@ -203,6 +203,7 @@ async function main() {
   record("route-choice", "첫 엘리트 강제 방지", routeHasOptionalEliteFork(run), "각 막의 첫 엘리트 직전에는 비엘리트 대안 경로가 남아야 합니다.");
   record("screens", "필수 화면과 안내", ["새 런 시작", "이어하기", "설정", "게임 정보", "기록", "코덱스", "가이드"].every((text) => mainSource.includes(text)), "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.");
   record("settings-accessibility", "접근성/설정 항목", ["volume", "musicVolume", "preview-sound", "preview-music", "motionSpeed", "textScale", "highContrast", "tacticalAdvisor"].every((key) => mainSource.includes(key)), "효과음/배경음 조절과 미리듣기, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.");
+  record("music-variation", "음악 루프 변주", ["playMusicMotif", "playMusicVariation", "variationEvery", "boss_lastgate_phase2"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프와 긴 간격의 변주 프레이즈를 가져야 합니다.");
   record("save-records", "저장/이어하기/기록 코드", ["loadRunFromStorage", "saveRunToStorage", "deleteSavedRun", "recordRunSummary"].every((text) => mainSource.includes(text)), "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.");
   record(
     "art-assets",

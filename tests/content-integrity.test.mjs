@@ -1348,6 +1348,8 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /function startMusicTheme\(themeName\)/);
   assert.match(mainSource, /function scheduleMusic\(\)/);
   assert.match(mainSource, /function playMusicMotif\(theme, start, beatLength, step\)/);
+  assert.match(mainSource, /function playMusicVariation\(theme, start, beatLength, step\)/);
+  assert.match(mainSource, /playMusicVariation\(theme, music\.nextTime, beatLength, phraseStep\)/);
   assert.match(mainSource, /if \(event\.isTrusted\) ensureAudio\(\)/);
   assert.match(mainSource, /state\.audio\.resume\(\)\.then/);
   assert.match(mainSource, /state\.audio\.state !== "running"/);
@@ -1379,6 +1381,9 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /turnDanger:/);
   assert.match(mainSource, /finish:/);
   assert.match(mainSource, /theme\.motif/);
+  assert.match(mainSource, /theme\.variation/);
+  assert.match(mainSource, /variationEvery:/);
+  assert.match(mainSource, /boss_lastgate_phase2:[\s\S]*variation:/);
   assert.match(mainSource, /function playMusicVoice\(frequency, start, duration, type, amount/);
   assert.match(mainSource, /musicVolume:\s*0\.28/);
   assert.match(mainSource, /musicVolume\(\) \* MUSIC_GAIN_SCALE \* theme\.gain/);

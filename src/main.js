@@ -12439,7 +12439,10 @@ const MUSIC_THEMES = {
     gain: 0.038,
     bass: [0, -5, -7, -5],
     pattern: [0, null, 7, null, 10, null, 7, null, 3, null, 5, null, 7, null, 10, null],
-    chords: [[0, 7, 12], [3, 10, 15]]
+    chords: [[0, 7, 12], [3, 10, 15]],
+    variation: [12, 10, 7, 5],
+    variationEvery: 64,
+    variationGain: 0.1
   },
   explore: {
     bpm: 72,
@@ -12448,7 +12451,10 @@ const MUSIC_THEMES = {
     gain: 0.034,
     bass: [0, -7, -5, -10],
     pattern: [0, null, 5, 7, null, 10, 7, null, 3, null, 7, null, 12, 10, null, 5],
-    chords: [[0, 5, 12], [-2, 5, 10]]
+    chords: [[0, 5, 12], [-2, 5, 10]],
+    variation: [12, 10, 7, 5, 3],
+    variationEvery: 48,
+    variationGain: 0.11
   },
   combat: {
     bpm: 94,
@@ -12458,7 +12464,11 @@ const MUSIC_THEMES = {
     bass: [0, 0, -5, -7],
     pattern: [0, 3, null, 7, 10, null, 7, 3, 0, null, 5, 7, null, 10, 12, null],
     chords: [[0, 7, 10], [-5, 2, 7]],
-    pulse: 0.012
+    pulse: 0.012,
+    variation: [12, 7, 10, 3, 0],
+    variationEvery: 32,
+    variationWave: "square",
+    variationGain: 0.13
   },
   boss: {
     bpm: 108,
@@ -12468,7 +12478,11 @@ const MUSIC_THEMES = {
     bass: [0, -1, -5, -8],
     pattern: [0, null, 1, 7, null, 8, 7, 1, 0, null, -1, 5, 7, null, 8, 12],
     chords: [[0, 6, 13], [-1, 5, 12]],
-    pulse: 0.018
+    pulse: 0.018,
+    variation: [0, -1, 7, 8, 13],
+    variationEvery: 32,
+    variationWave: "sawtooth",
+    variationGain: 0.14
   },
   boss_cataloger: {
     bpm: 106,
@@ -12482,7 +12496,11 @@ const MUSIC_THEMES = {
     motif: [0, 2, 7, 11],
     motifEvery: 16,
     motifWave: "square",
-    motifGain: 0.2
+    motifGain: 0.2,
+    variation: [11, 7, 2, 14, 11],
+    variationEvery: 48,
+    variationWave: "triangle",
+    variationGain: 0.14
   },
   boss_cataloger_phase2: {
     bpm: 116,
@@ -12496,7 +12514,11 @@ const MUSIC_THEMES = {
     motif: [0, 7, 2, 11, 14],
     motifEvery: 12,
     motifWave: "square",
-    motifGain: 0.22
+    motifGain: 0.22,
+    variation: [14, 11, 7, 2, 16, 14],
+    variationEvery: 24,
+    variationWave: "square",
+    variationGain: 0.16
   },
   boss_algorithm: {
     bpm: 102,
@@ -12510,7 +12532,11 @@ const MUSIC_THEMES = {
     motif: [0, 6, -1, 11],
     motifEvery: 16,
     motifWave: "sawtooth",
-    motifGain: 0.18
+    motifGain: 0.18,
+    variation: [11, 6, -1, 4],
+    variationEvery: 40,
+    variationWave: "sawtooth",
+    variationGain: 0.13
   },
   boss_algorithm_phase2: {
     bpm: 112,
@@ -12524,7 +12550,11 @@ const MUSIC_THEMES = {
     motif: [0, 11, 6, -1, -6],
     motifEvery: 12,
     motifWave: "sawtooth",
-    motifGain: 0.2
+    motifGain: 0.2,
+    variation: [11, 6, -1, -6, 5],
+    variationEvery: 24,
+    variationWave: "sawtooth",
+    variationGain: 0.16
   },
   boss_lastgate: {
     bpm: 110,
@@ -12538,7 +12568,11 @@ const MUSIC_THEMES = {
     motif: [0, 7, 12, 15, 19],
     motifEvery: 16,
     motifWave: "sine",
-    motifGain: 0.2
+    motifGain: 0.2,
+    variation: [19, 15, 12, 7, 24],
+    variationEvery: 40,
+    variationWave: "sine",
+    variationGain: 0.15
   },
   boss_lastgate_phase2: {
     bpm: 122,
@@ -12552,7 +12586,11 @@ const MUSIC_THEMES = {
     motif: [0, 12, 7, 19, 15, 24],
     motifEvery: 8,
     motifWave: "sawtooth",
-    motifGain: 0.24
+    motifGain: 0.24,
+    variation: [24, 19, 15, 12, 7, 0],
+    variationEvery: 24,
+    variationWave: "sawtooth",
+    variationGain: 0.18
   },
   reward: {
     bpm: 70,
@@ -12561,7 +12599,10 @@ const MUSIC_THEMES = {
     gain: 0.04,
     bass: [0, -5, 3, -7],
     pattern: [0, 7, 12, null, 15, 12, 7, null, 3, 10, 15, null, 14, 10, 7, null],
-    chords: [[0, 7, 12], [3, 7, 15]]
+    chords: [[0, 7, 12], [3, 7, 15]],
+    variation: [12, 15, 19, 17],
+    variationEvery: 48,
+    variationGain: 0.12
   },
   victory: {
     bpm: 78,
@@ -12570,7 +12611,10 @@ const MUSIC_THEMES = {
     gain: 0.048,
     bass: [0, 5, 7, 12],
     pattern: [0, 4, 7, 12, 16, null, 12, 7, 5, 9, 12, 17, null, 16, 12, 7],
-    chords: [[0, 7, 12], [5, 9, 16]]
+    chords: [[0, 7, 12], [5, 9, 16]],
+    variation: [12, 16, 19, 24],
+    variationEvery: 32,
+    variationGain: 0.14
   },
   defeat: {
     bpm: 54,
@@ -12579,7 +12623,10 @@ const MUSIC_THEMES = {
     gain: 0.038,
     bass: [0, -2, -5, -7],
     pattern: [0, null, -2, null, -5, null, -7, null, -5, null, -2, null, 0, null, null, null],
-    chords: [[0, 3, 7], [-5, -2, 3]]
+    chords: [[0, 3, 7], [-5, -2, 3]],
+    variation: [-5, -2, 0, -7],
+    variationEvery: 48,
+    variationGain: 0.1
   }
 };
 
@@ -12808,14 +12855,16 @@ function scheduleMusic() {
   const beatLength = 60 / theme.bpm;
   const horizon = state.audio.currentTime + 0.78;
   while (music.nextTime < horizon) {
-    const step = music.step % theme.pattern.length;
+    const phraseStep = music.step;
+    const step = phraseStep % theme.pattern.length;
     const note = theme.pattern[step];
     const chord = theme.chords[Math.floor(music.step / 8) % theme.chords.length];
     if (step % 4 === 0) playMusicVoice(midiToFrequency(theme.root - 12 + theme.bass[Math.floor(music.step / 4) % theme.bass.length]), music.nextTime, beatLength * 1.8, "sine", 0.74, -0.18);
     if (step % 8 === 0) playMusicChord(chord.map((offset) => midiToFrequency(theme.root + offset)), music.nextTime, beatLength * 5.2, theme.wave, 0.34);
     if (note !== null) playMusicVoice(midiToFrequency(theme.root + note), music.nextTime, beatLength * 0.82, theme.wave, 0.62, step % 4 < 2 ? 0.2 : -0.2);
-    playMusicMotif(theme, music.nextTime, beatLength, step);
-    if (theme.pulse && step % 2 === 0) playMusicPulse(music.nextTime, theme.pulse);
+    playMusicMotif(theme, music.nextTime, beatLength, phraseStep);
+    playMusicVariation(theme, music.nextTime, beatLength, phraseStep);
+    if (theme.pulse && phraseStep % 2 === 0) playMusicPulse(music.nextTime, theme.pulse);
     music.nextTime += beatLength;
     music.step += 1;
   }
@@ -12831,6 +12880,20 @@ function playMusicMotif(theme, start, beatLength, step) {
       theme.motifWave ?? theme.wave,
       (theme.motifGain ?? 0.18) / Math.sqrt(theme.motif.length),
       index % 2 === 0 ? 0.34 : -0.34
+    );
+  });
+}
+
+function playMusicVariation(theme, start, beatLength, step) {
+  if (!theme.variation?.length || step === 0 || step % (theme.variationEvery ?? 48) !== 0) return;
+  theme.variation.forEach((offset, index) => {
+    playMusicVoice(
+      midiToFrequency(theme.root + offset),
+      start + index * beatLength * 0.22,
+      beatLength * 0.52,
+      theme.variationWave ?? theme.motifWave ?? theme.wave,
+      (theme.variationGain ?? 0.12) / Math.sqrt(theme.variation.length),
+      index % 2 === 0 ? -0.28 : 0.28
     );
   });
 }
