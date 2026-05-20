@@ -12552,22 +12552,33 @@ const MUSIC_THEMES = {
 };
 
 const SOUND_CUES = {
+  attackCard: { notes: [220, 147], type: "sawtooth", duration: 0.12, stagger: 0.018, gain: 0.044, noise: 0.03 },
   block: { notes: [196, 294], type: "triangle", duration: 0.14, stagger: 0.035, gain: 0.045 },
   button: { notes: [330], type: "triangle", duration: 0.09, stagger: 0, gain: 0.035 },
   card: { notes: [392, 523, 659], type: "triangle", duration: 0.12, stagger: 0.028, gain: 0.045 },
   craft: { notes: [262, 330, 392], type: "sine", duration: 0.18, stagger: 0.05, gain: 0.04 },
   damage: { notes: [164, 110], type: "sawtooth", duration: 0.12, stagger: 0.025, gain: 0.04, noise: 0.035 },
   danger: { notes: [130, 92], type: "sawtooth", duration: 0.18, stagger: 0.04, gain: 0.05, noise: 0.025 },
+  debuff: { notes: [277, 196, 185], type: "sawtooth", duration: 0.15, stagger: 0.032, gain: 0.035, noise: 0.018 },
+  drawCard: { notes: [392, 440, 523], type: "triangle", duration: 0.08, stagger: 0.018, gain: 0.03, noise: 0.01 },
   energy: { notes: [523, 659], type: "square", duration: 0.09, stagger: 0.022, gain: 0.032 },
+  enemyAttack: { notes: [130, 98], type: "sawtooth", duration: 0.16, stagger: 0.02, gain: 0.05, noise: 0.04 },
+  enemyBuff: { notes: [185, 247, 277], type: "triangle", duration: 0.18, stagger: 0.045, gain: 0.035 },
+  enemyGuard: { notes: [164, 220], type: "triangle", duration: 0.15, stagger: 0.032, gain: 0.04 },
   event: { notes: [247, 370, 494], type: "sine", duration: 0.16, stagger: 0.06, gain: 0.035 },
   finish: { notes: [196, 392, 784], type: "sawtooth", duration: 0.22, stagger: 0.05, gain: 0.052, noise: 0.028 },
+  heal: { notes: [330, 440, 660], type: "sine", duration: 0.18, stagger: 0.052, gain: 0.038 },
   lose: { notes: [147, 123, 98], type: "sawtooth", duration: 0.32, stagger: 0.12, gain: 0.055, noise: 0.025 },
   bossPhase: { notes: [98, 196, 294, 392, 587], type: "sawtooth", duration: 0.28, stagger: 0.055, gain: 0.06, noise: 0.045 },
+  powerCard: { notes: [196, 392, 587, 784], type: "square", duration: 0.18, stagger: 0.04, gain: 0.034 },
   relic: { notes: [523, 784], type: "triangle", duration: 0.2, stagger: 0.06, gain: 0.04 },
+  remove: { notes: [220, 165, 110], type: "triangle", duration: 0.16, stagger: 0.035, gain: 0.038, noise: 0.012 },
   reward: { notes: [330, 440, 660], type: "sine", duration: 0.2, stagger: 0.055, gain: 0.045 },
+  skillCard: { notes: [247, 370, 494], type: "triangle", duration: 0.14, stagger: 0.032, gain: 0.04 },
   shop: { notes: [294, 370], type: "triangle", duration: 0.13, stagger: 0.04, gain: 0.036 },
   start: { notes: [220, 330, 440], type: "triangle", duration: 0.18, stagger: 0.055, gain: 0.045 },
   status: { notes: [277, 415, 554], type: "triangle", duration: 0.16, stagger: 0.035, gain: 0.034 },
+  summon: { notes: [147, 196, 247], type: "triangle", duration: 0.2, stagger: 0.05, gain: 0.04, noise: 0.015 },
   turnDanger: { notes: [196, 130, 98], type: "sawtooth", duration: 0.22, stagger: 0.045, gain: 0.048, noise: 0.02 },
   turnGuard: { notes: [247, 330], type: "triangle", duration: 0.13, stagger: 0.035, gain: 0.035 },
   turnPass: { notes: [294, 392], type: "sine", duration: 0.12, stagger: 0.035, gain: 0.03 },
@@ -12581,14 +12592,23 @@ function soundCueFor(action, run) {
   if (action === "play-card" && activeCombatVictoryCoda(run)) return "finish";
   if (action === "play-card") return combatFxSoundCue();
   if (action === "end-turn" && state.combatFx?.kind === "enemy-action") return combatFxSoundCue();
-  if (["reward-card", "reward-relic", "skip-reward"].includes(action)) return "reward";
-  if (["shop-card", "shop-relic", "shop-heal"].includes(action)) return "shop";
-  if (["shop-remove", "shop-upgrade", "deck-select", "rest"].includes(action)) return "craft";
-  if (action === "event-option") return "event";
+  if (action === "reward-card") return "reward";
+  if (action === "reward-relic") return "relic";
+  if (action === "skip-reward") return "button";
+  if (action === "shop-card") return "shop";
+  if (action === "shop-relic") return "relic";
+  if (action === "shop-heal") return "heal";
+  if (action === "shop-remove") return "remove";
+  if (action === "shop-upgrade") return "craft";
+  if (action === "deck-select") return deckSelectionSoundCue();
+  if (action === "rest") return choicePulseSoundCue(action) ?? "craft";
+  if (action === "event-option") return choicePulseSoundCue(action) ?? "event";
   if (action === "enter-node") return "start";
   const tone = run.log.at(-1)?.tone;
   if (tone === "damage" || tone === "enemy") return "damage";
   if (tone === "block") return "block";
+  if (tone === "buff") return "powerCard";
+  if (tone === "warn") return "danger";
   if (tone === "relic") return "relic";
   if (tone === "reward") return "reward";
   if (tone === "shop") return "shop";
@@ -12607,13 +12627,59 @@ function soundCueForEndTurn(run) {
 
 function combatFxSoundCue(fx = state.combatFx) {
   if (!fx) return "card";
+  if (fx.kind === "enemy-action") return enemyActionSoundCue(fx);
+  return combatCardSoundCue(fx);
+}
+
+function combatCardSoundCue(fx = state.combatFx) {
+  if (!fx) return "card";
   if (fx.lethal) return "finish";
-  if (fx.kind === "enemy-action" && ((fx.selfHpLoss ?? 0) > 0 || fx.tone === "damage")) return "damage";
-  if (fx.tone === "damage") return "damage";
-  if (fx.tone === "block" || fx.tone === "guarded") return "block";
-  if (fx.tone === "resource") return "energy";
-  if (fx.tone === "status" || fx.tone === "control") return "status";
+  if ((fx.selfHeal ?? 0) > 0 || fx.chips?.some((chip) => chip.tone === "heal")) return "heal";
+  if (fx.tone === "damage") return fx.cardType === "attack" ? "attackCard" : "damage";
+  if (fx.tone === "block" || fx.tone === "guarded") return fx.cardType === "skill" ? "skillCard" : "block";
+  if (fx.tone === "resource") {
+    if (fx.cardType === "power") return "powerCard";
+    if (fx.chips?.some((chip) => /카드|뽑|생성/.test(chip.label ?? ""))) return "drawCard";
+    return "energy";
+  }
+  if (fx.tone === "status" || fx.tone === "control") {
+    if (fx.targetMode === "enemy" || fx.targetMode === "all-enemies") return "debuff";
+    return fx.cardType === "power" ? "powerCard" : "status";
+  }
+  if (fx.cardType === "attack") return "attackCard";
+  if (fx.cardType === "skill") return "skillCard";
+  if (fx.cardType === "power") return "powerCard";
   return "card";
+}
+
+function enemyActionSoundCue(fx = state.combatFx) {
+  if (!fx) return "damage";
+  if ((fx.selfHpLoss ?? 0) > 0 || fx.tone === "enemy") return "enemyAttack";
+  if (fx.tone === "warn") return "debuff";
+  if (fx.tone === "summon") return "summon";
+  if ((fx.enemyHeal ?? 0) > 0) return "heal";
+  if ((fx.enemyBlockGain ?? 0) > 0 || fx.tone === "block" || fx.tone === "guarded") return "enemyGuard";
+  if (fx.tone === "status") return "enemyBuff";
+  return "damage";
+}
+
+function choicePulseSoundCue(action, pulse = state.choicePulse) {
+  if (!pulse?.id?.includes(`-${action}`)) return null;
+  if (pulse.chips?.some((chip) => chip.tone === "warn" || chip.tone === "cost")) return "danger";
+  if (pulse.chips?.some((chip) => chip.tone === "heal")) return "heal";
+  if (pulse.chips?.some((chip) => chip.tone === "relic")) return "relic";
+  if (pulse.chips?.some((chip) => /제거|덱 -\d/.test(chip.label ?? ""))) return "remove";
+  if (pulse.tone === "craft") return "craft";
+  if (pulse.tone === "event") return "event";
+  if (pulse.tone === "shop") return "shop";
+  return null;
+}
+
+function deckSelectionSoundCue(run = state.run) {
+  const mode = run?.selector?.mode;
+  if (mode === "remove") return "remove";
+  if (mode === "upgrade") return "craft";
+  return choicePulseSoundCue("deck-select") ?? "craft";
 }
 
 function bossPhaseCue(run) {
