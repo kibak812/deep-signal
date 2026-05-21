@@ -145,6 +145,10 @@ async function main() {
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
   const balance = JSON.parse(await readFile(resolve(root, "qa/balance-report.json"), "utf8"));
   const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
+  const audioMixReportPath = resolve(root, "qa/audio-mix-report.json");
+  const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
+  const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
+  const audioMixReportMtime = await newestMtime([audioMixReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
   const atlas = await readFile(resolve(root, "public/assets/sprite-atlas.png"));
   const cardAtlas = await readFile(resolve(root, "public/assets/card-illustrations.png"));
@@ -223,7 +227,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
@@ -234,7 +238,24 @@ async function main() {
   record("route-choice", "첫 엘리트 강제 방지", routeHasOptionalEliteFork(run), "각 막의 첫 엘리트 직전에는 비엘리트 대안 경로가 남아야 합니다.");
   record("screens", "필수 화면과 안내", ["새 런 시작", "이어하기", "설정", "게임 정보", "기록", "코덱스", "가이드"].every((text) => mainSource.includes(text)), "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.");
   record("settings-accessibility", "접근성/설정 항목", ["volume", "musicVolume", "preview-sound", "preview-music", "motionSpeed", "textScale", "highContrast", "tacticalAdvisor"].every((key) => mainSource.includes(key)), "효과음/배경음 조절과 미리듣기, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.");
-  record("music-variation", "음악 루프 변주와 믹싱", ["playMusicMotif", "playMusicVariation", "playMusicBridge", "playMusicTransition", "variationEvery", "bridgeEvery", "createDynamicsCompressor", "boss_lastgate_phase2"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프, 긴 간격의 변주/브리지 프레이즈, 테마 전환 프레이즈와 기본 믹싱 버스를 가져야 합니다.");
+  record("music-variation", "음악 루프 변주와 믹싱", ["playMusicMotif", "playMusicVariation", "playMusicBridge", "playMusicTransition", "variationEvery", "bridgeEvery", "createDynamicsCompressor", "boss_lastgate_phase2", "duckMusicForCue", "musicDuckRatioForCue"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프, 긴 간격의 변주/브리지 프레이즈, 테마 전환 프레이즈, 덕킹, 기본 믹싱 버스를 가져야 합니다.");
+  record(
+    "audio-mix-report",
+    "효과음/배경음 믹스 리포트",
+    Boolean(audioMixReport?.ok) &&
+      audioMixReportMtime >= sourceMtime &&
+      audioMixReport.checks?.every((check) => check.ok) &&
+      audioMixReport.gain?.duckMinRatio >= 0.5 &&
+      audioMixReport.gain?.maxCueGain <= 0.065,
+    "효과음과 배경음의 상대 볼륨, 덕킹, 믹스 버스 검증 리포트가 최신이어야 합니다.",
+    {
+      checkedAt: audioMixReport?.checkedAt,
+      sourceFreshAfter: new Date(sourceMtime).toISOString(),
+      reportMtime: audioMixReportMtime ? new Date(audioMixReportMtime).toISOString() : null,
+      gain: audioMixReport?.gain,
+      checks: audioMixReport?.checks
+    }
+  );
   record("save-records", "저장/이어하기/기록 코드", ["loadRunFromStorage", "saveRunToStorage", "deleteSavedRun", "recordRunSummary"].every((text) => mainSource.includes(text)), "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.");
   record(
     "art-assets",

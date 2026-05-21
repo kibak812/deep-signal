@@ -28,85 +28,85 @@
       "height": 720
     },
     "pulse": {
-      "left": 216,
-      "top": 131,
-      "right": 340,
-      "bottom": 163,
-      "width": 124,
-      "height": 31
+      "left": 224,
+      "top": 133,
+      "right": 331,
+      "bottom": 160,
+      "width": 107,
+      "height": 27
     },
     "echo": {
-      "left": 234,
-      "top": 111,
-      "right": 314,
-      "bottom": 179,
-      "width": 80,
-      "height": 68
+      "left": 233,
+      "top": 113,
+      "right": 312,
+      "bottom": 180,
+      "width": 79,
+      "height": 67
     },
     "trail": {
       "left": 278,
       "top": 144,
-      "right": 1083,
+      "right": 950,
       "bottom": 147,
-      "width": 805,
+      "width": 672,
       "height": 3
     },
     "spark": {
-      "left": 450,
+      "left": 413,
       "top": 141,
-      "right": 458,
-      "bottom": 149,
-      "width": 9,
-      "height": 9
+      "right": 420,
+      "bottom": 150,
+      "width": 7,
+      "height": 8
     },
     "impact": {
-      "left": 1036,
-      "top": 79,
-      "right": 1126,
-      "bottom": 138,
-      "width": 91,
-      "height": 59
+      "left": 1033,
+      "top": 78,
+      "right": 1129,
+      "bottom": 140,
+      "width": 96,
+      "height": 63
     },
     "hitEnemy": {
-      "left": 967,
+      "left": 975,
       "top": 25,
-      "right": 1191,
+      "right": 1199,
       "bottom": 385,
       "width": 224,
       "height": 360
     },
     "targetRing": {
-      "left": 966,
-      "top": 41,
-      "right": 1193,
-      "bottom": 313,
-      "width": 228,
-      "height": 273
+      "left": 977,
+      "top": 46,
+      "right": 1197,
+      "bottom": 308,
+      "width": 219,
+      "height": 262
     },
     "hitSparks": {
-      "left": 994,
-      "top": 127,
-      "right": 1165,
+      "left": 1002,
+      "top": 128,
+      "right": 1172,
       "bottom": 239,
       "width": 170,
       "height": 112
     },
     "damagePop": {
-      "left": 1118,
+      "left": 1126,
       "top": 170,
-      "right": 1171,
+      "right": 1179,
       "bottom": 204,
       "width": 53,
       "height": 34
     },
     "resultStack": null,
     "playerSource": {
-      "left": 96,
-      "top": 30,
-      "right": 311,
-      "bottom": 352,
+      "left": 128,
+      "top": 23,
+      "right": 343,
+      "bottom": 346,
       "width": 215,
-      "height": 322
+      "height": 323
     }
   }
 }

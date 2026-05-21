@@ -245,6 +245,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const auditSource = readFileSync(new URL("../scripts/release-audit.mjs", import.meta.url), "utf8");
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
+  const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   let deployWorkflowSource = "";
   try {
     deployWorkflowSource = readFileSync(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8");
@@ -260,6 +261,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.doesNotMatch(styleSource, /url\("\.\/public\/assets\//);
   assert.match(readme, /## 검증 산출물/);
   assert.match(readme, /qa\/release-audit\.json/);
+  assert.match(readme, /qa\/audio-mix-report\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(auditSource, /balance:long/);
@@ -316,6 +318,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /현재 소스 변경 이후 다시 찍은/);
   assert.match(auditSource, /credits-license/);
   assert.match(auditSource, /distribution-polish/);
+  assert.match(auditSource, /audio-mix-report/);
   assert.match(auditSource, /pages-deploy-workflow/);
   assert.match(auditSource, /dist\/\.nojekyll/);
   assert.match(auditSource, /actions\/configure-pages@v6/);
@@ -552,6 +555,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /visibleSummaryTextFits/);
   assert.match(captureSource, /const seenCodaIds = new Set\(\)/);
   assert.match(captureSource, /Victory coda duplicated before reward/);
+  assert.match(audioMixSource, /Audio mix report passed/);
+  assert.match(audioMixSource, /music-ducking/);
+  assert.match(audioMixSource, /sfx-headroom/);
   assert.match(buildSource, /\.nojekyll/);
   if (deployWorkflowSource) {
     assert.match(deployWorkflowSource, /branches: \[main\]/);
@@ -1777,6 +1783,13 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /function musicVolume\(\)/);
   assert.match(mainSource, /function audioOutputEnabled\(\)/);
   assert.match(mainSource, /const MUSIC_GAIN_SCALE = 0\.35/);
+  assert.match(mainSource, /const MUSIC_DUCK_MIN_RATIO = 0\.54/);
+  assert.match(mainSource, /const MUSIC_DUCK_RELEASE_SECONDS = 0\.42/);
+  assert.match(mainSource, /function duckMusicForCue\(cue, start = state\.audio\?\.currentTime \?\? 0\)/);
+  assert.match(mainSource, /function musicDuckRatioForCue\(cue\)/);
+  assert.match(mainSource, /duckMusicForCue\(cue, now\)/);
+  assert.match(mainSource, /state\.music\.duckUntil/);
+  assert.match(mainSource, /musicGainFor\(state\.music\.theme, activeRatio\)/);
   assert.match(mainSource, /if \(!audioOutputEnabled\(\)\)/);
   assert.match(mainSource, /effectVolume\(\) <= 0/);
   assert.match(mainSource, /if \(musicVolume\(\) <= 0 \|\| !themeName\)/);
@@ -1811,7 +1824,7 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /boss_lastgate_phase2:[\s\S]*transition:/);
   assert.match(mainSource, /function playMusicVoice\(frequency, start, duration, type, amount/);
   assert.match(mainSource, /musicVolume:\s*0\.28/);
-  assert.match(mainSource, /musicVolume\(\) \* MUSIC_GAIN_SCALE \* theme\.gain/);
+  assert.match(mainSource, /const baseGain = musicVolume\(\) \* MUSIC_GAIN_SCALE \* theme\.gain/);
   assert.match(mainSource, /document\.body\.dataset\.musicTheme/);
   assert.match(mainSource, /state\.music\.timer = window\.setInterval\(scheduleMusic/);
   assert.match(mainSource, /state\.audio\.createDynamicsCompressor\?\.\(\)/);

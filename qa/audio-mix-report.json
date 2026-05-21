@@ -1,0 +1,47 @@
+{
+  "ok": true,
+  "checkedAt": "2026-05-21T23:50:30.829Z",
+  "themeCount": 13,
+  "cueCount": 32,
+  "gain": {
+    "musicGainScale": 0.35,
+    "maxThemeGain": 0.048,
+    "maxCueGain": 0.06,
+    "maxCueNoise": 0.045,
+    "duckMinRatio": 0.54,
+    "duckAttack": 0.026,
+    "duckRelease": 0.42
+  },
+  "checks": [
+    {
+      "id": "theme-coverage",
+      "ok": true,
+      "detail": "일반, 보스, 2단계, 승패 테마가 충분히 분리되어야 합니다."
+    },
+    {
+      "id": "cue-coverage",
+      "ok": true,
+      "detail": "전투, 보상, 상점, 보스 전환, 승패 효과음이 구분되어야 합니다."
+    },
+    {
+      "id": "music-headroom",
+      "ok": true,
+      "detail": "장시간 청감에서 배경음 기본 게인이 효과음을 덮지 않도록 여유를 둡니다."
+    },
+    {
+      "id": "sfx-headroom",
+      "ok": true,
+      "detail": "효과음 피크와 노이즈가 짧게 읽히되 과하게 튀지 않아야 합니다."
+    },
+    {
+      "id": "music-ducking",
+      "ok": true,
+      "detail": "효과음이 날 때 음악 버스가 짧게 내려갔다가 천천히 복귀해야 합니다."
+    },
+    {
+      "id": "mix-bus",
+      "ok": true,
+      "detail": "음악 버스에는 기본 저역 통과 필터와 컴프레서가 있어야 합니다."
+    }
+  ]
+}

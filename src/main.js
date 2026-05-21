@@ -14066,6 +14066,9 @@ function clearTabOnlyStorageNotice(scope) {
 
 const MUSIC_GAIN_SCALE = 0.35;
 const MUSIC_DEFAULT_BRIDGE_EVERY = 96;
+const MUSIC_DUCK_MIN_RATIO = 0.54;
+const MUSIC_DUCK_RELEASE_SECONDS = 0.42;
+const MUSIC_DUCK_ATTACK_SECONDS = 0.026;
 
 function effectVolume() {
   const value = Number(state.settings.volume);
@@ -14102,6 +14105,7 @@ function playTone(kind) {
   if (!state.audio || state.audio.state !== "running" || effectVolume() <= 0) return;
   const now = state.audio.currentTime;
   const cue = SOUND_CUES[kind] ?? SOUND_CUES.button;
+  duckMusicForCue(cue, now);
   cue.notes.forEach((note, index) => {
     const offset = index * cue.stagger;
     playOscillator(note, now + offset, cue.duration, cue.type, cue.gain);
@@ -14542,6 +14546,8 @@ function startMusicTheme(themeName) {
     gain,
     filter,
     compressor,
+    duckUntil: 0,
+    duckRatio: 1,
     nextTime: now + 0.08,
     step: 0,
     timer: null
@@ -14571,12 +14577,45 @@ function stopMusic() {
 function updateMusicGain() {
   if (!state.music || !state.audio) return;
   const now = state.audio.currentTime;
+  const duckRatio = currentMusicDuckRatio(now);
   state.music.gain.gain.cancelScheduledValues(now);
-  state.music.gain.gain.setTargetAtTime(musicGainFor(state.music.theme), now, 0.08);
+  state.music.gain.gain.setTargetAtTime(musicGainFor(state.music.theme, duckRatio), now, 0.08);
+  if (duckRatio < 1) {
+    state.music.gain.gain.setTargetAtTime(musicGainFor(state.music.theme), state.music.duckUntil, 0.18);
+  }
 }
 
-function musicGainFor(theme) {
-  return Math.max(0.0001, musicVolume() * MUSIC_GAIN_SCALE * theme.gain);
+function musicGainFor(theme, duckRatio = 1) {
+  const baseGain = musicVolume() * MUSIC_GAIN_SCALE * theme.gain;
+  return Math.max(0.0001, baseGain * duckRatio);
+}
+
+function currentMusicDuckRatio(now = state.audio?.currentTime ?? 0) {
+  if (!state.music || now >= (state.music.duckUntil ?? 0)) return 1;
+  return clamp(state.music.duckRatio ?? 1, MUSIC_DUCK_MIN_RATIO, 1);
+}
+
+function duckMusicForCue(cue, start = state.audio?.currentTime ?? 0) {
+  if (!state.audio || !state.music?.gain || musicVolume() <= 0) return;
+  const now = state.audio.currentTime;
+  const ratio = musicDuckRatioForCue(cue);
+  if (ratio >= 0.995) return;
+  const lastNoteOffset = (cue.notes.length - 1) * (cue.stagger ?? 0);
+  const releaseAt = Math.max(state.music.duckUntil ?? 0, start + lastNoteOffset + cue.duration + MUSIC_DUCK_RELEASE_SECONDS);
+  const activeRatio = now < (state.music.duckUntil ?? 0) ? Math.min(state.music.duckRatio ?? 1, ratio) : ratio;
+  state.music.duckUntil = releaseAt;
+  state.music.duckRatio = activeRatio;
+  state.music.gain.gain.cancelScheduledValues(now);
+  state.music.gain.gain.setTargetAtTime(musicGainFor(state.music.theme, activeRatio), Math.max(now, start), MUSIC_DUCK_ATTACK_SECONDS);
+  state.music.gain.gain.setTargetAtTime(musicGainFor(state.music.theme), releaseAt, 0.18);
+}
+
+function musicDuckRatioForCue(cue) {
+  const noteWeight = Math.min(0.18, Math.max(0, cue.notes.length - 1) * 0.045);
+  const gainWeight = Math.min(0.28, (cue.gain ?? 0) * 4.2);
+  const noiseWeight = Math.min(0.2, (cue.noise ?? 0) * 4.8);
+  const durationWeight = Math.min(0.12, (cue.duration ?? 0) * 0.28);
+  return clamp(1 - noteWeight - gainWeight - noiseWeight - durationWeight, MUSIC_DUCK_MIN_RATIO, 1);
 }
 
 function scheduleMusic() {
