@@ -1019,7 +1019,7 @@ export function bossRecoveryAmount(run) {
     2: 0.4,
     3: 0.37,
     4: 0.35,
-    5: 0.35
+    5: 0.38
   };
   return Math.ceil(run.player.maxHp * (ratios[run.difficulty] ?? 0.35));
 }
@@ -1187,7 +1187,8 @@ function eliteEnemyPool(act) {
 function createEnemy(run, enemyId, options = {}) {
   const template = ENEMY_BY_ID[enemyId];
   const difficulty = getDifficulty(run);
-  const hp = Math.max(1, Math.round(randomInt(run, template.hp[0], template.hp[1]) * difficulty.enemyHp * (options.hpScale ?? 1) * (run.runFlags.enemyHpMultiplier ?? 1)));
+  const finalBossHp = template.tier === "boss" && template.act >= 3 ? (difficulty.finalBossHp ?? 1) : 1;
+  const hp = Math.max(1, Math.round(randomInt(run, template.hp[0], template.hp[1]) * difficulty.enemyHp * finalBossHp * (options.hpScale ?? 1) * (run.runFlags.enemyHpMultiplier ?? 1)));
   return {
     uid: makeUid(run),
     templateId: enemyId,

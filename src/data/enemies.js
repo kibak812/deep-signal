@@ -288,7 +288,7 @@ export const ENEMIES = [
     name: "익사한 알고리즘",
     tier: "boss",
     act: 2,
-    hp: [166, 184],
+    hp: [160, 178],
     sprite: "algorithm",
     description: "무리한 선택의 대가를 되돌려 묻는 심층 계산체.",
     mechanic: "전투가 길어질수록 증폭과 바이러스로 체력을 갉아먹습니다. 2단계부터는 취약 뒤 연속 공격을 합니다.",

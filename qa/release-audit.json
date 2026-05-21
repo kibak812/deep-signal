@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T21:55:41.638Z",
+  "generatedAt": "2026-05-21T22:20:01.132Z",
   "summary": {
     "passed": 25,
     "failed": 0,
@@ -341,21 +341,21 @@
       "evidence": {
         "totals": {
           "runs": 108,
-          "wins": 68,
-          "winRate": 0.63,
-          "averageFloors": 19.45,
-          "averageSteps": 115.73,
+          "wins": 70,
+          "winRate": 0.65,
+          "averageFloors": 19.56,
+          "averageSteps": 115.53,
           "problemRuns": 0
         },
         "easiest": {
           "difficulty": 0,
           "difficultyName": "표층",
           "runs": 18,
-          "wins": 15,
-          "averageFloors": 18.83,
-          "averageDeckSize": 23.11,
-          "averageRelics": 8.72,
-          "averageDamageTaken": 137,
+          "wins": 16,
+          "averageFloors": 19.22,
+          "averageDeckSize": 23.39,
+          "averageRelics": 9.11,
+          "averageDamageTaken": 140.67,
           "problemRuns": 0,
           "floorBands": [
             {
@@ -368,7 +368,55 @@
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 1,
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "late",
+              "label": "후반 15-20층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "final",
+              "label": "최종 21층",
+              "runs": 16,
+              "wins": 16,
+              "winRate": 1
+            }
+          ],
+          "lossReasons": [
+            {
+              "label": "초반 성장 실패",
+              "count": 2
+            }
+          ],
+          "winRate": 0.8888888888888888
+        },
+        "hardest": {
+          "difficulty": 5,
+          "difficultyName": "최심층",
+          "runs": 18,
+          "wins": 7,
+          "averageFloors": 19.83,
+          "averageDeckSize": 21.61,
+          "averageRelics": 7.67,
+          "averageDamageTaken": 196.72,
+          "problemRuns": 0,
+          "floorBands": [
+            {
+              "id": "early",
+              "label": "초반 1-7층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "middle",
+              "label": "중반 8-14층",
+              "runs": 3,
               "wins": 0,
               "winRate": 0
             },
@@ -383,77 +431,21 @@
               "id": "final",
               "label": "최종 21층",
               "runs": 15,
-              "wins": 15,
-              "winRate": 1
-            }
-          ],
-          "lossReasons": [
-            {
-              "label": "초반 성장 실패",
-              "count": 2
-            },
-            {
-              "label": "중반 강적",
-              "count": 1
-            }
-          ],
-          "winRate": 0.8333333333333334
-        },
-        "hardest": {
-          "difficulty": 5,
-          "difficultyName": "최심층",
-          "runs": 18,
-          "wins": 8,
-          "averageFloors": 19.56,
-          "averageDeckSize": 21.67,
-          "averageRelics": 7.56,
-          "averageDamageTaken": 191.17,
-          "problemRuns": 0,
-          "floorBands": [
-            {
-              "id": "early",
-              "label": "초반 1-7층",
-              "runs": 0,
-              "wins": 0,
-              "winRate": 0
-            },
-            {
-              "id": "middle",
-              "label": "중반 8-14층",
-              "runs": 2,
-              "wins": 0,
-              "winRate": 0
-            },
-            {
-              "id": "late",
-              "label": "후반 15-20층",
-              "runs": 3,
-              "wins": 0,
-              "winRate": 0
-            },
-            {
-              "id": "final",
-              "label": "최종 21층",
-              "runs": 13,
-              "wins": 8,
-              "winRate": 0.62
+              "wins": 7,
+              "winRate": 0.47
             }
           ],
           "lossReasons": [
             {
               "label": "최종 보스",
-              "count": 5
-            },
-            {
-              "label": "후반 체력 부족",
-              "count": 3
+              "count": 8
             },
             {
               "label": "중반 강적",
-              "count": 2
+              "count": 3
             }
           ],
-          "winRate": 0.4444444444444444
+          "winRate": 0.3888888888888889
         }
       }
     },
@@ -477,10 +469,10 @@
         },
         "totals": {
           "runs": 216,
-          "wins": 137,
-          "winRate": 0.63,
-          "averageFloors": 19.29,
-          "averageSteps": 114.04,
+          "wins": 142,
+          "winRate": 0.66,
+          "averageFloors": 19.49,
+          "averageSteps": 114.32,
           "problemRuns": 0
         },
         "byDifficulty": [
@@ -488,11 +480,11 @@
             "difficulty": 0,
             "difficultyName": "표층",
             "runs": 36,
-            "wins": 30,
-            "averageFloors": 19.47,
-            "averageDeckSize": 23.25,
-            "averageRelics": 8.78,
-            "averageDamageTaken": 139.81,
+            "wins": 32,
+            "averageFloors": 19.67,
+            "averageDeckSize": 23.44,
+            "averageRelics": 9.06,
+            "averageDamageTaken": 140.44,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -505,7 +497,7 @@
               {
                 "id": "middle",
                 "label": "중반 8-14층",
-                "runs": 3,
+                "runs": 2,
                 "wins": 0,
                 "winRate": 0
               },
@@ -519,16 +511,12 @@
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 31,
-                "wins": 30,
-                "winRate": 0.97
+                "runs": 32,
+                "wins": 32,
+                "winRate": 1
               }
             ],
             "lossReasons": [
-              {
-                "label": "중반 강적",
-                "count": 2
-              },
               {
                 "label": "초반 성장 실패",
                 "count": 2
@@ -538,11 +526,11 @@
                 "count": 1
               },
               {
-                "label": "최종 보스",
+                "label": "중반 강적",
                 "count": 1
               }
             ],
-            "winRate": 0.8333333333333334
+            "winRate": 0.8888888888888888
           },
           {
             "difficulty": 1,
@@ -550,9 +538,9 @@
             "runs": 36,
             "wins": 27,
             "averageFloors": 20.36,
-            "averageDeckSize": 23.56,
+            "averageDeckSize": 23.5,
             "averageRelics": 8.64,
-            "averageDamageTaken": 174.75,
+            "averageDamageTaken": 171.06,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -604,11 +592,11 @@
             "difficulty": 2,
             "difficultyName": "무광층",
             "runs": 36,
-            "wins": 25,
+            "wins": 26,
             "averageFloors": 20.17,
-            "averageDeckSize": 23.28,
-            "averageRelics": 9.17,
-            "averageDamageTaken": 168.89,
+            "averageDeckSize": 23.31,
+            "averageRelics": 9.28,
+            "averageDamageTaken": 167.11,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -636,31 +624,31 @@
                 "id": "final",
                 "label": "최종 21층",
                 "runs": 34,
-                "wins": 25,
-                "winRate": 0.74
+                "wins": 26,
+                "winRate": 0.76
               }
             ],
             "lossReasons": [
               {
                 "label": "최종 보스",
-                "count": 9
+                "count": 8
               },
               {
                 "label": "초반 성장 실패",
                 "count": 2
               }
             ],
-            "winRate": 0.6944444444444444
+            "winRate": 0.7222222222222222
           },
           {
             "difficulty": 3,
             "difficultyName": "압력층",
             "runs": 36,
-            "wins": 23,
-            "averageFloors": 19.22,
-            "averageDeckSize": 22.69,
-            "averageRelics": 7.97,
-            "averageDamageTaken": 165.86,
+            "wins": 24,
+            "averageFloors": 19.42,
+            "averageDeckSize": 22.72,
+            "averageRelics": 8,
+            "averageDamageTaken": 165.67,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -673,7 +661,7 @@
               {
                 "id": "middle",
                 "label": "중반 8-14층",
-                "runs": 4,
+                "runs": 3,
                 "wins": 0,
                 "winRate": 0
               },
@@ -687,8 +675,8 @@
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 30,
-                "wins": 23,
+                "runs": 31,
+                "wins": 24,
                 "winRate": 0.77
               }
             ],
@@ -699,7 +687,7 @@
               },
               {
                 "label": "중반 강적",
-                "count": 4
+                "count": 3
               },
               {
                 "label": "상태 누적",
@@ -710,17 +698,17 @@
                 "count": 1
               }
             ],
-            "winRate": 0.6388888888888888
+            "winRate": 0.6666666666666666
           },
           {
             "difficulty": 4,
             "difficultyName": "무호흡층",
             "runs": 36,
-            "wins": 20,
+            "wins": 19,
             "averageFloors": 19.28,
-            "averageDeckSize": 22.14,
-            "averageRelics": 8.39,
-            "averageDamageTaken": 180.47,
+            "averageDeckSize": 22.25,
+            "averageRelics": 8.47,
+            "averageDamageTaken": 179.72,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -748,14 +736,14 @@
                 "id": "final",
                 "label": "최종 21층",
                 "runs": 28,
-                "wins": 20,
-                "winRate": 0.71
+                "wins": 19,
+                "winRate": 0.68
               }
             ],
             "lossReasons": [
               {
                 "label": "최종 보스",
-                "count": 8
+                "count": 9
               },
               {
                 "label": "중반 강적",
@@ -770,17 +758,17 @@
                 "count": 1
               }
             ],
-            "winRate": 0.5555555555555556
+            "winRate": 0.5277777777777778
           },
           {
             "difficulty": 5,
             "difficultyName": "최심층",
             "runs": 36,
-            "wins": 12,
-            "averageFloors": 17.22,
-            "averageDeckSize": 20.39,
-            "averageRelics": 6.72,
-            "averageDamageTaken": 173.06,
+            "wins": 14,
+            "averageFloors": 18.06,
+            "averageDeckSize": 20.72,
+            "averageRelics": 7.11,
+            "averageDamageTaken": 182.17,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -793,59 +781,55 @@
               {
                 "id": "middle",
                 "label": "중반 8-14층",
-                "runs": 9,
+                "runs": 7,
                 "wins": 0,
                 "winRate": 0
               },
               {
                 "id": "late",
                 "label": "후반 15-20층",
-                "runs": 4,
+                "runs": 0,
                 "wins": 0,
                 "winRate": 0
               },
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 20,
-                "wins": 12,
-                "winRate": 0.6
+                "runs": 26,
+                "wins": 14,
+                "winRate": 0.54
               }
             ],
             "lossReasons": [
               {
-                "label": "중반 강적",
-                "count": 9
-              },
-              {
                 "label": "최종 보스",
-                "count": 8
+                "count": 12
               },
               {
-                "label": "후반 체력 부족",
-                "count": 4
+                "label": "중반 강적",
+                "count": 6
+              },
+              {
+                "label": "상태 누적",
+                "count": 2
               },
               {
                 "label": "초반 성장 실패",
                 "count": 2
-              },
-              {
-                "label": "상태 누적",
-                "count": 1
               }
             ],
-            "winRate": 0.3333333333333333
+            "winRate": 0.3888888888888889
           }
         ],
         "easiest": {
           "difficulty": 0,
           "difficultyName": "표층",
           "runs": 36,
-          "wins": 30,
-          "averageFloors": 19.47,
-          "averageDeckSize": 23.25,
-          "averageRelics": 8.78,
-          "averageDamageTaken": 139.81,
+          "wins": 32,
+          "averageFloors": 19.67,
+          "averageDeckSize": 23.44,
+          "averageRelics": 9.06,
+          "averageDamageTaken": 140.44,
           "problemRuns": 0,
           "floorBands": [
             {
@@ -858,7 +842,7 @@
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 3,
+              "runs": 2,
               "wins": 0,
               "winRate": 0
             },
@@ -872,16 +856,12 @@
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 31,
-              "wins": 30,
-              "winRate": 0.97
+              "runs": 32,
+              "wins": 32,
+              "winRate": 1
             }
           ],
           "lossReasons": [
-            {
-              "label": "중반 강적",
-              "count": 2
-            },
             {
               "label": "초반 성장 실패",
               "count": 2
@@ -891,21 +871,21 @@
               "count": 1
             },
             {
-              "label": "최종 보스",
+              "label": "중반 강적",
               "count": 1
             }
           ],
-          "winRate": 0.8333333333333334
+          "winRate": 0.8888888888888888
         },
         "hardest": {
           "difficulty": 5,
           "difficultyName": "최심층",
           "runs": 36,
-          "wins": 12,
-          "averageFloors": 17.22,
-          "averageDeckSize": 20.39,
-          "averageRelics": 6.72,
-          "averageDamageTaken": 173.06,
+          "wins": 14,
+          "averageFloors": 18.06,
+          "averageDeckSize": 20.72,
+          "averageRelics": 7.11,
+          "averageDamageTaken": 182.17,
           "problemRuns": 0,
           "floorBands": [
             {
@@ -918,48 +898,44 @@
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 9,
+              "runs": 7,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "late",
               "label": "후반 15-20층",
-              "runs": 4,
+              "runs": 0,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 20,
-              "wins": 12,
-              "winRate": 0.6
+              "runs": 26,
+              "wins": 14,
+              "winRate": 0.54
             }
           ],
           "lossReasons": [
             {
-              "label": "중반 강적",
-              "count": 9
-            },
-            {
               "label": "최종 보스",
-              "count": 8
+              "count": 12
             },
             {
-              "label": "후반 체력 부족",
-              "count": 4
+              "label": "중반 강적",
+              "count": 6
+            },
+            {
+              "label": "상태 누적",
+              "count": 2
             },
             {
               "label": "초반 성장 실패",
               "count": 2
-            },
-            {
-              "label": "상태 누적",
-              "count": 1
             }
           ],
-          "winRate": 0.3333333333333333
+          "winRate": 0.3888888888888889
         }
       }
     },
@@ -1046,11 +1022,11 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-21T21:53:29.665Z",
+        "sourceFreshAfter": "2026-05-21T22:15:09.121Z",
         "files": [
           {
             "file": "browser-qa-about-refreshed.png",
-            "mtime": "2026-05-21T21:54:02.557Z",
+            "mtime": "2026-05-21T22:17:24.531Z",
             "fresh": true
           },
           {
@@ -1060,12 +1036,12 @@
           },
           {
             "file": "browser-qa-act-interlude-one-shot.png",
-            "mtime": "2026-05-21T21:54:09.009Z",
+            "mtime": "2026-05-21T22:17:31.103Z",
             "fresh": true
           },
           {
             "file": "browser-qa-act-interlude-refreshed.png",
-            "mtime": "2026-05-21T21:54:06.681Z",
+            "mtime": "2026-05-21T22:17:28.701Z",
             "fresh": true
           },
           {
@@ -1080,27 +1056,27 @@
           },
           {
             "file": "browser-qa-boss-status-strip.png",
-            "mtime": "2026-05-21T21:54:52.574Z",
+            "mtime": "2026-05-21T22:18:14.297Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-fx.png",
-            "mtime": "2026-05-21T21:54:43.057Z",
+            "mtime": "2026-05-21T22:18:04.896Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-hover.png",
-            "mtime": "2026-05-21T21:54:41.544Z",
+            "mtime": "2026-05-21T22:18:03.373Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-play-fx.png",
-            "mtime": "2026-05-21T21:54:32.841Z",
+            "mtime": "2026-05-21T22:17:54.716Z",
             "fresh": true
           },
           {
             "file": "browser-qa-choice-pulse-next-step.png",
-            "mtime": "2026-05-21T21:54:12.696Z",
+            "mtime": "2026-05-21T22:17:34.850Z",
             "fresh": true
           },
           {
@@ -1155,7 +1131,7 @@
           },
           {
             "file": "browser-qa-codex-refreshed.png",
-            "mtime": "2026-05-21T21:54:04.117Z",
+            "mtime": "2026-05-21T22:17:26.042Z",
             "fresh": true
           },
           {
@@ -1260,7 +1236,7 @@
           },
           {
             "file": "browser-qa-combat-card-hover.png",
-            "mtime": "2026-05-21T21:54:31.244Z",
+            "mtime": "2026-05-21T22:17:53.205Z",
             "fresh": true
           },
           {
@@ -1270,7 +1246,7 @@
           },
           {
             "file": "browser-qa-combat-energy-locked.png",
-            "mtime": "2026-05-21T21:54:45.822Z",
+            "mtime": "2026-05-21T22:18:07.650Z",
             "fresh": true
           },
           {
@@ -1300,7 +1276,7 @@
           },
           {
             "file": "browser-qa-combat-high-energy-hud.png",
-            "mtime": "2026-05-21T21:54:47.109Z",
+            "mtime": "2026-05-21T22:18:08.852Z",
             "fresh": true
           },
           {
@@ -1320,7 +1296,7 @@
           },
           {
             "file": "browser-qa-combat-intent-tooltip.png",
-            "mtime": "2026-05-21T21:54:55.709Z",
+            "mtime": "2026-05-21T22:18:17.178Z",
             "fresh": true
           },
           {
@@ -1355,7 +1331,7 @@
           },
           {
             "file": "browser-qa-combat-refreshed.png",
-            "mtime": "2026-05-21T21:54:29.776Z",
+            "mtime": "2026-05-21T22:17:51.941Z",
             "fresh": true
           },
           {
@@ -1400,7 +1376,7 @@
           },
           {
             "file": "browser-qa-combat-status-tooltip.png",
-            "mtime": "2026-05-21T21:54:54.441Z",
+            "mtime": "2026-05-21T22:18:15.958Z",
             "fresh": true
           },
           {
@@ -1465,22 +1441,22 @@
           },
           {
             "file": "browser-qa-end-turn-risk-block-preview.png",
-            "mtime": "2026-05-21T21:54:35.496Z",
+            "mtime": "2026-05-21T22:17:57.410Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-kill-preview.png",
-            "mtime": "2026-05-21T21:54:38.503Z",
+            "mtime": "2026-05-21T22:18:00.389Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-preview.png",
-            "mtime": "2026-05-21T21:54:34.138Z",
+            "mtime": "2026-05-21T22:17:56.045Z",
             "fresh": true
           },
           {
             "file": "browser-qa-enemy-grouped-fx.png",
-            "mtime": "2026-05-21T21:54:58.163Z",
+            "mtime": "2026-05-21T22:18:19.727Z",
             "fresh": true
           },
           {
@@ -1525,7 +1501,7 @@
           },
           {
             "file": "browser-qa-event-refreshed.png",
-            "mtime": "2026-05-21T21:54:11.839Z",
+            "mtime": "2026-05-21T22:17:33.996Z",
             "fresh": true
           },
           {
@@ -1535,17 +1511,17 @@
           },
           {
             "file": "browser-qa-final-boss-readiness.png",
-            "mtime": "2026-05-21T21:54:25.461Z",
+            "mtime": "2026-05-21T22:17:47.757Z",
             "fresh": true
           },
           {
             "file": "browser-qa-final-boss-selector.png",
-            "mtime": "2026-05-21T21:54:27.772Z",
+            "mtime": "2026-05-21T22:17:50.075Z",
             "fresh": true
           },
           {
             "file": "browser-qa-guide-refreshed.png",
-            "mtime": "2026-05-21T21:54:04.988Z",
+            "mtime": "2026-05-21T22:17:26.908Z",
             "fresh": true
           },
           {
@@ -1610,7 +1586,7 @@
           },
           {
             "file": "browser-qa-map-refreshed.png",
-            "mtime": "2026-05-21T21:54:23.847Z",
+            "mtime": "2026-05-21T22:17:46.090Z",
             "fresh": true
           },
           {
@@ -1640,7 +1616,7 @@
           },
           {
             "file": "browser-qa-map-route-preview.png",
-            "mtime": "2026-05-21T21:54:24.593Z",
+            "mtime": "2026-05-21T22:17:46.864Z",
             "fresh": true
           },
           {
@@ -1700,7 +1676,7 @@
           },
           {
             "file": "browser-qa-mobile-combat-refreshed.png",
-            "mtime": "2026-05-21T21:55:02.125Z",
+            "mtime": "2026-05-21T22:18:23.541Z",
             "fresh": true
           },
           {
@@ -1740,7 +1716,7 @@
           },
           {
             "file": "browser-qa-mobile-refreshed.png",
-            "mtime": "2026-05-21T21:55:04.187Z",
+            "mtime": "2026-05-21T22:18:25.649Z",
             "fresh": true
           },
           {
@@ -1800,7 +1776,7 @@
           },
           {
             "file": "browser-qa-records-refreshed.png",
-            "mtime": "2026-05-21T21:54:05.751Z",
+            "mtime": "2026-05-21T22:17:27.782Z",
             "fresh": true
           },
           {
@@ -1825,7 +1801,7 @@
           },
           {
             "file": "browser-qa-rest-refreshed.png",
-            "mtime": "2026-05-21T21:54:17.722Z",
+            "mtime": "2026-05-21T22:17:39.908Z",
             "fresh": true
           },
           {
@@ -1880,7 +1856,7 @@
           },
           {
             "file": "browser-qa-reward-card-selected.png",
-            "mtime": "2026-05-21T21:54:21.044Z",
+            "mtime": "2026-05-21T22:17:43.238Z",
             "fresh": true
           },
           {
@@ -1920,17 +1896,17 @@
           },
           {
             "file": "browser-qa-reward-post-victory-refreshed.png",
-            "mtime": "2026-05-21T21:54:51.254Z",
+            "mtime": "2026-05-21T22:18:12.995Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-refreshed.png",
-            "mtime": "2026-05-21T21:54:50.902Z",
+            "mtime": "2026-05-21T22:18:12.638Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-relics-refreshed.png",
-            "mtime": "2026-05-21T21:54:20.225Z",
+            "mtime": "2026-05-21T22:17:42.403Z",
             "fresh": true
           },
           {
@@ -2030,7 +2006,7 @@
           },
           {
             "file": "browser-qa-settings-refreshed.png",
-            "mtime": "2026-05-21T21:54:03.373Z",
+            "mtime": "2026-05-21T22:17:25.276Z",
             "fresh": true
           },
           {
@@ -2100,7 +2076,7 @@
           },
           {
             "file": "browser-qa-shop-refreshed.png",
-            "mtime": "2026-05-21T21:54:15.418Z",
+            "mtime": "2026-05-21T22:17:37.594Z",
             "fresh": true
           },
           {
@@ -2140,7 +2116,7 @@
           },
           {
             "file": "browser-qa-summary-lost-refreshed.png",
-            "mtime": "2026-05-21T21:54:21.923Z",
+            "mtime": "2026-05-21T22:17:44.138Z",
             "fresh": true
           },
           {
@@ -2150,7 +2126,7 @@
           },
           {
             "file": "browser-qa-summary-won-refreshed.png",
-            "mtime": "2026-05-21T21:54:22.845Z",
+            "mtime": "2026-05-21T22:17:45.075Z",
             "fresh": true
           },
           {
@@ -2160,7 +2136,7 @@
           },
           {
             "file": "browser-qa-tablet-combat-refreshed.png",
-            "mtime": "2026-05-21T21:55:03.558Z",
+            "mtime": "2026-05-21T22:18:24.858Z",
             "fresh": true
           },
           {
@@ -2230,7 +2206,7 @@
           },
           {
             "file": "browser-qa-title-refreshed.png",
-            "mtime": "2026-05-21T21:54:01.711Z",
+            "mtime": "2026-05-21T22:17:23.709Z",
             "fresh": true
           },
           {
@@ -2305,7 +2281,7 @@
           },
           {
             "file": "browser-qa-turn-player-cue-minimal.png",
-            "mtime": "2026-05-21T21:55:01.195Z",
+            "mtime": "2026-05-21T22:18:22.639Z",
             "fresh": true
           },
           {
@@ -2340,7 +2316,7 @@
           },
           {
             "file": "browser-qa-victory-coda.png",
-            "mtime": "2026-05-21T21:54:49.628Z",
+            "mtime": "2026-05-21T22:18:11.365Z",
             "fresh": true
           }
         ],
