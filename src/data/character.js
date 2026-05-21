@@ -47,8 +47,8 @@ export const DIFFICULTIES = [
   {
     id: 3,
     name: "압력층",
-    text: "적이 강하고 시작 최대 체력이 5 감소합니다.",
-    enemyHp: 1.17,
+    text: "적 체력 +18%, 적 피해 +8%, 시작 최대 체력 -5.",
+    enemyHp: 1.18,
     enemyDamage: 1.08,
     gold: 1,
     playerMaxHp: -5

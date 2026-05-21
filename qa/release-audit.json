@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T20:06:00.957Z",
+  "generatedAt": "2026-05-21T20:17:54.528Z",
   "summary": {
     "passed": 25,
     "failed": 0,
@@ -341,8 +341,8 @@
       "evidence": {
         "totals": {
           "runs": 108,
-          "wins": 71,
-          "winRate": 0.66,
+          "wins": 68,
+          "winRate": 0.63,
           "averageFloors": 19.27,
           "averageSteps": 114.44,
           "problemRuns": 0
@@ -481,10 +481,10 @@
         },
         "totals": {
           "runs": 216,
-          "wins": 139,
-          "winRate": 0.64,
-          "averageFloors": 19.13,
-          "averageSteps": 112.94,
+          "wins": 134,
+          "winRate": 0.62,
+          "averageFloors": 19.1,
+          "averageSteps": 113,
           "problemRuns": 0
         },
         "byDifficulty": [
@@ -660,11 +660,11 @@
             "difficulty": 3,
             "difficultyName": "압력층",
             "runs": 36,
-            "wins": 28,
-            "averageFloors": 19.42,
-            "averageDeckSize": 23,
-            "averageRelics": 8.08,
-            "averageDamageTaken": 166.44,
+            "wins": 23,
+            "averageFloors": 19.22,
+            "averageDeckSize": 22.69,
+            "averageRelics": 7.97,
+            "averageDamageTaken": 165.86,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -677,7 +677,7 @@
               {
                 "id": "middle",
                 "label": "중반 8-14층",
-                "runs": 3,
+                "runs": 4,
                 "wins": 0,
                 "winRate": 0
               },
@@ -691,19 +691,19 @@
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 31,
-                "wins": 28,
-                "winRate": 0.9
+                "runs": 30,
+                "wins": 23,
+                "winRate": 0.77
               }
             ],
             "lossReasons": [
               {
-                "label": "중반 강적",
-                "count": 3
+                "label": "최종 보스",
+                "count": 7
               },
               {
-                "label": "최종 보스",
-                "count": 3
+                "label": "중반 강적",
+                "count": 4
               },
               {
                 "label": "상태 누적",
@@ -714,7 +714,7 @@
                 "count": 1
               }
             ],
-            "winRate": 0.7777777777777778
+            "winRate": 0.6388888888888888
           },
           {
             "difficulty": 4,
