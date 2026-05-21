@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T15:37:10.113Z",
+  "generatedAt": "2026-05-21T15:49:08.304Z",
   "summary": {
     "passed": 24,
     "failed": 0,
@@ -340,10 +340,10 @@
       "evidence": {
         "totals": {
           "runs": 108,
-          "wins": 76,
-          "winRate": 0.7,
+          "wins": 78,
+          "winRate": 0.72,
           "averageFloors": 19.1,
-          "averageSteps": 112.13,
+          "averageSteps": 111.97,
           "problemRuns": 0
         },
         "easiest": {
@@ -352,9 +352,9 @@
           "runs": 18,
           "wins": 14,
           "averageFloors": 18.83,
-          "averageDeckSize": 22.5,
-          "averageRelics": 9,
-          "averageDamageTaken": 133.72,
+          "averageDeckSize": 22.94,
+          "averageRelics": 8.94,
+          "averageDamageTaken": 133.28,
           "problemRuns": 0,
           "floorBands": [
             {
@@ -408,9 +408,9 @@
           "runs": 18,
           "wins": 8,
           "averageFloors": 18.22,
-          "averageDeckSize": 21.22,
+          "averageDeckSize": 21.33,
           "averageRelics": 7,
-          "averageDamageTaken": 174,
+          "averageDamageTaken": 174.06,
           "problemRuns": 0,
           "floorBands": [
             {

@@ -428,11 +428,22 @@ function bossPreparationBonus(run, card) {
   const finalActBonus = context.act >= 3 ? 1.55 : 1;
   let bonus = 0;
   if ((context.needsStatusControl ?? deckCards.filter(cardSupportsStatusControl).length < 2) && cardSupportsStatusControl(card)) bonus += (cardSupportsCleanse(card) ? 6.2 : 4.8) * finalActBonus;
-  if ((context.needsBurstDefense ?? false) && cardSupportsBurstDefense(card)) bonus += 5.8 * finalActBonus;
+  if ((context.needsBurstDefense ?? false) && cardSupportsBurstDefense(card)) bonus += (6.8 + serialDefenseCardBonus(card)) * finalActBonus;
   if ((context.needsDefense ?? deckCards.filter(cardSupportsDefense).length < 6) && cardSupportsDefense(card)) bonus += 4.3 * finalActBonus;
   if ((context.needsFinish ?? deckCards.filter(cardSupportsFinish).length < 7) && cardSupportsFinish(card)) bonus += 3.7 * finalActBonus;
   if ((context.needsDeckSpeed ?? deckCards.filter(cardSupportsFlow).length < 4) && cardSupportsFlow(card)) bonus += 2.8;
   return bonus;
+}
+
+function serialDefenseCardBonus(card) {
+  const profile = cardDefenseProfile(card);
+  return (
+    (profile.weak >= 1 ? 2.2 : 0) +
+    (profile.plated >= 2 ? 2.1 : 0) +
+    (profile.block >= 11 ? 1.6 : 0) +
+    (cardSupportsFlow(card) ? 1.4 : 0) +
+    ((card.cost ?? 0) <= 1 ? 1.1 : 0)
+  );
 }
 
 function bossContext(run) {
@@ -617,6 +628,11 @@ function pilotShop(run) {
       buyShopHeal(run);
       return;
     }
+    const prepCard = bossPrepShopCardChoice(run, bossPrep);
+    if (prepCard && shouldBuyBossPrepCardBeforeService(prepCard, bossPrep)) {
+      buyShopCard(run, prepCard.index);
+      return;
+    }
     if (bossPrep.needsDeckSpeed && run.player.gold >= prices.remove && removableCard(run)) {
       requestShopRemove(run);
       return;
@@ -655,6 +671,29 @@ function pilotShop(run) {
     return;
   }
   leaveShop(run);
+}
+
+function bossPrepShopCardChoice(run, bossPrep) {
+  if (!bossPrep?.needsRole) return null;
+  return run.shop.cards
+    .map((item, index) => {
+      const card = CARD_BY_ID[item.cardId];
+      let roleBonus = 0;
+      if (bossPrep.needsBurstDefense && cardSupportsBurstDefense(card)) roleBonus += 9 + serialDefenseCardBonus(card);
+      if (bossPrep.needsStatusControl && cardSupportsStatusControl(card)) roleBonus += cardSupportsCleanse(card) ? 7 : 5;
+      if (bossPrep.needsFinish && cardSupportsFinish(card)) roleBonus += 5;
+      if (bossPrep.needsDefense && cardSupportsDefense(card)) roleBonus += 4;
+      return { item, index, score: rewardCardScore(run, item.cardId) + roleBonus - item.price * 0.055 };
+    })
+    .filter((entry) => !entry.item.sold && run.player.gold >= entry.item.price)
+    .sort((left, right) => right.score - left.score)[0] ?? null;
+}
+
+function shouldBuyBossPrepCardBeforeService(entry, bossPrep) {
+  const card = CARD_BY_ID[entry.item.cardId];
+  if (!bossPrep?.finalAct || !bossPrep.needsBurstDefense || !cardSupportsBurstDefense(card)) return false;
+  const criticallyLow = bossPrep.burstDefense <= (bossPrep.close ? 1 : 0);
+  return entry.score > (criticallyLow ? 11 : 18);
 }
 
 function shopRelicScore(relicId) {
@@ -716,7 +755,7 @@ function bossPrepUpgradeScore(bossPrep, before, after) {
   if (!bossPrep) return 0;
   const finalActBonus = bossPrep.finalAct ? 1.45 : 1;
   let score = 0;
-  if (bossPrep.needsBurstDefense && cardSupportsBurstDefense(after)) score += (cardSupportsBurstDefense(before) ? 8 : 14) * finalActBonus;
+  if (bossPrep.needsBurstDefense && cardSupportsBurstDefense(after)) score += ((cardSupportsBurstDefense(before) ? 10 : 17) + serialDefenseCardBonus(after)) * finalActBonus;
   if (bossPrep.needsDefense && cardSupportsDefense(after)) score += 6 * finalActBonus;
   if (bossPrep.needsStatusControl && cardSupportsStatusControl(after)) score += (cardSupportsCleanse(after) ? 10 : 7) * finalActBonus;
   if (bossPrep.needsFinish && cardSupportsFinish(after)) score += 6 * finalActBonus;
