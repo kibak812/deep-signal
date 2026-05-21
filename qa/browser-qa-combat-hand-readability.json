@@ -5,6 +5,75 @@
   "handVisible": true,
   "cardFacesVisible": true,
   "sixCardReadability": true,
+  "identityTagsReadable": true,
+  "identityTags": [
+    {
+      "visible": true,
+      "type": "✦",
+      "typeTitle": "공격",
+      "rarity": "•",
+      "rarityTitle": "시작 카드",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    },
+    {
+      "visible": true,
+      "type": "⬡",
+      "typeTitle": "기술",
+      "rarity": "•",
+      "rarityTitle": "시작 카드",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    },
+    {
+      "visible": true,
+      "type": "⬡",
+      "typeTitle": "기술",
+      "rarity": "•",
+      "rarityTitle": "시작 카드",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    },
+    {
+      "visible": true,
+      "type": "✦",
+      "typeTitle": "공격",
+      "rarity": "•",
+      "rarityTitle": "시작 카드",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    },
+    {
+      "visible": true,
+      "type": "✦",
+      "typeTitle": "공격",
+      "rarity": "•",
+      "rarityTitle": "일반",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    },
+    {
+      "visible": true,
+      "type": "✦",
+      "typeTitle": "공격",
+      "rarity": "•",
+      "rarityTitle": "일반",
+      "insideCard": true,
+      "insideArt": true,
+      "overlapsCost": false,
+      "overlapsHotkey": false
+    }
+  ],
   "cardCount": 6,
   "minWidth": 170,
   "maxWidth": 171,

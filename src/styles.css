@@ -7851,6 +7851,73 @@ dd,
   font-size: 0.86rem;
 }
 
+.card-identity-strip {
+  position: absolute;
+  z-index: 6;
+  top: 46px;
+  right: 12px;
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.hand-zone .card-identity-strip {
+  display: inline-flex;
+}
+
+.card-identity-strip span {
+  min-width: 21px;
+  height: 21px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, currentColor 42%, rgba(236, 248, 243, 0.16));
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 42% 28%, rgba(255, 255, 255, 0.18), transparent 30%),
+    rgba(3, 13, 15, 0.76);
+  color: rgba(236, 248, 243, 0.82);
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 1000;
+  line-height: 1;
+  box-shadow:
+    0 0 0 1px rgba(3, 13, 15, 0.62),
+    0 7px 14px rgba(0, 0, 0, 0.3);
+}
+
+.card-identity-type {
+  color: rgb(var(--card-accent-rgb));
+}
+
+.card-identity-type b {
+  line-height: 1;
+}
+
+.card-identity-rarity {
+  padding: 0 5px;
+  color: rgba(236, 248, 243, 0.72);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+}
+
+.rarity-uncommon .card-identity-rarity {
+  color: #bcecff;
+}
+
+.rarity-rare .card-identity-rarity {
+  color: #f4d27a;
+  font-size: 0.68rem;
+  letter-spacing: 0;
+}
+
+.rarity-curse .card-identity-rarity {
+  color: #ff9db1;
+  font-size: 0.68rem;
+  letter-spacing: 0;
+}
+
 .card-cost {
   position: absolute;
   z-index: 6;
@@ -21691,6 +21758,7 @@ input[type="range"] {
 .high-contrast .play-hint b,
 .high-contrast .assist-chips i,
 .high-contrast .card-hotkey,
+.high-contrast .card-identity-strip span,
 .high-contrast .end-turn span,
 .high-contrast .energy-pips i,
 .high-contrast .forecast-chip,
@@ -23852,6 +23920,14 @@ input[type="range"] {
 
   .hand-zone .card-meta span:last-child {
     max-width: 44px;
+  }
+
+  .hand-zone .card-identity-strip {
+    top: 39px;
+    right: 8px;
+    gap: 3px;
+    transform: scale(0.88);
+    transform-origin: top right;
   }
 
 	  .hand-zone .game-card p {

@@ -454,6 +454,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /await assertShopFocusUx\(cdp\);/);
   assert.match(captureSource, /Shop focus UX failed/);
   assert.match(captureSource, /dimmedCards >= 1/);
+  assert.match(captureSource, /identityTagsReadable/);
+  assert.match(captureSource, /card\.querySelector\("\.card-identity-strip"\)/);
+  assert.match(captureSource, /item\.typeTitle/);
+  assert.match(captureSource, /item\.rarityTitle/);
   assert.match(captureSource, /function stageStatusTooltipFixture\(cdp\)/);
   assert.match(captureSource, /function assertStatusTooltipUx\(cdp\)/);
   assert.match(captureSource, /browser-qa-combat-status-tooltip\.png/);
@@ -2386,6 +2390,9 @@ test("card surfaces expose rarity and type without relying on color alone", () =
   assert.match(mainSource, /const rarityText = rarityLabel\(card\.rarity\)/);
   assert.match(mainSource, /const typeText = typeLabel\(card\.type\)/);
   assert.match(mainSource, /class="card-meta"/);
+  assert.match(mainSource, /class="card-identity-strip"/);
+  assert.match(mainSource, /function cardRarityGlyph\(rarity\)/);
+  assert.match(mainSource, /rare:\s*"★"/);
   assert.match(mainSource, /class="card-upgrade-mark"/);
   assert.match(mainSource, /function renderCardCatalogItem\(card\)/);
   assert.match(mainSource, /class="catalog-card-preview-pair"/);
@@ -2402,6 +2409,10 @@ test("card surfaces expose rarity and type without relying on color alone", () =
   assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*white-space:\s*normal/);
   assert.match(styleSource, /\.hand-zone \.game-card h3[\s\S]*word-break:\s*keep-all/);
+  assert.match(styleSource, /\.card-identity-strip/);
+  assert.match(styleSource, /\.hand-zone \.card-identity-strip[\s\S]*display:\s*inline-flex/);
+  assert.match(styleSource, /\.card-identity-rarity[\s\S]*letter-spacing:\s*0\.08em/);
+  assert.match(styleSource, /\.rarity-rare \.card-identity-rarity[\s\S]*font-size:\s*0\.68rem/);
   assert.match(styleSource, /\.card-art[\s\S]*grid-column:\s*1 \/ -1/);
   assert.match(styleSource, /\.hand-zone \.game-card[\s\S]*grid-template-rows:\s*31px 172px 0 34px 0/);
   assert.match(styleSource, /\.hand-zone \.card-art-sigil[\s\S]*display:\s*none/);
@@ -2415,6 +2426,7 @@ test("card surfaces expose rarity and type without relying on color alone", () =
   assert.match(styleSource, /\.catalog-card-preview-pair/);
   assert.match(styleSource, /\.catalog-no-upgrade/);
   assert.match(styleSource, /\.high-contrast \.card-upgrade-mark/);
+  assert.match(styleSource, /\.high-contrast \.card-identity-strip span/);
   assert.match(styleSource, /\.card-cost[\s\S]*0 0 0 2px rgba\(3, 13, 15, 0\.82\)/);
   assert.match(styleSource, /\.card-keywords[\s\S]*grid-row:\s*5/);
   assert.match(styleSource, /\.card-rules[\s\S]*-webkit-line-clamp:\s*2/);
@@ -2522,6 +2534,9 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(styleSource, /\.hand-zone \.game-card[\s\S]*grid-template-rows:\s*31px 172px 0 34px 0/);
   assert.match(styleSource, /\.hand-zone \.card-meta[\s\S]*display:\s*none[\s\S]*position:\s*absolute[\s\S]*top:\s*48px/);
   assert.match(styleSource, /\.hand-zone \.card-type-mark[\s\S]*background:\s*rgba\(3, 13, 15, 0\.74\)/);
+  assert.match(styleSource, /\.card-identity-strip[\s\S]*top:\s*46px/);
+  assert.match(styleSource, /\.card-identity-strip span[\s\S]*border-radius:\s*999px/);
+  assert.match(styleSource, /\.card-identity-type[\s\S]*color:\s*rgb\(var\(--card-accent-rgb\)\)/);
   assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome,[\s\S]*\.hand-zone \.game-card\.previewing-card \.card-outcome[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(styleSource, /\.hand-zone \.card-outcome span[\s\S]*justify-content:\s*center/);

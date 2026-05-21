@@ -2444,18 +2444,62 @@ async function assertDesktopHandReadability(cdp) {
     const handVisible = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight + 1);
     const sixCardReadability = cards.length < 6 || (minWidth >= 164 && maxOverlap <= 12 && averageWidth < 178);
     const cardFacesVisible = boxes.every((box) => box.height >= 270 && box.bottom <= window.innerHeight + 1);
+    const overlaps = (left, right) => Boolean(
+      left &&
+      right &&
+      left.right > right.left &&
+      left.left < right.right &&
+      left.bottom > right.top &&
+      left.top < right.bottom
+    );
+    const identityTags = cards.map((card) => {
+      const cardBox = card.getBoundingClientRect();
+      const strip = card.querySelector(".card-identity-strip");
+      const type = strip?.querySelector(".card-identity-type");
+      const rarity = strip?.querySelector(".card-identity-rarity");
+      const cost = card.querySelector(".card-cost");
+      const hotkey = card.querySelector(".card-hotkey");
+      const art = card.querySelector(".card-art");
+      const stripBox = strip?.getBoundingClientRect();
+      const artBox = art?.getBoundingClientRect();
+      const style = strip ? getComputedStyle(strip) : null;
+      return {
+        visible: Boolean(stripBox && /flex/.test(style?.display ?? "") && stripBox.width >= 40 && stripBox.height >= 18),
+        type: type?.innerText.trim() ?? "",
+        typeTitle: type?.getAttribute("title") ?? "",
+        rarity: rarity?.innerText.trim() ?? "",
+        rarityTitle: rarity?.getAttribute("title") ?? "",
+        insideCard: Boolean(stripBox && stripBox.left >= cardBox.left && stripBox.right <= cardBox.right && stripBox.top >= cardBox.top && stripBox.bottom <= cardBox.bottom),
+        insideArt: Boolean(stripBox && artBox && stripBox.top >= artBox.top - 2 && stripBox.bottom <= artBox.bottom + 2),
+        overlapsCost: overlaps(stripBox, cost?.getBoundingClientRect()),
+        overlapsHotkey: overlaps(stripBox, hotkey?.getBoundingClientRect())
+      };
+    });
+    const identityTagsReadable = identityTags.every((item) =>
+      item.visible &&
+      item.insideCard &&
+      item.insideArt &&
+      item.type &&
+      item.typeTitle &&
+      item.rarity &&
+      item.rarityTitle &&
+      !item.overlapsCost &&
+      !item.overlapsHotkey
+    );
     const cssVars = {
       width: hand?.style.getPropertyValue("--hand-card-width") ?? "",
       height: hand?.style.getPropertyValue("--hand-card-height") ?? "",
       overlap: hand?.style.getPropertyValue("--hand-overlap") ?? ""
     };
     return {
-      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability,
+      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability && identityTagsReadable,
       desktopViewport,
       noPageOverflow,
       handVisible,
       cardFacesVisible,
       sixCardReadability,
+      identityTagsReadable,
+      identityTags,
       cardCount: cards.length,
       minWidth: Math.round(minWidth),
       maxWidth: Math.round(maxWidth),

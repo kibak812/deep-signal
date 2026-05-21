@@ -11438,6 +11438,10 @@ function renderCard(cardInstance, options = {}) {
       ${options.hotkey ? `<div class="card-hotkey" aria-hidden="true">${options.hotkey}</div>` : ""}
       ${recommendationLabel ? `<em class="card-recommendation">${recommendationLabel}</em>` : ""}
       ${cardInstance.upgraded ? `<span class="card-upgrade-mark" aria-hidden="true">+</span>` : ""}
+      <div class="card-identity-strip" aria-hidden="true">
+        <span class="card-identity-type" title="${typeText}"><b>${cardTypeIcon(card.type)}</b></span>
+        <span class="card-identity-rarity" title="${rarityText}">${cardRarityGlyph(card.rarity)}</span>
+      </div>
       ${renderCardArt(card)}
       <div class="card-meta">
         <span class="card-type-mark" title="${typeText}"><b aria-hidden="true">${cardTypeIcon(card.type)}</b><em>${typeText}${cardInstance.upgraded ? "+" : ""}</em></span>
@@ -11497,6 +11501,17 @@ function cardTypeIcon(type) {
     status: "◎",
     curse: "!"
   }[type] ?? "•";
+}
+
+function cardRarityGlyph(rarity) {
+  return {
+    starter: "•",
+    common: "•",
+    uncommon: "••",
+    rare: "★",
+    special: "◆",
+    curse: "!"
+  }[rarity] ?? "•";
 }
 
 function handHotkeyLabel(index) {
