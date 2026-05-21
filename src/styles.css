@@ -7410,6 +7410,34 @@ dd,
   color: #ffb8c5;
 }
 
+.end-turn.is-locked.turn-player-ready {
+  border-color: rgba(125, 211, 252, 0.58);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(125, 211, 252, 0.18), transparent 62%),
+    rgba(8, 25, 34, 0.92);
+  color: #bcecff;
+}
+
+.end-turn.is-locked.turn-player-ready span,
+.end-turn.is-locked.turn-player-ready small {
+  border-color: rgba(125, 211, 252, 0.64);
+  color: #bcecff;
+}
+
+.end-turn.is-locked.turn-processing {
+  border-color: rgba(246, 193, 119, 0.54);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(246, 193, 119, 0.15), transparent 62%),
+    rgba(28, 20, 9, 0.92);
+  color: #f6d28c;
+}
+
+.end-turn.is-locked.turn-processing span,
+.end-turn.is-locked.turn-processing small {
+  border-color: rgba(246, 193, 119, 0.6);
+  color: #f6d28c;
+}
+
 .game-card {
   position: relative;
   --card-accent-rgb: 125 211 252;

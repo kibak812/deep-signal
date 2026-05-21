@@ -1397,7 +1397,58 @@ function activeCombatTurnCue(run = state.run) {
 }
 
 function combatTurnInputLocked(run = state.run) {
-  return activeCombatTurnCue(run)?.kind === "enemy" || Boolean(state.combatTurnActionTimer) || state.combatFx?.kind === "enemy-action";
+  return Boolean(activeCombatTurnCue(run)) || Boolean(state.combatTurnActionTimer) || state.combatFx?.kind === "enemy-action";
+}
+
+function combatTurnLockReason(run = state.run) {
+  const cue = activeCombatTurnCue(run);
+  if (cue?.kind === "enemy") {
+    return {
+      kind: "enemy",
+      label: "상대 턴",
+      key: "…",
+      small: "처리 중",
+      ariaLabel: "상대 턴 진행 중",
+      title: "상대 행동을 처리하는 중입니다.",
+      disabledReason: "상대 턴에는 사용할 수 없음"
+    };
+  }
+  if (cue?.kind === "player") {
+    return {
+      kind: "player-ready",
+      label: "내 턴",
+      key: "…",
+      small: "준비 중",
+      ariaLabel: "내 턴 준비 중",
+      title: "새 손패와 에너지를 정리하는 중입니다.",
+      disabledReason: "내 턴을 준비하는 중"
+    };
+  }
+  return {
+    kind: "processing",
+    label: "처리 중",
+    key: "…",
+    small: "잠시만",
+    ariaLabel: "전투 효과 처리 중",
+    title: "피해와 상태 변화를 처리하는 중입니다.",
+    disabledReason: "전투 효과 처리 중"
+  };
+}
+
+function combatEndTurnButtonState(run, preview) {
+  if (!combatTurnInputLocked(run)) {
+    return {
+      kind: "ready",
+      locked: false,
+      label: "턴 종료",
+      key: "E",
+      small: preview.label,
+      ariaLabel: "턴 종료",
+      title: preview.detail,
+      disabledReason: ""
+    };
+  }
+  return { ...combatTurnLockReason(run), locked: true };
 }
 
 function endTurnWithFx(run) {
@@ -4926,9 +4977,8 @@ function renderCombat(run) {
   const recommendedCardUid = combatRecommendedCardUid(run);
   const turnLocked = combatTurnInputLocked(run);
   const arenaScene = combatArenaScene(run, boss);
-  const endTurnLabel = turnLocked ? "상대 턴" : "턴 종료";
-  const endTurnKey = turnLocked ? "…" : "E";
   const endTurnPreview = combatEndTurnPreview(run);
+  const endTurnButton = combatEndTurnButtonState(run, endTurnPreview);
   const visibleEnemies = combat.enemies.filter((enemy) => enemy.hp > 0 || state.combatFx?.defeatedUids?.includes(enemy.uid));
   return `
     <section class="${boardClass}" style="${arenaScene.boardStyle}">
@@ -4984,17 +5034,17 @@ function renderCombat(run) {
               combat,
               playable,
               hardDisabled: turnLocked,
-              disabledReason: turnLocked ? "상대 턴에는 사용할 수 없음" : "전하 부족",
+              disabledReason: turnLocked ? endTurnButton.disabledReason : "전하 부족",
               hotkey: handHotkeyLabel(index),
               recommended: !turnLocked && card.uid === recommendedCardUid
             });
           })
           .join("")}
       </div>
-      <button class="end-turn ${turnLocked ? "is-locked" : ""} risk-${endTurnPreview.tone}" data-action="end-turn" aria-keyshortcuts="E Space" aria-label="${turnLocked ? "상대 턴 진행 중" : "턴 종료"}" title="${turnLocked ? "상대 행동을 처리하는 중입니다." : endTurnPreview.detail}" ${turnLocked ? "disabled" : ""}>
-        <span class="end-turn-key" aria-hidden="true">${endTurnKey}</span>
-        <strong>${endTurnLabel}</strong>
-        <small>${turnLocked ? "처리 중" : endTurnPreview.label}</small>
+      <button class="end-turn ${turnLocked ? `is-locked turn-${endTurnButton.kind}` : ""} risk-${endTurnPreview.tone}" data-action="end-turn" aria-keyshortcuts="E Space" aria-label="${endTurnButton.ariaLabel}" title="${endTurnButton.title}" ${turnLocked ? "disabled" : ""}>
+        <span class="end-turn-key" aria-hidden="true">${endTurnButton.key}</span>
+        <strong>${endTurnButton.label}</strong>
+        <small>${endTurnButton.small}</small>
       </button>
     </section>
   `;

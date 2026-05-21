@@ -797,6 +797,8 @@ async function captureGroupedEnemyFx(cdp) {
     const fixtureHasMultiHit = ${JSON.stringify(fixture)}.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
     const handCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
     const handLabels = handCards.map((card) => card.getAttribute("aria-label") ?? "");
+    const endTurn = document.querySelector(".end-turn");
+    const endTurnText = endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     return {
       fixture: ${JSON.stringify(fixture)},
       grouped: fx?.classList.contains("fx-grouped") ?? false,
@@ -811,6 +813,9 @@ async function captureGroupedEnemyFx(cdp) {
       duplicatedBeamHidden: beamStyle?.display === "none",
       visibleSparkCount,
       lockedBoard: document.querySelector(".combat-board")?.classList.contains("turn-locked") ?? false,
+      endTurnText,
+      endTurnAria: endTurn?.getAttribute("aria-label") ?? "",
+      endTurnClass: endTurn?.className ?? "",
       handCardCount: handCards.length,
       disabledHandCards: handCards.filter((card) => card.disabled).length,
       lockedHandLabels: handLabels.filter((label) => /상대 턴에는 사용할 수 없음/.test(label)).length,
@@ -823,6 +828,8 @@ async function captureGroupedEnemyFx(cdp) {
     !evidence.duplicatedBeamHidden ||
     evidence.visibleSparkCount > 1 ||
     !evidence.lockedBoard ||
+    !/상대 턴/.test(evidence.endTurnText) ||
+    !/상대 턴 진행 중/.test(evidence.endTurnAria) ||
     evidence.disabledHandCards !== evidence.handCardCount ||
     evidence.lockedHandLabels !== evidence.handCardCount ||
     evidence.unlockedHandLabels !== 0 ||
@@ -832,6 +839,36 @@ async function captureGroupedEnemyFx(cdp) {
   }
   await writeFile(resolve(qaDir, "browser-qa-enemy-grouped-fx.json"), JSON.stringify(evidence, null, 2));
   await capture(cdp, "browser-qa-enemy-grouped-fx.png");
+  await waitForSelector(cdp, ".combat-turn-cue.player");
+  const playerCueEvidence = await evaluate(cdp, `(() => {
+    const cue = document.querySelector(".combat-turn-cue.player");
+    const endTurn = document.querySelector(".end-turn");
+    const handCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const handLabels = handCards.map((card) => card.getAttribute("aria-label") ?? "");
+    return {
+      cueText: cue?.innerText.replace(/\\s+/g, " ").trim() ?? "",
+      endTurnText: endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "",
+      endTurnAria: endTurn?.getAttribute("aria-label") ?? "",
+      endTurnClass: endTurn?.className ?? "",
+      handCardCount: handCards.length,
+      disabledHandCards: handCards.filter((card) => card.disabled).length,
+      readyHandLabels: handLabels.filter((label) => /내 턴을 준비하는 중/.test(label)).length,
+      enemyTurnHandLabels: handLabels.filter((label) => /상대 턴에는 사용할 수 없음/.test(label)).length
+    };
+  })()`);
+  if (
+    !/내 턴/.test(playerCueEvidence.cueText) ||
+    !/내 턴/.test(playerCueEvidence.endTurnText) ||
+    /상대 턴/.test(playerCueEvidence.endTurnText) ||
+    !/내 턴 준비 중/.test(playerCueEvidence.endTurnAria) ||
+    !/turn-player-ready/.test(playerCueEvidence.endTurnClass) ||
+    playerCueEvidence.disabledHandCards !== playerCueEvidence.handCardCount ||
+    playerCueEvidence.readyHandLabels !== playerCueEvidence.handCardCount ||
+    playerCueEvidence.enemyTurnHandLabels !== 0
+  ) {
+    throw new Error(`Player turn cue button mismatch: ${JSON.stringify(playerCueEvidence)}`);
+  }
+  await capture(cdp, "browser-qa-turn-player-cue-minimal.png");
   await clearSavedRun(cdp);
   return evidence;
 }

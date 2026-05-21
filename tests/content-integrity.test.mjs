@@ -385,6 +385,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-combat-turn-and-victory-evidence\.json/);
   assert.match(captureSource, /rewardReachedAfterVictory/);
   assert.match(captureSource, /enemyTurnDuplicated/);
+  assert.match(captureSource, /Player turn cue button mismatch/);
+  assert.match(captureSource, /turn-player-ready/);
   assert.match(captureSource, /const codaEvidence = await assertVictoryCodaUx\(cdp\);/);
   assert.match(captureSource, /Victory coda UX failed/);
   assert.match(captureSource, /function assertCombatRiskSingleSource\(cdp\)/);
@@ -975,7 +977,10 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
   assert.match(mainSource, /aria-live="assertive"/);
   assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
-  assert.match(mainSource, /disabledReason:\s*turnLocked \? "상대 턴에는 사용할 수 없음" : "전하 부족"/);
+  assert.match(mainSource, /function combatTurnLockReason\(run = state\.run\)/);
+  assert.match(mainSource, /function combatEndTurnButtonState\(run, preview\)/);
+  assert.match(mainSource, /ariaLabel:\s*"내 턴 준비 중"/);
+  assert.match(mainSource, /disabledReason:\s*turnLocked \? endTurnButton\.disabledReason : "전하 부족"/);
   assert.match(mainSource, /hardDisabled:\s*turnLocked/);
   assert.match(mainSource, /const hardDisabled = action && \(options\.hardDisabled === true \|\| \(action !== "play-card" && options\.playable === false\)\)/);
   assert.match(mainSource, /const softDisabled = action === "play-card" && options\.playable === false && !hardDisabled/);
@@ -1176,7 +1181,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /combatTurnInputLocked\(\)/);
   assert.match(mainSource, /state\.combatFx\?\.kind === "enemy-action"/);
   assert.match(mainSource, /const turnLocked = combatTurnInputLocked\(run\)/);
-  assert.match(mainSource, /aria-label="\$\{turnLocked \? "상대 턴 진행 중" : "턴 종료"\}"/);
+  assert.match(mainSource, /aria-label="\$\{endTurnButton\.ariaLabel\}"/);
   assert.match(mainSource, /deferredMutation = endTurnWithFx\(run\)/);
   assert.match(mainSource, /endTurn\(run\);[\s\S]*afterMutation\("end-turn"\)/);
   assert.match(mainSource, /base\.push\("turn-locked"\)/);
@@ -1280,6 +1285,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-turn-cue div[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.combat-board\.turn-locked \.hand-zone/);
   assert.match(styleSource, /\.end-turn\.is-locked/);
+  assert.match(styleSource, /\.end-turn\.is-locked\.turn-player-ready/);
+  assert.match(styleSource, /\.end-turn\.is-locked\.turn-processing/);
   assert.match(styleSource, /\.combat-board\.turn-locked \.end-turn\.is-locked/);
   assert.match(styleSource, /\.combat-board\.turn-cue-enemy::after/);
   assert.match(styleSource, /@keyframes combat-turn-cue-enter/);
