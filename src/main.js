@@ -8194,6 +8194,7 @@ function renderShopService(run, service, price, advice = null) {
   const preview = shopServicePreview(run, service, price);
   const recommended = advice?.recommendedService === service && !preview.disabled;
   const aria = `${preview.label}${recommended ? " · 추천" : ""}`;
+  const metrics = preview.metrics.map((metric) => `<i class="${metric.tone}">${metric.label}</i>`).join("");
   return `
     <button class="shop-service ${preview.tone} ${recommended ? "recommended" : ""}" data-action="${preview.action}" aria-label="${aria}" ${preview.disabled ? "disabled" : ""}>
       <span class="shop-service-icon" aria-hidden="true">${shopServiceGlyph(service)}</span>
@@ -8202,7 +8203,8 @@ function renderShopService(run, service, price, advice = null) {
         ${recommended ? `<em class="service-recommendation">추천</em>` : ""}
       </span>
       <span class="shop-service-result">${preview.detail}</span>
-      <small class="shop-service-cost" title="${preview.cost}">${preview.cost}</small>
+      <span class="shop-service-metrics" aria-label="${preview.metricLabel}">${metrics}</span>
+      <small class="shop-service-cost" title="${preview.cost}">${preview.priceLabel}</small>
     </button>
   `;
 }
@@ -8267,14 +8269,25 @@ function shopRelicInsight(run, relicId) {
 function shopServicePreview(run, service, price) {
   const canAfford = run.player.gold >= price;
   const serviceCost = canAfford ? `${price} 크레딧 · 남음 ${run.player.gold - price}` : `${price - run.player.gold} 크레딧 부족`;
+  const priceLabel = canAfford ? `${price} 크레딧` : `${price - run.player.gold} 부족`;
+  const balanceMetric = canAfford
+    ? { tone: "wallet", label: `남음 ${run.player.gold - price}` }
+    : { tone: "warn", label: `${price - run.player.gold} 부족` };
   if (service === "heal") {
     const hpAfter = Math.min(run.player.maxHp, run.player.hp + 20);
     const healAmount = hpAfter - run.player.hp;
     return {
       action: "shop-heal",
       label: "체력 회복",
-      detail: healAmount > 0 ? `체력 +${healAmount} · ${hpAfter}/${run.player.maxHp}` : "이미 최대 체력입니다.",
+      detail: healAmount > 0 ? `체력 ${run.player.hp}→${hpAfter}` : "이미 최대 체력입니다.",
       cost: serviceCost,
+      priceLabel,
+      metricLabel: healAmount > 0 ? `체력 ${healAmount} 회복, ${serviceCost}` : `체력 최대, ${serviceCost}`,
+      metrics: [
+        { tone: healAmount > 0 ? "heal" : "muted", label: healAmount > 0 ? `체력 +${healAmount}` : "체력 최대" },
+        { tone: "price", label: `${price} 크레딧` },
+        balanceMetric
+      ],
       disabled: !canAfford || run.player.hp >= run.player.maxHp,
       tone: hpAfter > run.player.hp ? "heal" : "muted"
     };
@@ -8283,8 +8296,15 @@ function shopServicePreview(run, service, price) {
     return {
       action: "shop-remove",
       label: "카드 제거",
-      detail: `덱 -1장 · 남은 덱 ${Math.max(0, run.player.deck.length - 1)}장`,
+      detail: `덱 ${run.player.deck.length}→${Math.max(0, run.player.deck.length - 1)}장`,
       cost: serviceCost,
+      priceLabel,
+      metricLabel: `덱에서 카드 1장 제거, ${serviceCost}`,
+      metrics: [
+        { tone: "craft", label: "덱 -1장" },
+        { tone: "price", label: `${price} 크레딧` },
+        balanceMetric
+      ],
       disabled: !canAfford || run.player.deck.length <= 1,
       tone: "craft"
     };
@@ -8293,8 +8313,15 @@ function shopServicePreview(run, service, price) {
   return {
     action: "shop-upgrade",
     label: upgradeable ? "카드 강화" : "강화 가능 카드 없음",
-    detail: upgradeable ? `강화 후보 ${upgradeable}장` : "이미 강화되었거나 변화 없는 카드뿐입니다.",
+    detail: upgradeable ? `후보 ${upgradeable}장 중 1장` : "이미 강화되었거나 변화 없는 카드뿐입니다.",
     cost: serviceCost,
+    priceLabel,
+    metricLabel: upgradeable ? `카드 1장 강화, ${serviceCost}` : `강화 가능 카드 없음, ${serviceCost}`,
+    metrics: [
+      { tone: upgradeable ? "craft" : "muted", label: upgradeable ? "강화 +1" : "후보 없음" },
+      { tone: "price", label: `${price} 크레딧` },
+      balanceMetric
+    ],
     disabled: !canAfford || upgradeable <= 0,
     tone: upgradeable ? "craft" : "muted"
   };

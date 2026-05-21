@@ -2864,6 +2864,15 @@ async function assertShopFocusUx(cdp) {
     const activeStyle = activeItem ? getComputedStyle(activeItem) : null;
     const detailStyle = activeDetail ? getComputedStyle(activeDetail) : null;
     const sections = [...document.querySelectorAll(".shop-section")];
+    const serviceMetrics = [...document.querySelectorAll(".shop-service-metrics")];
+    const serviceMetricText = serviceMetrics.map((row) => row.textContent.trim()).join(" ");
+    const serviceMetricsInside = serviceMetrics.every((row) => {
+      const button = row.closest(".shop-service");
+      if (!button) return false;
+      const rowBox = row.getBoundingClientRect();
+      const buttonBox = button.getBoundingClientRect();
+      return rowBox.left >= buttonBox.left - 1 && rowBox.right <= buttonBox.right + 1 && rowBox.bottom <= buttonBox.bottom + 1;
+    });
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
     const ok =
       Boolean(layout) &&
@@ -2874,6 +2883,10 @@ async function assertShopFocusUx(cdp) {
       detailStyle.display !== "none" &&
       activeStyle.transform !== "none" &&
       sections.length >= 3 &&
+      serviceMetrics.length >= 3 &&
+      /남음/.test(serviceMetricText) &&
+      /덱 -1장/.test(serviceMetricText) &&
+      serviceMetricsInside &&
       !overflow;
     return {
       ok,
@@ -2883,6 +2896,9 @@ async function assertShopFocusUx(cdp) {
       detailDisplay: detailStyle?.display ?? "",
       activeTransform: activeStyle?.transform ?? "",
       sections: sections.length,
+      serviceMetrics: serviceMetrics.length,
+      serviceMetricText,
+      serviceMetricsInside,
       scrollWidth: document.documentElement.scrollWidth,
       viewportWidth: window.innerWidth
     };

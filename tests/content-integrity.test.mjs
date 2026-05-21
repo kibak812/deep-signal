@@ -3280,10 +3280,13 @@ test("shop purchases preview deck fit and service outcomes", () => {
   assert.match(mainSource, /advice\?\.recommendedService === service/);
   assert.match(mainSource, /추천 · \$\{shopServiceShortLabel/);
   assert.match(mainSource, /const serviceCost = canAfford \?/);
+  assert.match(mainSource, /const metrics = preview\.metrics\.map/);
+  assert.match(mainSource, /class="shop-service-metrics"/);
+  assert.match(mainSource, /metricLabel/);
   assert.match(mainSource, /남음 \$\{run\.player\.gold - price\}/);
-  assert.match(mainSource, /체력 \+\$\{healAmount\} · \$\{hpAfter\}\/\$\{run\.player\.maxHp\}/);
-  assert.match(mainSource, /덱 -1장 · 남은 덱/);
-  assert.match(mainSource, /강화 후보 \$\{upgradeable\}장/);
+  assert.match(mainSource, /체력 \$\{run\.player\.hp\}→\$\{hpAfter\}/);
+  assert.match(mainSource, /label:\s*"덱 -1장"/);
+  assert.match(mainSource, /후보 \$\{upgradeable\}장 중 1장/);
   assert.match(mainSource, /구매하면 \$\{rewardPickLineText\(card, insight\)\}/);
   assert.match(mainSource, /withTopicParticle\(card\.name\)/);
   assert.match(mainSource, /withTopicParticle\(relic\.name\)/);
@@ -3332,6 +3335,8 @@ test("shop purchases preview deck fit and service outcomes", () => {
   assert.match(styleSource, /\.shop-insight-detail[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.shop-service/);
   assert.match(styleSource, /\.shop-service-icon/);
+  assert.match(styleSource, /\.shop-service-metrics/);
+  assert.match(styleSource, /\.shop-service-metrics i\.wallet/);
   assert.match(styleSource, /\.shop-service-cost/);
   assert.match(styleSource, /\.shop-service:hover/);
   assert.match(styleSource, /\.shop-service:focus-visible/);
@@ -3339,6 +3344,7 @@ test("shop purchases preview deck fit and service outcomes", () => {
   assert.match(styleSource, /\.shop-service\.recommended/);
   assert.match(styleSource, /\.service-recommendation/);
   assert.match(styleSource, /\.high-contrast \.shop-spend-plan/);
+  assert.match(styleSource, /\.high-contrast \.shop-service-metrics i/);
   assert.match(styleSource, /@media \(min-width: 861px\) and \(max-width: 1040px\)[\s\S]*\.shop-side-column[\s\S]*grid-column:\s*1/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.shop-spend-plan[\s\S]*grid-template-columns:\s*1fr/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.shop-exit-panel[\s\S]*position:\s*static/);
