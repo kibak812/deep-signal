@@ -350,6 +350,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-card-attack-fx\.json/);
   assert.match(captureSource, /function stageAttackFxFixture\(cdp\)/);
   assert.match(captureSource, /function assertAttackCardPlayFx\(cdp\)/);
+  assert.match(captureSource, /trailTapered/);
+  assert.match(captureSource, /impactCrossVisible/);
   assert.match(captureSource, /Attack card FX failed/);
   assert.match(captureSource, /browser-qa-about-refreshed\.png/);
   assert.match(captureSource, /browser-qa-final-boss-selector\.png/);
@@ -1602,6 +1604,9 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-echo \.card-art-image/);
   assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-card-cost,[\s\S]*\.combat-action-fx\.fx-source-player \.fx-card-type[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.combat-action-fx\.fx-source-player \.fx-source-pulse/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-damage\.fx-source-player \.fx-trail[\s\S]*clip-path:\s*polygon/);
+  assert.match(styleSource, /\.combat-action-fx\.fx-damage\.fx-source-player \.fx-impact::before,/);
+  assert.match(styleSource, /@keyframes fx-impact-cross/);
   assert.match(styleSource, /\.combat-board\.fx-active:not\(\.fx-enemy-board\)\.fx-mode-enemy \.player-sprite/);
   assert.match(styleSource, /\.combat-board\.fx-enemy-board \.enemy-card\.fx-source:not\(\.fx-defeated\) \.enemy-sprite/);
   assert.match(styleSource, /\.player-stand\.fx-target \.player-sprite/);

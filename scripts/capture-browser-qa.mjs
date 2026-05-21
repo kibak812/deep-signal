@@ -2354,7 +2354,7 @@ async function assertCardPlayFxSource(cdp) {
     }));
     const style = pulse ? getComputedStyle(pulse) : null;
     const echoStyle = echo ? getComputedStyle(echo) : null;
-    const visible = (box) => Boolean(box && box.width > 4 && box.height > 4 && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const visible = (box, minSize = 4) => Boolean(box && box.width > minSize && box.height > minSize && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
     const ok =
       Boolean(fx) &&
       Boolean(pulse) &&
@@ -2365,7 +2365,7 @@ async function assertCardPlayFxSource(cdp) {
       Boolean(targetFeedback) &&
       visible(boxes.pulse) &&
       visible(boxes.echo) &&
-      visible(boxes.trail) &&
+      visible(boxes.trail, 2) &&
       visible(boxes.impact) &&
       visible(boxes.targetFeedback) &&
       Number(style?.opacity ?? 0) >= 0.05 &&
@@ -2393,6 +2393,9 @@ async function assertAttackCardPlayFx(cdp) {
     const trail = fx?.querySelector(".fx-trail");
     const spark = fx?.querySelector(".fx-trail i");
     const impact = fx?.querySelector(".fx-impact");
+    const trailStyle = trail ? getComputedStyle(trail) : null;
+    const impactBefore = impact ? getComputedStyle(impact, "::before") : null;
+    const impactAfter = impact ? getComputedStyle(impact, "::after") : null;
     const hitEnemy = document.querySelector(".enemy-card.fx-hit:not(.fx-defeated)");
     const targetRing = hitEnemy?.querySelector(".entity-impact-ring.damage, .entity-impact-ring.enemy");
     const hitSparks = hitEnemy?.querySelector(".entity-hit-sparks.damage, .entity-hit-sparks.enemy");
@@ -2403,10 +2406,16 @@ async function assertAttackCardPlayFx(cdp) {
       const box = node?.getBoundingClientRect?.();
       return [key, box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null];
     }));
-    const visible = (box) => Boolean(box && box.width > 3 && box.height > 3 && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const visible = (box, minSize = 3) => Boolean(box && box.width > minSize && box.height > minSize && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
     const damageText = [damagePop?.innerText, resultStack?.innerText].filter(Boolean).join(" ").replace(/\\s+/g, " ").trim();
     const boardClass = board?.className ?? "";
     const fxClass = fx?.className ?? "";
+    const trailTapered = trailStyle?.clipPath !== "none" && Number.parseFloat(trailStyle?.height ?? "0") <= 4;
+    const impactCrossVisible =
+      impactBefore?.display !== "none" &&
+      impactAfter?.display !== "none" &&
+      impactBefore?.content !== "none" &&
+      impactAfter?.content !== "none";
     const ok =
       Boolean(board) &&
       Boolean(fx) &&
@@ -2421,9 +2430,11 @@ async function assertAttackCardPlayFx(cdp) {
       Boolean(damagePop) &&
       Boolean(playerSource) &&
       /-\\d+/.test(damageText) &&
+      trailTapered &&
+      impactCrossVisible &&
       visible(boxes.pulse) &&
       visible(boxes.echo) &&
-      visible(boxes.trail) &&
+      visible(boxes.trail, 2) &&
       visible(boxes.spark) &&
       visible(boxes.impact) &&
       visible(boxes.hitEnemy) &&
@@ -2435,6 +2446,19 @@ async function assertAttackCardPlayFx(cdp) {
       boardClass,
       fxClass,
       damageText,
+      trailTapered,
+      impactCrossVisible,
+      trailStyle: {
+        height: trailStyle?.height ?? "",
+        clipPath: trailStyle?.clipPath ?? "",
+        filter: trailStyle?.filter ?? ""
+      },
+      impactCross: {
+        beforeDisplay: impactBefore?.display ?? "",
+        beforeContent: impactBefore?.content ?? "",
+        afterDisplay: impactAfter?.display ?? "",
+        afterContent: impactAfter?.content ?? ""
+      },
       combatFxCount: document.querySelectorAll(".combat-action-fx").length,
       hitEnemyCount: document.querySelectorAll(".enemy-card.fx-hit:not(.fx-defeated)").length,
       boxes

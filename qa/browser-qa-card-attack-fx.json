@@ -3,6 +3,19 @@
   "boardClass": "combat-board feedback-damage arena-act-1 arena-combat fx-active fx-tone-damage fx-mode-enemy arena-variant-0 arena-depth-entry arena-motif-abyss",
   "fxClass": "combat-action-fx fx-damage fx-enemy fx-card fx-source-player",
   "damageText": "✦ -6",
+  "trailTapered": true,
+  "impactCrossVisible": true,
+  "trailStyle": {
+    "height": "3px",
+    "clipPath": "polygon(0px 50%, 8% 28%, 72% 16%, 100% 50%, 72% 84%, 8% 72%)",
+    "filter": "drop-shadow(rgba(251, 113, 133, 0.68) 0px 0px 14px) drop-shadow(rgba(255, 245, 214, 0.66) 0px 0px 4px)"
+  },
+  "impactCross": {
+    "beforeDisplay": "block",
+    "beforeContent": "\"\"",
+    "afterDisplay": "block",
+    "afterContent": "\"\""
+  },
   "combatFxCount": 1,
   "hitEnemyCount": 1,
   "boxes": {
@@ -15,12 +28,12 @@
       "height": 720
     },
     "pulse": {
-      "left": 217,
+      "left": 218,
       "top": 132,
-      "right": 339,
+      "right": 338,
       "bottom": 162,
-      "width": 121,
-      "height": 31
+      "width": 120,
+      "height": 30
     },
     "echo": {
       "left": 234,
@@ -32,25 +45,25 @@
     },
     "trail": {
       "left": 278,
-      "top": 143,
-      "right": 1075,
-      "bottom": 148,
-      "width": 797,
-      "height": 5
+      "top": 144,
+      "right": 1082,
+      "bottom": 147,
+      "width": 804,
+      "height": 3
     },
     "spark": {
-      "left": 444,
-      "top": 139,
-      "right": 456,
-      "bottom": 151,
-      "width": 12,
-      "height": 12
+      "left": 448,
+      "top": 141,
+      "right": 457,
+      "bottom": 150,
+      "width": 9,
+      "height": 9
     },
     "impact": {
       "left": 1035,
-      "top": 79,
+      "top": 78,
       "right": 1127,
-      "bottom": 138,
+      "bottom": 139,
       "width": 92,
       "height": 60
     },
@@ -64,10 +77,10 @@
     },
     "targetRing": {
       "left": 966,
-      "top": 41,
+      "top": 42,
       "right": 1192,
-      "bottom": 313,
-      "width": 227,
+      "bottom": 312,
+      "width": 226,
       "height": 271
     },
     "hitSparks": {
@@ -90,7 +103,7 @@
     "playerSource": {
       "left": 96,
       "top": 30,
-      "right": 310,
+      "right": 311,
       "bottom": 352,
       "width": 215,
       "height": 322
