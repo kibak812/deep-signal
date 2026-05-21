@@ -3414,18 +3414,23 @@ async function assertBossStatusStrip(cdp) {
     const intent = strip?.querySelector("small");
     const objective = strip?.querySelector(".boss-objective");
     const pattern = strip?.querySelector(".boss-pattern-cue");
+    const readiness = document.querySelector(".requiem-readiness");
     const stripBox = strip?.getBoundingClientRect();
     const bossBox = boss?.getBoundingClientRect();
     const objectiveBox = objective?.getBoundingClientRect();
     const meterBox = meter?.getBoundingClientRect();
     const intentBox = intent?.getBoundingClientRect();
     const patternBox = pattern?.getBoundingClientRect();
+    const readinessBox = readiness?.getBoundingClientRect();
     const handBox = document.querySelector(".hand-zone")?.getBoundingClientRect();
     const playerPlateBox = document.querySelector(".boss-fight .player-plate")?.getBoundingClientRect();
     const playerSpriteBox = document.querySelector(".boss-fight .player-sprite")?.getBoundingClientRect();
     const style = strip ? getComputedStyle(strip) : null;
+    const readinessStyle = readiness ? getComputedStyle(readiness) : null;
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const patternText = pattern?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const readinessText = readiness?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const readinessAria = readiness?.getAttribute("aria-label") ?? "";
     const aria = strip?.getAttribute("aria-label") ?? "";
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
     const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
@@ -3443,12 +3448,17 @@ async function assertBossStatusStrip(cdp) {
       Boolean(intent) &&
       Boolean(objective) &&
       Boolean(pattern) &&
+      Boolean(readiness) &&
       text.includes("보스") &&
       text.includes("본체 처치") &&
       text.includes("2페이즈 연쇄") &&
       patternText.includes("문 낙하") &&
       patternText.includes("문지기 호출") &&
       patternText.includes("레퀴엠") &&
+      readinessText.includes("레퀴엠") &&
+      readinessText.includes("예상") &&
+      readinessText.includes("보존") &&
+      readinessAria.includes("보존 방어") &&
       /2단계|레퀴엠|충돌|폭주|문/.test(text) &&
       aria.includes("보스 본체를 쓰러뜨리면 전투가 끝납니다") &&
       aria.includes("현재 의도") &&
@@ -3457,11 +3467,14 @@ async function assertBossStatusStrip(cdp) {
       Boolean(phaseTwoSprite) &&
       Boolean(expectedPhaseTwoImage && phaseTwoSpriteImage.includes(expectedPhaseTwoImage)) &&
       Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36 && stripBox.width <= 432 && stripBox.height <= 128) &&
+      Boolean(readinessBox && handBox && readinessBox.bottom <= handBox.top - 6 && readinessBox.width <= Math.min(480, window.innerWidth - 16)) &&
       (!bossBox || stripBox.bottom < bossBox.bottom) &&
       style?.pointerEvents === "none" &&
+      readinessStyle?.pointerEvents === "none" &&
       !overlaps(objectiveBox, meterBox) &&
       !overlaps(objectiveBox, intentBox) &&
       !overlaps(patternBox, meterBox) &&
+      !overlaps(readinessBox, stripBox) &&
       playerVitalsClearHand &&
       !overflow;
     return {
@@ -3479,10 +3492,14 @@ async function assertBossStatusStrip(cdp) {
       hasIntent: Boolean(intent),
       hasObjective: Boolean(objective),
       hasPattern: Boolean(pattern),
+      hasReadiness: Boolean(readiness),
       stripTop: stripBox ? Math.round(stripBox.top) : null,
       stripBottom: stripBox ? Math.round(stripBox.bottom) : null,
       stripWidth: stripBox ? Math.round(stripBox.width) : null,
       stripHeight: stripBox ? Math.round(stripBox.height) : null,
+      readinessText,
+      readinessAria,
+      readinessBox: readinessBox ? { x: Math.round(readinessBox.x), y: Math.round(readinessBox.y), width: Math.round(readinessBox.width), height: Math.round(readinessBox.height), bottom: Math.round(readinessBox.bottom) } : null,
       bossBottom: bossBox ? Math.round(bossBox.bottom) : null,
       objectiveBox: objectiveBox ? { x: Math.round(objectiveBox.x), y: Math.round(objectiveBox.y), width: Math.round(objectiveBox.width), height: Math.round(objectiveBox.height) } : null,
       meterBox: meterBox ? { x: Math.round(meterBox.x), y: Math.round(meterBox.y), width: Math.round(meterBox.width), height: Math.round(meterBox.height) } : null,
@@ -3493,6 +3510,7 @@ async function assertBossStatusStrip(cdp) {
       playerPlateBox: playerPlateBox ? { top: Math.round(playerPlateBox.top), bottom: Math.round(playerPlateBox.bottom), width: Math.round(playerPlateBox.width), height: Math.round(playerPlateBox.height) } : null,
       playerSpriteBox: playerSpriteBox ? { top: Math.round(playerSpriteBox.top), bottom: Math.round(playerSpriteBox.bottom), width: Math.round(playerSpriteBox.width), height: Math.round(playerSpriteBox.height) } : null,
       pointerEvents: style?.pointerEvents ?? "",
+      readinessPointerEvents: readinessStyle?.pointerEvents ?? "",
       scrollWidth: document.documentElement.scrollWidth,
       viewportWidth: window.innerWidth
     };

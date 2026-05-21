@@ -6909,6 +6909,142 @@ dd,
   gap: 4px;
 }
 
+.requiem-readiness {
+  width: min(430px, 100%);
+  min-width: 0;
+  min-height: 64px;
+  justify-self: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid rgba(246, 193, 119, 0.24);
+  background:
+    linear-gradient(90deg, rgba(246, 193, 119, 0.12), rgba(125, 211, 252, 0.08)),
+    rgba(3, 8, 14, 0.72);
+  color: var(--text);
+  padding: 7px 8px;
+  pointer-events: none;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.26), inset 0 0 18px rgba(246, 193, 119, 0.06);
+  backdrop-filter: blur(12px);
+}
+
+.requiem-readiness.danger {
+  border-color: rgba(251, 113, 133, 0.42);
+  background:
+    linear-gradient(90deg, rgba(251, 113, 133, 0.16), rgba(246, 193, 119, 0.08)),
+    rgba(7, 12, 23, 0.78);
+}
+
+.requiem-readiness.warning {
+  border-color: rgba(246, 193, 119, 0.46);
+}
+
+.requiem-readiness.guarded {
+  border-color: rgba(52, 211, 153, 0.36);
+  background:
+    linear-gradient(90deg, rgba(52, 211, 153, 0.12), rgba(125, 211, 252, 0.07)),
+    rgba(4, 14, 14, 0.72);
+}
+
+.requiem-readiness-copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.requiem-readiness-copy span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--amber);
+  font-size: 0.58rem;
+  font-weight: 1000;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.requiem-readiness-copy strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 1000;
+  line-height: 1.06;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.requiem-readiness-copy p {
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  display: -webkit-box;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1.18;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.requiem-readiness-metrics {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(52px, 1fr));
+  gap: 4px;
+}
+
+.requiem-readiness-metrics i {
+  min-width: 0;
+  min-height: 24px;
+  display: grid;
+  align-content: center;
+  gap: 1px;
+  border: 1px solid rgba(236, 248, 243, 0.1);
+  background: rgba(236, 248, 243, 0.045);
+  color: var(--muted);
+  font-style: normal;
+  line-height: 1;
+  padding: 3px 5px;
+}
+
+.requiem-readiness-metrics i.danger {
+  border-color: rgba(251, 113, 133, 0.38);
+  background: rgba(251, 113, 133, 0.12);
+  color: #ffc4ce;
+}
+
+.requiem-readiness-metrics i.warning {
+  border-color: rgba(246, 193, 119, 0.36);
+  background: rgba(246, 193, 119, 0.1);
+  color: #ffe2ad;
+}
+
+.requiem-readiness-metrics i.guarded {
+  border-color: rgba(52, 211, 153, 0.34);
+  background: rgba(52, 211, 153, 0.1);
+  color: #baf7d4;
+}
+
+.requiem-readiness-metrics b,
+.requiem-readiness-metrics span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.requiem-readiness-metrics b {
+  font-size: 0.52rem;
+  font-weight: 900;
+}
+
+.requiem-readiness-metrics span {
+  font-size: 0.66rem;
+  font-weight: 1000;
+}
+
 .target-assist {
   position: relative;
   z-index: 1;
@@ -22535,6 +22671,8 @@ input[type="range"] {
 .high-contrast .boss-status-meter,
 .high-contrast .boss-pattern-cue,
 .high-contrast .boss-pattern-cue li,
+.high-contrast .requiem-readiness,
+.high-contrast .requiem-readiness-metrics i,
 .high-contrast .combat-action-fx .fx-card-name,
 .high-contrast .combat-action-fx .fx-card-echo,
 .high-contrast .combat-action-fx .fx-actor-echo,
@@ -24341,6 +24479,17 @@ input[type="range"] {
 
   .boss-pattern-cue p {
     white-space: normal;
+  }
+
+  .requiem-readiness {
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 5px;
+    min-height: 0;
+  }
+
+  .requiem-readiness-metrics {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .depth-rail {

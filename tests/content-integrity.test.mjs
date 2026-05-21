@@ -470,6 +470,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /phaseTwoSpriteImage\.includes\(expectedPhaseTwoImage\)/);
   assert.match(captureSource, /patternText\.includes\("문 낙하"\)/);
   assert.match(captureSource, /aria\.includes\("다음은 레퀴엠"\)/);
+  assert.match(captureSource, /document\.querySelector\("\.requiem-readiness"\)/);
+  assert.match(captureSource, /readinessText\.includes\("레퀴엠"\)/);
+  assert.match(captureSource, /readinessText\.includes\("보존"\)/);
+  assert.match(captureSource, /readinessAria\.includes\("보존 방어"\)/);
   assert.match(captureSource, /Boss status strip failed/);
   assert.match(captureSource, /function assertShopFocusUx\(cdp\)/);
   assert.match(captureSource, /await assertShopFocusUx\(cdp\);/);
@@ -2002,6 +2006,9 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(mainSource, /function renderBossPatternCue\(cue\)/);
   assert.match(mainSource, /function bossPatternCue\(enemy, template\)/);
   assert.match(mainSource, /function finalBossPatternDetail\(currentId, phaseTwo\)/);
+  assert.match(mainSource, /function renderRequiemReadiness\(run\)/);
+  assert.match(mainSource, /function finalBossRequiemReadiness\(run\)/);
+  assert.match(mainSource, /function finalBossProjectedMoveDamage\(run, enemy, move, turnsAway = 0\)/);
   assert.match(mainSource, /function renderBossPhaseChip\(enemy, template\)/);
   assert.match(mainSource, /function bossPhaseCue\(run\)/);
   assert.match(mainSource, /function isFreshBossPhaseLog\(run, template\)/);
@@ -2019,6 +2026,9 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(mainSource, /2페이즈 연쇄/);
   assert.match(mainSource, /문 낙하 뒤 호출과 레퀴엠/);
   assert.match(mainSource, /다음은 레퀴엠입니다/);
+  assert.match(mainSource, /레퀴엠 방어 손패 없음/);
+  assert.match(mainSource, /보존 방어/);
+  assert.match(mainSource, /다음 레퀴엠 본체 예상/);
   assert.match(mainSource, /심층 보스/);
   assert.match(mainSource, /bossPhase:\s*\{\s*notes:/);
   assert.match(mainSource, /playTone\(phaseCue \? "bossPhase" : soundCueFor/);
@@ -2048,12 +2058,16 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(styleSource, /\.boss-pattern-cue/);
   assert.match(styleSource, /\.boss-pattern-cue ol/);
   assert.match(styleSource, /\.boss-pattern-cue li\.danger\.current/);
+  assert.match(styleSource, /\.requiem-readiness/);
+  assert.match(styleSource, /\.requiem-readiness-metrics/);
+  assert.match(styleSource, /\.requiem-readiness\.danger/);
   assert.match(styleSource, /\.boss-fight \.player-stand[\s\S]*translate:\s*0 clamp\(-92px, -12vh, -76px\)/);
   assert.match(styleSource, /\.boss-fight \.player-plate[\s\S]*transform:\s*translateY\(clamp\(-104px, -13vh, -72px\)\)/);
   assert.match(styleSource, /\.boss-status-meter/);
   assert.match(styleSource, /\.boss-status-strip\.phase-two/);
   assert.match(styleSource, /\.high-contrast \.boss-status-strip/);
   assert.match(styleSource, /\.high-contrast \.boss-pattern-cue/);
+  assert.match(styleSource, /\.high-contrast \.requiem-readiness/);
   assert.match(styleSource, /\.boss-curtain-readout[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.boss-cataloger \.combat-background/);
   assert.match(styleSource, /\.boss-algorithm \.combat-background/);

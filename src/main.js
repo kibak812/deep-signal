@@ -5983,10 +5983,149 @@ function renderCombatPlayPanel(run, recommendedCardUid) {
       <div class="combat-guidance-stack">
         ${renderCombatActionRecap(run)}
         ${renderTargetAssist(run, recommendedCardUid)}
+        ${renderRequiemReadiness(run)}
         <section class="combat-card-preview-rail" aria-label="카드 대상 미리보기" aria-live="polite" hidden></section>
       </div>
     </section>
   `;
+}
+
+function renderRequiemReadiness(run) {
+  const cue = finalBossRequiemReadiness(run);
+  if (!cue) return "";
+  const aria = [cue.kicker, cue.title, cue.detail, ...cue.metrics.map((metric) => `${metric.label} ${metric.value}`)].join(". ");
+  return `
+    <section class="requiem-readiness ${cue.tone}" aria-label="${aria}">
+      <div class="requiem-readiness-copy">
+        <span>${cue.kicker}</span>
+        <strong>${cue.title}</strong>
+        <p>${cue.detail}</p>
+      </div>
+      <div class="requiem-readiness-metrics" aria-hidden="true">
+        ${cue.metrics.map((metric) => `<i class="${metric.tone}"><b>${metric.label}</b><span>${metric.value}</span></i>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function finalBossRequiemReadiness(run) {
+  const boss = activeCombatBoss(run);
+  if (!boss || boss.template.id !== "last_gate_choir" || (boss.enemy.phase ?? 1) < 2) return null;
+  const moveId = boss.enemy.nextMove?.id ?? "";
+  const requiemMove = boss.template.moves.find((move) => move.id === "phase_requiem");
+  if (!requiemMove) return null;
+
+  const combat = run.combat;
+  const selected = combat?.enemies?.find((enemy) => enemy.uid === combat.selectedEnemyUid && enemy.hp > 0) ?? boss.enemy;
+  const previews = (combat?.hand ?? [])
+    .map((card) => cardPlayPreview(run, card, selected?.uid))
+    .filter((preview) => preview.playable);
+  const handBlock = bestPreviewTotal(previews, combat?.energy ?? 0, "block");
+  const retainedCards = (combat?.hand ?? []).map((card) => effectiveCard(card)).filter((card) => card.retain);
+  const retainedProfiles = retainedCards.map((card) => cardDefenseProfile(card));
+  const retainedBlock = retainedProfiles.reduce((total, profile) => total + profile.block, 0);
+  const retainedBurst = retainedCards.filter((card) => cardSupportsBurstDefense(card)).length;
+  const retainedWeak = retainedProfiles.reduce((total, profile) => total + profile.weak, 0);
+  const plated = statusAmount(run.player, "plated");
+  const currentForecast = enemyIntentForecast(run);
+  const projectedRequiem = finalBossProjectedMoveDamage(run, boss.enemy, requiemMove, moveId === "gate_slam" ? 2 : moveId === "gate_call" ? 1 : 0);
+
+  if (moveId === "phase_requiem") {
+    const incoming = Math.max(currentForecast.incomingDamage, projectedRequiem);
+    const cover = Math.max(0, run.player.block + handBlock);
+    const gap = Math.max(0, incoming - cover);
+    return {
+      tone: gap > 0 ? "danger" : "guarded",
+      kicker: "종말 레퀴엠",
+      title: gap > 0 ? "레퀴엠 방어 부족" : "레퀴엠 방어 가능",
+      detail: gap > 0
+        ? `예상 피해 ${incoming}, 현재/손패 방어 ${cover}. 체력 ${gap} 손실 전에 방어를 먼저 쓰세요.`
+        : `예상 피해 ${incoming}, 현재/손패 방어 ${cover}. 이번 턴을 넘기면 마무리 기회가 열립니다.`,
+      metrics: [
+        requiemMetric("예상", incoming, gap > 0 ? "danger" : "steady"),
+        requiemMetric("손패 방어", cover, gap > 0 ? "warning" : "guarded"),
+        requiemMetric("에너지", combat?.energy ?? 0, "steady")
+      ]
+    };
+  }
+
+  if (moveId === "gate_call") {
+    const prepCover = retainedBlock + plated;
+    const gap = Math.max(0, projectedRequiem - prepCover);
+    const hasPrep = retainedBurst > 0 || plated > 0 || retainedWeak > 0;
+    return {
+      tone: hasPrep ? gap > 0 ? "warning" : "guarded" : "danger",
+      kicker: "다음 행동",
+      title: hasPrep ? "레퀴엠 준비 있음" : "레퀴엠 방어 손패 없음",
+      detail: hasPrep
+        ? `다음 레퀴엠 본체 예상 ${projectedRequiem}. 보존 방어 ${retainedBurst}장과 도금 ${plated}로 버틸 순서를 남기세요.`
+        : `다음 레퀴엠 본체 예상 ${projectedRequiem}. 보존 방어가 없으니 뽑기, 도금, 약화 카드를 우선하세요.`,
+      metrics: [
+        requiemMetric("예상", projectedRequiem, "danger"),
+        requiemMetric("보존", retainedBurst, hasPrep ? "guarded" : "danger"),
+        requiemMetric("보존 방어", retainedBlock, retainedBlock > 0 ? "guarded" : "warning"),
+        requiemMetric("도금", plated, plated > 0 ? "guarded" : "steady")
+      ]
+    };
+  }
+
+  if (moveId === "gate_slam") {
+    const currentGap = Math.max(0, currentForecast.hpLoss - handBlock);
+    return {
+      tone: currentGap > 0 ? "warning" : "steady",
+      kicker: "연쇄 시작",
+      title: "문 낙하 뒤 체력 보존",
+      detail: `이번 손실 ${Math.max(0, currentForecast.hpLoss)}, 다음 레퀴엠 본체 예상 ${projectedRequiem}. 보존 방어와 도금을 남겨 두세요.`,
+      metrics: [
+        requiemMetric("이번 손실", Math.max(0, currentForecast.hpLoss), currentGap > 0 ? "warning" : "steady"),
+        requiemMetric("손패 방어", handBlock, handBlock > 0 ? "guarded" : "warning"),
+        requiemMetric("레퀴엠", projectedRequiem, "danger")
+      ]
+    };
+  }
+
+  return {
+    tone: retainedBurst > 0 || plated > 0 ? "steady" : "warning",
+    kicker: "2페이즈 대비",
+    title: "레퀴엠 방어 준비",
+    detail: `문 낙하→호출→레퀴엠 전까지 보존 방어, 약화, 도금을 손패에 남기세요.`,
+    metrics: [
+      requiemMetric("보존", retainedBurst, retainedBurst > 0 ? "guarded" : "warning"),
+      requiemMetric("도금", plated, plated > 0 ? "guarded" : "steady"),
+      requiemMetric("예상", projectedRequiem, "danger")
+    ]
+  };
+}
+
+function requiemMetric(label, value, tone) {
+  return { label, value, tone };
+}
+
+function finalBossProjectedMoveDamage(run, enemy, move, turnsAway = 0) {
+  if (!move?.damage) return 0;
+  const difficulty = GAME_DATA.difficulties.find((item) => item.id === run.difficulty) ?? GAME_DATA.difficulties[0];
+  const hits = move.hits ?? 1;
+  const enemyWeak = Math.max(0, statusAmount(enemy, "weak") - Math.max(0, turnsAway));
+  const playerVulnerable = Math.max(0, statusAmount(run.player, "vulnerable") - Math.max(0, turnsAway));
+  const playerFragile = Math.max(0, statusAmount(run.player, "fragile") - Math.max(0, turnsAway));
+  let simulatedMark = statusAmount(run.player, "mark");
+  let incoming = 0;
+  for (let hit = 0; hit < hits; hit += 1) {
+    let damage = Math.max(0, Math.round(move.damage * (difficulty.enemyDamage ?? 1)) + statusAmount(enemy, "strength"));
+    if (enemyWeak > 0) damage = Math.floor(damage * 0.75);
+    if (playerVulnerable > 0) damage = Math.ceil(damage * 1.5);
+    if (playerFragile > 0) damage = Math.ceil(damage * 1.15);
+    if (simulatedMark > 0) {
+      damage += 2;
+      simulatedMark -= 1;
+    }
+    incoming += damage;
+  }
+  return incoming;
+}
+
+function statusAmount(entity, status) {
+  return Math.max(0, entity?.statuses?.[status] ?? 0);
 }
 
 function renderCombatResourceDock(run) {
