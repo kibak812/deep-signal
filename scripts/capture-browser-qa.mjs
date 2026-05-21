@@ -1110,16 +1110,19 @@ async function captureGroupedEnemyFx(cdp) {
     const beamStyle = fx ? getComputedStyle(fx, "::before") : null;
     const visibleSparkCount = [...document.querySelectorAll(".entity-hit-sparks i")]
       .filter((spark) => getComputedStyle(spark).display !== "none").length;
-    const fixtureHasMultiHit = ${JSON.stringify(fixture)}.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
+    const fixtureData = ${JSON.stringify(fixture)};
+    const fixtureHasMultiHit = fixtureData.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
+    const expectedHitBadge = fixtureData.expectedHitCount > 1 ? \`×\${fixtureData.expectedHitCount}\` : "";
     const handCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
     const handLabels = handCards.map((card) => card.getAttribute("aria-label") ?? "");
     const endTurn = document.querySelector(".end-turn");
     const endTurnText = endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     return {
-      fixture: ${JSON.stringify(fixture)},
+      fixture: fixtureData,
       grouped: fx?.classList.contains("fx-grouped") ?? false,
       actorCount: actor?.getAttribute("data-actor-count") ?? "",
       hitCount: actor?.getAttribute("data-hit-count") ?? "",
+      expectedHitBadge,
       actorTitle: actor?.getAttribute("title") ?? "",
       moveName: actor?.querySelector("strong")?.innerText ?? "",
       actorName: actor?.querySelector("em")?.innerText ?? "",
@@ -1149,6 +1152,7 @@ async function captureGroupedEnemyFx(cdp) {
     evidence.disabledHandCards !== evidence.handCardCount ||
     evidence.lockedHandLabels !== evidence.handCardCount ||
     evidence.unlockedHandLabels !== 0 ||
+    (evidence.expectedHitBadge && evidence.hitCount !== evidence.expectedHitBadge) ||
     (evidence.fixtureHasMultiHit && (!evidence.hitCount || !evidence.chipText.includes("×")))
   ) {
     throw new Error(`Grouped enemy FX missing: ${JSON.stringify(evidence)}`);
@@ -1473,7 +1477,11 @@ async function stageGroupedEnemyFxFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return {
-      enemies: picked.combat.enemies.map((enemy) => ({ name: enemy.name, intent: enemy.nextMove.intent }))
+      enemies: picked.combat.enemies.map((enemy) => ({ name: enemy.name, intent: enemy.nextMove.intent })),
+      expectedHitCount: picked.combat.enemies.reduce((sum, enemy) => {
+        const damage = Math.max(0, Number(enemy.nextMove?.damage ?? 0));
+        return damage > 0 ? sum + Math.max(1, Number(enemy.nextMove?.hits ?? 1) || 1) : sum;
+      }, 0)
     };
   })()`);
 }

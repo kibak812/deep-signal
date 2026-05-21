@@ -9,15 +9,17 @@
         "name": "실트 스캐너",
         "intent": "공격 7"
       }
-    ]
+    ],
+    "expectedHitCount": 4
   },
   "grouped": true,
   "actorCount": "×2",
-  "hitCount": "×3",
-  "actorTitle": "로그 진드기 외 1명 · 연속 행동 · 연타 ×3",
+  "hitCount": "×4",
+  "expectedHitBadge": "×4",
+  "actorTitle": "로그 진드기 외 1명 · 연속 행동 · 총 타격 ×4",
   "moveName": "연속 행동",
   "actorName": "로그 진드기 외 1명",
-  "chipText": "✦-13 ×3",
+  "chipText": "✦-13 ×4",
   "fixtureHasMultiHit": true,
   "duplicateFxCount": 1,
   "duplicatedBeamHidden": true,

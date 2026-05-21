@@ -1705,7 +1705,7 @@ function stageEnemyTurnFx(run, before) {
   const playerWasHit = playerHpLoss > 0 || playerStatusChips.length > 0 || actor.move?.damage;
   const targetMode = playerWasHit ? "self" : "enemy";
   const targetUid = targetMode === "enemy" ? actor.uid : null;
-  const hitCount = enemyFxHitCount(actor.move);
+  const hitCount = enemyFxTotalHitCount(before, actor);
   const tone = enemyFxTone({ playerHpLoss, playerBlockLoss, playerStatusChips, enemyBlockGain, enemyHeal, enemyStatusChips, summonedCount, move: actor.move });
   const chips = enemyFxChips({
     playerHpLoss,
@@ -1716,7 +1716,8 @@ function stageEnemyTurnFx(run, before) {
     enemyStatusChips,
     summonedCount,
     move: actor.move,
-    hitCount
+    hitCount,
+    actorCount
   });
   const label = enemyFxLabel({
     playerHpLoss,
@@ -1755,6 +1756,15 @@ function stageEnemyTurnFx(run, before) {
 
 function enemyFxActorCount(before) {
   return Math.max(1, before?.enemies?.filter((enemy) => enemy.hp > 0 && enemy.move).length ?? 1);
+}
+
+function enemyFxTotalHitCount(before, fallbackActor = null) {
+  const activeBefore = before?.enemies?.filter((enemy) => enemy.hp > 0 && enemy.move) ?? [];
+  const damagingMoves = activeBefore
+    .map((enemy) => enemy.move)
+    .filter((move) => enemyMoveDamageTotal(move) > 0);
+  if (!damagingMoves.length) return enemyFxHitCount(fallbackActor?.move ?? {});
+  return damagingMoves.reduce((sum, move) => sum + enemyFxHitCount(move), 0);
 }
 
 function enemyFxActorName(actor, actorCount = 1) {
@@ -1817,11 +1827,13 @@ function enemyFxLabel({ playerHpLoss, playerBlockLoss, playerStatusChips, enemyB
   return tone === "block" ? "방어" : "적 행동";
 }
 
-function enemyFxChips({ playerHpLoss, playerBlockLoss, playerStatusChips, enemyBlockGain, enemyHeal, enemyStatusChips, summonedCount, move, hitCount = enemyFxHitCount(move) }) {
+function enemyFxChips({ playerHpLoss, playerBlockLoss, playerStatusChips, enemyBlockGain, enemyHeal, enemyStatusChips, summonedCount, move, hitCount = enemyFxHitCount(move), actorCount = 1 }) {
   const chips = [];
   if (playerHpLoss > 0) chips.push({ label: `체력 -${playerHpLoss}`, tone: "damage" });
   else if (playerBlockLoss > 0) chips.push({ label: `방어 -${playerBlockLoss}`, tone: "block" });
-  if ((playerHpLoss > 0 || playerBlockLoss > 0 || move?.damage) && hitCount > 1) chips.push({ label: `연타 ×${hitCount}`, tone: "control" });
+  if ((playerHpLoss > 0 || playerBlockLoss > 0 || move?.damage) && hitCount > 1) {
+    chips.push({ label: `${actorCount > 1 ? "총 타격" : "연타"} ×${hitCount}`, tone: "control" });
+  }
   chips.push(...dedupeFxChips(playerStatusChips));
   if (enemyBlockGain > 0) chips.push({ label: `방어 +${enemyBlockGain}`, tone: "block" });
   if (enemyHeal > 0) chips.push({ label: `회복 +${enemyHeal}`, tone: "block" });
@@ -5484,7 +5496,7 @@ function renderCombatFxSource(fx) {
   const actorTemplate = fx.actorTemplateId ? GAME_DATA.enemies.find((enemy) => enemy.id === fx.actorTemplateId) : null;
   if (fx.kind === "enemy-action" && actorTemplate) {
     const hitLabel = Number(fx.hitCount ?? 1) > 1 ? `×${fx.hitCount}` : "";
-    const hitTitle = hitLabel ? ` · 연타 ${hitLabel}` : "";
+    const hitTitle = hitLabel ? ` · ${fx.actorCount > 1 ? "총 타격" : "연타"} ${hitLabel}` : "";
     return `
       <span class="fx-actor-echo" title="${fx.actorName ? `${fx.actorName} · ` : ""}${fx.moveName ?? fx.cardName}${hitTitle}"${fx.actorCount > 1 ? ` data-actor-count="×${fx.actorCount}"` : ""}${hitLabel ? ` data-hit-count="${hitLabel}"` : ""}>
         ${renderEnemySprite({ templateId: actorTemplate.id, name: actorTemplate.name, hp: actorTemplate.maxHp, maxHp: actorTemplate.maxHp }, actorTemplate)}

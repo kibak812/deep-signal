@@ -382,6 +382,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /duplicateFxCount/);
   assert.match(captureSource, /fixtureHasMultiHit/);
   assert.match(captureSource, /hitCount/);
+  assert.match(captureSource, /expectedHitBadge/);
+  assert.match(captureSource, /expectedHitCount/);
   assert.match(captureSource, /Victory coda lacks combat payoff/);
   assert.match(captureSource, /Victory coda should hide regular HUD/);
   assert.match(captureSource, /await navigate\(cdp, baseUrl\);\s*await waitForSelector\(cdp, "\.title-screen"\);/);
@@ -940,7 +942,10 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /fx\.actorCount > 1 \? " fx-grouped" : ""/);
   assert.match(mainSource, /data-actor-count="×\$\{fx\.actorCount\}"/);
   assert.match(mainSource, /function enemyFxHitCount\(move = \{\}\)/);
+  assert.match(mainSource, /function enemyFxTotalHitCount\(before, fallbackActor = null\)/);
+  assert.match(mainSource, /const hitCount = enemyFxTotalHitCount\(before, actor\)/);
   assert.match(mainSource, /data-hit-count="\$\{hitLabel\}"/);
+  assert.match(mainSource, /fx\.actorCount > 1 \? "총 타격" : "연타"/);
   assert.match(mainSource, /fx\.sourceMode \? ` fx-source-\$\{fx\.sourceMode\}` : ""/);
   assert.match(mainSource, /<span class="fx-trail"><i><\/i><\/span>/);
   assert.match(mainSource, /function renderCombatActionRecap\(run\)/);
@@ -985,6 +990,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function combatFxMergeChips\(chips, limit = 2\)/);
   assert.match(mainSource, /function combatFxSupportingChips\(chips = \[\]\)/);
   assert.match(mainSource, /function enemyFxActorCount\(before\)/);
+  assert.match(mainSource, /damagingMoves\.reduce\(\(sum, move\) => sum \+ enemyFxHitCount\(move\), 0\)/);
   assert.match(mainSource, /function enemyFxActorName\(actor, actorCount = 1\)/);
   assert.match(mainSource, /function enemyFxMoveName\(actor, actorCount = 1\)/);
   assert.match(mainSource, /actorName: enemyFxActorName\(actor, actorCount\)/);
