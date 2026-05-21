@@ -3002,8 +3002,8 @@ function renderCombatCardPreviewRail(card, preview, selected, targetCount, mode 
   const actionIcon = preview.playable ? (mode === "drag" ? "↓" : "✓") : "!";
   const detail = combatPreviewDetail(preview, selected);
   return `
-    <span class="preview-action-symbol" title="${actionLabel}" aria-hidden="true">${actionIcon}</span>
-    <strong class="preview-target-name" title="${targetName}"><i aria-hidden="true">${combatPreviewTargetIcon(targetCount)}</i><em>${targetName}</em></strong>
+    <span class="preview-action-symbol" title="${actionLabel}" data-symbol="${actionIcon}" aria-hidden="true"></span>
+    <strong class="preview-target-name" title="${targetName}"><i data-symbol="${combatPreviewTargetIcon(targetCount)}" aria-hidden="true"></i><em>${targetName}</em></strong>
     <div class="preview-effect-icons" aria-hidden="true">
       ${visualChips
         .map((chip) => {
@@ -3012,7 +3012,7 @@ function renderCombatCardPreviewRail(card, preview, selected, targetCount, mode 
         })
         .join("")}
     </div>
-    <b class="preview-energy-after" title="사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}" aria-hidden="true"><span>⚡</span>${Math.max(0, preview.energyAfter)}</b>
+    <b class="preview-energy-after" title="사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}" aria-hidden="true"><span class="preview-energy-icon"></span><em>${Math.max(0, preview.energyAfter)}</em></b>
     <span class="sr-only">${card.name}. ${actionLabel}. 대상 ${targetName}. ${detail}. 사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}.</span>
   `;
 }

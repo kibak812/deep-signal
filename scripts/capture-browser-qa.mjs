@@ -1276,11 +1276,17 @@ async function assertEnergyLockedHandHover(cdp) {
       if (!element) return "";
       const clone = element.cloneNode(true);
       clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      clone.querySelectorAll(".preview-energy-after").forEach((node) => node.remove());
       return clone.innerText.replace(/\\s+/g, " ").trim();
     };
     const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const railText = compactText(rail);
     const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
+    const railEnergyText = readableText(rail?.querySelector(".preview-energy-after em"));
+    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
+      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
+      : "";
+    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
     const cardRaised =
       Boolean(cardBox) &&
       cardBox.top >= 0 &&
@@ -1838,12 +1844,14 @@ async function assertCardHoverLayout(cdp) {
       if (!element) return "";
       const clone = element.cloneNode(true);
       clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      clone.querySelectorAll(".preview-energy-after").forEach((node) => node.remove());
       return clone.innerText.replace(/\\s+/g, " ").trim();
     };
     const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const previewRail = document.querySelector(".combat-card-preview-rail:not([hidden])");
     const previewRailText = compactText(previewRail);
     const previewRailAssistiveText = readableText(previewRail?.querySelector(".sr-only"));
+    const previewRailSemanticText = previewRailText + " " + previewRailAssistiveText;
     const tooltipPreview = tooltip.querySelector(".tooltip-preview");
     const tooltipPreviewHidden = !tooltipPreview || getComputedStyle(tooltipPreview).display === "none";
     const previewRailCompact = Boolean(
@@ -1853,7 +1861,7 @@ async function assertCardHoverLayout(cdp) {
     );
     const previewRailReadable = Boolean(
       previewRail &&
-      /피해|방어|전하|표식|바이러스|취약|약화|⚡/.test(previewRailText) &&
+      /피해|방어|전하|표식|바이러스|취약|약화/.test(previewRailSemanticText) &&
       /사용 가능|사용 불가|놓으면 사용/.test(previewRailAssistiveText) &&
       previewRailCompact
     );
@@ -1893,7 +1901,7 @@ async function assertCardHoverLayout(cdp) {
     const selfBlockAfter = selfBlockPreview?.querySelector("strong")?.getAttribute("data-preview-after") ?? "";
     const selfBlockStyle = selfBlockPreview ? getComputedStyle(selfBlockPreview) : null;
     const selfBlockProjectionOk = Boolean(selfBlockPreview && /^\\+\\d+/.test(selfBlockResult) && Number(selfBlockAfter) > 0 && selfBlockStyle?.display !== "none");
-    const selfUtilityProjectionOk = selfPreview && /뽑기|전하|회복|정화|비용|⚡/.test(previewRailText + " " + previewRailAssistiveText);
+    const selfUtilityProjectionOk = selfPreview && /뽑기|전하|회복|정화|비용/.test(previewRailSemanticText);
     const selfProjectionOk = !selfPreview || selfBlockProjectionOk || selfUtilityProjectionOk;
     const enemyPreview = Boolean(document.querySelector(".enemy-card.preview-target"));
     const aimLine = document.querySelector(".combat-aim-line");
@@ -1911,6 +1919,7 @@ async function assertCardHoverLayout(cdp) {
       previewRailCompact,
       previewRailText,
       previewRailAssistiveText,
+      previewRailSemanticText,
       previewBoardActive,
       previewingCard: Boolean(previewingCard),
       dimmedCards,
@@ -1941,6 +1950,7 @@ async function assertCardOutcomeReadability(cdp) {
       if (!element) return "";
       const clone = element.cloneNode(true);
       clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      clone.querySelectorAll(".preview-energy-after").forEach((node) => node.remove());
       return cleanText(clone);
     };
     const handOutcomeNodes = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card'] .card-outcome .primary em")];
@@ -1962,6 +1972,11 @@ async function assertCardOutcomeReadability(cdp) {
     }));
     const railText = visibleText(rail);
     const railAssistiveText = cleanText(rail?.querySelector(".sr-only"));
+    const railEnergyText = cleanText(rail?.querySelector(".preview-energy-after em"));
+    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
+      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
+      : "";
+    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
     const semanticPattern = /(피해|방어|뽑기|전하|정화|회복|처치|표식|바이러스|취약|약화|집중|생성|버림|소멸|강화|비용|효과)/;
     const bareNumberPattern = /^[+−-]?\\d+$/;
     const railCompact =
@@ -1977,7 +1992,8 @@ async function assertCardOutcomeReadability(cdp) {
       outcomeFits.every((item) => item.fit);
     const hasReadableRail =
       Boolean(rail) &&
-      /(?:전하|⚡)\\s*\\d+/.test(railText) &&
+      /^\\d+$/.test(railEnergyText) &&
+      (railEnergyIcon === "⚡" || /전하/.test(railAssistiveText)) &&
       railEffectTexts.length >= 1 &&
       railEffectTexts.every((text) => semanticPattern.test(text) && !bareNumberPattern.test(text)) &&
       railEffectsFit.every((item) => item.fit) &&
@@ -1989,6 +2005,9 @@ async function assertCardOutcomeReadability(cdp) {
       outcomeFits,
       railText,
       railAssistiveText,
+      railEnergyText,
+      railEnergyIcon,
+      railVisualSummary,
       railCompact,
       railEffectTexts,
       railEffectsFit,
@@ -2614,11 +2633,17 @@ async function assertAttackCardHoverTarget(cdp) {
       if (!element) return "";
       const clone = element.cloneNode(true);
       clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      clone.querySelectorAll(".preview-energy-after").forEach((node) => node.remove());
       return clone.innerText.replace(/\\s+/g, " ").trim();
     };
     const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const railText = compactText(rail);
     const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
+    const railEnergyText = readableText(rail?.querySelector(".preview-energy-after em"));
+    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
+      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
+      : "";
+    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
     const targetStyle = target ? getComputedStyle(target) : null;
     const healthResult = health?.getAttribute("data-preview-result") ?? "";
     const previewHpLoss = targetStyle?.getPropertyValue("--preview-hp-loss").trim() ?? "";
@@ -2637,7 +2662,9 @@ async function assertAttackCardHoverTarget(cdp) {
       parseFloat(previewHpLoss) > 0 &&
       /피해|처치|-\\d+/.test(markerText) &&
       /처치|-\\d+/.test(healthResult) &&
-      /피해|⚡/.test(railText) &&
+      /피해/.test(railText) &&
+      /^\\d+$/.test(railEnergyText) &&
+      (railEnergyIcon === "⚡" || /전하/.test(railAssistiveText)) &&
       /펄스 랜스.*사용 가능.*대상/.test(railAssistiveText);
     return {
       ok,
@@ -2646,6 +2673,9 @@ async function assertAttackCardHoverTarget(cdp) {
       previewHpLoss,
       railText,
       railAssistiveText,
+      railEnergyText,
+      railEnergyIcon,
+      railVisualSummary,
       lineOpacity: lineStyle?.opacity ?? "",
       lineBeforeHeight: lineBefore?.height ?? "",
       targetClass: target?.className ?? "",

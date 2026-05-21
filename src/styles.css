@@ -7156,6 +7156,10 @@ dd,
   line-height: 1;
 }
 
+.combat-card-preview-rail .preview-action-symbol::before {
+  content: attr(data-symbol);
+}
+
 .combat-card-preview-rail .preview-target-name {
   min-width: 0;
   display: grid;
@@ -7174,6 +7178,10 @@ dd,
   color: currentColor;
   font-style: normal;
   text-align: center;
+}
+
+.combat-card-preview-rail .preview-target-name i::before {
+  content: attr(data-symbol);
 }
 
 .combat-card-preview-rail .preview-target-name em {
@@ -7264,10 +7272,18 @@ dd,
   white-space: nowrap;
 }
 
-.preview-energy-after span {
+.preview-energy-after em {
+  font-style: normal;
+}
+
+.preview-energy-after .preview-energy-icon {
   color: rgba(125, 211, 252, 0.86);
   font-size: 0.7rem;
   font-weight: 1000;
+}
+
+.preview-energy-after .preview-energy-icon::before {
+  content: "⚡";
 }
 
 .combat-aim-line[hidden] {
