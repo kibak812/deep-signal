@@ -1263,9 +1263,68 @@ function aggregateFinalBossAnalysis(runs) {
       wins: averageFinalBossRoles(wins),
       losses: averageFinalBossRoles(losses)
     },
+    byDifficulty: finalBossDifficultyRows(runs),
     timelineSamples: losses.slice(0, 4).map(finalBossTimelineSample),
     primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses, pressureProfile })
   };
+}
+
+function finalBossDifficultyRows(runs) {
+  return Object.values(
+    runs.reduce((groups, run) => {
+      const key = String(run.difficulty);
+      groups[key] ??= {
+        difficulty: run.difficulty,
+        difficultyName: run.difficultyName,
+        reached: 0,
+        wins: 0,
+        losses: 0,
+        entryHpTotal: 0,
+        entryHpRatioTotal: 0,
+        lossEntryHpTotal: 0,
+        lossEntryHpRatioTotal: 0,
+        lossBurstDefenseTotal: 0,
+        lowHpEntryLosses: 0,
+        sequenceLosses: 0,
+        noBurstDefenseAtRequiemLosses: 0
+      };
+      const group = groups[key];
+      if (!run.finalBoss) return groups;
+      const entryHp = finalBossEntryHp(run);
+      const entryHpRatio = finalBossEntryHpRatio(run);
+      group.reached += 1;
+      group.wins += run.won ? 1 : 0;
+      group.entryHpTotal += entryHp;
+      group.entryHpRatioTotal += entryHpRatio;
+      if (!run.won) {
+        group.losses += 1;
+        group.lossEntryHpTotal += entryHp;
+        group.lossEntryHpRatioTotal += entryHpRatio;
+        group.lossBurstDefenseTotal += run.finalBoss?.roles?.burstDefense ?? run.roleProfile?.burstDefense ?? 0;
+        group.lowHpEntryLosses += entryHp <= 18 ? 1 : 0;
+        group.sequenceLosses += finalBossMoveSequenceSeen(run, ["gate_slam", "gate_call", "phase_requiem"]) ? 1 : 0;
+        group.noBurstDefenseAtRequiemLosses += handBurstDefenseCount(firstFinalBossTimelineEntry(run, "phase_requiem")?.hand ?? []) === 0 ? 1 : 0;
+      }
+      return groups;
+    }, {})
+  )
+    .map((group) => ({
+      difficulty: group.difficulty,
+      difficultyName: group.difficultyName,
+      reached: group.reached,
+      wins: group.wins,
+      losses: group.losses,
+      winRate: group.reached ? round(group.wins / group.reached) : 0,
+      averageEntryHp: group.reached ? round(group.entryHpTotal / group.reached) : 0,
+      averageEntryHpRatio: group.reached ? round(group.entryHpRatioTotal / group.reached) : 0,
+      averageLossEntryHp: group.losses ? round(group.lossEntryHpTotal / group.losses) : 0,
+      averageLossEntryHpRatio: group.losses ? round(group.lossEntryHpRatioTotal / group.losses) : 0,
+      averageLossBurstDefense: group.losses ? round(group.lossBurstDefenseTotal / group.losses) : 0,
+      lowHpEntryLosses: group.lowHpEntryLosses,
+      sequenceLosses: group.sequenceLosses,
+      noBurstDefenseAtRequiemLosses: group.noBurstDefenseAtRequiemLosses
+    }))
+    .sort((left, right) => left.difficulty - right.difficulty);
 }
 
 function rankedMoveEntries(runs) {
@@ -1286,6 +1345,14 @@ function isCloseFinalBossLoss(run) {
   const boss = run.finalBoss;
   if (!boss) return false;
   return boss.bossHp <= 70 || boss.bossHp / Math.max(1, boss.bossMaxHp ?? 350) <= 0.2;
+}
+
+function finalBossEntryHp(run) {
+  return run.finalBossTimeline?.[0]?.playerHp ?? run.finalBoss?.playerHp ?? run.hp ?? 0;
+}
+
+function finalBossEntryHpRatio(run) {
+  return finalBossEntryHp(run) / Math.max(1, run.maxHp ?? 1);
 }
 
 function finalBossMoveSeen(run, moveId) {
@@ -1440,6 +1507,14 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
       text: `${hardest.difficultyName} 평균 도달이 ${hardest.averageFloors}층입니다. 완주 난이도는 높게 유지하되 1막 보스 이전 사망 비율을 낮추면 도전 의욕이 더 살아납니다.`
     });
   }
+  const inversion = difficultyCurveInversion(byDifficulty);
+  if (inversion) {
+    recommendations.push({
+      tone: "steady",
+      area: "난이도 곡선",
+      text: `${inversion.previous.difficultyName} 승률 ${percent(inversion.previous.winRate)}보다 ${inversion.current.difficultyName} 승률 ${percent(inversion.current.winRate)}가 높습니다. 표본 변동인지 확인하고, 직접 플레이 로그와 장시간 표본을 함께 보고 조정하세요.`
+    });
+  }
   const topLoss = lossReasons[0];
   if (topLoss) {
     recommendations.push({
@@ -1498,6 +1573,16 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
     });
   }
   return recommendations;
+}
+
+function difficultyCurveInversion(byDifficulty) {
+  const sorted = [...byDifficulty].sort((left, right) => left.difficulty - right.difficulty);
+  for (let index = 1; index < sorted.length; index += 1) {
+    const previous = sorted[index - 1];
+    const current = sorted[index];
+    if (current.winRate > previous.winRate + 0.03) return { previous, current };
+  }
+  return null;
 }
 
 function percent(value) {

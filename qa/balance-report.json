@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T20:24:00.428Z",
+  "generatedAt": "2026-05-21T21:03:22.745Z",
   "config": {
     "seedCount": 18,
     "difficulties": [
@@ -109,7 +109,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 20
+      "durationMs": 16
     },
     {
       "seed": "balance-02-d0",
@@ -304,7 +304,7 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "seed": "balance-04-d0",
@@ -496,7 +496,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5
     },
     {
       "seed": "balance-06-d0",
@@ -595,7 +595,7 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-07-d0",
@@ -845,7 +845,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 7
     },
     {
       "seed": "balance-10-d0",
@@ -942,7 +942,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5
     },
     {
       "seed": "balance-11-d0",
@@ -1138,7 +1138,7 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 6
     },
     {
       "seed": "balance-13-d0",
@@ -1424,7 +1424,7 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-17-d0",
@@ -1523,7 +1523,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 4
     },
     {
       "seed": "balance-18-d0",
@@ -1618,7 +1618,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-01-d1",
@@ -1716,7 +1716,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d1",
@@ -2349,7 +2349,7 @@
       ],
       "steps": 136,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d1",
@@ -2541,7 +2541,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-06-d1",
@@ -2839,7 +2839,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d1",
@@ -2935,7 +2935,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-10-d1",
@@ -4035,7 +4035,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-17-d1",
@@ -4131,7 +4131,7 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-18-d1",
@@ -4327,7 +4327,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-02-d2",
@@ -5069,7 +5069,7 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-05-d2",
@@ -5309,7 +5309,7 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-08-d2",
@@ -5714,7 +5714,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-10-d2",
@@ -6021,7 +6021,7 @@
       ],
       "steps": 103,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-11-d2",
@@ -6119,7 +6119,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d2",
@@ -6218,7 +6218,7 @@
       ],
       "steps": 156,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-13-d2",
@@ -6317,7 +6317,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-14-d2",
@@ -6613,7 +6613,7 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-17-d2",
@@ -7134,7 +7134,7 @@
       ],
       "steps": 157,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d3",
@@ -7544,7 +7544,7 @@
       ],
       "steps": 143,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d3",
@@ -8058,7 +8058,7 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-08-d3",
@@ -8155,7 +8155,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d3",
@@ -8198,7 +8198,7 @@
       ],
       "steps": 21,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "seed": "balance-10-d3",
@@ -8754,7 +8754,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-14-d3",
@@ -8851,7 +8851,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d3",
@@ -9163,7 +9163,7 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-16-d3",
@@ -9750,7 +9750,7 @@
       ],
       "steps": 169,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d4",
@@ -9945,7 +9945,7 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d4",
@@ -10003,7 +10003,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-05-d4",
@@ -10467,7 +10467,7 @@
       ],
       "steps": 51,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-08-d4",
@@ -11179,7 +11179,7 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d4",
@@ -11274,7 +11274,7 @@
       ],
       "steps": 146,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-13-d4",
@@ -11720,7 +11720,7 @@
       ],
       "steps": 82,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-18-d4",
@@ -12335,7 +12335,7 @@
       ],
       "steps": 89,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-05-d5",
@@ -12490,7 +12490,7 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-07-d5",
@@ -12788,7 +12788,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-10-d5",
@@ -12887,7 +12887,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-11-d5",
@@ -13196,7 +13196,7 @@
       ],
       "steps": 136,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d5",
@@ -13255,7 +13255,7 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-13-d5",
@@ -13998,7 +13998,7 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-17-d5",
@@ -14316,7 +14316,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-18-d5",
@@ -15066,6 +15066,104 @@
         "upgraded": 4.14
       }
     },
+    "byDifficulty": [
+      {
+        "difficulty": 0,
+        "difficultyName": "표층",
+        "reached": 15,
+        "wins": 15,
+        "losses": 0,
+        "winRate": 1,
+        "averageEntryHp": 53.8,
+        "averageEntryHpRatio": 0.57,
+        "averageLossEntryHp": 0,
+        "averageLossEntryHpRatio": 0,
+        "averageLossBurstDefense": 0,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 0,
+        "noBurstDefenseAtRequiemLosses": 0
+      },
+      {
+        "difficulty": 1,
+        "difficultyName": "냉수층",
+        "reached": 18,
+        "wins": 14,
+        "losses": 4,
+        "winRate": 0.78,
+        "averageEntryHp": 44.17,
+        "averageEntryHpRatio": 0.47,
+        "averageLossEntryHp": 41,
+        "averageLossEntryHpRatio": 0.43,
+        "averageLossBurstDefense": 1.25,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 4,
+        "noBurstDefenseAtRequiemLosses": 3
+      },
+      {
+        "difficulty": 2,
+        "difficultyName": "무광층",
+        "reached": 17,
+        "wins": 12,
+        "losses": 5,
+        "winRate": 0.71,
+        "averageEntryHp": 47.82,
+        "averageEntryHpRatio": 0.5,
+        "averageLossEntryHp": 43.8,
+        "averageLossEntryHpRatio": 0.45,
+        "averageLossBurstDefense": 0.6,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 5,
+        "noBurstDefenseAtRequiemLosses": 4
+      },
+      {
+        "difficulty": 3,
+        "difficultyName": "압력층",
+        "reached": 14,
+        "wins": 9,
+        "losses": 5,
+        "winRate": 0.64,
+        "averageEntryHp": 35.07,
+        "averageEntryHpRatio": 0.4,
+        "averageLossEntryHp": 38.4,
+        "averageLossEntryHpRatio": 0.45,
+        "averageLossBurstDefense": 1.4,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 5,
+        "noBurstDefenseAtRequiemLosses": 2
+      },
+      {
+        "difficulty": 4,
+        "difficultyName": "무호흡층",
+        "reached": 13,
+        "wins": 10,
+        "losses": 3,
+        "winRate": 0.77,
+        "averageEntryHp": 35.69,
+        "averageEntryHpRatio": 0.41,
+        "averageLossEntryHp": 51.33,
+        "averageLossEntryHpRatio": 0.59,
+        "averageLossBurstDefense": 2,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 3,
+        "noBurstDefenseAtRequiemLosses": 2
+      },
+      {
+        "difficulty": 5,
+        "difficultyName": "최심층",
+        "reached": 13,
+        "wins": 8,
+        "losses": 5,
+        "winRate": 0.62,
+        "averageEntryHp": 34.62,
+        "averageEntryHpRatio": 0.42,
+        "averageLossEntryHp": 32.2,
+        "averageLossEntryHpRatio": 0.41,
+        "averageLossBurstDefense": 1.4,
+        "lowHpEntryLosses": 0,
+        "sequenceLosses": 3,
+        "noBurstDefenseAtRequiemLosses": 4
+      }
+    ],
     "timelineSamples": [
       {
         "seed": "balance-02-d1",
@@ -15569,6 +15667,11 @@
     "primaryIssue": "2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
   },
   "recommendations": [
+    {
+      "tone": "steady",
+      "area": "난이도 곡선",
+      "text": "압력층 승률 50%보다 무호흡층 승률 56%가 높습니다. 표본 변동인지 확인하고, 직접 플레이 로그와 장시간 표본을 함께 보고 조정하세요."
+    },
     {
       "tone": "steady",
       "area": "주요 사망 원인",

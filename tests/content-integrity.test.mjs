@@ -595,6 +595,13 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /function finalBossPressureProfile\(losses\)/);
   assert.match(balanceSource, /sequenceLosses/);
   assert.match(balanceSource, /averageRequiemHandBurstDefense/);
+  assert.match(balanceSource, /function finalBossDifficultyRows\(runs\)/);
+  assert.match(balanceSource, /averageEntryHpRatio/);
+  assert.match(balanceSource, /averageLossBurstDefense/);
+  assert.match(balanceSource, /noBurstDefenseAtRequiemLosses/);
+  assert.match(balanceSource, /function finalBossEntryHp\(run\)/);
+  assert.match(balanceSource, /function difficultyCurveInversion\(byDifficulty\)/);
+  assert.match(balanceSource, /area: "난이도 곡선"/);
   assert.match(balanceSource, /문 낙하→호출→레퀴엠/);
   assert.match(balanceSource, /burstDefense/);
   assert.match(balanceSource, /primaryIssue/);
