@@ -1,0 +1,63 @@
+{
+  "ok": true,
+  "outcomeTexts": [
+    "피해 6",
+    "방어 5",
+    "뽑기 1",
+    "피해 3",
+    "피해 4",
+    "피해 5"
+  ],
+  "outcomeFits": [
+    {
+      "text": "피해 6",
+      "fit": true,
+      "width": 30,
+      "scrollWidth": 30
+    },
+    {
+      "text": "방어 5",
+      "fit": true,
+      "width": 29,
+      "scrollWidth": 29
+    },
+    {
+      "text": "뽑기 1",
+      "fit": true,
+      "width": 27,
+      "scrollWidth": 27
+    },
+    {
+      "text": "피해 3",
+      "fit": true,
+      "width": 29,
+      "scrollWidth": 29
+    },
+    {
+      "text": "피해 4",
+      "fit": true,
+      "width": 30,
+      "scrollWidth": 30
+    },
+    {
+      "text": "피해 5",
+      "fit": true,
+      "width": 29,
+      "scrollWidth": 29
+    }
+  ],
+  "railText": "✓ ⌖ 로그 흡착자 피해 6 전하 2 펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 남은 전하 2.",
+  "railEffectTexts": [
+    "피해 6"
+  ],
+  "railEffectsFit": [
+    {
+      "text": "피해 6",
+      "fit": true,
+      "width": 27,
+      "scrollWidth": 27
+    }
+  ],
+  "hasReadableHand": true,
+  "hasReadableRail": true
+}

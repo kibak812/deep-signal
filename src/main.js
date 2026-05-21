@@ -3008,18 +3008,35 @@ function renderCombatCardPreviewRail(card, preview, selected, targetCount, mode 
       ${visualChips
         .map((chip) => {
           const visual = cardOutcomeVisual(chip);
-          return `<i class="${chip.tone}" title="${chip.label}"><em>${cardOutcomeText(chip, visual)}</em></i>`;
+          return `<i class="${chip.tone}" title="${chip.label}"><em>${cardCompactOutcomeText(chip, visual)}</em></i>`;
         })
         .join("")}
     </div>
-    <b class="preview-energy-after" title="사용 후 에너지" aria-hidden="true">⚡${Math.max(0, preview.energyAfter)}</b>
-    <span class="sr-only">${card.name}. ${actionLabel}. 대상 ${targetName}. ${detail}. 사용 후 에너지 ${Math.max(0, preview.energyAfter)}.</span>
+    <b class="preview-energy-after" title="사용 후 남은 전하" aria-hidden="true"><span>전하</span>${Math.max(0, preview.energyAfter)}</b>
+    <span class="sr-only">${card.name}. ${actionLabel}. 대상 ${targetName}. ${detail}. 사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}.</span>
   `;
 }
 
 function combatPreviewRailLabel(card, preview, selected, targetCount, mode = "hover") {
   const actionLabel = mode === "drag" ? "놓으면 사용" : preview.playable ? "사용 가능" : "사용 불가";
-  return `${card.name}. ${actionLabel}. 대상 ${combatPreviewTargetName(preview, selected, targetCount)}. ${combatPreviewDetail(preview, selected)}. 사용 후 에너지 ${Math.max(0, preview.energyAfter)}.`;
+  return `${card.name}. ${actionLabel}. 대상 ${combatPreviewTargetName(preview, selected, targetCount)}. ${combatPreviewDetail(preview, selected)}. 사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}.`;
+}
+
+function cardCompactOutcomeText(chip, visual) {
+  const label = String(chip?.label ?? "").trim();
+  const value = String(visual?.value ?? cardOutcomeText(chip, visual)).trim();
+  const cleanNumber = value.replace(/^[+−-]/, "");
+  if (/처치/.test(label)) return "처치";
+  if (/피해|체력 -|방어 -/.test(label)) return cleanNumber ? `피해 ${cleanNumber}` : "피해";
+  if (/방어/.test(label)) return cleanNumber ? `방어 ${cleanNumber}` : "방어";
+  if (/뽑기/.test(label)) return cleanNumber ? `뽑기 ${cleanNumber}` : "뽑기";
+  if (/에너지|전하/.test(label)) return cleanNumber ? `전하 ${cleanNumber}` : "전하";
+  if (/정화/.test(label)) return cleanNumber ? `정화 ${cleanNumber}` : "정화";
+  if (/회복/.test(label)) return cleanNumber ? `회복 ${cleanNumber}` : "회복";
+  if (/약화|취약|바이러스|표식|집중|상태/.test(label) || chip?.tone === "status") {
+    return label.replace(/^(대상|자신|모든 적)\s+/, "").replace(/\s+/g, " ").trim();
+  }
+  return value || label || "효과";
 }
 
 function combatPreviewTargetName(preview, selected, targetCount = 1) {
@@ -11497,7 +11514,7 @@ function renderCardOutcome(preview) {
       ${chips
         .map((chip, index) => {
           const visual = cardOutcomeVisual(chip);
-          return `<span class="${chip.tone}${index === 0 ? " primary" : ""}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardOutcomeText(chip, visual)}</em><small class="sr-only">${chip.label}</small></span>`;
+          return `<span class="${chip.tone}${index === 0 ? " primary" : ""}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardCompactOutcomeText(chip, visual)}</em><small class="sr-only">${chip.label}</small></span>`;
         })
         .join("")}
     </div>

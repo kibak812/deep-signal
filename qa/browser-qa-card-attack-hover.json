@@ -3,7 +3,7 @@
   "markerText": "-6",
   "healthResult": "-6",
   "previewHpLoss": "17.14%",
-  "railText": "✓ ⌖ 로그 흡착자 -6 ⚡2 펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 에너지 2.",
+  "railText": "✓ ⌖ 로그 흡착자 피해 6 전하 2 펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 남은 전하 2.",
   "lineOpacity": "0.74",
   "lineBeforeHeight": "2px",
   "targetClass": "enemy-card intent-debuff selected preview-target preview-damage",
@@ -34,11 +34,11 @@
       "height": 343
     },
     "rail": {
-      "left": 477,
+      "left": 466,
       "top": 328,
-      "right": 803,
+      "right": 814,
       "bottom": 362,
-      "width": 326,
+      "width": 348,
       "height": 34
     },
     "tooltip": {

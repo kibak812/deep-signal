@@ -6223,11 +6223,13 @@ dd,
 }
 
 .hand-zone .card-outcome span em {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.78rem;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 0.72rem;
   font-weight: 1000;
   letter-spacing: 0;
   line-height: 1.08;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -6954,10 +6956,10 @@ dd,
 
 .combat-card-preview-rail {
   min-width: 0;
-  width: min(326px, 100%);
+  width: min(348px, 100%);
   justify-self: center;
   display: grid;
-  grid-template-columns: 23px minmax(72px, 1fr) minmax(58px, auto) minmax(64px, auto);
+  grid-template-columns: 23px minmax(72px, 1fr) minmax(88px, auto) minmax(58px, auto);
   gap: 6px;
   align-items: center;
   border: 1px solid color-mix(in srgb, currentColor 42%, rgba(236, 248, 243, 0.16));
@@ -7044,7 +7046,7 @@ dd,
   display: flex;
   justify-content: flex-end;
   gap: 4px;
-  max-width: 72px;
+  max-width: 104px;
   overflow: hidden;
 }
 
@@ -7099,8 +7101,12 @@ dd,
 }
 
 .preview-energy-after {
-  min-width: 42px;
+  min-width: 50px;
   justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   border: 1px solid rgba(125, 211, 252, 0.2);
   border-radius: 4px;
   background:
@@ -7114,6 +7120,12 @@ dd,
   line-height: 1;
   text-align: center;
   white-space: nowrap;
+}
+
+.preview-energy-after span {
+  color: rgba(236, 248, 243, 0.64);
+  font-size: 0.62rem;
+  font-weight: 800;
 }
 
 .combat-aim-line[hidden] {

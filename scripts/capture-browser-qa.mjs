@@ -186,6 +186,7 @@ try {
   await waitForSelector(cdp, ".card-portal-tooltip:not([hidden])");
   await waitForSelector(cdp, ".combat-card-preview-rail:not([hidden])");
   await assertCardHoverLayout(cdp);
+  await assertCardOutcomeReadability(cdp);
   await capture(cdp, "browser-qa-combat-card-hover.png");
   await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 4, y: 4, button: "none" });
   await wait(120);
@@ -1699,6 +1700,57 @@ async function assertCardHoverLayout(cdp) {
     };
   })()`);
   if (!result.ok) throw new Error(`Card hover layout failed: ${JSON.stringify(result)}`);
+}
+
+async function assertCardOutcomeReadability(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const cleanText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const handOutcomeNodes = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card'] .card-outcome .primary em")];
+    const rail = document.querySelector(".combat-card-preview-rail:not([hidden])");
+    const railEffectNodes = [...(rail?.querySelectorAll(".preview-effect-icons em") ?? [])];
+    const outcomeTexts = handOutcomeNodes.map(cleanText).filter(Boolean);
+    const railEffectTexts = railEffectNodes.map(cleanText).filter(Boolean);
+    const outcomeFits = handOutcomeNodes.map((item) => ({
+      text: cleanText(item),
+      fit: item.scrollWidth <= item.clientWidth + 2,
+      width: Math.round(item.clientWidth),
+      scrollWidth: Math.round(item.scrollWidth)
+    }));
+    const railEffectsFit = railEffectNodes.map((item) => ({
+      text: cleanText(item),
+      fit: item.scrollWidth <= item.clientWidth + 2,
+      width: Math.round(item.clientWidth),
+      scrollWidth: Math.round(item.scrollWidth)
+    }));
+    const railText = cleanText(rail);
+    const semanticPattern = /(피해|방어|뽑기|전하|정화|회복|처치|표식|바이러스|취약|약화|집중|생성|버림|소멸|강화|비용|효과)/;
+    const bareNumberPattern = /^[+−-]?\\d+$/;
+    const hasReadableHand =
+      outcomeTexts.length >= 6 &&
+      outcomeTexts.some((text) => /피해\\s*\\d+/.test(text)) &&
+      outcomeTexts.some((text) => /방어\\s*\\d+/.test(text)) &&
+      outcomeTexts.some((text) => /뽑기\\s*\\d+/.test(text)) &&
+      outcomeTexts.every((text) => semanticPattern.test(text) && !bareNumberPattern.test(text)) &&
+      outcomeFits.every((item) => item.fit);
+    const hasReadableRail =
+      Boolean(rail) &&
+      /전하\\s*\\d+/.test(railText) &&
+      railEffectTexts.length >= 1 &&
+      railEffectTexts.every((text) => semanticPattern.test(text) && !bareNumberPattern.test(text)) &&
+      railEffectsFit.every((item) => item.fit);
+    return {
+      ok: hasReadableHand && hasReadableRail,
+      outcomeTexts,
+      outcomeFits,
+      railText,
+      railEffectTexts,
+      railEffectsFit,
+      hasReadableHand,
+      hasReadableRail
+    };
+  })()`);
+  if (!result.ok) throw new Error(`Card outcome readability failed: ${JSON.stringify(result)}`);
+  await writeFile(resolve(qaDir, "browser-qa-card-outcome-readability.json"), `${JSON.stringify(result, null, 2)}\n`);
 }
 
 async function assertMobileCombatTouchUx(cdp) {

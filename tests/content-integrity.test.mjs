@@ -263,6 +263,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
+  assert.match(readme, /browser-qa-card-outcome-readability\.json/);
   assert.match(readme, /browser-qa-card-attack-hover\.png/);
   assert.match(readme, /browser-qa-card-attack-hover\.json/);
   assert.match(readme, /browser-qa-card-attack-fx\.png/);
@@ -335,6 +336,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /browser-qa-.+\\.png/);
   assert.match(auditSource, /검증 산출물/);
   assert.match(captureSource, /browser-qa-combat-card-hover\.png/);
+  assert.match(captureSource, /browser-qa-card-outcome-readability\.json/);
+  assert.match(captureSource, /function assertCardOutcomeReadability\(cdp\)/);
+  assert.match(captureSource, /await assertCardOutcomeReadability\(cdp\);/);
+  assert.match(captureSource, /Card outcome readability failed/);
   assert.match(captureSource, /browser-qa-card-attack-hover\.png/);
   assert.match(captureSource, /browser-qa-card-attack-hover\.json/);
   assert.match(captureSource, /function assertAttackCardHoverTarget\(cdp\)/);
@@ -385,6 +390,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function stageSummaryFixture\(cdp, outcome\)/);
   assert.match(captureSource, /function stageRecordsFixture\(cdp\)/);
   assert.match(captureSource, /function assertCardHoverLayout\(cdp\)/);
+  assert.ok(captureSource.includes("outcomeTexts.some((text) => /피해\\\\s*\\\\d+/.test(text))"));
+  assert.ok(captureSource.includes("outcomeTexts.some((text) => /방어\\\\s*\\\\d+/.test(text))"));
+  assert.ok(captureSource.includes("outcomeTexts.some((text) => /뽑기\\\\s*\\\\d+/.test(text))"));
   assert.match(captureSource, /function stageVictoryCodaFixture\(cdp\)/);
   assert.match(captureSource, /function captureVictoryCodaFlow\(cdp\)/);
   assert.match(captureSource, /function assertVictoryCodaUx\(cdp\)/);
@@ -1065,6 +1073,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function hideCombatAimLine\(\)/);
   assert.match(mainSource, /function renderCombatCardPreviewRail\(card, preview, selected, targetCount, mode = "hover"\)/);
   assert.match(mainSource, /function combatPreviewRailLabel\(card, preview, selected, targetCount, mode = "hover"\)/);
+  assert.match(mainSource, /function cardCompactOutcomeText\(chip, visual\)/);
   assert.match(mainSource, /function combatPreviewTargetName\(preview, selected, targetCount = 1\)/);
   assert.match(mainSource, /function combatPreviewTargetIcon\(targetCount = 1\)/);
   assert.match(mainSource, /function combatPreviewTargetBadge\(preview, selected, targetCount = 1\)/);
@@ -1380,9 +1389,14 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-card-preview-rail \.preview-target-name/);
   assert.match(styleSource, /\.combat-card-preview-rail \.preview-effect-icons/);
   assert.match(styleSource, /\.preview-energy-after/);
-  assert.match(mainSource, /class="preview-energy-after"[\s\S]*>⚡\$\{Math\.max\(0, preview\.energyAfter\)\}<\/b>/);
+  assert.match(mainSource, /cardCompactOutcomeText\(chip, visual\)/);
+  assert.match(mainSource, /return cleanNumber \? `피해 \$\{cleanNumber\}` : "피해"/);
+  assert.match(mainSource, /return cleanNumber \? `전하 \$\{cleanNumber\}` : "전하"/);
+  assert.match(mainSource, /class="preview-energy-after"[\s\S]*<span>전하<\/span>\$\{Math\.max\(0, preview\.energyAfter\)\}<\/b>/);
+  assert.match(mainSource, /사용 후 남은 전하 \$\{Math\.max\(0, preview\.energyAfter\)\}/);
   assert.doesNotMatch(mainSource, /class="preview-energy-after"[\s\S]*>에너지 \$\{Math\.max\(0, preview\.energyAfter\)\}<\/b>/);
-  assert.match(styleSource, /\.preview-energy-after[\s\S]*min-width:\s*42px/);
+  assert.match(styleSource, /\.preview-energy-after[\s\S]*min-width:\s*50px/);
+  assert.match(styleSource, /\.preview-energy-after span[\s\S]*font-size:\s*0\.62rem/);
   assert.match(styleSource, /\.preview-energy-after[\s\S]*font-family:\s*inherit/);
   assert.match(styleSource, /\.combat-aim-line/);
   assert.match(styleSource, /\.combat-aim-line\.aim-drag/);
@@ -2338,7 +2352,7 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(styleSource, /\.assist-target-lock/);
   assert.match(styleSource, /\.assist-action-lock/);
   assert.match(styleSource, /\.target-assist\.previewing[\s\S]*width:\s*1px/);
-  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*width:\s*min\(326px, 100%\)/);
+  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*width:\s*min\(348px, 100%\)/);
   assert.match(styleSource, /\.assist-target-lock,[\s\S]*\.assist-action-lock[\s\S]*grid-template-columns:\s*auto minmax\(0, 1fr\)/);
   assert.match(styleSource, /\.assist-target-lock,[\s\S]*\.assist-action-lock[\s\S]*min-height:\s*30px/);
   assert.match(styleSource, /\.target-assist small[\s\S]*display:\s*none/);
@@ -2511,7 +2525,8 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(styleSource, /\.hand-zone \.card-outcome[\s\S]*grid-template-columns:\s*minmax\(0, 1fr\)/);
   assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome,[\s\S]*\.hand-zone \.game-card\.previewing-card \.card-outcome[\s\S]*grid-template-columns:\s*repeat\(2, minmax\(0, 1fr\)\)/);
   assert.match(styleSource, /\.hand-zone \.card-outcome span[\s\S]*justify-content:\s*center/);
-  assert.match(styleSource, /\.hand-zone \.card-outcome span em[\s\S]*font-family:\s*"JetBrains Mono", ui-monospace, monospace/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome span em[\s\S]*font-family:\s*inherit/);
+  assert.match(styleSource, /\.hand-zone \.card-outcome span em[\s\S]*text-overflow:\s*ellipsis/);
   assert.match(styleSource, /\.hand-zone \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*1 \/ -1/);
   assert.match(styleSource, /\.hand-zone \.game-card\[data-action\]:hover \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*auto/);
   assert.match(styleSource, /\.hand-zone \.game-card\.previewing-card \.card-outcome\.has-secondary \.primary[\s\S]*grid-column:\s*auto/);
@@ -2525,7 +2540,8 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-preview[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-preview-summary[\s\S]*white-space:\s*normal/);
   assert.match(styleSource, /\.card-portal-tooltip\.hand-tooltip \.tooltip-preview span em[\s\S]*white-space:\s*normal/);
-  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*grid-template-columns:\s*23px minmax\(72px, 1fr\) minmax\(58px, auto\) minmax\(64px, auto\)/);
+  assert.match(styleSource, /\.combat-card-preview-rail[\s\S]*grid-template-columns:\s*23px minmax\(72px, 1fr\) minmax\(88px, auto\) minmax\(58px, auto\)/);
+  assert.match(styleSource, /\.combat-card-preview-rail \.preview-effect-icons[\s\S]*max-width:\s*104px/);
   assert.match(styleSource, /\.combat-card-preview-rail \.preview-effect-icons i em[\s\S]*white-space:\s*nowrap/);
   assert.match(styleSource, /\.combat-aim-line[\s\S]*z-index:\s*2[\s\S]*opacity:\s*0\.5/);
   assert.match(styleSource, /\.combat-aim-line::before[\s\S]*height:\s*1px[\s\S]*opacity:\s*0\.58/);
