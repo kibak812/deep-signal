@@ -8820,18 +8820,23 @@ function renderSummaryReplayPrompt(summary, replaySeed, nextDifficulty = null) {
 }
 
 function renderSummaryNextRail(summary) {
-  const steps = summaryNextRunSteps(summary).slice(0, 3);
+  const steps = summaryOpeningPlanSteps(summary);
   return `
     <section class="summary-next-rail ${summary.won ? "won" : "lost"}" aria-label="다음 런 추천 행동">
-      <span>${summary.won ? "다음에 유지할 선택" : "다음에 바꿀 선택"}</span>
+      <header>
+        <span>${summary.won ? "첫 선택 플랜" : "재도전 플랜"}</span>
+        <strong>${summary.won ? "잘 된 방향을 더 빨리 완성" : "막힌 지점을 첫 선택으로 고치기"}</strong>
+      </header>
       <ol>
         ${steps
           .map(
-            (step, index) => `
-              <li class="${step.tone}" aria-label="${step.title}: ${summaryNextStepShortText(step.detail)}" title="${summaryNextStepShortText(step.detail)}">
-                <b>${index + 1}</b>
-                <strong>${step.title}</strong>
-                <small>${summaryNextStepShortText(step.detail)}</small>
+            (step) => `
+              <li class="${step.tone}" aria-label="${step.label}: ${step.title}. ${summaryNextStepShortText(step.detail)}" title="${summaryNextStepShortText(step.detail)}">
+                <b>${step.label}</b>
+                <div>
+                  <strong>${step.title}</strong>
+                  <small>${summaryNextStepShortText(step.detail)}</small>
+                </div>
               </li>
             `
           )
@@ -8839,6 +8844,16 @@ function renderSummaryNextRail(summary) {
       </ol>
     </section>
   `;
+}
+
+function summaryOpeningPlanSteps(summary) {
+  const labels = summary.won ? ["첫 보상", "덱 손질", "보스 전"] : ["첫 보상", "첫 경로", "첫 정비"];
+  return summaryNextRunSteps(summary)
+    .slice(0, 3)
+    .map((step, index) => ({
+      ...step,
+      label: labels[index] ?? `${index + 1}번`
+    }));
 }
 
 function summaryNextStepShortText(detail = "") {

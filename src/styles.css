@@ -16675,9 +16675,8 @@ dd,
 
 .summary-next-rail {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px 12px;
-  align-items: center;
+  gap: 8px;
+  align-content: start;
   margin: 8px 0 10px;
   border: 1px solid rgba(125, 211, 252, 0.22);
   background:
@@ -16700,7 +16699,15 @@ dd,
     rgba(5, 12, 21, 0.62);
 }
 
-.summary-next-rail > span {
+.summary-next-rail header {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.summary-next-rail header span {
   color: var(--cyan);
   font-size: 0.7rem;
   font-weight: 900;
@@ -16708,8 +16715,19 @@ dd,
   white-space: nowrap;
 }
 
-.summary-next-rail.lost > span {
+.summary-next-rail.lost header span {
   color: #ffb8c5;
+}
+
+.summary-next-rail header strong {
+  min-width: 0;
+  color: var(--text);
+  font-size: 0.82rem;
+  line-height: 1.18;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .summary-next-rail ol {
@@ -16724,26 +16742,25 @@ dd,
 .summary-next-rail li {
   min-width: 0;
   display: grid;
-  grid-template-columns: 24px minmax(0, 1fr);
-  gap: 3px 7px;
-  align-items: center;
+  grid-template-columns: minmax(48px, auto) minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
   border: 1px solid rgba(236, 248, 243, 0.12);
   background: rgba(13, 19, 33, 0.62);
   padding: 7px;
 }
 
 .summary-next-rail li b {
-  grid-row: 1 / span 2;
   display: grid;
   place-items: center;
-  width: 24px;
-  height: 24px;
+  min-width: 48px;
+  height: 26px;
   border: 1px solid rgba(125, 211, 252, 0.38);
   background: rgba(125, 211, 252, 0.1);
   color: var(--cyan);
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .summary-next-rail li strong,
@@ -16767,17 +16784,15 @@ dd,
 .summary-next-rail li small {
   color: var(--muted);
   font-size: 0.68rem;
-  line-height: 1.15;
-  white-space: nowrap;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   word-break: keep-all;
 }
 
 .summary-command-panel .summary-next-rail li {
   align-content: center;
-}
-
-.summary-command-panel .summary-next-rail li small {
-  display: none;
 }
 
 .summary-next-rail li.strong {
@@ -23035,7 +23050,14 @@ input[type="range"] {
     grid-row: auto;
   }
 
-  .summary-next-rail > span {
+  .summary-next-rail header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .summary-next-rail header span,
+  .summary-next-rail header strong {
+    text-align: left;
     white-space: normal;
   }
 

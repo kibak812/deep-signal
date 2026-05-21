@@ -1769,9 +1769,10 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /function renderSummaryRunHook\(summary\)/);
   assert.match(mainSource, /function renderSummaryReplayPrompt\(summary, replaySeed, nextDifficulty = null\)/);
   assert.match(mainSource, /function renderSummaryNextRail\(summary\)/);
+  assert.match(mainSource, /function summaryOpeningPlanSteps\(summary\)/);
   assert.match(mainSource, /class="summary-command-panel"/);
   assert.match(mainSource, /aria-label="다음 런 바로가기"/);
-  assert.match(mainSource, /aria-label="\$\{step\.title\}: \$\{summaryNextStepShortText\(step\.detail\)\}"/);
+  assert.match(mainSource, /aria-label="\$\{step\.label\}: \$\{step\.title\}\. \$\{summaryNextStepShortText\(step\.detail\)\}"/);
   assert.match(mainSource, /function summaryNextStepShortText\(detail = ""\)/);
   assert.match(mainSource, /function summaryReplayPrompt\(summary, replaySeed, nextDifficulty = null\)/);
   assert.match(mainSource, /function summaryStopPoint\(summary\)/);
@@ -1782,7 +1783,11 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /이번 런 점검표/);
   assert.match(mainSource, /다음 런 포인트/);
   assert.match(mainSource, /다시 해볼 선택/);
-  assert.match(mainSource, /다음에 바꿀 선택/);
+  assert.match(mainSource, /첫 선택 플랜/);
+  assert.match(mainSource, /재도전 플랜/);
+  assert.match(mainSource, /첫 보상/);
+  assert.match(mainSource, /첫 경로/);
+  assert.match(mainSource, /첫 정비/);
   assert.match(mainSource, /aria-label="다음 런 추천 행동"/);
   assert.match(mainSource, /renderSummaryNextRail\(summary\)/);
   assert.match(mainSource, /aria-label="재도전 제안"/);
@@ -1791,7 +1796,8 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /첫 세 보상 안에 하나만 고르기/);
   assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*word-break:\s*keep-all/);
-  assert.match(styleSource, /\.summary-command-panel \.summary-next-rail li small[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.summary-next-rail li small[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.doesNotMatch(styleSource, /\.summary-command-panel \.summary-next-rail li small[\s\S]*display:\s*none/);
   assert.match(mainSource, /function summaryStoppedAct\(summary\)/);
   assert.match(mainSource, /function summaryFailureProfile\(summary\)/);
   assert.match(mainSource, /function summaryFailureCause\(profile\)/);
@@ -1878,6 +1884,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(styleSource, /\.summary-replay-prompt\.strong/);
   assert.match(styleSource, /\.high-contrast \.summary-replay-prompt/);
   assert.match(styleSource, /\.summary-next-rail/);
+  assert.match(styleSource, /\.summary-next-rail header/);
   assert.match(styleSource, /\.summary-next-rail ol/);
   assert.match(styleSource, /\.summary-next-rail li b/);
   assert.match(styleSource, /\.summary-next-rail li small/);
