@@ -5,6 +5,7 @@ import {
   buyShopHeal,
   buyShopRelic,
   cardCost,
+  cardPlayPreview,
   chooseEventOption,
   chooseRest,
   chooseRewardCard,
@@ -78,19 +79,29 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
   const startedAt = Date.now();
   let finalBossSnapshot = null;
   const finalBossTimeline = [];
+  const observations = {
+    finalBossRewardSamples: [],
+    finalBossReserveSignals: []
+  };
 
   let steps = 0;
   while (run.phase !== "summary" && steps < maxSteps) {
     steps += 1;
-    if (isFinalBossCombat(run)) finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
+    if (isFinalBossCombat(run)) {
+      finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
+      recordFinalBossReserveSignal(run, observations.finalBossReserveSignals);
+    }
     const before = stateFingerprint(run);
     try {
-      pilotStep(run, route);
+      pilotStep(run, route, observations);
     } catch (error) {
       problems.push(`exception:${error.message}`);
       break;
     }
-    if (isFinalBossCombat(run)) finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
+    if (isFinalBossCombat(run)) {
+      finalBossSnapshot = recordFinalBossSnapshot(run, finalBossTimeline);
+      recordFinalBossReserveSignal(run, observations.finalBossReserveSignals);
+    }
     const after = stateFingerprint(run);
     if (after === before && !run.selector) {
       problems.push(`stalled:${run.phase}:${run.currentNodeId ?? "none"}`);
@@ -105,6 +116,7 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
   if (steps >= maxSteps && run.phase !== "summary") problems.push("max-steps");
 
   const finalBossTimelineReport = finalBossSnapshot && !run.summary?.won ? finalBossTimeline.map(stripFinalBossTimelineKey) : [];
+  const finalBossReserveSignalReport = observations.finalBossReserveSignals.map(stripFinalBossReserveSignalKey);
   return {
     seed,
     difficulty,
@@ -127,6 +139,8 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
     roleProfile: deckRoleProfile(run),
     finalBoss: finalBossSnapshot,
     finalBossTimeline: finalBossTimelineReport,
+    finalBossRewardSamples: observations.finalBossRewardSamples,
+    finalBossReserveSignals: finalBossReserveSignalReport,
     route,
     steps,
     problems,
@@ -139,7 +153,12 @@ function stripFinalBossTimelineKey(entry) {
   return reportEntry;
 }
 
-function pilotStep(run, route) {
+function stripFinalBossReserveSignalKey(entry) {
+  const { stateKey, ...reportEntry } = entry;
+  return reportEntry;
+}
+
+function pilotStep(run, route, observations) {
   if (run.selector) {
     resolveDeckSelection(run, selectDeckCard(run).uid);
     return;
@@ -155,7 +174,7 @@ function pilotStep(run, route) {
     return;
   }
   if (run.phase === "reward") {
-    chooseReward(run);
+    chooseReward(run, observations);
     return;
   }
   if (run.phase === "event") {
@@ -371,7 +390,7 @@ function chooseTarget(run) {
     .sort((left, right) => right.score - left.score)[0]?.enemy;
 }
 
-function chooseReward(run) {
+function chooseReward(run, observations) {
   const scored = run.reward.cards.map((cardId) => ({ cardId, score: rewardCardScore(run, cardId) })).sort((left, right) => right.score - left.score);
   const best = scored[0];
   const deckSize = run.player.deck.length;
@@ -379,11 +398,37 @@ function chooseReward(run) {
   const threshold = bossPrep?.missing.length
     ? deckSize < 24 ? 3 : 7
     : deckSize < 16 ? 0 : deckSize < 24 ? 5 : 9;
+  recordFinalBossRewardSample(run, scored, threshold, observations?.finalBossRewardSamples);
   if (best && best.score >= threshold) chooseRewardCard(run, best.cardId);
   else skipReward(run);
   if (run.phase === "reward" && run.reward?.relicChoices?.length && !run.reward.selectedRelicId) {
     chooseRewardRelic(run, chooseRewardRelicId(run));
   }
+}
+
+function recordFinalBossRewardSample(run, scored, threshold, samples) {
+  const bossPrep = bossPrepContext(run);
+  if (!samples || !bossPrep?.finalAct || bossPrep.distance > 3 || !run.reward?.cards?.length) return;
+  const best = scored[0] ?? null;
+  const bestCard = best ? CARD_BY_ID[best.cardId] : null;
+  const chosen = Boolean(best && best.score >= threshold);
+  samples.push({
+    floor: run.stats.floors,
+    distance: bossPrep.distance,
+    hpRatio: round(bossPrep.hpRatio),
+    deckSize: bossPrep.deckSize,
+    missing: bossPrep.missing,
+    chosen,
+    recommendedCard: best?.cardId ?? null,
+    recommendedRole: bestCard ? finalBossRewardRole(bestCard) : "none",
+    recommendedScore: best ? round(best.score) : null,
+    threshold: round(threshold),
+    options: scored.map((entry) => ({
+      cardId: entry.cardId,
+      role: finalBossRewardRole(CARD_BY_ID[entry.cardId]),
+      score: round(entry.score)
+    }))
+  });
 }
 
 function chooseRewardRelicId(run) {
@@ -450,6 +495,20 @@ function bossPreparationBonus(run, card) {
   if ((context.needsFinish ?? deckCards.filter(cardSupportsFinish).length < 7) && cardSupportsFinish(card)) bonus += 3.7 * finalActBonus;
   if ((context.needsDeckSpeed ?? deckCards.filter(cardSupportsFlow).length < 4) && cardSupportsFlow(card)) bonus += 2.8;
   return bonus;
+}
+
+function finalBossRewardRole(card) {
+  if (!card) return "unknown";
+  if (cardSupportsBurstDefense(card)) return "burstDefense";
+  if (cardSupportsDefense(card)) return "defense";
+  if (cardSupportsStatusControl(card)) return "statusControl";
+  if (cardSupportsFlow(card)) return "flow";
+  if (cardSupportsFinish(card)) return "finish";
+  return card.type ?? "other";
+}
+
+function isFinalBossDefenseRole(role) {
+  return role === "burstDefense" || role === "defense";
 }
 
 function serialDefenseCardBonus(card) {
@@ -880,6 +939,68 @@ function isFinalBossCombat(run) {
   return Boolean(run.combat?.enemies.some((enemy) => enemy.templateId === "last_gate_choir"));
 }
 
+function recordFinalBossReserveSignal(run, signals) {
+  if (!signals) return;
+  const signal = finalBossReserveSignal(run);
+  if (!signal) return;
+  const previous = signals.at(-1);
+  if (previous?.stateKey === signal.stateKey) return;
+  signals.push(signal);
+}
+
+function finalBossReserveSignal(run) {
+  const boss = run.combat?.enemies.find((enemy) => enemy.templateId === "last_gate_choir" && enemy.hp > 0);
+  if (!boss || (boss.phase ?? 1) >= 2) return null;
+  const template = ENEMY_BY_ID[boss.templateId];
+  const threshold = Math.round(boss.maxHp * (template?.phaseAt ?? 0.5));
+  const damageToPhase = Math.max(0, boss.hp - threshold);
+  const previewEntries = (run.combat?.hand ?? [])
+    .map((card) => {
+      const preview = cardPlayPreview(run, card, boss.uid);
+      return {
+        card,
+        preview,
+        bossDamage: preview.enemyDeltas?.find((delta) => delta.uid === boss.uid)?.damage ?? 0
+      };
+    })
+    .filter((entry) => entry.preview.playable);
+  if (!previewEntries.length) return null;
+  const bossDamagePreviews = previewEntries.map((entry) => ({ ...entry.preview, bossDamage: entry.bossDamage }));
+  const bestBossDamage = bestPreviewTotal(bossDamagePreviews, run.combat.energy, "bossDamage");
+  const finisherCards = previewEntries.filter((entry) => cardSupportsFinish(effectiveCard(entry.card))).length;
+  const canFinishBoss = bestBossDamage >= boss.hp;
+  const canOpenPhase = damageToPhase > 0 && bestBossDamage >= damageToPhase && !canFinishBoss;
+  const nearPhaseLine = damageToPhase > 0 && damageToPhase <= Math.max(8, Math.ceil(boss.maxHp * 0.08));
+  const type = canFinishBoss ? "bossFinish" : canOpenPhase ? "phasePushReserve" : nearPhaseLine && finisherCards ? "nearPhaseReserve" : null;
+  if (!type) return null;
+  const stateKey = [run.combat.turn, type, boss.hp, boss.block, bestBossDamage, run.combat.energy, run.combat.hand.map((card) => card.uid).join("|")].join(":");
+  return {
+    stateKey,
+    turn: run.combat.turn,
+    type,
+    bossHp: boss.hp,
+    threshold,
+    damageToPhase,
+    bestBossDamage,
+    finisherCards,
+    hand: run.combat.hand.map((card) => getCard(card).id).slice(0, 7)
+  };
+}
+
+function bestPreviewTotal(previews, energy, key) {
+  const budget = Math.max(0, Math.floor(energy));
+  const totals = Array(budget + 1).fill(0);
+  for (const preview of previews) {
+    const value = Math.max(0, Math.floor(preview[key] ?? 0));
+    if (value <= 0) continue;
+    const cost = Math.max(0, Math.min(budget, Math.floor(preview.cost ?? 0)));
+    for (let spent = budget; spent >= cost; spent -= 1) {
+      totals[spent] = Math.max(totals[spent], totals[spent - cost] + value);
+    }
+  }
+  return Math.max(...totals);
+}
+
 function finalBossCombatSnapshot(run) {
   const boss = run.combat?.enemies.find((enemy) => enemy.templateId === "last_gate_choir");
   if (!boss) return null;
@@ -1096,7 +1217,7 @@ function summarizeRuns(runs, config = {}) {
   return {
     generatedAt: new Date().toISOString(),
     config,
-    runs,
+    runs: runs.map(stripBalanceRunObservations),
     totals,
     byDifficulty,
     lossReasons,
@@ -1105,6 +1226,15 @@ function summarizeRuns(runs, config = {}) {
     primaryBuilds,
     finalBossAnalysis,
     recommendations: balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, finalBossAnalysis })
+  };
+}
+
+function stripBalanceRunObservations(run) {
+  const { finalBossRewardSamples, finalBossReserveSignals, ...reportRun } = run;
+  return {
+    ...reportRun,
+    finalBossRewardSampleCount: finalBossRewardSamples?.length ?? 0,
+    finalBossReserveSignalCount: finalBossReserveSignals?.length ?? 0
   };
 }
 
@@ -1245,6 +1375,8 @@ function aggregateFinalBossAnalysis(runs) {
   const lowHpEntryLosses = losses.filter((run) => (run.finalBossTimeline?.[0]?.playerHp ?? run.finalBoss?.playerHp ?? Infinity) <= 18).length;
   const lowBurstDefenseLosses = losses.filter((run) => (run.finalBoss?.roles?.burstDefense ?? run.roleProfile?.burstDefense ?? 0) < 2).length;
   const pressureProfile = finalBossPressureProfile(losses);
+  const rewardGuidance = aggregateFinalBossRewardGuidance(runs);
+  const reserveSignals = aggregateFinalBossReserveSignals(reached);
   return {
     reached: reached.length,
     wins: wins.length,
@@ -1258,6 +1390,8 @@ function aggregateFinalBossAnalysis(runs) {
     lowHpEntryLosses,
     lowBurstDefenseLosses,
     pressureProfile,
+    rewardGuidance,
+    reserveSignals,
     timelineCoverage: losses.length ? round(timelineLosses.length / losses.length) : 0,
     roleAverages: {
       wins: averageFinalBossRoles(wins),
@@ -1266,6 +1400,80 @@ function aggregateFinalBossAnalysis(runs) {
     byDifficulty: finalBossDifficultyRows(runs),
     timelineSamples: losses.slice(0, 4).map(finalBossTimelineSample),
     primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses, pressureProfile })
+  };
+}
+
+function aggregateFinalBossRewardGuidance(runs) {
+  const samples = runs.flatMap((run) => run.finalBossRewardSamples ?? []);
+  const chosen = samples.filter((sample) => sample.chosen);
+  const roleCounts = rankedEntries(
+    chosen.reduce((groups, sample) => {
+      groups[sample.recommendedRole] = (groups[sample.recommendedRole] ?? 0) + 1;
+      return groups;
+    }, {})
+  );
+  const defensive = chosen.filter((sample) => isFinalBossDefenseRole(sample.recommendedRole));
+  const defenseWhileFinishMissing = defensive.filter((sample) => sample.missing.includes("마무리"));
+  const defenseWithoutDefenseMissing = defensive.filter((sample) => !sample.missing.some((label) => /방어/.test(label)));
+  return {
+    samples: samples.length,
+    chosen: chosen.length,
+    skipped: samples.length - chosen.length,
+    roleCounts,
+    defensiveRecommendations: defensive.length,
+    defensiveShare: chosen.length ? round(defensive.length / chosen.length) : 0,
+    defenseWhileFinishMissing: defenseWhileFinishMissing.length,
+    defenseWithoutDefenseMissing: defenseWithoutDefenseMissing.length,
+    finishRecommendations: chosen.filter((sample) => sample.recommendedRole === "finish").length,
+    flowRecommendations: chosen.filter((sample) => sample.recommendedRole === "flow").length,
+    statusRecommendations: chosen.filter((sample) => sample.recommendedRole === "statusControl").length,
+    examples: samples
+      .filter((sample) => sample.chosen)
+      .slice(0, 6)
+      .map((sample) => ({
+        floor: sample.floor,
+        distance: sample.distance,
+        missing: sample.missing,
+        card: sample.recommendedCard,
+        role: sample.recommendedRole,
+        score: sample.recommendedScore,
+        threshold: sample.threshold
+      }))
+  };
+}
+
+function aggregateFinalBossReserveSignals(reachedRuns) {
+  const signals = reachedRuns.flatMap((run) => run.finalBossReserveSignals ?? []);
+  const signalRuns = reachedRuns.filter((run) => run.finalBossReserveSignals?.length);
+  const phasePushSignals = signals.filter((signal) => signal.type === "phasePushReserve");
+  const nearPhaseSignals = signals.filter((signal) => signal.type === "nearPhaseReserve");
+  const bossFinishSignals = signals.filter((signal) => signal.type === "bossFinish");
+  const maxSignalsPerRun = reachedRuns.reduce((max, run) => Math.max(max, run.finalBossReserveSignals?.length ?? 0), 0);
+  return {
+    reached: reachedRuns.length,
+    signalRuns: signalRuns.length,
+    signalRunRate: reachedRuns.length ? round(signalRuns.length / reachedRuns.length) : 0,
+    signals: signals.length,
+    averageSignalsPerReached: reachedRuns.length ? round(signals.length / reachedRuns.length) : 0,
+    maxSignalsPerRun,
+    phasePushSignals: phasePushSignals.length,
+    nearPhaseSignals: nearPhaseSignals.length,
+    bossFinishSignals: bossFinishSignals.length,
+    typeCounts: rankedEntries(
+      signals.reduce((groups, signal) => {
+        groups[signal.type] = (groups[signal.type] ?? 0) + 1;
+        return groups;
+      }, {})
+    ),
+    examples: signals.slice(0, 6).map((signal) => ({
+      turn: signal.turn,
+      type: signal.type,
+      bossHp: signal.bossHp,
+      damageToPhase: signal.damageToPhase,
+      bestBossDamage: signal.bestBossDamage,
+      finisherCards: signal.finisherCards,
+      hand: signal.hand
+    }))
   };
 }
 
@@ -1538,6 +1746,25 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
       tone: "steady",
       area: "최종 보스",
       text: `최종 보스 도달 ${finalBossAnalysis.reached}런 중 ${finalBossAnalysis.losses}패입니다. 패배 직전 행동은 ${moveSummary || "표본 부족"}입니다.${closeSummary}${sequenceSummary} ${finalBossAnalysis.primaryIssue}`
+    });
+  }
+  const rewardGuidance = finalBossAnalysis?.rewardGuidance;
+  if (rewardGuidance?.samples > 0) {
+    const defensiveShare = percent(rewardGuidance.defensiveShare);
+    const tone = rewardGuidance.defensiveShare > 0.72 && rewardGuidance.defenseWhileFinishMissing > 0 ? "warning" : "steady";
+    recommendations.push({
+      tone,
+      area: "최종 보스 보상 추천",
+      text: `마지막 문 직전 카드 보상 표본 ${rewardGuidance.samples}건 중 선택된 추천의 방어 계열 비중은 ${defensiveShare}입니다. 마무리 부족 상태에서 방어를 고른 경우는 ${rewardGuidance.defenseWhileFinishMissing}건, 방어 부족이 아닌데 방어를 고른 경우는 ${rewardGuidance.defenseWithoutDefenseMissing}건입니다.`
+    });
+  }
+  const reserveSignals = finalBossAnalysis?.reserveSignals;
+  if (reserveSignals?.reached > 0) {
+    const tone = reserveSignals.averageSignalsPerReached > 2.4 || reserveSignals.maxSignalsPerRun > 5 ? "warning" : "steady";
+    recommendations.push({
+      tone,
+      area: "마무리 보존 안내",
+      text: `최종 보스 도달 ${reserveSignals.reached}런 중 ${reserveSignals.signalRuns}런에서 마무리 보존 신호가 관측됐고, 도달 런당 평균 ${reserveSignals.averageSignalsPerReached}회입니다. 2단계 전환선 경고는 ${reserveSignals.phasePushSignals}회, 근접 보존 안내는 ${reserveSignals.nearPhaseSignals}회입니다.`
     });
   }
   const earlyLossBand = floorBands.find((band) => band.id === "early");

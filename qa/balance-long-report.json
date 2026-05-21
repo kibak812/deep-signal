@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T22:15:33.683Z",
+  "generatedAt": "2026-05-21T23:18:14.467Z",
   "config": {
     "seedCount": 36,
     "difficulties": [
@@ -108,7 +108,9 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 14
+      "durationMs": 18,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-02-d0",
@@ -206,7 +208,9 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-03-d0",
@@ -303,7 +307,9 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-04-d0",
@@ -400,7 +406,9 @@
       ],
       "steps": 156,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 7,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-05-d0",
@@ -495,7 +503,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-06-d0",
@@ -594,7 +604,9 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-07-d0",
@@ -690,7 +702,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-08-d0",
@@ -788,7 +802,9 @@
       ],
       "steps": 151,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 7,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-09-d0",
@@ -885,7 +901,9 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-10-d0",
@@ -982,7 +1000,9 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-11-d0",
@@ -1079,7 +1099,9 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-12-d0",
@@ -1178,7 +1200,9 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-13-d0",
@@ -1224,7 +1248,9 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-14-d0",
@@ -1319,7 +1345,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-15-d0",
@@ -1365,7 +1393,9 @@
       ],
       "steps": 32,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-16-d0",
@@ -1464,7 +1494,9 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-17-d0",
@@ -1563,7 +1595,9 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-18-d0",
@@ -1658,7 +1692,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-19-d0",
@@ -1754,7 +1790,9 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-20-d0",
@@ -1850,7 +1888,9 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-21-d0",
@@ -1951,7 +1991,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-22-d0",
@@ -2049,7 +2091,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-23-d0",
@@ -2145,7 +2189,9 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-24-d0",
@@ -2243,7 +2289,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-25-d0",
@@ -2341,7 +2389,9 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-26-d0",
@@ -2394,7 +2444,9 @@
       ],
       "steps": 88,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-27-d0",
@@ -2491,7 +2543,9 @@
       ],
       "steps": 128,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-28-d0",
@@ -2589,7 +2643,9 @@
       ],
       "steps": 89,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-29-d0",
@@ -2685,7 +2741,9 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-30-d0",
@@ -2784,7 +2842,9 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-31-d0",
@@ -2884,7 +2944,9 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-32-d0",
@@ -2983,7 +3045,9 @@
       ],
       "steps": 159,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-33-d0",
@@ -3038,7 +3102,9 @@
       ],
       "steps": 86,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-34-d0",
@@ -3139,7 +3205,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-35-d0",
@@ -3239,7 +3307,9 @@
       ],
       "steps": 143,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-36-d0",
@@ -3336,7 +3406,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-01-d1",
@@ -3434,7 +3506,9 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-02-d1",
@@ -3741,7 +3815,9 @@
       ],
       "steps": 103,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-03-d1",
@@ -4058,7 +4134,9 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-04-d1",
@@ -4154,7 +4232,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-05-d1",
@@ -4250,7 +4330,9 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-06-d1",
@@ -4352,7 +4434,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-07-d1",
@@ -4450,7 +4534,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-08-d1",
@@ -4548,7 +4634,9 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-09-d1",
@@ -4644,7 +4732,9 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-10-d1",
@@ -4740,7 +4830,9 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-11-d1",
@@ -5048,7 +5140,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-12-d1",
@@ -5146,7 +5240,9 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-13-d1",
@@ -5243,7 +5339,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-14-d1",
@@ -5551,7 +5649,9 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-15-d1",
@@ -5648,7 +5748,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-16-d1",
@@ -5746,7 +5848,9 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-17-d1",
@@ -5841,7 +5945,9 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-18-d1",
@@ -5940,7 +6046,9 @@
       ],
       "steps": 135,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-19-d1",
@@ -6264,7 +6372,9 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-20-d1",
@@ -6359,7 +6469,9 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-21-d1",
@@ -6458,7 +6570,9 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-22-d1",
@@ -6556,7 +6670,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-23-d1",
@@ -6652,7 +6768,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-24-d1",
@@ -6751,7 +6869,9 @@
       ],
       "steps": 142,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-25-d1",
@@ -6799,7 +6919,9 @@
       ],
       "steps": 46,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-26-d1",
@@ -6852,7 +6974,9 @@
       ],
       "steps": 75,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-27-d1",
@@ -6951,7 +7075,9 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-28-d1",
@@ -7049,7 +7175,9 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-29-d1",
@@ -7358,7 +7486,9 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-30-d1",
@@ -7686,7 +7816,9 @@
       ],
       "steps": 139,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-31-d1",
@@ -7785,7 +7917,9 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-32-d1",
@@ -7881,7 +8015,9 @@
       ],
       "steps": 117,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-33-d1",
@@ -7979,7 +8115,9 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-34-d1",
@@ -8076,7 +8214,9 @@
       ],
       "steps": 110,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-35-d1",
@@ -8172,7 +8312,9 @@
       ],
       "steps": 96,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-36-d1",
@@ -8268,7 +8410,9 @@
       ],
       "steps": 146,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-01-d2",
@@ -8365,7 +8509,9 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-02-d2",
@@ -8686,7 +8832,9 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-03-d2",
@@ -9012,7 +9160,9 @@
       ],
       "steps": 137,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-04-d2",
@@ -9108,7 +9258,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-05-d2",
@@ -9205,7 +9357,9 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-06-d2",
@@ -9253,7 +9407,9 @@
       ],
       "steps": 48,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-07-d2",
@@ -9348,7 +9504,9 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-08-d2",
@@ -9444,7 +9602,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-09-d2",
@@ -9541,7 +9701,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-10-d2",
@@ -9848,7 +10010,9 @@
       ],
       "steps": 103,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-11-d2",
@@ -9946,7 +10110,9 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-12-d2",
@@ -10045,7 +10211,9 @@
       ],
       "steps": 156,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-13-d2",
@@ -10144,7 +10312,9 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-14-d2",
@@ -10246,7 +10416,9 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-15-d2",
@@ -10345,7 +10517,9 @@
       ],
       "steps": 106,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-16-d2",
@@ -10442,7 +10616,9 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-17-d2",
@@ -10540,7 +10716,9 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-18-d2",
@@ -10865,7 +11043,9 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-19-d2",
@@ -10964,7 +11144,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-20-d2",
@@ -11065,7 +11247,9 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-21-d2",
@@ -11363,7 +11547,9 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-22-d2",
@@ -11686,7 +11872,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-23-d2",
@@ -11732,7 +11920,9 @@
       ],
       "steps": 27,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-24-d2",
@@ -11827,7 +12017,9 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-25-d2",
@@ -11927,7 +12119,9 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-26-d2",
@@ -12024,7 +12218,9 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-27-d2",
@@ -12122,7 +12318,9 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-28-d2",
@@ -12219,7 +12417,9 @@
       ],
       "steps": 117,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-29-d2",
@@ -12318,7 +12518,9 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-30-d2",
@@ -12414,7 +12616,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-31-d2",
@@ -12728,7 +12932,9 @@
       ],
       "steps": 130,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-32-d2",
@@ -12829,7 +13035,9 @@
       ],
       "steps": 128,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-33-d2",
@@ -12926,7 +13134,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-34-d2",
@@ -13223,7 +13433,9 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-35-d2",
@@ -13319,7 +13531,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-36-d2",
@@ -13416,7 +13630,9 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-01-d3",
@@ -13512,7 +13728,9 @@
       ],
       "steps": 135,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-02-d3",
@@ -13610,7 +13828,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-03-d3",
@@ -13919,7 +14139,9 @@
       ],
       "steps": 117,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-04-d3",
@@ -14231,7 +14453,9 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-05-d3",
@@ -14330,7 +14554,9 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-06-d3",
@@ -14378,7 +14604,9 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-07-d3",
@@ -14433,7 +14661,9 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-08-d3",
@@ -14531,7 +14761,9 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-09-d3",
@@ -14574,7 +14806,9 @@
       ],
       "steps": 21,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-10-d3",
@@ -14673,7 +14907,9 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-11-d3",
@@ -14772,7 +15008,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-12-d3",
@@ -14824,7 +15062,9 @@
       ],
       "steps": 65,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-13-d3",
@@ -15130,7 +15370,9 @@
       ],
       "steps": 137,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-14-d3",
@@ -15227,7 +15469,9 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-15-d3",
@@ -15326,7 +15570,9 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-16-d3",
@@ -15423,7 +15669,9 @@
       ],
       "steps": 95,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-17-d3",
@@ -15720,7 +15968,9 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-18-d3",
@@ -15817,7 +16067,9 @@
       ],
       "steps": 142,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-19-d3",
@@ -15915,7 +16167,9 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-20-d3",
@@ -16218,7 +16472,9 @@
       ],
       "steps": 144,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-21-d3",
@@ -16316,7 +16572,9 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-22-d3",
@@ -16412,7 +16670,9 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-23-d3",
@@ -16509,7 +16769,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-24-d3",
@@ -16606,7 +16868,9 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-25-d3",
@@ -16703,7 +16967,9 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-26-d3",
@@ -16803,7 +17069,9 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-27-d3",
@@ -16901,7 +17169,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-28-d3",
@@ -16997,7 +17267,9 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-29-d3",
@@ -17092,7 +17364,9 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-30-d3",
@@ -17189,7 +17463,9 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-31-d3",
@@ -17244,7 +17520,9 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-32-d3",
@@ -17342,7 +17620,9 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-33-d3",
@@ -17443,7 +17723,9 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-34-d3",
@@ -17744,7 +18026,9 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-35-d3",
@@ -18064,7 +18348,9 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-36-d3",
@@ -18162,7 +18448,9 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-01-d4",
@@ -18258,7 +18546,9 @@
       ],
       "steps": 169,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-02-d4",
@@ -18356,7 +18646,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-03-d4",
@@ -18453,7 +18745,9 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-04-d4",
@@ -18511,7 +18805,9 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-05-d4",
@@ -18829,7 +19125,9 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-06-d4",
@@ -18924,7 +19222,9 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-07-d4",
@@ -18975,7 +19275,9 @@
       ],
       "steps": 51,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-08-d4",
@@ -19030,7 +19332,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-09-d4",
@@ -19340,7 +19644,9 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-10-d4",
@@ -19388,7 +19694,9 @@
       ],
       "steps": 49,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-11-d4",
@@ -19485,7 +19793,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-12-d4",
@@ -19580,7 +19890,9 @@
       ],
       "steps": 145,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-13-d4",
@@ -19888,7 +20200,9 @@
       ],
       "steps": 101,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-14-d4",
@@ -19983,7 +20297,9 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-15-d4",
@@ -20080,7 +20396,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-16-d4",
@@ -20176,7 +20494,9 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-17-d4",
@@ -20236,7 +20556,9 @@
       ],
       "steps": 82,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-18-d4",
@@ -20336,7 +20658,9 @@
       ],
       "steps": 162,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-19-d4",
@@ -20636,7 +20960,9 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-20-d4",
@@ -20965,7 +21291,9 @@
       ],
       "steps": 100,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-21-d4",
@@ -21022,7 +21350,9 @@
       ],
       "steps": 78,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-22-d4",
@@ -21121,7 +21451,9 @@
       ],
       "steps": 143,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-23-d4",
@@ -21219,7 +21551,9 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-24-d4",
@@ -21274,7 +21608,9 @@
       ],
       "steps": 92,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-25-d4",
@@ -21580,7 +21916,9 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-26-d4",
@@ -21882,7 +22220,9 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-27-d4",
@@ -22207,7 +22547,9 @@
       ],
       "steps": 145,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-28-d4",
@@ -22306,7 +22648,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-29-d4",
@@ -22404,7 +22748,9 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-30-d4",
@@ -22726,7 +23072,9 @@
       ],
       "steps": 165,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-31-d4",
@@ -22822,7 +23170,9 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 3,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-32-d4",
@@ -22919,7 +23269,9 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-33-d4",
@@ -23017,7 +23369,9 @@
       ],
       "steps": 89,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-34-d4",
@@ -23115,7 +23469,9 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-35-d4",
@@ -23212,7 +23568,9 @@
       ],
       "steps": 143,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-36-d4",
@@ -23262,7 +23620,9 @@
       ],
       "steps": 62,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-01-d5",
@@ -23572,7 +23932,9 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-02-d5",
@@ -23627,7 +23989,9 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-03-d5",
@@ -23724,7 +24088,9 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-04-d5",
@@ -23779,7 +24145,9 @@
       ],
       "steps": 81,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-05-d5",
@@ -23876,7 +24244,9 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-06-d5",
@@ -24213,7 +24583,9 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-07-d5",
@@ -24311,7 +24683,9 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-08-d5",
@@ -24410,7 +24784,9 @@
       ],
       "steps": 110,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-09-d5",
@@ -24507,7 +24883,9 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-10-d5",
@@ -24606,7 +24984,9 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-11-d5",
@@ -24914,7 +25294,9 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-12-d5",
@@ -25222,7 +25604,9 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-13-d5",
@@ -25277,7 +25661,9 @@
       ],
       "steps": 82,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-14-d5",
@@ -25619,7 +26005,9 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-15-d5",
@@ -25919,7 +26307,9 @@
       ],
       "steps": 144,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-16-d5",
@@ -26231,7 +26621,9 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-17-d5",
@@ -26328,7 +26720,9 @@
       ],
       "steps": 135,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-18-d5",
@@ -26641,7 +27035,9 @@
       ],
       "steps": 146,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-19-d5",
@@ -26738,7 +27134,9 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-20-d5",
@@ -26786,7 +27184,9 @@
       ],
       "steps": 48,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-21-d5",
@@ -27110,7 +27510,9 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-22-d5",
@@ -27206,7 +27608,9 @@
       ],
       "steps": 154,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-23-d5",
@@ -27520,7 +27924,9 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-24-d5",
@@ -27568,7 +27974,9 @@
       ],
       "steps": 40,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-25-d5",
@@ -27665,7 +28073,9 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-26-d5",
@@ -27762,7 +28172,9 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-27-d5",
@@ -27857,7 +28269,9 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 2
     },
     {
       "seed": "balance-28-d5",
@@ -27912,7 +28326,9 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-29-d5",
@@ -28229,7 +28645,9 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 1,
+      "finalBossReserveSignalCount": 3
     },
     {
       "seed": "balance-30-d5",
@@ -28326,7 +28744,9 @@
       ],
       "steps": 130,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-31-d5",
@@ -28423,7 +28843,9 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 2,
+      "finalBossRewardSampleCount": 2,
+      "finalBossReserveSignalCount": 1
     },
     {
       "seed": "balance-32-d5",
@@ -28467,7 +28889,9 @@
       ],
       "steps": 23,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-33-d5",
@@ -28520,7 +28944,9 @@
       ],
       "steps": 67,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-34-d5",
@@ -28570,7 +28996,9 @@
       ],
       "steps": 57,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 0,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-35-d5",
@@ -28621,7 +29049,9 @@
       ],
       "steps": 77,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 1,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 0
     },
     {
       "seed": "balance-36-d5",
@@ -28923,7 +29353,9 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3,
+      "finalBossRewardSampleCount": 0,
+      "finalBossReserveSignalCount": 1
     }
   ],
   "totals": {
@@ -29599,6 +30031,231 @@
       "averageRequiemHandBurstDefense": 0.34,
       "averageRequiemIncomingDamage": 22.69
     },
+    "rewardGuidance": {
+      "samples": 305,
+      "chosen": 304,
+      "skipped": 1,
+      "roleCounts": [
+        {
+          "label": "burstDefense",
+          "count": 113
+        },
+        {
+          "label": "flow",
+          "count": 84
+        },
+        {
+          "label": "defense",
+          "count": 50
+        },
+        {
+          "label": "statusControl",
+          "count": 45
+        },
+        {
+          "label": "finish",
+          "count": 12
+        }
+      ],
+      "defensiveRecommendations": 163,
+      "defensiveShare": 0.54,
+      "defenseWhileFinishMissing": 0,
+      "defenseWithoutDefenseMissing": 16,
+      "finishRecommendations": 12,
+      "flowRecommendations": 84,
+      "statusRecommendations": 45,
+      "examples": [
+        {
+          "floor": 18,
+          "distance": 3,
+          "missing": [],
+          "card": "lantern_overclock",
+          "role": "statusControl",
+          "score": 12.2,
+          "threshold": 9
+        },
+        {
+          "floor": 21,
+          "distance": 0,
+          "missing": [
+            "체력",
+            "카드 뽑기"
+          ],
+          "card": "lantern_overclock",
+          "role": "statusControl",
+          "score": 17.2,
+          "threshold": 7
+        },
+        {
+          "floor": 18,
+          "distance": 3,
+          "missing": [
+            "연속 방어"
+          ],
+          "card": "wire_reef",
+          "role": "burstDefense",
+          "score": 24.32,
+          "threshold": 7
+        },
+        {
+          "floor": 19,
+          "distance": 2,
+          "missing": [
+            "체력",
+            "방어",
+            "카드 뽑기"
+          ],
+          "card": "undertow_kick",
+          "role": "defense",
+          "score": 23.42,
+          "threshold": 7
+        },
+        {
+          "floor": 21,
+          "distance": 0,
+          "missing": [
+            "체력",
+            "연속 방어",
+            "카드 뽑기"
+          ],
+          "card": "archive_dust",
+          "role": "burstDefense",
+          "score": 18.76,
+          "threshold": 7
+        },
+        {
+          "floor": 19,
+          "distance": 2,
+          "missing": [
+            "방어",
+            "정화·약화"
+          ],
+          "card": "pale_firewall",
+          "role": "defense",
+          "score": 31.78,
+          "threshold": 3
+        }
+      ]
+    },
+    "reserveSignals": {
+      "reached": 185,
+      "signalRuns": 161,
+      "signalRunRate": 0.87,
+      "signals": 234,
+      "averageSignalsPerReached": 1.26,
+      "maxSignalsPerRun": 3,
+      "phasePushSignals": 102,
+      "nearPhaseSignals": 132,
+      "bossFinishSignals": 0,
+      "typeCounts": [
+        {
+          "label": "nearPhaseReserve",
+          "count": 132
+        },
+        {
+          "label": "phasePushReserve",
+          "count": 102
+        }
+      ],
+      "examples": [
+        {
+          "turn": 17,
+          "type": "nearPhaseReserve",
+          "bossHp": 188,
+          "damageToPhase": 17,
+          "bestBossDamage": 0,
+          "finisherCards": 2,
+          "hand": [
+            "hold_breath",
+            "chronograph_anchor",
+            "memory_sift",
+            "pale_firewall",
+            "echo_tap",
+            "pale_firewall",
+            "cleanse_cache"
+          ]
+        },
+        {
+          "turn": 18,
+          "type": "nearPhaseReserve",
+          "bossHp": 188,
+          "damageToPhase": 17,
+          "bestBossDamage": 12,
+          "finisherCards": 3,
+          "hand": [
+            "hold_breath",
+            "pulse_lance",
+            "floodgate",
+            "glass_lung",
+            "pulse_lance",
+            "tide_ward"
+          ]
+        },
+        {
+          "turn": 19,
+          "type": "phasePushReserve",
+          "bossHp": 176,
+          "damageToPhase": 5,
+          "bestBossDamage": 17,
+          "finisherCards": 3,
+          "hand": [
+            "hold_breath",
+            "current_siphon",
+            "tide_ward",
+            "cleanse_cache",
+            "rill_cut",
+            "pulse_lance"
+          ]
+        },
+        {
+          "turn": 5,
+          "type": "nearPhaseReserve",
+          "bossHp": 161,
+          "damageToPhase": 7,
+          "bestBossDamage": 0,
+          "finisherCards": 3,
+          "hand": [
+            "tide_ward",
+            "axiom_break",
+            "null_pin",
+            "pale_firewall",
+            "pulse_lance"
+          ]
+        },
+        {
+          "turn": 9,
+          "type": "phasePushReserve",
+          "bossHp": 165,
+          "damageToPhase": 9,
+          "bestBossDamage": 16,
+          "finisherCards": 3,
+          "hand": [
+            "hold_breath",
+            "hold_breath",
+            "rill_cut",
+            "pulse_lance",
+            "cleanse_cache",
+            "pulse_lance",
+            "tide_ward"
+          ]
+        },
+        {
+          "turn": 6,
+          "type": "nearPhaseReserve",
+          "bossHp": 160,
+          "damageToPhase": 7,
+          "bestBossDamage": 0,
+          "finisherCards": 4,
+          "hand": [
+            "rust_bloom",
+            "echo_tap",
+            "tide_ward",
+            "pulse_lance",
+            "floodgate"
+          ]
+        }
+      ]
+    },
     "timelineCoverage": 1,
     "roleAverages": {
       "wins": {
@@ -30230,6 +30887,16 @@
       "tone": "steady",
       "area": "최종 보스",
       "text": "최종 보스 도달 185런 중 43패입니다. 패배 직전 행동은 문 낙하 19건, 종말 레퀴엠 15건, 개문 선율 6건입니다. 본체 체력이 낮게 남은 패배는 19건입니다. 문 낙하→호출→레퀴엠을 모두 지난 패배는 31건이고, 레퀴엠 진입 시 연속 방어 카드가 손패에 없던 패배는 33건입니다. 2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
+    },
+    {
+      "tone": "steady",
+      "area": "최종 보스 보상 추천",
+      "text": "마지막 문 직전 카드 보상 표본 305건 중 선택된 추천의 방어 계열 비중은 54%입니다. 마무리 부족 상태에서 방어를 고른 경우는 0건, 방어 부족이 아닌데 방어를 고른 경우는 16건입니다."
+    },
+    {
+      "tone": "steady",
+      "area": "마무리 보존 안내",
+      "text": "최종 보스 도달 185런 중 161런에서 마무리 보존 신호가 관측됐고, 도달 런당 평균 1.26회입니다. 2단계 전환선 경고는 102회, 근접 보존 안내는 132회입니다."
     }
   ]
 }

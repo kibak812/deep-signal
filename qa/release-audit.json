@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T23:00:58.514Z",
+  "generatedAt": "2026-05-21T23:19:00.247Z",
   "summary": {
     "passed": 25,
     "failed": 0,
@@ -337,7 +337,7 @@
       "id": "balance-report",
       "label": "밸런스 리포트 안정성",
       "ok": true,
-      "detail": "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.",
+      "detail": "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률과 최종 보스 보상/마무리 안내 지표가 허용 범위에 있어야 합니다.",
       "evidence": {
         "totals": {
           "runs": 108,
@@ -446,6 +446,231 @@
             }
           ],
           "winRate": 0.3888888888888889
+        },
+        "rewardGuidance": {
+          "samples": 149,
+          "chosen": 149,
+          "skipped": 0,
+          "roleCounts": [
+            {
+              "label": "burstDefense",
+              "count": 52
+            },
+            {
+              "label": "flow",
+              "count": 44
+            },
+            {
+              "label": "defense",
+              "count": 24
+            },
+            {
+              "label": "statusControl",
+              "count": 22
+            },
+            {
+              "label": "finish",
+              "count": 7
+            }
+          ],
+          "defensiveRecommendations": 76,
+          "defensiveShare": 0.51,
+          "defenseWhileFinishMissing": 0,
+          "defenseWithoutDefenseMissing": 6,
+          "finishRecommendations": 7,
+          "flowRecommendations": 44,
+          "statusRecommendations": 22,
+          "examples": [
+            {
+              "floor": 18,
+              "distance": 3,
+              "missing": [],
+              "card": "lantern_overclock",
+              "role": "statusControl",
+              "score": 12.2,
+              "threshold": 9
+            },
+            {
+              "floor": 21,
+              "distance": 0,
+              "missing": [
+                "체력",
+                "카드 뽑기"
+              ],
+              "card": "lantern_overclock",
+              "role": "statusControl",
+              "score": 17.2,
+              "threshold": 7
+            },
+            {
+              "floor": 18,
+              "distance": 3,
+              "missing": [
+                "연속 방어"
+              ],
+              "card": "wire_reef",
+              "role": "burstDefense",
+              "score": 24.32,
+              "threshold": 7
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [
+                "체력",
+                "방어",
+                "카드 뽑기"
+              ],
+              "card": "undertow_kick",
+              "role": "defense",
+              "score": 23.42,
+              "threshold": 7
+            },
+            {
+              "floor": 21,
+              "distance": 0,
+              "missing": [
+                "체력",
+                "연속 방어",
+                "카드 뽑기"
+              ],
+              "card": "archive_dust",
+              "role": "burstDefense",
+              "score": 18.76,
+              "threshold": 7
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [
+                "방어",
+                "정화·약화"
+              ],
+              "card": "pale_firewall",
+              "role": "defense",
+              "score": 31.78,
+              "threshold": 3
+            }
+          ]
+        },
+        "reserveSignals": {
+          "reached": 93,
+          "signalRuns": 85,
+          "signalRunRate": 0.91,
+          "signals": 119,
+          "averageSignalsPerReached": 1.28,
+          "maxSignalsPerRun": 3,
+          "phasePushSignals": 54,
+          "nearPhaseSignals": 65,
+          "bossFinishSignals": 0,
+          "typeCounts": [
+            {
+              "label": "nearPhaseReserve",
+              "count": 65
+            },
+            {
+              "label": "phasePushReserve",
+              "count": 54
+            }
+          ],
+          "examples": [
+            {
+              "turn": 17,
+              "type": "nearPhaseReserve",
+              "bossHp": 188,
+              "damageToPhase": 17,
+              "bestBossDamage": 0,
+              "finisherCards": 2,
+              "hand": [
+                "hold_breath",
+                "chronograph_anchor",
+                "memory_sift",
+                "pale_firewall",
+                "echo_tap",
+                "pale_firewall",
+                "cleanse_cache"
+              ]
+            },
+            {
+              "turn": 18,
+              "type": "nearPhaseReserve",
+              "bossHp": 188,
+              "damageToPhase": 17,
+              "bestBossDamage": 12,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "pulse_lance",
+                "floodgate",
+                "glass_lung",
+                "pulse_lance",
+                "tide_ward"
+              ]
+            },
+            {
+              "turn": 19,
+              "type": "phasePushReserve",
+              "bossHp": 176,
+              "damageToPhase": 5,
+              "bestBossDamage": 17,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "current_siphon",
+                "tide_ward",
+                "cleanse_cache",
+                "rill_cut",
+                "pulse_lance"
+              ]
+            },
+            {
+              "turn": 5,
+              "type": "nearPhaseReserve",
+              "bossHp": 161,
+              "damageToPhase": 7,
+              "bestBossDamage": 0,
+              "finisherCards": 3,
+              "hand": [
+                "tide_ward",
+                "axiom_break",
+                "null_pin",
+                "pale_firewall",
+                "pulse_lance"
+              ]
+            },
+            {
+              "turn": 9,
+              "type": "phasePushReserve",
+              "bossHp": 165,
+              "damageToPhase": 9,
+              "bestBossDamage": 16,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "hold_breath",
+                "rill_cut",
+                "pulse_lance",
+                "cleanse_cache",
+                "pulse_lance",
+                "tide_ward"
+              ]
+            },
+            {
+              "turn": 6,
+              "type": "nearPhaseReserve",
+              "bossHp": 160,
+              "damageToPhase": 7,
+              "bestBossDamage": 0,
+              "finisherCards": 4,
+              "hand": [
+                "rust_bloom",
+                "echo_tap",
+                "tide_ward",
+                "pulse_lance",
+                "floodgate"
+              ]
+            }
+          ]
         }
       }
     },
@@ -453,7 +678,7 @@
       "id": "balance-long-report",
       "label": "장시간 밸런스 리포트",
       "ok": true,
-      "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도는 어렵지만 초중반 절벽이 아니어야 합니다.",
+      "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
       "evidence": {
         "config": {
           "seedCount": 36,
@@ -936,6 +1161,231 @@
             }
           ],
           "winRate": 0.3888888888888889
+        },
+        "rewardGuidance": {
+          "samples": 305,
+          "chosen": 304,
+          "skipped": 1,
+          "roleCounts": [
+            {
+              "label": "burstDefense",
+              "count": 113
+            },
+            {
+              "label": "flow",
+              "count": 84
+            },
+            {
+              "label": "defense",
+              "count": 50
+            },
+            {
+              "label": "statusControl",
+              "count": 45
+            },
+            {
+              "label": "finish",
+              "count": 12
+            }
+          ],
+          "defensiveRecommendations": 163,
+          "defensiveShare": 0.54,
+          "defenseWhileFinishMissing": 0,
+          "defenseWithoutDefenseMissing": 16,
+          "finishRecommendations": 12,
+          "flowRecommendations": 84,
+          "statusRecommendations": 45,
+          "examples": [
+            {
+              "floor": 18,
+              "distance": 3,
+              "missing": [],
+              "card": "lantern_overclock",
+              "role": "statusControl",
+              "score": 12.2,
+              "threshold": 9
+            },
+            {
+              "floor": 21,
+              "distance": 0,
+              "missing": [
+                "체력",
+                "카드 뽑기"
+              ],
+              "card": "lantern_overclock",
+              "role": "statusControl",
+              "score": 17.2,
+              "threshold": 7
+            },
+            {
+              "floor": 18,
+              "distance": 3,
+              "missing": [
+                "연속 방어"
+              ],
+              "card": "wire_reef",
+              "role": "burstDefense",
+              "score": 24.32,
+              "threshold": 7
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [
+                "체력",
+                "방어",
+                "카드 뽑기"
+              ],
+              "card": "undertow_kick",
+              "role": "defense",
+              "score": 23.42,
+              "threshold": 7
+            },
+            {
+              "floor": 21,
+              "distance": 0,
+              "missing": [
+                "체력",
+                "연속 방어",
+                "카드 뽑기"
+              ],
+              "card": "archive_dust",
+              "role": "burstDefense",
+              "score": 18.76,
+              "threshold": 7
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [
+                "방어",
+                "정화·약화"
+              ],
+              "card": "pale_firewall",
+              "role": "defense",
+              "score": 31.78,
+              "threshold": 3
+            }
+          ]
+        },
+        "reserveSignals": {
+          "reached": 185,
+          "signalRuns": 161,
+          "signalRunRate": 0.87,
+          "signals": 234,
+          "averageSignalsPerReached": 1.26,
+          "maxSignalsPerRun": 3,
+          "phasePushSignals": 102,
+          "nearPhaseSignals": 132,
+          "bossFinishSignals": 0,
+          "typeCounts": [
+            {
+              "label": "nearPhaseReserve",
+              "count": 132
+            },
+            {
+              "label": "phasePushReserve",
+              "count": 102
+            }
+          ],
+          "examples": [
+            {
+              "turn": 17,
+              "type": "nearPhaseReserve",
+              "bossHp": 188,
+              "damageToPhase": 17,
+              "bestBossDamage": 0,
+              "finisherCards": 2,
+              "hand": [
+                "hold_breath",
+                "chronograph_anchor",
+                "memory_sift",
+                "pale_firewall",
+                "echo_tap",
+                "pale_firewall",
+                "cleanse_cache"
+              ]
+            },
+            {
+              "turn": 18,
+              "type": "nearPhaseReserve",
+              "bossHp": 188,
+              "damageToPhase": 17,
+              "bestBossDamage": 12,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "pulse_lance",
+                "floodgate",
+                "glass_lung",
+                "pulse_lance",
+                "tide_ward"
+              ]
+            },
+            {
+              "turn": 19,
+              "type": "phasePushReserve",
+              "bossHp": 176,
+              "damageToPhase": 5,
+              "bestBossDamage": 17,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "current_siphon",
+                "tide_ward",
+                "cleanse_cache",
+                "rill_cut",
+                "pulse_lance"
+              ]
+            },
+            {
+              "turn": 5,
+              "type": "nearPhaseReserve",
+              "bossHp": 161,
+              "damageToPhase": 7,
+              "bestBossDamage": 0,
+              "finisherCards": 3,
+              "hand": [
+                "tide_ward",
+                "axiom_break",
+                "null_pin",
+                "pale_firewall",
+                "pulse_lance"
+              ]
+            },
+            {
+              "turn": 9,
+              "type": "phasePushReserve",
+              "bossHp": 165,
+              "damageToPhase": 9,
+              "bestBossDamage": 16,
+              "finisherCards": 3,
+              "hand": [
+                "hold_breath",
+                "hold_breath",
+                "rill_cut",
+                "pulse_lance",
+                "cleanse_cache",
+                "pulse_lance",
+                "tide_ward"
+              ]
+            },
+            {
+              "turn": 6,
+              "type": "nearPhaseReserve",
+              "bossHp": 160,
+              "damageToPhase": 7,
+              "bestBossDamage": 0,
+              "finisherCards": 4,
+              "hand": [
+                "rust_bloom",
+                "echo_tap",
+                "tide_ward",
+                "pulse_lance",
+                "floodgate"
+              ]
+            }
+          ]
         }
       }
     },

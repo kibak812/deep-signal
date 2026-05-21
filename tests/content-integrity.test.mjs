@@ -264,6 +264,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(auditSource, /balance:long/);
   assert.match(auditSource, /balance-long-report/);
+  assert.match(auditSource, /rewardGuidance/);
+  assert.match(auditSource, /reserveSignals/);
+  assert.match(auditSource, /defenseWhileFinishMissing/);
+  assert.match(auditSource, /averageSignalsPerReached/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
@@ -595,7 +599,13 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /context\.act >= 3 \? 1\.55 : 1/);
   assert.match(balanceSource, /let finalBossSnapshot = null/);
   assert.match(balanceSource, /const finalBossTimeline = \[\]/);
+  assert.match(balanceSource, /finalBossRewardSamples: \[\]/);
+  assert.match(balanceSource, /finalBossReserveSignals: \[\]/);
   assert.match(balanceSource, /function recordFinalBossSnapshot\(run, timeline\)/);
+  assert.match(balanceSource, /function recordFinalBossRewardSample\(run, scored, threshold, samples\)/);
+  assert.match(balanceSource, /function finalBossRewardRole\(card\)/);
+  assert.match(balanceSource, /function finalBossReserveSignal\(run\)/);
+  assert.match(balanceSource, /function recordFinalBossReserveSignal\(run, signals\)/);
   assert.match(balanceSource, /function finalBossTimelineEntry\(snapshot\)/);
   assert.match(balanceSource, /function finalBossSnapshotKey\(snapshot\)/);
   assert.match(balanceSource, /function finalBossCombatSnapshot\(run\)/);
@@ -606,6 +616,12 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /lossMoves/);
   assert.match(balanceSource, /timelineSamples/);
   assert.match(balanceSource, /lowBurstDefenseLosses/);
+  assert.match(balanceSource, /function aggregateFinalBossRewardGuidance\(runs\)/);
+  assert.match(balanceSource, /function aggregateFinalBossReserveSignals\(reachedRuns\)/);
+  assert.match(balanceSource, /rewardGuidance/);
+  assert.match(balanceSource, /reserveSignals/);
+  assert.match(balanceSource, /마지막 문 직전 카드 보상 표본/);
+  assert.match(balanceSource, /마무리 보존 신호가 관측/);
   assert.match(balanceSource, /function finalBossPressureProfile\(losses\)/);
   assert.match(balanceSource, /sequenceLosses/);
   assert.match(balanceSource, /averageRequiemHandBurstDefense/);

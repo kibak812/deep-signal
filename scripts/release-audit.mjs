@@ -277,7 +277,28 @@ async function main() {
     { workflow: ".github/workflows/deploy-pages.yml", mode: "github-actions-pages", publishDir: "dist" }
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
-  record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.75 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });
+  const rewardGuidance = balance.finalBossAnalysis?.rewardGuidance;
+  const reserveSignals = balance.finalBossAnalysis?.reserveSignals;
+  const longRewardGuidance = longBalance.finalBossAnalysis?.rewardGuidance;
+  const longReserveSignals = longBalance.finalBossAnalysis?.reserveSignals;
+  record(
+    "balance-report",
+    "밸런스 리포트 안정성",
+    balance.totals?.runs >= 108 &&
+      balance.totals?.problemRuns === 0 &&
+      balance.totals?.winRate >= 0.25 &&
+      balance.totals?.winRate <= 0.75 &&
+      easiest?.winRate >= 0.45 &&
+      hardest?.winRate <= 0.45 &&
+      rewardGuidance?.samples >= 120 &&
+      rewardGuidance?.defensiveShare <= 0.72 &&
+      rewardGuidance?.defenseWhileFinishMissing === 0 &&
+      reserveSignals?.reached >= 80 &&
+      reserveSignals?.averageSignalsPerReached <= 2.4 &&
+      reserveSignals?.maxSignalsPerRun <= 5,
+    "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률과 최종 보스 보상/마무리 안내 지표가 허용 범위에 있어야 합니다.",
+    { totals: balance.totals, easiest, hardest, rewardGuidance, reserveSignals }
+  );
   record(
     "balance-long-report",
     "장시간 밸런스 리포트",
@@ -290,9 +311,15 @@ async function main() {
       longHardest?.winRate >= 0.2 &&
       longHardest?.winRate <= 0.45 &&
       longHardest?.averageFloors >= 16 &&
-      longBalance.byDifficulty?.every((entry) => entry.problemRuns === 0),
-    "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도는 어렵지만 초중반 절벽이 아니어야 합니다.",
-    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest }
+      longBalance.byDifficulty?.every((entry) => entry.problemRuns === 0) &&
+      longRewardGuidance?.samples >= 240 &&
+      longRewardGuidance?.defensiveShare <= 0.72 &&
+      longRewardGuidance?.defenseWhileFinishMissing === 0 &&
+      longReserveSignals?.reached >= 160 &&
+      longReserveSignals?.averageSignalsPerReached <= 2.4 &&
+      longReserveSignals?.maxSignalsPerRun <= 5,
+    "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
+    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest, rewardGuidance: longRewardGuidance, reserveSignals: longReserveSignals }
   );
   record(
     "credits-license",
