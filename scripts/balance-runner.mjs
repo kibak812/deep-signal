@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import {
   buyShopCard,
   buyShopHeal,
@@ -29,8 +30,11 @@ import { ENEMY_BY_ID } from "../src/data/enemies.js";
 import { EVENT_BY_ID } from "../src/data/events.js";
 import { RELIC_BY_ID } from "../src/data/relics.js";
 
-const DEFAULT_SEEDS = Array.from({ length: 18 }, (_, index) => `balance-${String(index + 1).padStart(2, "0")}`);
+const DEFAULT_SEED_COUNT = 18;
+const DEFAULT_SEED_PREFIX = "balance";
+const DEFAULT_SEEDS = createBalanceSeeds(DEFAULT_SEED_COUNT);
 const DEFAULT_DIFFICULTIES = [0, 1, 2, 3, 4, 5];
+const DEFAULT_REPORT_PATH = "qa/balance-report.json";
 const MAX_STEPS = 1800;
 const COMBAT_TURN_LIMITS = {
   combat: 30,
@@ -58,7 +62,13 @@ export function runBalanceSuite({
       runs.push(simulateRun({ seed: `${seed}-d${difficulty}`, difficulty, maxSteps }));
     }
   }
-  return summarizeRuns(runs);
+  return summarizeRuns(runs, { seedCount: seeds.length, difficulties, maxSteps });
+}
+
+export function createBalanceSeeds(count = DEFAULT_SEED_COUNT, prefix = DEFAULT_SEED_PREFIX) {
+  const parsed = Number.parseInt(count, 10);
+  const safeCount = Number.isInteger(parsed) && parsed > 0 ? parsed : DEFAULT_SEED_COUNT;
+  return Array.from({ length: safeCount }, (_, index) => `${prefix}-${String(index + 1).padStart(2, "0")}`);
 }
 
 export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {}) {
@@ -1030,7 +1040,7 @@ function stateFingerprint(run) {
   });
 }
 
-function summarizeRuns(runs) {
+function summarizeRuns(runs, config = {}) {
   const byDifficulty = Object.values(
     runs.reduce((groups, run) => {
       groups[run.difficultyName] ??= {
@@ -1085,6 +1095,7 @@ function summarizeRuns(runs) {
 
   return {
     generatedAt: new Date().toISOString(),
+    config,
     runs,
     totals,
     byDifficulty,
@@ -1497,10 +1508,78 @@ function round(value) {
   return Math.round(value * 100) / 100;
 }
 
+function parseBalanceCliOptions(argv = process.argv.slice(2)) {
+  const options = {
+    seedCount: DEFAULT_SEED_COUNT,
+    maxSteps: MAX_STEPS,
+    reportPath: DEFAULT_REPORT_PATH,
+    help: false
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === "--help" || arg === "-h") {
+      options.help = true;
+      continue;
+    }
+    if (arg === "--seed-count") {
+      options.seedCount = positiveCliInteger(argv[++index], "--seed-count");
+      continue;
+    }
+    if (arg.startsWith("--seed-count=")) {
+      options.seedCount = positiveCliInteger(arg.slice("--seed-count=".length), "--seed-count");
+      continue;
+    }
+    if (arg === "--max-steps") {
+      options.maxSteps = positiveCliInteger(argv[++index], "--max-steps");
+      continue;
+    }
+    if (arg.startsWith("--max-steps=")) {
+      options.maxSteps = positiveCliInteger(arg.slice("--max-steps=".length), "--max-steps");
+      continue;
+    }
+    if (arg === "--report") {
+      options.reportPath = requiredCliValue(argv[++index], "--report");
+      continue;
+    }
+    if (arg.startsWith("--report=")) {
+      options.reportPath = requiredCliValue(arg.slice("--report=".length), "--report");
+      continue;
+    }
+    throw new Error(`Unknown balance option: ${arg}`);
+  }
+
+  return options;
+}
+
+function positiveCliInteger(value, name) {
+  if (!/^\d+$/.test(value ?? "")) throw new Error(`${name} must be a positive integer.`);
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isInteger(parsed) || parsed <= 0) throw new Error(`${name} must be a positive integer.`);
+  return parsed;
+}
+
+function requiredCliValue(value, name) {
+  if (!value) throw new Error(`${name} requires a value.`);
+  return value;
+}
+
+function printBalanceHelp() {
+  console.log(`Usage: node scripts/balance-runner.mjs [--seed-count=18] [--max-steps=1800] [--report=qa/balance-report.json]`);
+}
+
 async function main() {
-  const report = runBalanceSuite();
-  await mkdir("qa", { recursive: true });
-  await writeFile("qa/balance-report.json", `${JSON.stringify(report, null, 2)}\n`);
+  const options = parseBalanceCliOptions();
+  if (options.help) {
+    printBalanceHelp();
+    return;
+  }
+  const report = runBalanceSuite({
+    seeds: createBalanceSeeds(options.seedCount),
+    maxSteps: options.maxSteps
+  });
+  await mkdir(dirname(options.reportPath), { recursive: true });
+  await writeFile(options.reportPath, `${JSON.stringify(report, null, 2)}\n`);
   console.log(
     JSON.stringify(
       {
@@ -1519,7 +1598,7 @@ async function main() {
         primaryBuilds: report.primaryBuilds.slice(0, 8),
         finalBossAnalysis: report.finalBossAnalysis,
         recommendations: report.recommendations,
-        reportPath: "qa/balance-report.json"
+        reportPath: options.reportPath
       },
       null,
       2

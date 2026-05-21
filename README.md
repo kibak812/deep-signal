@@ -16,6 +16,7 @@ npm run dev
 npm test
 npm run build
 npm run balance
+npm run balance:long
 npm run audit
 ```
 
@@ -80,7 +81,7 @@ GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다
 ## 검증한 플로우
 
 - 자동 테스트: 콘텐츠 수량, 데이터 무결성, 카드 설명과 엔진 효과 일치, 전투 시작/턴 시작/카드 사용/보상/상점/휴식 유물 발동, 오늘의 계약 조항, 저장 복구, 기록 집계, 보상 선택, 더미 처리, 키보드 조작, 보스 단계 전환, 이벤트 중복 방지, 승리/패배 요약을 검증합니다.
-- 밸런스 러너: `npm run balance`는 6개 난이도 x 18개 시드의 보수적 자동 플레이를 실행하고 `qa/balance-report.json`을 생성합니다. 리포트에는 전체 승률, 난이도별 평균 도달층, 사망 원인, 초반/중반/후반/최종 구간 분포, 전체 키워드별 승률, 1순위 주력별 승률, 최종 보스 전투 스냅샷과 턴 타임라인, 패배 행동 집계, 연속 방어 지표, 우선 조정 제안이 포함됩니다. 현재 리포트는 108런, 진행 불가 0건, 전체 평균 19.27층, 자동 조종 승리 71건, 전체 승률 66.0%를 기록했습니다. 난이도별 승률은 표층 83.3%, 냉수층 77.8%, 무광층 66.7%, 압력층 66.7%, 무호흡층 55.6%, 최심층 44.4%입니다.
+- 밸런스 러너: `npm run balance`는 6개 난이도 x 18개 시드의 보수적 자동 플레이를 실행하고 `qa/balance-report.json`을 생성합니다. `npm run balance:long`은 같은 규칙을 6개 난이도 x 36개 시드로 확장해 `qa/balance-long-report.json`을 남깁니다. 리포트에는 전체 승률, 난이도별 평균 도달층, 사망 원인, 초반/중반/후반/최종 구간 분포, 전체 키워드별 승률, 1순위 주력별 승률, 최종 보스 전투 스냅샷과 턴 타임라인, 패배 행동 집계, 연속 방어 지표, 우선 조정 제안이 포함됩니다. 현재 기본 리포트는 108런, 진행 불가 0건, 전체 평균 19.27층, 자동 조종 승리 71건, 전체 승률 66.0%를 기록했습니다. 난이도별 승률은 표층 83.3%, 냉수층 77.8%, 무광층 66.7%, 압력층 66.7%, 무호흡층 55.6%, 최심층 44.4%입니다. 장시간 리포트는 216런, 진행 불가 0건, 전체 승률 64.0%를 기록했고, 표층 83.3%, 냉수층 75.0%, 무광층 69.4%, 압력층 77.8%, 무호흡층 55.6%, 최심층 25.0%로 압력층 체감과 최심층 후반 난도를 다음 조정 후보로 드러냅니다.
 - 출시 감사: `npm run audit`는 콘텐츠 수량, 필수 화면, 접근성 설정, 저장/기록 연결, PNG 스프라이트/카드 일러스트/전투 배경 아틀라스, 정적 빌드 산출물, GitHub Pages 배포 준비, 밸런스 리포트 안정성, 최신 브라우저 검증 스크린샷을 한 번에 확인하고 `qa/release-audit.json`을 생성합니다.
 - 브라우저 검증: 새 런 시작, 난이도 선택, 오늘의 계약, 게임 정보, 기록 화면, 맵 이동, 전투, 전투 더미 점검, 카드 사용, 전투 FX, 대상 변경, 턴 종료, 보상 선택, 이벤트, 상점, 휴식, 이어하기, 저장 삭제 확인, 패배 요약, 설정 반영, 작은 화면 전투 흐름, 콘솔 오류 없음을 확인했습니다.
 
@@ -90,13 +91,14 @@ GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다
 
 - `qa/release-audit.json`: 출시 감사 결과와 각 항목의 증거
 - `qa/balance-report.json`: 6개 난이도 x 18개 시드 자동 플레이 결과
+- `qa/balance-long-report.json`: 6개 난이도 x 36개 시드 장시간 자동 플레이 결과
 - `qa/browser-qa-combat-updated.png`, `qa/browser-qa-responsive-combat-hud.png`, `qa/browser-qa-map-routes.png`, `qa/browser-qa-reward-card-rarity.png`, `qa/browser-qa-settings-accessibility.png`, `qa/browser-qa-mobile-combat.png`, `qa/browser-qa-codex.png`: 오래된 기준 화면까지 남긴 브라우저 확인 자료입니다. UI나 소스가 바뀐 뒤에는 다시 캡처해야 출시 감사가 통과합니다.
 - 최신 갱신본: `browser-qa-title-refreshed.png`, `browser-qa-about-refreshed.png`, `browser-qa-map-refreshed.png`, `browser-qa-map-route-preview.png`, `browser-qa-act-interlude-refreshed.png`, `browser-qa-act-interlude-one-shot.png`, `browser-qa-final-boss-readiness.png`, `browser-qa-final-boss-selector.png`, `browser-qa-combat-refreshed.png`, `browser-qa-combat-card-hover.png`, `browser-qa-card-attack-hover.png`, `browser-qa-card-attack-fx.png`, `browser-qa-combat-energy-locked.png`, `browser-qa-combat-status-tooltip.png`, `browser-qa-combat-intent-tooltip.png`, `browser-qa-boss-status-strip.png`, `browser-qa-victory-coda.png`, `browser-qa-enemy-grouped-fx.png`, `browser-qa-choice-pulse-next-step.png`, `browser-qa-reward-refreshed.png`, `browser-qa-reward-card-selected.png`, `browser-qa-reward-relics-refreshed.png`, `browser-qa-reward-post-victory-refreshed.png`, `browser-qa-shop-refreshed.png`, `browser-qa-rest-refreshed.png`, `browser-qa-summary-lost-refreshed.png`, `browser-qa-summary-won-refreshed.png`, `browser-qa-records-refreshed.png`, `browser-qa-mobile-refreshed.png`, `browser-qa-mobile-combat-refreshed.png`, `browser-qa-tablet-combat-refreshed.png`, `browser-qa-settings-refreshed.png`, `browser-qa-codex-refreshed.png`, `browser-qa-guide-refreshed.png`입니다.
 - JSON 증거: `browser-qa-card-outcome-readability.json`은 손패와 호버 레일의 카드 결과가 `피해 6`, `방어 5`, `전하 2`처럼 의미 있는 한글 라벨로 보이고 잘리지 않는지 기록합니다. `browser-qa-combat-hand-readability.json`은 6장 손패가 데스크톱 전투 화면에서 손패 영역 안에 들어오고 턴 종료 버튼과 충분히 떨어져 있는지 기록합니다. `browser-qa-combat-route-beacon.json`은 전투 HUD가 현재 위치, 보스까지 거리, 목표 보스 이름, 전투 후 보상 맥락을 겹침 없이 보여주는지 기록합니다. `browser-qa-combat-high-energy-hud.json`은 최대 전하가 5까지 오른 전투에서도 전하 막대가 원형 HUD 안에서 한 줄로 읽히는지 기록합니다. `browser-qa-card-attack-hover.json`은 공격 카드 호버 중 선택 카드, 목표 적, 조준선, 대상 미리보기가 함께 보이는지 기록합니다. `browser-qa-card-attack-fx.json`은 공격 카드가 플레이어 발사 지점, 적 피격 표시, 피해 숫자, 경로 이펙트를 함께 보여주는지 기록합니다. `browser-qa-combat-energy-locked.json`은 전하가 부족한 카드의 사용 불가 상태와 호버 설명을 기록합니다. `browser-qa-enemy-grouped-fx.json`은 여러 적 행동 효과가 한 번만 뜨는지, 참여 적 수와 총 타격 수가 묶음 배지로 정확히 보이는지 기록합니다. `browser-qa-combat-turn-and-victory-evidence.json`은 적 턴 이펙트 중복 방지, 승리창 중복 방지, `rewardReachedAfterVictory` 값을 기록합니다. `browser-qa-mobile-combat-refreshed.json`과 `browser-qa-tablet-combat-refreshed.json`은 작은 화면과 태블릿 전투에서 손패, 에너지, 더미, 턴 종료 버튼, 대상 안내가 서로 겹치지 않는지 기록합니다.
 
 ## 출시 전 우선순위
 
-- 장시간 플레이를 통한 각 난이도별 승률 조정. 이번 조정으로 중간 난이도의 적 체력/피해 배율을 촘촘하게 다시 잡아 표층 83.3%에서 최심층 44.4%까지 더 자연스럽게 내려가는 승률 곡선을 만들었습니다. 자동 조종이 보스 본체를 `templateId` 문자열이 아니라 실제 적 티어로 판정하게 고쳐, 마지막 문 성가대 전투에서 소환수보다 본체 마무리를 우선합니다. 문지기 호출로 나오는 거울 해파리 체력 배율도 0.7에서 0.6으로 낮춰 2단계 소환이 긴장감은 주되 보스 본체를 과하게 가리지 않게 했습니다. 새 리포트에서는 중반 강적 사망이 12건에서 9건으로 줄었고, 최종 보스 도달 88런 중 71승, 자동 조종 전체 승률 66.0%를 기록했습니다. 다음 조정은 실제 반복 플레이로 표본을 늘려 무광층과 압력층의 체감 차이를 더 세밀하게 다듬는 일입니다.
+- 장시간 플레이를 통한 각 난이도별 승률 조정. 이번 조정으로 중간 난이도의 적 체력/피해 배율을 촘촘하게 다시 잡아 표층 83.3%에서 최심층 44.4%까지 더 자연스럽게 내려가는 기본 승률 곡선을 만들었습니다. 자동 조종이 보스 본체를 `templateId` 문자열이 아니라 실제 적 티어로 판정하게 고쳐, 마지막 문 성가대 전투에서 소환수보다 본체 마무리를 우선합니다. 문지기 호출로 나오는 거울 해파리 체력 배율도 0.7에서 0.6으로 낮춰 2단계 소환이 긴장감은 주되 보스 본체를 과하게 가리지 않게 했습니다. 36시드 장시간 리포트에서는 216런 모두 진행 불가 없이 완료됐고, 최종 보스 도달 174런 중 139승, 자동 조종 전체 승률 64.0%를 기록했습니다. 다음 조정은 압력층이 무광층보다 쉬워지는 표본 편차를 실제 플레이와 대조하고, 최심층의 후반 체력 곡선을 더 정교하게 다듬는 일입니다.
 - 카드별/적별 아트의 수작업 일러스트 다듬기와 추가 애니메이션. 이번 갱신으로 전투 스프라이트가 카드 사용, 적 공격, 피격, 처치 순간에 짧은 동작 잔상과 발밑 충격을 내도록 추가했고, 카드 일러스트에는 카드별 전경 모티프를 더해 같은 계열 카드도 한눈에 구분되게 했습니다. 보스는 2단계 진입 시 전용 PNG 스프라이트로 바뀌도록 연결했고, 일반 적과 엘리트는 전투판에서 더 잘 읽히도록 적별 크기·포즈 보정을 적용했습니다. 다음 단계는 실제 플레이 중 적 조합별 화면 밀도와 이펙트 가독성을 더 다듬는 일입니다.
 - 음악 믹싱과 장기 플레이 청감 검증. 이번 갱신으로 테마 전환 프레이즈, 긴 브리지 프레이즈, 기본 필터/컴프레서 처리를 추가했습니다. 다음 단계는 실제 스피커와 헤드폰에서 효과음과 배경음의 상대 볼륨을 오래 들어보며 조정하는 일입니다.
 - 전체 런 반복 검증, 모바일/태블릿 세부 터치 조작 다듬기

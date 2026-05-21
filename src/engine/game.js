@@ -1140,10 +1140,15 @@ function startCombat(run, type = "combat", options = {}) {
     firstExhaustTriggered: false,
     relicTriggers: []
   };
-  if (hasRelic(run, "dead_battery")) loseHp(run, 2, "죽은 축전지");
+  if (hasRelic(run, "dead_battery")) {
+    loseHp(run, 2, "죽은 축전지");
+    if (run.phase !== "combat" || !run.combat) return touch(run);
+  }
   applyCombatStartRelics(run);
+  if (run.phase !== "combat" || !run.combat) return touch(run);
   for (const enemy of enemies) chooseEnemyIntent(run, enemy, true);
   startPlayerTurn(run);
+  if (run.phase !== "combat" || !run.combat) return touch(run);
   clearNextCombatFlags(run);
   addLog(run, `${combatTitle(type)} 시작.`, "combat");
   return touch(run);

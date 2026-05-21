@@ -144,6 +144,7 @@ async function main() {
   const testSource = `${await readFile(resolve(root, "tests/engine.test.mjs"), "utf8")}\n${await readFile(resolve(root, "tests/content-integrity.test.mjs"), "utf8")}`;
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
   const balance = JSON.parse(await readFile(resolve(root, "qa/balance-report.json"), "utf8"));
+  const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
   const qaFiles = await readdir(qaDir).catch(() => []);
   const atlas = await readFile(resolve(root, "public/assets/sprite-atlas.png"));
   const cardAtlas = await readFile(resolve(root, "public/assets/card-illustrations.png"));
@@ -217,7 +218,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "balance", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
@@ -273,6 +274,18 @@ async function main() {
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
   record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.75 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });
+  record(
+    "balance-long-report",
+    "장시간 밸런스 리포트",
+    longBalance.totals?.runs >= 216 &&
+      longBalance.config?.seedCount >= 36 &&
+      longBalance.totals?.problemRuns === 0 &&
+      longBalance.totals?.winRate >= 0.25 &&
+      longBalance.totals?.winRate <= 0.75 &&
+      longBalance.byDifficulty?.every((entry) => entry.problemRuns === 0),
+    "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 합니다.",
+    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty }
+  );
   record(
     "credits-license",
     "크레딧/라이선스 안내",

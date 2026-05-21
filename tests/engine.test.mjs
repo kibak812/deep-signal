@@ -36,7 +36,7 @@ import { deleteSavedRun, loadRunFromStorage, saveRunToStorage, SAVE_BACKUP_KEY, 
 import { CARDS } from "../src/data/cards.js";
 import { EVENT_BY_ID } from "../src/data/events.js";
 import { BOSS_IDS, ENEMIES, ENEMY_BY_ID } from "../src/data/enemies.js";
-import { runBalanceSuite } from "../scripts/balance-runner.mjs";
+import { createBalanceSeeds, runBalanceSuite } from "../scripts/balance-runner.mjs";
 
 function memoryStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -712,6 +712,18 @@ test("combat start and turn-start relics apply readable state changes", () => {
   const batteryRun = combatRunWithRelics(["dead_battery"], { hp: 80 });
   assert.equal(batteryRun.combat.maxEnergy, 4);
   assert.equal(batteryRun.player.hp, 78);
+
+  const lethalBatteryRun = newRun({ seed: "dead-battery-lethal-start", difficulty: 0 });
+  const lethalNode = lethalBatteryRun.map
+    .flat()
+    .find((node) => lethalBatteryRun.availableNodeIds.includes(node.id) && node.type === "combat");
+  assert.ok(lethalNode);
+  lethalBatteryRun.player.relics = ["dead_battery"];
+  lethalBatteryRun.player.hp = 2;
+  assert.doesNotThrow(() => enterNode(lethalBatteryRun, lethalNode.id));
+  assert.equal(lethalBatteryRun.phase, "summary");
+  assert.equal(lethalBatteryRun.combat, null);
+  assert.match(lethalBatteryRun.summary.reason, /죽은 축전지/);
 
   const gillRun = combatRunWithRelics(["clockwork_gill"], { hp: 40 });
   assert.ok(relicWasTriggered(gillRun, "clockwork_gill"));
@@ -1457,6 +1469,9 @@ test("run records preserve recent builds and defeated boss names", () => {
 test("balance report highlights death causes, floor bands, and build performance", () => {
   const report = runBalanceSuite({ seeds: ["qa-a", "qa-b"], difficulties: [0, 2], maxSteps: 900 });
   assert.equal(report.totals.runs, 4);
+  assert.deepEqual(createBalanceSeeds(3), ["balance-01", "balance-02", "balance-03"]);
+  assert.equal(report.config.seedCount, 2);
+  assert.deepEqual(report.config.difficulties, [0, 2]);
   assert.ok(Array.isArray(report.lossReasons));
   assert.ok(report.floorBands.some((band) => band.id === "early" && band.label.includes("1-7")));
   assert.ok(report.floorBands.some((band) => band.id === "final"));

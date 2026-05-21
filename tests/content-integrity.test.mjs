@@ -261,6 +261,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /## 검증 산출물/);
   assert.match(readme, /qa\/release-audit\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
+  assert.match(readme, /qa\/balance-long-report\.json/);
+  assert.match(auditSource, /balance:long/);
+  assert.match(auditSource, /balance-long-report/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
