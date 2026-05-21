@@ -8796,6 +8796,13 @@ function summaryRetryBriefLine(summary) {
 function summaryRetryBriefChips(summary, replaySeed, nextDifficulty = null) {
   const firstStep = summaryNextRunSteps(summary)[0];
   const stop = summary.won ? `${summary.floors ?? 0}층 완주` : summaryStopPoint(summary);
+  if (!summary.won && summaryFinalBossLoss(summary)) {
+    return [
+      { label: "막힌 곳", value: stop },
+      { label: "첫 선택", value: firstStep?.title ?? "보스 전 정비" },
+      summaryFinalBossRetryChip(summary)
+    ];
+  }
   const thirdChip = nextDifficulty
     ? { label: "다음", value: nextDifficulty.name }
     : { label: "시드", value: replaySeed || "랜덤" };
@@ -8873,13 +8880,19 @@ function renderSummaryNextRail(summary) {
 }
 
 function summaryOpeningPlanSteps(summary) {
-  const labels = summary.won ? ["첫 보상", "덱 손질", "보스 전"] : ["첫 보상", "첫 경로", "첫 정비"];
+  const labels = summaryOpeningPlanLabels(summary);
   return summaryNextRunSteps(summary)
     .slice(0, 3)
     .map((step, index) => ({
       ...step,
       label: labels[index] ?? `${index + 1}번`
     }));
+}
+
+function summaryOpeningPlanLabels(summary) {
+  if (summary.won) return ["첫 보상", "덱 손질", "보스 전"];
+  if (summaryFinalBossLoss(summary)) return ["마지막 정비", "보스 패턴", "마무리 턴"];
+  return ["첫 보상", "첫 경로", "첫 정비"];
 }
 
 function summaryNextStepShortText(detail = "") {
@@ -8959,16 +8972,54 @@ function summaryReplayPrompt(summary, replaySeed, nextDifficulty = null) {
       ]
     };
   }
+  const retryChips = summaryFinalBossLoss(summary)
+    ? [
+        { label: "목표", value: firstPlan?.title ?? "최종 보스 정비" },
+        summaryFinalBossRetryChip(summary),
+        summaryFinalBossHpChip(summary, replaySeed)
+      ]
+    : [
+        { label: "목표", value: firstPlan?.title ?? "첫 방향 정하기" },
+        { label: "막힌 곳", value: stop },
+        { label: "시드", value: replaySeed || "랜덤" }
+      ];
   return {
     tone: firstPlan?.tone ?? "steady",
     title: `${stop}에서 ${failureAdvice?.retryTitle ?? "다른 선택 보기"}`,
     detail: `${firstPlan?.detail ?? "첫 보상에서 주력을 빨리 정하세요."} 같은 시드로 들어가면 어느 선택이 달랐는지 비교하기 쉽습니다.`,
-    chips: [
-      { label: "목표", value: firstPlan?.title ?? "첫 방향 정하기" },
-      { label: "막힌 곳", value: stop },
-      { label: "시드", value: replaySeed || "랜덤" }
-    ]
+    chips: retryChips
   };
+}
+
+function summaryFinalBossRetryChip(summary) {
+  const finalCombat = summary.finalCombat ?? {};
+  const moveLabel = summaryFinalBossMoveLabel(finalCombat.bossMove);
+  const incomingDamage = finalCombat.forecast?.incomingDamage ?? 0;
+  const summons = finalCombat.forecast?.summons ?? 0;
+  if (moveLabel && incomingDamage > 0) return { label: "패턴", value: `${moveLabel} ${incomingDamage}피해` };
+  if (moveLabel && summons > 0) return { label: "패턴", value: `${moveLabel} 소환` };
+  if (moveLabel) return { label: "패턴", value: moveLabel };
+  if (Number.isFinite(finalCombat.bossHp) && Number.isFinite(finalCombat.bossMaxHp)) {
+    return { label: "본체", value: `${Math.max(0, finalCombat.bossHp)}/${finalCombat.bossMaxHp}` };
+  }
+  return { label: "패턴", value: "2단계" };
+}
+
+function summaryFinalBossHpChip(summary, replaySeed) {
+  const finalCombat = summary.finalCombat ?? {};
+  if (Number.isFinite(finalCombat.bossHp) && Number.isFinite(finalCombat.bossMaxHp)) {
+    return { label: "본체", value: `${Math.max(0, finalCombat.bossHp)}/${finalCombat.bossMaxHp}` };
+  }
+  return { label: "시드", value: replaySeed || "랜덤" };
+}
+
+function summaryFinalBossMoveLabel(move = "") {
+  const labels = {
+    gate_slam: "문 낙하",
+    gate_call: "문지기 호출",
+    phase_requiem: "레퀴엠"
+  };
+  return labels[move] ?? "";
 }
 
 function summaryStopPoint(summary) {

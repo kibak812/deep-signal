@@ -143,6 +143,8 @@ try {
   await assertSummaryActionsVisible(cdp);
   await waitForText(cdp, "문 낙하를 맞을 체력이 남지 않았습니다");
   await waitForText(cdp, "보스 전 회복·단타 방어 챙기기");
+  await waitForText(cdp, "문 낙하 25피해");
+  await waitForText(cdp, "마지막 정비");
   await capture(cdp, "browser-qa-summary-lost-refreshed.png");
   await clearSavedRun(cdp);
 
@@ -2911,6 +2913,9 @@ async function assertSummaryActionsVisible(cdp) {
     const statValues = [...document.querySelectorAll(".summary-verdict-stats dd")].map((item) => item.innerText.replace(/\\s+/g, " ").trim());
     const buildStat = document.querySelector(".summary-verdict-stats div:last-child dd");
     const compactBuildStat = !buildStat || buildStat.innerText.replace(/\\s+/g, " ").trim().length <= 12;
+    const lostSummary = panel.classList.contains("lost");
+    const retryChipText = [...document.querySelectorAll(".summary-verdict-cta-chips i, .summary-replay-prompt i")].map((item) => item.innerText.replace(/\\s+/g, " ").trim()).join(" ");
+    const finalBossRetryCueOk = !lostSummary || (retryChipText.includes("패턴") && retryChipText.includes("문 낙하"));
     const summaryKeepAll = [...document.querySelectorAll(".summary-verdict-copy > strong, .summary-verdict-stats dd, .summary-verdict-cta strong, .summary-focus-strip strong, .summary-next-rail li strong, .summary-action-main strong")].every((item) => getComputedStyle(item).wordBreak === "keep-all");
     const visibleSummaryTextFits = [...document.querySelectorAll(".summary-verdict-stats dd, .summary-next-rail li strong, .summary-action-main strong")].every((item) => item.scrollWidth <= item.clientWidth + 2 || getComputedStyle(item).display.includes("box"));
     const ok =
@@ -2918,6 +2923,7 @@ async function assertSummaryActionsVisible(cdp) {
       nextRailItems === 3 &&
       ctaChips === 3 &&
       compactBuildStat &&
+      finalBossRetryCueOk &&
       summaryKeepAll &&
       visibleSummaryTextFits &&
       verdictCtaText.includes("다음 런 브리핑") &&
@@ -2943,6 +2949,8 @@ async function assertSummaryActionsVisible(cdp) {
       ctaChips,
       statValues,
       compactBuildStat,
+      finalBossRetryCueOk,
+      retryChipText,
       summaryKeepAll,
       visibleSummaryTextFits,
       viewportH,

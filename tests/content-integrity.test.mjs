@@ -1827,6 +1827,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /function renderSummaryReplayPrompt\(summary, replaySeed, nextDifficulty = null\)/);
   assert.match(mainSource, /function renderSummaryNextRail\(summary\)/);
   assert.match(mainSource, /function summaryOpeningPlanSteps\(summary\)/);
+  assert.match(mainSource, /function summaryOpeningPlanLabels\(summary\)/);
   assert.match(mainSource, /class="summary-command-panel"/);
   assert.match(mainSource, /aria-label="다음 런 바로가기"/);
   assert.match(mainSource, /aria-label="\$\{step\.label\}: \$\{step\.title\}\. \$\{summaryNextStepShortText\(step\.detail\)\}"/);
@@ -1854,7 +1855,9 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*word-break:\s*keep-all/);
   assert.match(styleSource, /\.summary-next-rail li small[\s\S]*-webkit-line-clamp:\s*2/);
-  assert.doesNotMatch(styleSource, /\.summary-command-panel \.summary-next-rail li small[\s\S]*display:\s*none/);
+  const commandPanelNextRailSmallRule = styleSource.match(/\.summary-command-panel \.summary-next-rail li small\s*\{[^}]*\}/)?.[0] ?? "";
+  assert.match(commandPanelNextRailSmallRule, /-webkit-line-clamp:\s*1/);
+  assert.doesNotMatch(commandPanelNextRailSmallRule, /display:\s*none/);
   assert.match(mainSource, /function summaryStoppedAct\(summary\)/);
   assert.match(mainSource, /function summaryFailureProfile\(summary\)/);
   assert.match(mainSource, /function summaryFailureCause\(profile\)/);
@@ -1863,6 +1866,13 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /function summaryFinalBossAdvice\(profile\)/);
   assert.match(mainSource, /function summaryFinalBossCue\(finalCombat = \{\}\)/);
   assert.match(mainSource, /function summaryFinalBossStateText\(finalCombat = \{\}\)/);
+  assert.match(mainSource, /function summaryFinalBossRetryChip\(summary\)/);
+  assert.match(mainSource, /function summaryFinalBossHpChip\(summary, replaySeed\)/);
+  assert.match(mainSource, /function summaryFinalBossMoveLabel\(move = ""\)/);
+  assert.match(mainSource, /마지막 정비/);
+  assert.match(mainSource, /보스 패턴/);
+  assert.match(mainSource, /마무리 턴/);
+  assert.match(mainSource, /문 낙하 25피해|`\$\{moveLabel\} \$\{incomingDamage\}피해`/);
   assert.match(mainSource, /마지막 한 턴의 마무리 피해가 부족했습니다/);
   assert.match(mainSource, /본체 피해 중 어느 쪽이 빠른지 먼저 비교하세요/);
   assert.match(mainSource, /문 낙하를 맞을 체력이 남지 않았습니다/);
