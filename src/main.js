@@ -11073,23 +11073,39 @@ function renderRecordsNextGoal(records, history, conceptCounts) {
       <header>
         <span>다음 목표</span>
         <strong>${history.length ? "다음 런에서 바꿀 것" : "첫 기록 만들기"}</strong>
+        <p>${history.length ? "방금 막힌 지점에서 바로 바꿀 선택만 추렸습니다." : "첫 런은 흐름을 익히고 기록을 남기는 것이 목표입니다."}</p>
       </header>
-      <div>
+      <div class="records-goal-rail" aria-label="다음 런 실행 순서">
         ${items
-          .map(
-            (item) => `
-              <article class="${item.tone}">
-                <span>${item.label}</span>
-                <strong>${item.title}</strong>
-                <p>${item.detail}</p>
-                ${item.action ? `<button data-action="${item.action}" data-id="${item.seed}" data-difficulty="${item.difficultyId}">${item.actionLabel}</button>` : ""}
-              </article>
-            `
-          )
+          .map((item, index) => renderRecordsGoalStep(item, index))
           .join("")}
       </div>
     </section>
   `;
+}
+
+function renderRecordsGoalStep(item, index) {
+  return `
+    <article class="records-goal-step ${item.tone}">
+      <i class="records-goal-index" aria-hidden="true">${index + 1}</i>
+      <div>
+        <span>${item.label}</span>
+        <strong>${item.title}</strong>
+        <small>${item.detail}</small>
+        <div class="records-goal-chips">
+          ${(item.chips ?? []).map((chip) => `<i><b>${chip.label}</b>${chip.value}</i>`).join("")}
+        </div>
+      </div>
+      ${recordsGoalActionButton(item)}
+    </article>
+  `;
+}
+
+function recordsGoalActionButton(item) {
+  if (!item.action) return "";
+  const idAttr = item.seed ? ` data-id="${item.seed}"` : "";
+  const difficultyAttr = Number.isFinite(Number(item.difficultyId)) ? ` data-difficulty="${item.difficultyId}"` : "";
+  return `<button data-action="${item.action}"${idAttr}${difficultyAttr}>${item.actionLabel}</button>`;
 }
 
 function recordsNextGoalItems(records, history, conceptCounts) {
@@ -11101,19 +11117,31 @@ function recordsNextGoalItems(records, history, conceptCounts) {
         tone: "steady",
         label: "첫 런",
         title: "표층에서 첫 루프 익히기",
-        detail: "전하, 표식, 바이러스, 반격 중 하나를 먼저 고르세요."
+        detail: "전하, 표식, 바이러스, 반격 중 하나를 먼저 고르세요.",
+        chips: [
+          { label: "먼저", value: "주력 1개" },
+          { label: "목표", value: "보상 읽기" }
+        ]
       },
       {
         tone: "strong",
         label: "첫 목표",
         title: "1막 보스까지 도달",
-        detail: "초반 전투로 카드를 모으고, 체력이 낮으면 상점이나 휴식을 보세요."
+        detail: "초반 전투로 카드를 모으고, 체력이 낮으면 상점이나 휴식을 보세요.",
+        chips: [
+          { label: "경로", value: "전투 중심" },
+          { label: "안전", value: "휴식 확인" }
+        ]
       },
       {
         tone: "relic",
         label: "기록 열기",
         title: "시드와 주력 저장",
-        detail: "런이 끝나면 시드, 덱 크기, 보스 처치, 사용한 주력이 이 화면에 남습니다."
+        detail: "런이 끝나면 시드, 덱 크기, 보스 처치, 사용한 주력이 이 화면에 남습니다.",
+        chips: [
+          { label: "남김", value: "시드" },
+          { label: "비교", value: "주력" }
+        ]
       }
     ];
   }
@@ -11131,7 +11159,11 @@ function recordsNextGoalItems(records, history, conceptCounts) {
       action: "replay-seed",
       actionLabel: latest.won && nextDifficulty ? "높은 난이도 재도전" : "같은 시드 재도전",
       seed: latestSeed,
-      difficultyId: nextDifficulty?.id ?? latest.difficultyId ?? 0
+      difficultyId: nextDifficulty?.id ?? latest.difficultyId ?? 0,
+      chips: [
+        { label: "시드", value: "같게" },
+        { label: "비교", value: latest.won && nextDifficulty ? "난이도" : "첫 선택" }
+      ]
     });
   }
 
@@ -11146,7 +11178,11 @@ function recordsMaintenanceGoal(latest) {
       tone: "warning",
       label: "덱 손질",
       title: "카드 제거를 한 번 더",
-      detail: `최근 덱은 ${latest.deckSize}장입니다. 제거를 먼저 쓰면 핵심 카드가 더 자주 옵니다.`
+      detail: `최근 덱은 ${latest.deckSize}장입니다. 제거를 먼저 쓰면 핵심 카드가 더 자주 옵니다.`,
+      chips: [
+        { label: "덱", value: `${latest.deckSize}장` },
+        { label: "먼저", value: "제거" }
+      ]
     };
   }
   if ((latest.damageTaken ?? 0) >= 80 || (latest.hp ?? 0) <= 0) {
@@ -11154,14 +11190,22 @@ function recordsMaintenanceGoal(latest) {
       tone: "danger",
       label: "생존 목표",
       title: "방어와 약화 먼저 챙기기",
-      detail: `최근 받은 피해 ${latest.damageTaken ?? 0}. 큰 공격 앞에서는 방어와 약화를 먼저 보세요.`
+      detail: `최근 받은 피해 ${latest.damageTaken ?? 0}. 큰 공격 앞에서는 방어와 약화를 먼저 보세요.`,
+      chips: [
+        { label: "받은 피해", value: latest.damageTaken ?? 0 },
+        { label: "먼저", value: "방어" }
+      ]
     };
   }
   return {
     tone: "steady",
     label: "경로 목표",
     title: "상점과 휴식 한 번씩 들르기",
-    detail: "상점에서는 제거, 보스 전에는 회복이나 강화를 먼저 챙기세요."
+    detail: "상점에서는 제거, 보스 전에는 회복이나 강화를 먼저 챙기세요.",
+    chips: [
+      { label: "상점", value: "제거" },
+      { label: "휴식", value: "회복·강화" }
+    ]
   };
 }
 
@@ -11172,7 +11216,11 @@ function recordsBuildGoal(records, conceptCounts, latest) {
       tone: "strong",
       label: "주력 보강",
       title: `${topLabel}에 보조 역할 더하기`,
-      detail: "방어, 마무리, 정화·약화 중 빈 역할 하나만 빨리 붙이세요."
+      detail: "방어, 마무리, 정화·약화 중 빈 역할 하나만 빨리 붙이세요.",
+      chips: [
+        { label: "주력", value: topLabel },
+        { label: "횟수", value: topCount }
+      ]
     };
   }
   if ((records.wins ?? 0) <= 0) {
@@ -11180,14 +11228,22 @@ function recordsBuildGoal(records, conceptCounts, latest) {
       tone: "relic",
       label: "첫 승리",
       title: "전하 피니시나 표식 러시부터",
-      detail: "처음엔 피해가 바로 보이는 주력이 좋습니다. 같은 키워드 카드를 둘 이상 모으세요."
+      detail: "처음엔 피해가 바로 보이는 주력이 좋습니다. 같은 키워드 카드를 둘 이상 모으세요.",
+      chips: [
+        { label: "추천", value: "전하·표식" },
+        { label: "기준", value: "2장 이상" }
+      ]
     };
   }
   return {
     tone: "steady",
     label: "다른 주력",
     title: buildConceptShortText(latest.build, "새 방향 찾기"),
-    detail: "최근과 다른 주력 카드를 고르면 같은 보스도 다르게 풀립니다."
+    detail: "최근과 다른 주력 카드를 고르면 같은 보스도 다르게 풀립니다.",
+    chips: [
+      { label: "최근", value: buildConceptShortText(latest.build, "미기록") },
+      { label: "다음", value: "다른 주력" }
+    ]
   };
 }
 

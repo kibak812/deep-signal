@@ -75,6 +75,7 @@ try {
   await navigate(cdp, baseUrl);
   await clickText(cdp, "기록");
   await waitForSelector(cdp, ".records-career");
+  await assertRecordsDecisionUx(cdp);
   await capture(cdp, "browser-qa-records-refreshed.png");
   await clearRecords(cdp);
 
@@ -447,6 +448,46 @@ async function assertCodexConceptUx(cdp) {
   })()`);
   if (!evidence.ok) {
     throw new Error(`Codex concept UX failed: ${JSON.stringify(evidence)}`);
+  }
+}
+
+async function assertRecordsDecisionUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const rail = document.querySelector(".records-goal-rail");
+    const steps = [...document.querySelectorAll(".records-goal-step")];
+    const chips = [...document.querySelectorAll(".records-goal-chips i")];
+    const indexes = [...document.querySelectorAll(".records-goal-index")].map((item) => item.innerText.trim()).join("");
+    const replayButton = document.querySelector(".records-goal-step button[data-action='replay-seed']");
+    const railBox = rail?.getBoundingClientRect();
+    const stepBoxes = steps.map((step) => step.getBoundingClientRect());
+    const noOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    const firstViewportFit = Boolean(railBox && railBox.top >= 0 && railBox.bottom <= window.innerHeight + 80);
+    const readableSteps = stepBoxes.every((box) => box.width >= 250 && box.height <= 180);
+    const text = document.body.innerText;
+    return {
+      ok: Boolean(
+        rail &&
+        steps.length === 3 &&
+        chips.length >= 6 &&
+        indexes === "123" &&
+        replayButton &&
+        text.includes("방금 막힌 지점에서 바로 바꿀 선택만 추렸습니다") &&
+        text.includes("시드") &&
+        text.includes("먼저") &&
+        firstViewportFit &&
+        readableSteps &&
+        noOverflow
+      ),
+      steps: steps.length,
+      chips: chips.length,
+      indexes,
+      firstViewportFit,
+      readableSteps,
+      noOverflow
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Records decision UX failed: ${JSON.stringify(evidence)}`);
   }
 }
 

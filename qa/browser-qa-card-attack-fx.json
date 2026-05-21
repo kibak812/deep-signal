@@ -15,12 +15,12 @@
       "height": 720
     },
     "pulse": {
-      "left": 217,
+      "left": 218,
       "top": 132,
-      "right": 339,
+      "right": 338,
       "bottom": 162,
-      "width": 121,
-      "height": 31
+      "width": 120,
+      "height": 30
     },
     "echo": {
       "left": 234,
@@ -33,22 +33,22 @@
     "trail": {
       "left": 278,
       "top": 143,
-      "right": 1076,
+      "right": 1065,
       "bottom": 148,
-      "width": 798,
+      "width": 787,
       "height": 5
     },
     "spark": {
-      "left": 444,
+      "left": 441,
       "top": 139,
-      "right": 456,
+      "right": 453,
       "bottom": 151,
       "width": 12,
       "height": 12
     },
     "impact": {
       "left": 1035,
-      "top": 79,
+      "top": 78,
       "right": 1127,
       "bottom": 138,
       "width": 92,
@@ -63,11 +63,11 @@
       "height": 360
     },
     "targetRing": {
-      "left": 965,
-      "top": 41,
+      "left": 966,
+      "top": 42,
       "right": 1192,
-      "bottom": 313,
-      "width": 227,
+      "bottom": 312,
+      "width": 226,
       "height": 271
     },
     "hitSparks": {
@@ -90,7 +90,7 @@
     "playerSource": {
       "left": 96,
       "top": 30,
-      "right": 310,
+      "right": 311,
       "bottom": 352,
       "width": 215,
       "height": 322

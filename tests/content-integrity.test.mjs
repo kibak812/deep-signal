@@ -2267,6 +2267,8 @@ test("records screen preserves replay seeds and run-shaping details", () => {
   assert.match(mainSource, /function recordsCareerNextAction\(records, history, conceptCounts\)/);
   assert.match(mainSource, /function renderRecordsCareerActionButton\(next\)/);
   assert.match(mainSource, /function recordsNextGoalItems\(records, history, conceptCounts\)/);
+  assert.match(mainSource, /function renderRecordsGoalStep\(item, index\)/);
+  assert.match(mainSource, /function recordsGoalActionButton\(item\)/);
   assert.match(mainSource, /function recordsMaintenanceGoal\(latest\)/);
   assert.match(mainSource, /function recordsBuildGoal\(records, conceptCounts, latest\)/);
   assert.match(mainSource, /function renderHistoryReplayCue\(entry, replaySeed = ""\)/);
@@ -2277,6 +2279,10 @@ test("records screen preserves replay seeds and run-shaping details", () => {
   assert.match(mainSource, /function buildConceptShortText\(tags, emptyText = "주력 미정"\)/);
   assert.match(mainSource, /다음 목표/);
   assert.match(mainSource, /다음 런에서 바꿀 것/);
+  assert.match(mainSource, /방금 막힌 지점에서 바로 바꿀 선택만 추렸습니다/);
+  assert.match(mainSource, /aria-label="다음 런 실행 순서"/);
+  assert.match(mainSource, /class="records-goal-step \$\{item\.tone\}"/);
+  assert.match(mainSource, /class="records-goal-chips"/);
   assert.match(mainSource, /기록 요약/);
   assert.match(mainSource, /aria-label="기록 요약"/);
   assert.match(mainSource, /class="summary-stats records-stat-strip"/);
@@ -2309,7 +2315,10 @@ test("records screen preserves replay seeds and run-shaping details", () => {
   assert.match(styleSource, /\.records-career-metrics/);
   assert.match(styleSource, /\.records-career-action/);
   assert.match(styleSource, /\.records-stat-strip/);
-  assert.match(styleSource, /\.records-next-goal > div/);
+  assert.match(styleSource, /\.records-goal-rail/);
+  assert.match(styleSource, /\.records-goal-step/);
+  assert.match(styleSource, /\.records-goal-index/);
+  assert.match(styleSource, /\.records-goal-chips/);
   assert.match(styleSource, /\.history-path-line/);
   assert.match(styleSource, /\.history-path-line\.lost/);
   assert.match(styleSource, /\.high-contrast \.history-path-line/);
