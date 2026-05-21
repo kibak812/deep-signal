@@ -3550,6 +3550,9 @@ test("map route choices explain risk, reward, and upcoming branches", () => {
   assert.match(mainSource, /aria-label="현재 목표"/);
   assert.match(mainSource, /function renderMapHorizon\(run, progress, routeChoices = \[\], routeAdvice = null\)/);
   assert.match(mainSource, /class="map-horizon \$\{progress\.tone\}"/);
+  assert.match(mainSource, /class="map-horizon-portrait sprite-\$\{boss\.sprite\}"/);
+  assert.match(mainSource, /function mapHorizonBossStyle\(boss\)/);
+  assert.match(mainSource, /--map-boss-image:url\('\$\{enemyCombatantImage\(boss\)\}'\)/);
   assert.match(mainSource, /aria-label="현재 진행 목표"/);
   assert.match(mainSource, /function bossFocusTags\(boss\)/);
   assert.match(mainSource, /바이러스 관리/);
@@ -3663,6 +3666,9 @@ test("map route choices explain risk, reward, and upcoming branches", () => {
   assert.match(styleSource, /\.map-horizon-main/);
   assert.match(styleSource, /\.map-horizon-boss/);
   assert.match(styleSource, /\.map-horizon-status/);
+  assert.match(styleSource, /\.map-horizon-portrait/);
+  assert.match(styleSource, /\.map-horizon-portrait::after/);
+  assert.match(styleSource, /\.high-contrast \.map-horizon-portrait/);
   assert.match(styleSource, /\.map-decision-panel/);
   assert.match(styleSource, /\.map-decision-panel i/);
   assert.match(styleSource, /\.map-decision-panel\.strong/);

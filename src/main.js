@@ -4663,6 +4663,7 @@ function renderMapHorizon(run, progress, routeChoices = [], routeAdvice = null) 
   const focusTags = bossHorizonTags(boss, progress.readiness);
   return `
     <section class="map-horizon ${progress.tone}" aria-label="현재 진행 목표">
+      ${boss ? `<span class="map-horizon-portrait sprite-${boss.sprite}" style="${mapHorizonBossStyle(boss)}" aria-hidden="true"></span>` : ""}
       <div class="map-horizon-main">
         <span>${progress.actLabel}</span>
         <strong>${progress.distanceText}</strong>
@@ -4695,6 +4696,11 @@ function bossHorizonTags(boss, readiness = null) {
   const missing = bossReadinessMissing(readiness);
   if (missing.length) return missing.map((label) => `${label} 보강`).slice(0, 3);
   return bossFocusTags(boss);
+}
+
+function mapHorizonBossStyle(boss) {
+  if (!boss?.sprite) return "";
+  return `--map-boss-image:url('${enemyCombatantImage(boss)}');`;
 }
 
 function renderMapDecisionPanel(run, routeChoices, routeAdvice = null) {

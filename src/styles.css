@@ -1891,8 +1891,11 @@ dd,
 }
 
 .map-horizon {
+  position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(58px, 5.8vw, 78px);
   gap: 8px;
+  align-items: center;
   border: 1px solid rgba(125, 211, 252, 0.24);
   background:
     radial-gradient(circle at 92% 12%, rgba(125, 211, 252, 0.14), transparent 34%),
@@ -1900,6 +1903,7 @@ dd,
     rgba(2, 10, 16, 0.6);
   padding: 10px;
   color: var(--cyan);
+  overflow: hidden;
 }
 
 .map-horizon.warning,
@@ -1908,6 +1912,7 @@ dd,
 }
 
 .map-horizon-main {
+  grid-column: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 2px 8px;
@@ -1943,9 +1948,39 @@ dd,
 
 .map-horizon-boss,
 .map-horizon-status {
+  grid-column: 1;
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.map-horizon-portrait {
+  position: relative;
+  z-index: 1;
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  width: clamp(58px, 5.8vw, 78px);
+  height: clamp(72px, 7.4vw, 98px);
+  justify-self: end;
+  align-self: end;
+  background-image: var(--map-boss-image);
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: drop-shadow(0 18px 18px rgba(0, 0, 0, 0.42)) saturate(1.06) brightness(1.03);
+  pointer-events: none;
+}
+
+.map-horizon-portrait::after {
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 72%;
+  height: 10px;
+  background: radial-gradient(ellipse at center, color-mix(in srgb, currentColor 34%, transparent), transparent 72%);
+  content: "";
+  opacity: 0.62;
+  transform: translateX(-50%);
 }
 
 .map-horizon-boss i,
@@ -22180,6 +22215,7 @@ input[type="range"] {
 .high-contrast .map-objective-card i,
 .high-contrast .map-horizon,
 .high-contrast .map-horizon i,
+.high-contrast .map-horizon-portrait,
 .high-contrast .map-decision-panel,
 .high-contrast .map-decision-panel i,
 .high-contrast .map-board-header,
