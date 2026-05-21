@@ -5225,7 +5225,7 @@ function renderCombat(run) {
           })
           .join("")}
       </div>
-      <button class="end-turn ${turnLocked ? `is-locked turn-${endTurnButton.kind}` : ""} risk-${endTurnPreview.tone}" data-action="end-turn" aria-keyshortcuts="E Space" aria-label="${endTurnButton.ariaLabel}" title="${endTurnButton.title}" ${turnLocked ? "disabled" : ""}>
+      <button class="end-turn ${turnLocked ? `is-locked turn-${endTurnButton.kind}` : ""} risk-${endTurnPreview.tone}" data-action="end-turn" data-risk-detail="${endTurnButton.title}" aria-keyshortcuts="E Space" aria-label="${endTurnButton.ariaLabel}" title="${endTurnButton.title}" ${turnLocked ? "disabled" : ""}>
         <span class="end-turn-key" aria-hidden="true">${endTurnButton.key}</span>
         <strong>${endTurnButton.label}</strong>
         <small>${endTurnButton.small}</small>

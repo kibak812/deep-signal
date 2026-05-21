@@ -2135,7 +2135,9 @@ async function assertCombatRiskSingleSource(cdp) {
     const endBox = endTurn?.getBoundingClientRect();
     const endText = endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const endTitle = endTurn?.getAttribute("title") ?? "";
+    const riskDetail = endTurn?.getAttribute("data-risk-detail") ?? "";
     const riskTone = [...(endTurn?.classList ?? [])].find((item) => item.startsWith("risk-")) ?? "";
+    const riskTooltip = endTurn ? getComputedStyle(endTurn, "::before") : null;
     const ring = endTurn ? getComputedStyle(endTurn, "::after") : null;
     const commandHidden =
       Boolean(commandBox && commandBox.width <= 1 && commandBox.height <= 1) &&
@@ -2153,6 +2155,8 @@ async function assertCombatRiskSingleSource(cdp) {
       /턴 종료/.test(endText) &&
       /체력|상태|방어|준비|안전|약화|취약|바이러스|표식|소환|강화/.test(endText) &&
       endTitle.length >= 8 &&
+      riskDetail === endTitle &&
+      riskTooltip?.content !== "none" &&
       ringVisible;
     return {
       ok,
@@ -2161,7 +2165,9 @@ async function assertCombatRiskSingleSource(cdp) {
       endVisible,
       endText,
       endTitle,
+      riskDetail,
       riskTone,
+      tooltipContent: riskTooltip?.content ?? "",
       ringOpacity: ring?.opacity ?? "",
       commandBox: commandBox ? { width: Math.round(commandBox.width), height: Math.round(commandBox.height), clip: commandStyle?.clip ?? "", position: commandStyle?.position ?? "" } : null,
       forecastBox: forecastBox ? { width: Math.round(forecastBox.width), height: Math.round(forecastBox.height) } : null,

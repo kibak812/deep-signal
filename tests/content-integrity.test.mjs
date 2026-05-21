@@ -1241,6 +1241,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /state\.combatFx\?\.kind === "enemy-action"/);
   assert.match(mainSource, /const turnLocked = combatTurnInputLocked\(run\)/);
   assert.match(mainSource, /aria-label="\$\{endTurnButton\.ariaLabel\}"/);
+  assert.match(mainSource, /data-risk-detail="\$\{endTurnButton\.title\}"/);
   assert.match(mainSource, /deferredMutation = endTurnWithFx\(run\)/);
   assert.match(mainSource, /endTurn\(run\);[\s\S]*afterMutation\("end-turn"\)/);
   assert.match(mainSource, /base\.push\("turn-locked"\)/);
@@ -1308,6 +1309,10 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-play-panel/);
   assert.match(styleSource, /\.combat-board \.combat-command-row,[\s\S]*\.combat-board \.combat-command-row\.advisor-off,[\s\S]*clip:\s*rect\(0 0 0 0\)/);
   assert.match(styleSource, /\.combat-board \.combat-command-row \.combat-forecast[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.end-turn::before/);
+  assert.match(styleSource, /\.end-turn:hover::before/);
+  assert.match(styleSource, /\.end-turn:focus::before/);
+  assert.match(styleSource, /\.end-turn:focus-visible::before/);
   assert.match(styleSource, /\.end-turn::after/);
   assert.match(styleSource, /\.end-turn\.risk-danger::after/);
   assert.match(styleSource, /@keyframes end-turn-risk-ring/);
