@@ -10723,30 +10723,14 @@ function renderGuide() {
         <header class="compendium-header">
           <div>
             <h1>게임 가이드</h1>
-            <p>막힐 때 세 가지만 확인하세요. 보상, 체력, 보스 준비입니다.</p>
+            <p>막히면 지금 화면에서 바꿀 선택 하나만 고르세요.</p>
           </div>
           <div class="title-actions">
             ${state.returnScreen === "game" && state.run ? `<button data-action="return-screen">${returnButtonLabel()}</button>` : state.run ? `<button data-action="screen" data-id="game">게임으로</button>` : ""}
             <button data-action="screen" data-id="title">시작 화면</button>
           </div>
         </header>
-        <section class="guide-flow" aria-label="첫 런 추천 흐름">
-          <article>
-            <span>1</span>
-            <strong>보상은 같은 키워드로</strong>
-            <p>전하, 표식, 바이러스처럼 이어지는 카드가 보이면 그쪽으로 모읍니다.</p>
-          </article>
-          <article>
-            <span>2</span>
-            <strong>체력이 낮으면 안전 경로</strong>
-            <p>회복과 방어가 없으면 엘리트보다 상점이나 휴식을 먼저 봅니다.</p>
-          </article>
-          <article>
-            <span>3</span>
-            <strong>보스 전 빈 역할 보강</strong>
-            <p>방어, 정화·약화, 마무리 피해 중 없는 것을 채웁니다.</p>
-          </article>
-        </section>
+        ${renderGuidePlaybook()}
         ${renderGuideConcepts()}
         <section class="guide-grid" aria-label="상황별 판단">
           ${renderGuideCard("경로 선택", [
@@ -10779,22 +10763,70 @@ function renderGuide() {
   `;
 }
 
+function renderGuidePlaybook() {
+  const steps = [
+    {
+      label: "보상",
+      title: "같은 키워드 두 장",
+      detail: "전하, 표식, 바이러스, 반격 중 하나가 반복되면 그쪽으로 갑니다.",
+      chips: ["주력 선택", "스킵 가능"]
+    },
+    {
+      label: "경로",
+      title: "체력이 낮으면 안전하게",
+      detail: "회복 수단이 없으면 엘리트보다 상점이나 휴식을 먼저 봅니다.",
+      chips: ["체력 확인", "상점·휴식"]
+    },
+    {
+      label: "보스",
+      title: "빈 역할 하나 채우기",
+      detail: "방어, 정화·약화, 마무리 중 없는 역할을 보스 전까지 붙입니다.",
+      chips: ["방어", "정화·약화", "마무리"]
+    }
+  ];
+  return `
+    <section class="guide-playbook" aria-label="첫 런 플레이북">
+      <header>
+        <span>첫 런 기준</span>
+        <strong>한 번에 하나만 정하세요</strong>
+        <p>보상, 경로, 보스 대비를 동시에 고민하지 않아도 됩니다.</p>
+      </header>
+      <div class="guide-flow" aria-label="첫 런 추천 흐름">
+        ${steps.map((step, index) => `
+          <article>
+            <span>${index + 1}</span>
+            <div>
+              <small>${step.label}</small>
+              <strong>${step.title}</strong>
+              <p>${step.detail}</p>
+              <div class="guide-flow-chips">${step.chips.map((chip) => `<i>${chip}</i>`).join("")}</div>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
 function renderGuideConcepts() {
   return `
     <section class="guide-concepts" aria-label="주력 전략 빠른 보기">
       <div class="guide-section-heading">
         <h2>주력 전략</h2>
-        <p>많이 보이는 키워드를 따라가면 덱이 선명해집니다.</p>
+        <p>덱 방향은 카드 설명보다 흐름으로 먼저 읽습니다.</p>
       </div>
       <div class="guide-concept-grid">
         ${CORE_CONCEPT_GUIDE.map((concept) => {
           const axis = DECK_AXIS_DEFINITIONS.find((entry) => entry.id === concept.axisId);
+          const flow = codexAxisFlow(axis.id);
           return `
             <details class="guide-concept-card concept-${axis.id}">
               <summary>
-                <strong>${axis.label}</strong>
+                <strong>${axis.shortLabel ?? axis.label}</strong>
                 <span>${axis.keywords.slice(0, 3).map(keywordLabel).join(" · ")}</span>
-                <small>${concept.pick}</small>
+                <div class="guide-concept-loop">
+                  ${flow.map((item) => `<i><b>${item.step}</b>${item.value}</i>`).join("")}
+                </div>
               </summary>
               <p>${axis.detail}</p>
               <dl>

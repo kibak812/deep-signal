@@ -71,6 +71,12 @@ try {
   await assertCodexConceptUx(cdp);
   await capture(cdp, "browser-qa-codex-refreshed.png");
 
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "가이드");
+  await waitForSelector(cdp, ".guide-playbook");
+  await assertGuidePlaybookUx(cdp);
+  await capture(cdp, "browser-qa-guide-refreshed.png");
+
   await stageRecordsFixture(cdp);
   await navigate(cdp, baseUrl);
   await clickText(cdp, "기록");
@@ -488,6 +494,45 @@ async function assertRecordsDecisionUx(cdp) {
   })()`);
   if (!evidence.ok) {
     throw new Error(`Records decision UX failed: ${JSON.stringify(evidence)}`);
+  }
+}
+
+async function assertGuidePlaybookUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const playbook = document.querySelector(".guide-playbook");
+    const steps = [...document.querySelectorAll(".guide-flow article")];
+    const stepChips = [...document.querySelectorAll(".guide-flow-chips i")];
+    const conceptLoops = [...document.querySelectorAll(".guide-concept-loop")];
+    const playbookBox = playbook?.getBoundingClientRect();
+    const noOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    const text = document.body.innerText;
+    const visibleConcepts = [...document.querySelectorAll(".guide-concept-card")]
+      .filter((card) => card.getBoundingClientRect().top < window.innerHeight).length;
+    return {
+      ok: Boolean(
+        playbook &&
+        steps.length === 3 &&
+        stepChips.length >= 6 &&
+        conceptLoops.length >= 6 &&
+        text.includes("한 번에 하나만 정하세요") &&
+        text.includes("같은 키워드 두 장") &&
+        text.includes("덱 방향은 카드 설명보다 흐름으로 먼저 읽습니다") &&
+        playbookBox &&
+        playbookBox.top >= 0 &&
+        playbookBox.bottom <= window.innerHeight &&
+        visibleConcepts >= 3 &&
+        noOverflow
+      ),
+      steps: steps.length,
+      stepChips: stepChips.length,
+      conceptLoops: conceptLoops.length,
+      visibleConcepts,
+      noOverflow,
+      playbookBottom: playbookBox ? Math.round(playbookBox.bottom) : null
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Guide playbook UX failed: ${JSON.stringify(evidence)}`);
   }
 }
 
