@@ -7138,6 +7138,7 @@ function renderRewardOptionDetail(run, cardId) {
       <summary>상세 비교</summary>
       <div class="reward-option-detail-body">
         ${renderRewardDeckShift(run, cardId)}
+        ${renderRewardTakeVsSkip(run, cardId)}
         ${renderRewardInsight(run, cardId)}
       </div>
     </details>
@@ -7168,12 +7169,14 @@ function rewardOptionAriaLabel(run, cardId, recommended = false, previewing = fa
   const card = effectiveCard({ cardId, upgraded: false });
   const insight = rewardCardInsight(run, cardId);
   const shift = rewardDeckShift(run, cardId);
+  const takeVsSkip = rewardTakeVsSkip(run, cardId);
   const stateText = selected ? "선택됨" : previewing ? "비교 중" : recommended ? "추천 보상" : "보상 후보";
   return [
     `${card.name}. ${stateText}`,
     `${rarityLabel(card.rarity)} ${typeLabel(card.type)}. 비용 ${card.cost >= 90 ? "사용 불가" : card.cost}`,
     `${rewardInsightShortLabel(insight)}. ${insight.detail}`,
     `${shift.title}. ${shift.detail}`,
+    `${takeVsSkip.title}. ${takeVsSkip.detail}`,
     `덱 ${shift.beforeSize}장에서 ${shift.afterSize}장. 평균 비용 ${shift.beforeCostText}에서 ${shift.afterCostText}`,
     card.text
   ].filter(Boolean).join(". ");
@@ -7202,6 +7205,20 @@ function renderRewardDeckShift(run, cardId) {
         ${shift.chips.map((chip) => `<i class="${chip.tone}">${chip.label}</i>`).join("")}
       </div>
     </div>
+  `;
+}
+
+function renderRewardTakeVsSkip(run, cardId) {
+  const verdict = rewardTakeVsSkip(run, cardId);
+  return `
+    <section class="reward-take-vs-skip ${verdict.tone}" aria-label="받기와 스킵 비교: ${verdict.title}. ${verdict.detail}" title="${verdict.detail}">
+      <span>받기/스킵</span>
+      <strong>${verdict.title}</strong>
+      <small>${verdict.detail}</small>
+      <div>
+        ${verdict.chips.map((chip) => `<i class="${chip.tone}">${chip.label}</i>`).join("")}
+      </div>
+    </section>
   `;
 }
 
@@ -12345,6 +12362,78 @@ function rewardComparisonChips(run, cardId) {
     { tone: duplicateCount > 1 ? "warn" : duplicateCount === 1 ? "steady" : "strong", label: duplicateCount ? `중복 ${duplicateCount + 1}` : "신규" },
     { tone: roleTone, label: `${typeLabel(card.type)} +1` }
   ];
+}
+
+function rewardTakeVsSkip(run, cardId) {
+  const card = effectiveCard({ cardId, upgraded: false });
+  const insight = rewardCardInsight(run, cardId);
+  const shift = rewardDeckShift(run, cardId);
+  const skip = skipRewardInsight(run);
+  const score = rewardCardRecommendationScore(run, cardId);
+  const scoreTone = score >= 76 ? "strong" : score < 54 ? "warn" : "steady";
+  const skipTone = ["strong", "warning"].includes(skip.tone) ? "warn" : "steady";
+  const sizeTone = shift.afterSize >= 26 ? "warn" : "steady";
+  const chips = [
+    { tone: scoreTone, label: `선택 ${Math.round(score)}` },
+    { tone: skipTone, label: rewardSkipCompactLabel(skip) },
+    { tone: sizeTone, label: `덱 ${shift.beforeSize}→${shift.afterSize}` }
+  ];
+  const roleLabel = rewardCardRoleLabel(card);
+  const skipShort = skipInsightShortDetail(skip);
+
+  if (skip.tone === "strong" && score < 76) {
+    return {
+      tone: "warning",
+      title: "스킵과 먼저 비교",
+      detail: `${skipShort} ${roleLabel} 역할이 확실하지 않으면 덱 +1장은 부담입니다.`,
+      chips
+    };
+  }
+  if (skip.tone === "warning" && score < 66) {
+    return {
+      tone: "warning",
+      title: "저주와 덱 부담 확인",
+      detail: `${skipShort} 이 카드가 바로 쓰일 때만 받는 편이 안전합니다.`,
+      chips
+    };
+  }
+  if (insight.tone === "strong" || score >= 82) {
+    return {
+      tone: "strong",
+      title: "받을 이유가 더 큼",
+      detail: `${rewardInsightShortLabel(insight)}라서 덱 ${shift.afterSize}장 부담을 이깁니다.`,
+      chips
+    };
+  }
+  if (shift.tone === "warning") {
+    return {
+      tone: "warning",
+      title: "비용과 중복 확인",
+      detail: `${shift.detail} 지금 손패가 무겁다면 넘기는 선택도 봅니다.`,
+      chips
+    };
+  }
+  if (skip.tone === "pivot") {
+    return {
+      tone: "pivot",
+      title: "주력 정하기 후보",
+      detail: `${rewardConceptPhrase(insight.concept?.label ?? roleLabel)}을 밀 계획이면 받습니다.`,
+      chips
+    };
+  }
+  return {
+    tone: "steady",
+    title: "역할을 채우면 선택",
+    detail: `${skipShort} 그래도 ${roleLabel} 역할이 비었으면 받을 만합니다.`,
+    chips
+  };
+}
+
+function rewardSkipCompactLabel(insight) {
+  if (insight.tone === "strong") return "스킵 유리";
+  if (insight.tone === "warning") return "스킵 주의";
+  if (insight.tone === "steady") return "스킵 가능";
+  return "스킵 낮음";
 }
 
 function rewardRecommendedCardId(run) {

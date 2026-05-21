@@ -12877,6 +12877,21 @@ dd,
   text-align: left;
 }
 
+.reward-take-vs-skip {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 4px 8px;
+  border: 1px solid color-mix(in srgb, currentColor 30%, rgba(236, 248, 243, 0.1));
+  background:
+    linear-gradient(90deg, color-mix(in srgb, currentColor 12%, transparent), transparent 72%),
+    rgba(3, 9, 16, 0.7);
+  color: var(--amber);
+  padding: 7px 8px;
+  text-align: left;
+}
+
 .reward-option-detail {
   position: absolute;
   top: 8px;
@@ -12971,6 +12986,18 @@ dd,
   white-space: nowrap;
 }
 
+.reward-take-vs-skip span {
+  align-self: center;
+  border: 1px solid rgba(236, 248, 243, 0.14);
+  background: rgba(236, 248, 243, 0.06);
+  padding: 2px 5px;
+  color: currentColor;
+  font-size: 0.6rem;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
 .reward-deck-shift strong,
 .reward-deck-shift small {
   min-width: 0;
@@ -12979,10 +13006,24 @@ dd,
   white-space: nowrap;
 }
 
+.reward-take-vs-skip strong,
+.reward-take-vs-skip small {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .reward-deck-shift strong {
   color: var(--text);
   font-size: 0.76rem;
   line-height: 1.15;
+}
+
+.reward-take-vs-skip strong {
+  color: var(--text);
+  font-size: 0.76rem;
+  line-height: 1.15;
+  white-space: nowrap;
 }
 
 .reward-deck-shift small {
@@ -12990,6 +13031,17 @@ dd,
   color: var(--muted);
   font-size: 0.66rem;
   line-height: 1.25;
+}
+
+.reward-take-vs-skip small {
+  grid-column: 1 / -1;
+  display: -webkit-box;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.25;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .reward-deck-shift div {
@@ -13000,7 +13052,32 @@ dd,
   overflow: hidden;
 }
 
+.reward-take-vs-skip div {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  max-height: 18px;
+  overflow: hidden;
+}
+
 .reward-deck-shift i {
+  flex: 0 1 auto;
+  min-width: 0;
+  border: 1px solid rgba(236, 248, 243, 0.12);
+  background: rgba(10, 15, 27, 0.54);
+  padding: 2px 5px;
+  color: var(--muted);
+  overflow: hidden;
+  font-size: 0.6rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reward-take-vs-skip i {
   flex: 0 1 auto;
   min-width: 0;
   border: 1px solid rgba(236, 248, 243, 0.12);
@@ -13028,12 +13105,38 @@ dd,
   color: #ffb8c5;
 }
 
+.reward-take-vs-skip.strong {
+  color: #9df0ba;
+}
+
+.reward-take-vs-skip.pivot {
+  color: #d7c8ff;
+}
+
+.reward-take-vs-skip.warning {
+  color: #ffb8c5;
+}
+
+.reward-take-vs-skip.steady {
+  color: var(--amber);
+}
+
 .reward-deck-shift i.strong {
   border-color: rgba(150, 225, 161, 0.42);
   color: #c8f6d0;
 }
 
 .reward-deck-shift i.warn {
+  border-color: rgba(255, 157, 177, 0.52);
+  color: #ffb8c5;
+}
+
+.reward-take-vs-skip i.strong {
+  border-color: rgba(150, 225, 161, 0.42);
+  color: #c8f6d0;
+}
+
+.reward-take-vs-skip i.warn {
   border-color: rgba(255, 157, 177, 0.52);
   color: #ffb8c5;
 }
@@ -22477,6 +22580,8 @@ input[type="range"] {
 .high-contrast .reward-option-detail,
 .high-contrast .reward-deck-shift,
 .high-contrast .reward-deck-shift i,
+.high-contrast .reward-take-vs-skip,
+.high-contrast .reward-take-vs-skip i,
 .high-contrast .reward-insight,
 .high-contrast .reward-bonus > span,
 .high-contrast .reward-compare-row small,

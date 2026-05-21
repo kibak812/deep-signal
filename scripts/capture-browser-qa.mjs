@@ -3823,6 +3823,9 @@ async function assertRewardDecisionUx(cdp) {
     const metricRowsCompact = metricRows.every((row) => row.getBoundingClientRect().height <= 24);
     const metricChipsFit = metricRows.every((row) => [...row.querySelectorAll("i")].every((chip) => chip.scrollWidth <= chip.clientWidth + 2));
     const expandedPickLines = pickLines.filter((line) => getComputedStyle(line.querySelector("small")).display !== "none").length;
+    const takeVsSkipPanels = [...document.querySelectorAll(".reward-take-vs-skip")];
+    const takeVsSkipTexts = takeVsSkipPanels.map((panel) => panel.textContent.replace(/\\s+/g, " ").trim());
+    const takeVsSkipChipCounts = takeVsSkipPanels.map((panel) => panel.querySelectorAll("i").length);
     const visibleDetailButtons = [...document.querySelectorAll(".reward-option-detail")].filter((detail) => {
       const style = getComputedStyle(detail);
       return style.opacity !== "0" && style.pointerEvents !== "none";
@@ -3878,6 +3881,9 @@ async function assertRewardDecisionUx(cdp) {
       metricRowsCompact &&
       metricChipsFit &&
       expandedPickLines <= 1 &&
+      takeVsSkipPanels.length === pickLines.length &&
+      takeVsSkipChipCounts.every((count) => count === 3) &&
+      takeVsSkipTexts.every((text) => /받기\\/스킵/.test(text) && /선택 \\d+/.test(text) && /스킵/.test(text) && /덱 \\d+→\\d+/.test(text)) &&
       visibleDetailButtons <= 1 &&
       (relicChoices.length === 0 || collapsedRelicEffects === relicChoices.length) &&
       relicChoiceHeights.every((height) => height <= 94) &&
@@ -3908,6 +3914,9 @@ async function assertRewardDecisionUx(cdp) {
       metricRowsCompact,
       metricChipsFit,
       expandedPickLines,
+      takeVsSkipCount: takeVsSkipPanels.length,
+      takeVsSkipChipCounts,
+      takeVsSkipTexts,
       visibleDetailButtons,
       relicChoices: relicChoices.length,
       collapsedRelicEffects,

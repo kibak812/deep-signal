@@ -3022,6 +3022,7 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /function renderRewardInsight\(run, cardId\)/);
   assert.match(mainSource, /function renderRewardPickLine\(run, cardId\)/);
   assert.match(mainSource, /function renderRewardDeckShift\(run, cardId\)/);
+  assert.match(mainSource, /function renderRewardTakeVsSkip\(run, cardId\)/);
   assert.match(mainSource, /function rewardDeckShift\(run, cardId\)/);
   assert.match(mainSource, /function rewardAxisShortLabel\(axis\)/);
   assert.match(mainSource, /function rewardCardRoleLabel\(card\)/);
@@ -3149,6 +3150,8 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /if \(\/연속 방어\/\.test\(label\)\) return "연속 방어"/);
   assert.match(mainSource, /scoreBonus/);
   assert.match(mainSource, /function rewardComparisonChips\(run, cardId\)/);
+  assert.match(mainSource, /function rewardTakeVsSkip\(run, cardId\)/);
+  assert.match(mainSource, /function rewardSkipCompactLabel\(insight\)/);
   assert.match(mainSource, /function rewardRelicChoices\(reward\)/);
   assert.match(mainSource, /function skipRewardInsight\(run\)/);
   assert.match(mainSource, /function renderRewardReadiness\(run\)/);
@@ -3180,6 +3183,13 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /rewardPickMetricChips\(run, cardId\)\.map/);
   assert.match(mainSource, /rewardDeckShift\(run, cardId\)\.chips\.slice\(0, 2\)/);
   assert.match(mainSource, /class="reward-deck-shift \$\{shift\.tone\}"/);
+  assert.match(mainSource, /class="reward-take-vs-skip \$\{verdict\.tone\}"/);
+  assert.match(mainSource, /받기\/스킵/);
+  assert.match(mainSource, /rewardSkipCompactLabel\(skip\)/);
+  assert.match(mainSource, /선택 \$\{Math\.round\(score\)\}/);
+  assert.match(mainSource, /스킵과 먼저 비교/);
+  assert.match(mainSource, /받을 이유가 더 큼/);
+  assert.match(mainSource, /스킵 유리/);
   assert.match(mainSource, /선택 시 덱 변화/);
   assert.match(mainSource, /선택 뒤 덱 변화/);
   assert.match(mainSource, /고른 뒤 덱/);
@@ -3264,7 +3274,11 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(styleSource, /\.reward-deck-shift/);
   assert.match(styleSource, /\.reward-deck-shift\.strong/);
   assert.match(styleSource, /\.reward-deck-shift i\.warn/);
+  assert.match(styleSource, /\.reward-take-vs-skip/);
+  assert.match(styleSource, /\.reward-take-vs-skip\.warning/);
+  assert.match(styleSource, /\.reward-take-vs-skip i\.warn/);
   assert.match(styleSource, /\.high-contrast \.reward-deck-shift/);
+  assert.match(styleSource, /\.high-contrast \.reward-take-vs-skip/);
   assert.match(styleSource, /\.reward-card-choices/);
   assert.match(styleSource, /\.reward-card-choices > \.reward-section-heading > span/);
   assert.match(styleSource, /\.reward-flow/);
