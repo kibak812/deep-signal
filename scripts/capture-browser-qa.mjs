@@ -295,6 +295,7 @@ try {
   await capture(cdp, "browser-qa-combat-intent-tooltip.png");
   await clearSavedRun(cdp);
 
+  const enemyDensity = await captureEnemyDensityReadability(cdp);
   const groupedEnemyFx = await captureGroupedEnemyFx(cdp);
   const turnAndVictoryEvidence = await writeTurnAndVictoryEvidence(groupedEnemyFx, victoryCodaEvidence);
 
@@ -331,7 +332,7 @@ try {
     transitionCount: document.querySelectorAll(".phase-transition").length,
     text: document.body.innerText.slice(0, 500)
   }))()`);
-  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
+  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, enemyDensity, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
 } finally {
   await cleanup();
 }
@@ -1156,6 +1157,79 @@ async function stageMobileCombatFixture(cdp) {
   })()`);
 }
 
+async function captureEnemyDensityReadability(cdp) {
+  const fixture = await stageEnemyDensityFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await waitForSelector(cdp, ".enemy-crowd-strip");
+  const evidence = await evaluate(cdp, `(() => {
+    const line = document.querySelector(".enemy-line");
+    const strip = document.querySelector(".enemy-crowd-strip");
+    const cards = [...document.querySelectorAll(".enemy-card")];
+    const plates = [...document.querySelectorAll(".enemy-card .combatant-plate")];
+    const intents = [...document.querySelectorAll(".enemy-card .intent")];
+    const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const stripRect = strip?.getBoundingClientRect();
+    const lineRect = line?.getBoundingClientRect();
+    const plateRects = plates.map((item) => item.getBoundingClientRect());
+    const intentRects = intents.map((item) => item.getBoundingClientRect());
+    const overlapArea = (left, right) => {
+      const width = Math.max(0, Math.min(left.right, right.right) - Math.max(left.left, right.left));
+      const height = Math.max(0, Math.min(left.bottom, right.bottom) - Math.max(left.top, right.top));
+      return width * height;
+    };
+    const plateOverlaps = [];
+    for (let i = 0; i < plateRects.length; i += 1) {
+      for (let j = i + 1; j < plateRects.length; j += 1) {
+        if (overlapArea(plateRects[i], plateRects[j]) > 4) plateOverlaps.push([i, j]);
+      }
+    }
+    const intentPlateOverlaps = [];
+    for (let i = 0; i < intentRects.length; i += 1) {
+      for (let j = 0; j < plateRects.length; j += 1) {
+        if (i !== j && overlapArea(intentRects[i], plateRects[j]) > 4) intentPlateOverlaps.push([i, j]);
+      }
+    }
+    const overflowingLine = line ? line.scrollWidth > line.clientWidth + 2 : true;
+    const stripWithinViewport = Boolean(stripRect && stripRect.left >= 0 && stripRect.right <= window.innerWidth && stripRect.top >= 0);
+    const cardsWithinStage = cards.every((card) => {
+      const rect = card.getBoundingClientRect();
+      return rect.left >= -2 && rect.right <= window.innerWidth + 2 && (!lineRect || rect.bottom <= lineRect.bottom + 24);
+    });
+    return {
+      fixture: ${JSON.stringify(fixture)},
+      cardCount: cards.length,
+      stripText: text,
+      stripWithinViewport,
+      cardsWithinStage,
+      overflowingLine,
+      plateOverlaps,
+      intentPlateOverlaps,
+      lineWidth: line?.clientWidth ?? 0,
+      lineScrollWidth: line?.scrollWidth ?? 0,
+      stripBox: stripRect ? { left: Math.round(stripRect.left), top: Math.round(stripRect.top), right: Math.round(stripRect.right), width: Math.round(stripRect.width) } : null
+    };
+  })()`);
+  if (
+    evidence.cardCount !== 4 ||
+    !/다수 조우/.test(evidence.stripText) ||
+    !/적 4/.test(evidence.stripText) ||
+    !/예고/.test(evidence.stripText) ||
+    !evidence.stripWithinViewport ||
+    !evidence.cardsWithinStage ||
+    evidence.overflowingLine ||
+    evidence.plateOverlaps.length ||
+    evidence.intentPlateOverlaps.length
+  ) {
+    throw new Error(`Enemy density readability failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-enemy-density-readability.json"), `${JSON.stringify(evidence, null, 2)}\n`);
+  await capture(cdp, "browser-qa-enemy-density-readability.png");
+  await clearSavedRun(cdp);
+  return evidence;
+}
+
 async function captureGroupedEnemyFx(cdp) {
   const fixture = await stageGroupedEnemyFxFixture(cdp);
   await navigate(cdp, baseUrl);
@@ -1542,6 +1616,59 @@ async function stageGroupedEnemyFxFixture(cdp) {
         const damage = Math.max(0, Number(enemy.nextMove?.damage ?? 0));
         return damage > 0 ? sum + Math.max(1, Number(enemy.nextMove?.hits ?? 1) || 1) : sum;
       }, 0)
+    };
+  })()`);
+}
+
+async function stageEnemyDensityFixture(cdp) {
+  return await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const { ENEMY_BY_ID } = await import("./src/data/enemies.js");
+    const run = newRun({ seed: "qa-enemy-density-readability", difficulty: 2 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA enemy density fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    const enemyIds = ["lantern_crab", "cipher_ray", "rust_choir", "mirror_jelly"];
+    run.combat.enemies = enemyIds.map((enemyId, index) => {
+      const template = ENEMY_BY_ID[enemyId];
+      const hp = Math.round((template.hp[0] + template.hp[1]) / 2);
+      const preferredMove = template.moves.find((move) => move.damage || move.applyToPlayer?.length || move.summon?.length) ?? template.moves[0];
+      return {
+        uid: 8700 + index,
+        templateId: enemyId,
+        name: template.name,
+        maxHp: hp,
+        hp,
+        block: index === 2 ? 8 : 0,
+        statuses: index === 1 ? { weak: 1 } : {},
+        phase: 1,
+        moveCursor: 0,
+        nextMove: preferredMove,
+        summoned: index >= 2
+      };
+    });
+    run.nextUid = Math.max(run.nextUid, 8710);
+    run.player.hp = run.player.maxHp;
+    run.player.block = 0;
+    run.combat.selectedEnemyUid = run.combat.enemies[1].uid;
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [
+      { uid: 8721, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 8722, cardId: "tide_ward", upgraded: true, temporary: false, costMod: 0 },
+      { uid: 8723, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 8724, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 8725, cardId: "rill_cut", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return {
+      enemies: run.combat.enemies.map((enemy) => ({ name: enemy.name, intent: enemy.nextMove.intent })),
+      selected: run.combat.enemies[1].name
     };
   })()`);
 }

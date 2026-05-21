@@ -188,6 +188,7 @@ async function main() {
     { id: "energy-locked-card", match: /browser-qa-combat-energy-locked/ },
     { id: "status-tooltip", match: /browser-qa-combat-status-tooltip/ },
     { id: "intent-tooltip", match: /browser-qa-combat-intent-tooltip/ },
+    { id: "enemy-density-readability", match: /browser-qa-enemy-density-readability/ },
     { id: "victory-coda", match: /browser-qa-victory-coda/ },
     { id: "boss-status-strip", match: /browser-qa-boss-status-strip/ },
     { id: "map", match: /browser-qa-map/ },

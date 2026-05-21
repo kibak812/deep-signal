@@ -5224,6 +5224,7 @@ function renderCombat(run) {
           ${renderEntityFxBadge("self")}
         </article>
         <div class="enemy-line enemy-count-${visibleEnemies.length}" style="--enemy-count:${Math.max(1, visibleEnemies.length)}">
+          ${renderEnemyCrowdStrip(run, visibleEnemies)}
           ${visibleEnemies.map((enemy, index) => renderEnemy(run, enemy, index, visibleEnemies.length)).join("")}
         </div>
       </div>
@@ -6932,6 +6933,35 @@ function enemyThreatChips(move = {}, damage = 0, statuses = [], setup = []) {
   for (const item of setup.slice(0, 2)) chips.push({ tone: item.startsWith("소환") ? "summon" : "setup", label: item });
   if (!chips.length && move.intent) chips.push({ tone: "calm", label: move.intent });
   return chips.slice(0, 4);
+}
+
+function renderEnemyCrowdStrip(run, enemies = []) {
+  if (enemies.length < 3) return "";
+  const attackers = enemies.filter((enemy) => enemyMoveDamageTotal(enemy.nextMove) > 0);
+  const totalDamage = enemies.reduce((sum, enemy) => sum + enemyMoveDamageTotal(enemy.nextMove), 0);
+  const specialMoves = enemies.filter((enemy) => enemyMoveSetupParts(enemy.nextMove).length || enemy.nextMove?.type === "summon" || enemy.nextMove?.type === "debuff");
+  const selected = enemies.find((enemy) => enemy.uid === run.combat?.selectedEnemyUid) ?? enemies[0];
+  const tone = totalDamage >= 30 ? "danger" : totalDamage > 0 ? "warning" : specialMoves.length ? "setup" : "calm";
+  const chips = [
+    { label: `적 ${enemies.length}`, tone: "count" },
+    totalDamage > 0 ? { label: `예고 ${totalDamage}`, tone: "attack" } : { label: "공격 없음", tone: "calm" },
+    specialMoves.length ? { label: `특수 ${specialMoves.length}`, tone: "setup" } : { label: `공격체 ${attackers.length}`, tone: "attack" },
+    { label: `대상 ${selected?.name ?? "확인"}`, tone: "target" }
+  ];
+  const detail = totalDamage > 0
+    ? `${attackers.length}명이 총 ${totalDamage} 피해를 예고합니다.`
+    : specialMoves.length
+      ? `${specialMoves.length}명이 상태 이상, 방어, 소환 같은 특수 행동을 준비합니다.`
+      : "공격 예고는 없지만 다음 행동을 나눠 확인하세요.";
+  return `
+    <div class="enemy-crowd-strip ${tone}" aria-label="다수 조우 요약: ${detail} 현재 선택 대상 ${selected?.name ?? "없음"}">
+      <span>다수 조우</span>
+      <strong>${detail}</strong>
+      <div>
+        ${chips.map((chip) => `<i class="${chip.tone}">${chip.label}</i>`).join("")}
+      </div>
+    </div>
+  `;
 }
 
 function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {

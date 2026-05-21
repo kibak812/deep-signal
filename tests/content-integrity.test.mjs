@@ -290,6 +290,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-final-boss-selector\.png/);
   assert.match(readme, /browser-qa-combat-status-tooltip\.png/);
   assert.match(readme, /browser-qa-combat-intent-tooltip\.png/);
+  assert.match(readme, /browser-qa-enemy-density-readability\.png/);
+  assert.match(readme, /browser-qa-enemy-density-readability\.json/);
   assert.match(readme, /browser-qa-boss-status-strip\.png/);
   assert.match(readme, /browser-qa-victory-coda\.png/);
   assert.match(readme, /browser-qa-choice-pulse-next-step\.png/);
@@ -329,6 +331,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /card-attack-fx/);
   assert.match(auditSource, /status-tooltip/);
   assert.match(auditSource, /intent-tooltip/);
+  assert.match(auditSource, /enemy-density-readability/);
   assert.match(auditSource, /victory-coda/);
   assert.match(auditSource, /boss-status-strip/);
   assert.match(auditSource, /act-interlude/);
@@ -387,6 +390,11 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-tablet-combat-refreshed\.json/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.png/);
   assert.match(captureSource, /browser-qa-enemy-grouped-fx\.json/);
+  assert.match(captureSource, /browser-qa-enemy-density-readability\.png/);
+  assert.match(captureSource, /browser-qa-enemy-density-readability\.json/);
+  assert.match(captureSource, /function captureEnemyDensityReadability\(cdp\)/);
+  assert.match(captureSource, /function stageEnemyDensityFixture\(cdp\)/);
+  assert.match(captureSource, /Enemy density readability failed/);
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
   assert.match(captureSource, /duplicateFxCount/);
   assert.match(captureSource, /fixtureHasMultiHit/);

@@ -1,0 +1,38 @@
+{
+  "fixture": {
+    "enemies": [
+      {
+        "name": "랜턴 집게",
+        "intent": "공격 4 x2"
+      },
+      {
+        "name": "암호 가오리",
+        "intent": "공격 10"
+      },
+      {
+        "name": "녹 성가대",
+        "intent": "바이러스 2"
+      },
+      {
+        "name": "거울 해파리",
+        "intent": "공격 9"
+      }
+    ],
+    "selected": "암호 가오리"
+  },
+  "cardCount": 4,
+  "stripText": "다수 조우 3명이 총 27 피해를 예고합니다. 적 4 예고 27 특수 1 대상 암호 가오리",
+  "stripWithinViewport": true,
+  "cardsWithinStage": true,
+  "overflowingLine": false,
+  "plateOverlaps": [],
+  "intentPlateOverlaps": [],
+  "lineWidth": 748,
+  "lineScrollWidth": 748,
+  "stripBox": {
+    "left": 982,
+    "top": 24,
+    "right": 1188,
+    "width": 205
+  }
+}
