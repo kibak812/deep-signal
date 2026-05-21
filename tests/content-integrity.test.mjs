@@ -402,6 +402,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /badgeInsideCard/);
   assert.match(captureSource, /badgeClearTitle/);
   assert.match(captureSource, /aimLineMatchesTarget/);
+  assert.match(captureSource, /data-preview-result/);
+  assert.match(captureSource, /previewHpLoss/);
   assert.match(captureSource, /selfPreview \? aimLineHidden : enemyPreview \? !aimLineHidden : true/);
   assert.match(captureSource, /Card hover layout failed/);
   assert.match(captureSource, /function assertMapRouteUx\(cdp\)/);
@@ -1057,12 +1059,16 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /COMBAT_PREVIEW_TONE_CLASSES/);
   assert.match(mainSource, /previewing-card/);
   assert.match(mainSource, /enemyCard\?\.classList\.add\("preview-target", `preview-\$\{tone\}`\)/);
+  assert.match(mainSource, /function combatPreviewEnemyDelta\(preview, enemy\)/);
+  assert.match(mainSource, /function setCombatPreviewHealthProjection\(enemyCard, enemy, delta\)/);
+  assert.match(mainSource, /--preview-hp-loss/);
   assert.match(mainSource, /playerStand\?\.classList\.add\("preview-self", `preview-\$\{tone\}`\)/);
   assert.match(mainSource, /preview-target/);
   assert.match(mainSource, /data-preview-label/);
   assert.match(mainSource, /data-preview-icon/);
   assert.match(mainSource, /data-preview-value/);
   assert.match(mainSource, /data-preview-text/);
+  assert.match(mainSource, /data-preview-result/);
   assert.match(mainSource, /removeAttribute\("data-preview-label"\)/);
   assert.match(mainSource, /removeAttribute\("data-preview-icon"\)/);
   assert.match(mainSource, /removeAttribute\("data-preview-value"\)/);
@@ -1338,6 +1344,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.game-card\.previewing-card/);
   assert.match(styleSource, /\.enemy-card\.preview-target/);
   assert.match(styleSource, /\.enemy-card\.preview-target\.preview-damage::before/);
+  assert.match(styleSource, /\.enemy-card\.preview-target\.preview-damage \.health-bar\[data-preview-result\]::after/);
+  assert.match(styleSource, /@keyframes preview-hp-loss-pulse/);
   assert.match(styleSource, /\.enemy-card\.preview-target,[\s\S]*\.player-stand\.preview-self[\s\S]*box-shadow:\s*none/);
   assert.match(styleSource, /\.enemy-card\.preview-target::before,[\s\S]*\.player-stand\.preview-self::before[\s\S]*bottom:\s*86px[\s\S]*border-radius:\s*50%/);
   assert.match(styleSource, /\.enemy-card\.preview-target::after/);

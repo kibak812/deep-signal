@@ -351,6 +351,7 @@ export function cardPlayPreview(run, cardInstance, targetUid = null) {
     statuses: [],
     relics: [],
     conditions: [],
+    enemyDeltas: [],
     warnings: []
   };
 
@@ -413,8 +414,32 @@ export function cardPlayPreview(run, cardInstance, targetUid = null) {
     if (enemy.statuses[status] === 0) delete enemy.statuses[status];
     addPreviewStatus(scope, status, amount);
   };
+  const recordEnemyDelta = (enemy, beforeHp, beforeBlock, dealt, blocked) => {
+    let delta = preview.enemyDeltas.find((item) => item.uid === enemy.uid);
+    if (!delta) {
+      delta = {
+        uid: enemy.uid,
+        name: enemy.name,
+        hpBefore: beforeHp,
+        hpAfter: enemy.hp,
+        blockBefore: beforeBlock,
+        blockAfter: enemy.block,
+        damage: 0,
+        blockedDamage: 0,
+        lethal: false
+      };
+      preview.enemyDeltas.push(delta);
+    }
+    delta.hpAfter = enemy.hp;
+    delta.blockAfter = enemy.block;
+    delta.damage += dealt;
+    delta.blockedDamage += blocked;
+    delta.lethal = delta.hpBefore > 0 && enemy.hp <= 0;
+  };
   const previewAttack = (enemy, amount) => {
     if (!enemy || enemy.hp <= 0) return;
+    const beforeHp = enemy.hp;
+    const beforeBlock = enemy.block;
     let damage = Math.max(0, amount + statusFrom(playerStatuses, "strength"));
     if (statusFrom(playerStatuses, "weak") > 0) damage = Math.floor(damage * 0.75);
     if (statusFrom(enemy.statuses, "vulnerable") > 0) damage = Math.ceil(damage * 1.5);
@@ -430,6 +455,7 @@ export function cardPlayPreview(run, cardInstance, targetUid = null) {
     enemy.hp = Math.max(0, enemy.hp - dealt);
     preview.damage += dealt;
     preview.blockedDamage += blocked;
+    recordEnemyDelta(enemy, beforeHp, beforeBlock, dealt, blocked);
     if (card.type === "attack" && hasRelic(run, "abyssal_needle")) {
       addEnemyStatus(enemy, "virus", 1);
       addRelicPreview("abyssal_needle");

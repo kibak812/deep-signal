@@ -1,6 +1,8 @@
 {
   "ok": true,
   "markerText": "-6",
+  "healthResult": "-6",
+  "previewHpLoss": "17.14%",
   "railText": "✓ ⌖ 로그 흡착자 -6 ⚡2 펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 에너지 2.",
   "lineOpacity": "0.74",
   "lineBeforeHeight": "2px",

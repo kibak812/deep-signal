@@ -2645,13 +2645,16 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
   for (const enemyUid of targetUids) {
     const enemyCard = app.querySelector(`.enemy-card[data-id="${enemyUid}"]`);
     const enemy = aliveEnemies.find((item) => item.uid === enemyUid);
+    const delta = combatPreviewEnemyDelta(preview, enemy ?? selected);
+    const lethal = Boolean(delta?.lethal) || Boolean(enemy && !delta && preview.damage >= enemy.hp);
     enemyCard?.classList.add("preview-target", `preview-${tone}`);
-    const marker = combatPreviewMarker(preview, enemy ?? selected, targetUids.length, enemy && preview.damage >= enemy.hp ? "처치 가능" : targetBadge);
+    setCombatPreviewHealthProjection(enemyCard, enemy, delta);
+    const marker = combatPreviewMarker(preview, enemy ?? selected, targetUids.length, lethal ? "처치 가능" : targetBadge);
     enemyCard?.setAttribute("data-preview-label", marker.label);
     enemyCard?.setAttribute("data-preview-icon", marker.icon);
     enemyCard?.setAttribute("data-preview-value", marker.value);
     enemyCard?.setAttribute("data-preview-text", combatPreviewMarkerText(marker));
-    if (enemy && preview.damage >= enemy.hp) enemyCard?.classList.add("preview-lethal");
+    if (lethal) enemyCard?.classList.add("preview-lethal");
   }
   if (!targetUids.length && combatPreviewAffectsSelf(preview)) {
     const playerStand = app.querySelector(".player-stand");
@@ -2685,11 +2688,39 @@ function clearCombatCardPreview(source = null) {
   restoreCombatPreviewAssist();
   app.querySelectorAll(".preview-target, .preview-lethal, .preview-self").forEach((element) => {
     element.classList.remove("preview-target", "preview-lethal", "preview-self", ...COMBAT_PREVIEW_TONE_CLASSES);
+    clearCombatPreviewHealthProjection(element);
     element.removeAttribute("data-preview-label");
     element.removeAttribute("data-preview-icon");
     element.removeAttribute("data-preview-value");
     element.removeAttribute("data-preview-text");
   });
+}
+
+function combatPreviewEnemyDelta(preview, enemy) {
+  if (!preview?.enemyDeltas?.length || !enemy) return null;
+  return preview.enemyDeltas.find((delta) => delta.uid === enemy.uid) ?? null;
+}
+
+function setCombatPreviewHealthProjection(enemyCard, enemy, delta) {
+  if (!enemyCard || !enemy || !delta || delta.damage <= 0) return;
+  const maxHp = Math.max(1, enemy.maxHp);
+  const beforePct = clamp((delta.hpBefore / maxHp) * 100, 0, 100);
+  const afterPct = clamp((delta.hpAfter / maxHp) * 100, 0, 100);
+  const resultText = delta.lethal ? "처치" : `-${delta.damage}`;
+  enemyCard.style.setProperty("--preview-hp-before", `${beforePct.toFixed(2)}%`);
+  enemyCard.style.setProperty("--preview-hp-after", `${afterPct.toFixed(2)}%`);
+  enemyCard.style.setProperty("--preview-hp-loss", `${Math.max(0, beforePct - afterPct).toFixed(2)}%`);
+  const health = enemyCard.querySelector(".health-bar");
+  health?.setAttribute("data-preview-result", resultText);
+}
+
+function clearCombatPreviewHealthProjection(element) {
+  if (!element) return;
+  element.style.removeProperty("--preview-hp-before");
+  element.style.removeProperty("--preview-hp-after");
+  element.style.removeProperty("--preview-hp-loss");
+  const health = element.querySelector?.(".health-bar");
+  health?.removeAttribute("data-preview-result");
 }
 
 function setCombatPreviewAssist(card, preview, selected, aliveEnemies, mode, tone) {

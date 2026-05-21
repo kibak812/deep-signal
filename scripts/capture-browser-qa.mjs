@@ -1984,6 +1984,7 @@ async function assertAttackCardHoverTarget(cdp) {
     const line = document.querySelector(".combat-aim-line.damage.aim-hover:not([hidden])");
     const rail = document.querySelector(".combat-card-preview-rail.damage:not([hidden])");
     const tooltip = document.querySelector(".card-portal-tooltip:not([hidden])");
+    const health = target?.querySelector(".health-bar[data-preview-result]");
     const boxes = Object.fromEntries(Object.entries({ card, target, line, rail, tooltip }).map(([key, node]) => {
       const box = node?.getBoundingClientRect?.();
       return [key, box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null];
@@ -1993,22 +1994,30 @@ async function assertAttackCardHoverTarget(cdp) {
     const lineBefore = line ? getComputedStyle(line, "::before") : null;
     const markerText = target?.getAttribute("data-preview-text") ?? "";
     const railText = rail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const targetStyle = target ? getComputedStyle(target) : null;
+    const healthResult = health?.getAttribute("data-preview-result") ?? "";
+    const previewHpLoss = targetStyle?.getPropertyValue("--preview-hp-loss").trim() ?? "";
     const ok =
       Boolean(card) &&
       Boolean(target) &&
       Boolean(line) &&
       Boolean(rail) &&
+      Boolean(health) &&
       visible(boxes.card) &&
       visible(boxes.target) &&
       visible(boxes.line) &&
       visible(boxes.rail) &&
       Number(lineStyle?.opacity ?? 0) >= 0.7 &&
       parseFloat(lineBefore?.height ?? "0") >= 2 &&
+      parseFloat(previewHpLoss) > 0 &&
       /피해|처치|-\\d+/.test(markerText) &&
+      /처치|-\\d+/.test(healthResult) &&
       /피해|사용 가능|⚡/.test(railText);
     return {
       ok,
       markerText,
+      healthResult,
+      previewHpLoss,
       railText,
       lineOpacity: lineStyle?.opacity ?? "",
       lineBeforeHeight: lineBefore?.height ?? "",

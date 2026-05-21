@@ -271,6 +271,19 @@ test("card play preview reflects damage, block, and energy without mutating comb
   assert.equal(preview.playable, true);
   assert.equal(preview.damage, 11);
   assert.equal(preview.blockedDamage, 2);
+  assert.deepEqual(preview.enemyDeltas, [
+    {
+      uid: enemy.uid,
+      name: enemy.name,
+      hpBefore: before.hp,
+      hpAfter: before.hp - 11,
+      blockBefore: 2,
+      blockAfter: 0,
+      damage: 11,
+      blockedDamage: 2,
+      lethal: false
+    }
+  ]);
   assert.equal(preview.energyDelta, -1);
   assert.equal(preview.energyAfter, 2);
   assert.equal(enemy.hp, before.hp);
