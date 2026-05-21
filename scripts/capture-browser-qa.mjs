@@ -91,6 +91,11 @@ try {
   await waitForSelector(cdp, ".event-layout");
   await assertEventSceneUx(cdp);
   await capture(cdp, "browser-qa-event-refreshed.png");
+  await clickSelector(cdp, ".event-choice");
+  await waitForSelector(cdp, ".map-layout");
+  await waitForSelector(cdp, ".choice-result-pulse");
+  await assertChoicePulseNextStep(cdp);
+  await capture(cdp, "browser-qa-choice-pulse-next-step.png");
   await clearSavedRun(cdp);
 
   await stageNodeFixture(cdp, "shop", "qa-shop-scene");
@@ -159,6 +164,15 @@ try {
   await assertFinalBossReadinessUx(cdp);
   await capture(cdp, "browser-qa-final-boss-readiness.png");
   await clearSavedRun(cdp);
+
+  await stageFinalBossSelectorFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".deck-modal");
+  await assertFinalBossSelectorUx(cdp);
+  await capture(cdp, "browser-qa-final-boss-selector.png");
+  await clearSavedRun(cdp);
+
   await navigate(cdp, baseUrl);
   await clickText(cdp, "새 런 시작");
   await waitForSelector(cdp, ".map-layout");
@@ -166,6 +180,7 @@ try {
   await clickSelector(cdp, ".map-node.combat.available, .map-node.available");
   await waitForSelector(cdp, ".combat-board");
   await assertCombatRiskSingleSource(cdp);
+  await assertCombatRouteBeacon(cdp);
   await assertCombatPileDockCompact(cdp);
   await capture(cdp, "browser-qa-combat-refreshed.png");
   await hoverSelector(cdp, ".hand-zone .game-card[data-action='play-card']:not(:disabled)", { x: 0.5, y: 0.18 });
@@ -173,6 +188,31 @@ try {
   await waitForSelector(cdp, ".combat-card-preview-rail:not([hidden])");
   await assertCardHoverLayout(cdp);
   await capture(cdp, "browser-qa-combat-card-hover.png");
+  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 4, y: 4, button: "none" });
+  await wait(120);
+  await clickSelector(cdp, ".hand-zone .game-card[data-action='play-card']:not(:disabled)");
+  await waitForSelector(cdp, ".combat-action-fx");
+  await assertCardPlayFxSource(cdp);
+  await capture(cdp, "browser-qa-card-play-fx.png");
+  await clearSavedRun(cdp);
+
+  await stageAttackFxFixture(cdp);
+  await navigate(cdp, qaUrl("card-attack-hover"));
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await wait(1000);
+  await hoverSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7601']", { x: 0.5, y: 0.18 });
+  await triggerHoverSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7601']");
+  await waitForSelector(cdp, ".combat-aim-line.damage:not([hidden])");
+  await assertAttackCardHoverTarget(cdp);
+  await capture(cdp, "browser-qa-card-attack-hover.png");
+  await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 4, y: 4, button: "none" });
+  await wait(120);
+  await clickSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7601']");
+  await waitForSelector(cdp, ".combat-action-fx.fx-damage.fx-enemy.fx-source-player");
+  await assertAttackCardPlayFx(cdp);
+  await capture(cdp, "browser-qa-card-attack-fx.png");
+  await clearSavedRun(cdp);
 
   await stageEnergyLockedHandFixture(cdp);
   await navigate(cdp, baseUrl);
@@ -185,13 +225,7 @@ try {
   await capture(cdp, "browser-qa-combat-energy-locked.png");
   await clearSavedRun(cdp);
 
-  const reachedReward = await playUntilReward(cdp);
-  if (reachedReward) {
-    await assertSingleRewardSurface(cdp);
-    await assertRewardDecisionUx(cdp);
-    await capture(cdp, "browser-qa-reward-refreshed.png");
-    await capture(cdp, "browser-qa-reward-post-victory-refreshed.png");
-  }
+  const victoryCodaEvidence = await captureVictoryCodaFlow(cdp);
 
   await stageBossFixture(cdp);
   await navigate(cdp, baseUrl);
@@ -207,9 +241,12 @@ try {
   await waitForSelector(cdp, ".combat-board");
   await assertStatusTooltipUx(cdp);
   await capture(cdp, "browser-qa-combat-status-tooltip.png");
+  await assertIntentTooltipUx(cdp);
+  await capture(cdp, "browser-qa-combat-intent-tooltip.png");
   await clearSavedRun(cdp);
 
   const groupedEnemyFx = await captureGroupedEnemyFx(cdp);
+  const turnAndVictoryEvidence = await writeTurnAndVictoryEvidence(groupedEnemyFx, victoryCodaEvidence);
 
   await stageMobileCombatFixture(cdp);
   await navigate(cdp, baseUrl);
@@ -244,7 +281,7 @@ try {
     transitionCount: document.querySelectorAll(".phase-transition").length,
     text: document.body.innerText.slice(0, 500)
   }))()`);
-  console.log(JSON.stringify({ ok: true, reachedReward, groupedEnemyFx, summary }, null, 2));
+  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
 } finally {
   await cleanup();
 }
@@ -312,6 +349,11 @@ async function connectToPage() {
 async function navigate(cdp, url) {
   await cdp.send("Page.navigate", { url });
   await waitForReady(cdp);
+}
+
+function qaUrl(label) {
+  const separator = baseUrl.includes("?") ? "&" : "?";
+  return `${baseUrl}${separator}qa=${encodeURIComponent(label)}`;
 }
 
 async function waitForReady(cdp) {
@@ -413,11 +455,12 @@ async function stageEventFixture(cdp) {
     const { newRun } = await import("./src/engine/game.js");
     const { EVENTS } = await import("./src/data/events.js");
     const run = newRun({ seed: "qa-event-scene", difficulty: 1 });
-    const eventDefinition = EVENTS.find((event) => event.choices?.length >= 2) ?? EVENTS[0];
+    const eventDefinition = EVENTS.find((event) => event.id === "pressure_gate") ?? EVENTS.find((event) => event.choices?.length >= 2) ?? EVENTS[0];
+    const node = run.map.flat().find((item) => item.type === "event") ?? run.map.flat()[0];
     run.phase = "event";
-    run.currentRow = 3;
-    run.stats.floors = 4;
-    run.currentNodeId = "qa-event";
+    run.currentRow = node?.row ?? 3;
+    run.stats.floors = Math.max(run.stats.floors, (node?.row ?? 3) + 1);
+    run.currentNodeId = node?.id ?? "qa-event";
     run.availableNodeIds = [];
     run.reward = null;
     run.combat = null;
@@ -461,18 +504,25 @@ async function stageNodeFixture(cdp, type, seed) {
 async function stageBossFixture(cdp) {
   await evaluate(cdp, `(async () => {
     const { newRun, enterNode } = await import("./src/engine/game.js");
+    const { ENEMY_BY_ID } = await import("./src/data/enemies.js");
     const run = newRun({ seed: "qa-boss-status", difficulty: 1 });
     const node = run.map.flat().find((item) => item.type === "boss" && item.act === 2) ?? run.map.flat().find((item) => item.type === "boss");
     if (!node) throw new Error("QA boss fixture node not found");
     run.availableNodeIds = [node.id];
     enterNode(run, node.id);
     if (!run.combat?.enemies?.length) throw new Error("QA boss fixture combat not started");
+    const boss = run.combat.enemies.find((enemy) => ENEMY_BY_ID[enemy.templateId]?.tier === "boss") ?? run.combat.enemies[0];
+    const template = ENEMY_BY_ID[boss.templateId];
+    const threshold = Math.max(1, Math.floor(boss.maxHp * (template.phaseAt ?? 0.5)));
+    boss.hp = Math.min(boss.hp, threshold);
+    boss.phase = 2;
+    boss.nextMove = template.moves.find((move) => move.phase === 2) ?? boss.nextMove;
     run.player.hp = Math.min(run.player.maxHp, 78);
     run.updatedAt = Date.now();
     const payload = JSON.stringify(run);
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
-    return { phase: run.phase, boss: run.combat.enemies[0].name };
+    return { phase: run.phase, boss: boss.name, bossPhase: boss.phase, bossHp: boss.hp, nextMove: boss.nextMove?.id };
   })()`);
 }
 
@@ -494,6 +544,42 @@ async function stageFinalBossReadinessFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return { phase: run.phase, boss: boss.id, hp: run.player.hp, deck: run.player.deck.length };
+  })()`);
+}
+
+async function stageFinalBossSelectorFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-final-boss-selector", difficulty: 4 });
+    const rest = run.map.flat().find((item) => item.type === "rest" && item.act === 3);
+    if (!rest) throw new Error("QA final boss selector rest node not found");
+    run.phase = "rest";
+    run.currentNodeId = rest.id;
+    run.currentRow = rest.row;
+    run.availableNodeIds = [];
+    run.stats.floors = rest.row + 1;
+    run.player.hp = Math.min(run.player.maxHp, 56);
+    run.player.gold = 120;
+    run.player.deck = [
+      { uid: 9101, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9102, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9103, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9104, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9105, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9106, cardId: "pale_firewall", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9107, cardId: "rill_cut", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9108, cardId: "cleanse_cache", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9109, cardId: "silt_needle", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9110, cardId: "brass_knuckle", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9111, cardId: "drift_scan", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9112, cardId: "undertow_kick", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.selector = { mode: "upgrade", context: "rest", after: "completeNode" };
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, selector: run.selector.mode, node: rest.id, deck: run.player.deck.length };
   })()`);
 }
 
@@ -582,6 +668,73 @@ async function stageEnergyLockedHandFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return { phase: run.phase, energy: run.combat.energy, hand: run.combat.hand.length };
+  })()`);
+}
+
+async function stageAttackFxFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-card-attack-fx", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA attack FX fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA attack FX fixture combat not started");
+    const target = run.combat.enemies.find((enemy) => enemy.hp > 0) ?? run.combat.enemies[0];
+    target.hp = Math.min(target.maxHp, Math.max(18, target.hp));
+    target.block = 0;
+    target.statuses = {};
+    run.combat.selectedEnemyUid = target.uid;
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [
+      { uid: 7601, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7602, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7603, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7604, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [
+      { uid: 7611, cardId: "rill_cut", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7612, cardId: "signal_jab", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, target: target.name, targetHp: target.hp, hand: run.combat.hand.map((card) => card.cardId) };
+  })()`);
+}
+
+async function stageVictoryCodaFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-victory-coda", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA victory coda fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA victory coda fixture combat not started");
+    const enemy = run.combat.enemies[0];
+    run.combat.enemies = [enemy];
+    enemy.hp = 1;
+    enemy.block = 0;
+    enemy.statuses = {};
+    run.combat.selectedEnemyUid = enemy.uid;
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [{ uid: 7901, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 }];
+    run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, enemy: enemy.name, enemyHp: enemy.hp, hand: run.combat.hand.length };
   })()`);
 }
 
@@ -683,6 +836,35 @@ async function captureGroupedEnemyFx(cdp) {
   return evidence;
 }
 
+async function writeTurnAndVictoryEvidence(groupedEnemyFx, victoryCodaEvidence) {
+  const evidence = {
+    enemyTurnFxCountWas: Number(groupedEnemyFx.duplicateFxCount ?? 0),
+    enemyTurnGrouped: Boolean(groupedEnemyFx.grouped),
+    enemyTurnDuplicated: Number(groupedEnemyFx.duplicateFxCount ?? 0) !== 1,
+    enemyTurnSparkCount: Number(groupedEnemyFx.visibleSparkCount ?? 0),
+    enemyTurnLockedHand: groupedEnemyFx.disabledHandCards === groupedEnemyFx.handCardCount,
+    victoryOverlayDuplicated: Boolean(victoryCodaEvidence.victoryOverlayDuplicated),
+    rewardReachedAfterVictory: Boolean(victoryCodaEvidence.rewardReachedAfterVictory),
+    rewardSurfaceCountAfterVictory: Number(victoryCodaEvidence.rewardSurfaceCountAfterVictory ?? 0),
+    codaActionText: victoryCodaEvidence.codaActionText ?? "",
+    codaEnemyHeight: Number(victoryCodaEvidence.codaEnemyHeight ?? 0),
+    checkedAt: new Date().toISOString()
+  };
+  if (
+    evidence.enemyTurnFxCountWas !== 1 ||
+    evidence.enemyTurnDuplicated ||
+    evidence.enemyTurnSparkCount > 1 ||
+    !evidence.enemyTurnLockedHand ||
+    evidence.victoryOverlayDuplicated ||
+    !evidence.rewardReachedAfterVictory ||
+    evidence.rewardSurfaceCountAfterVictory !== 1
+  ) {
+    throw new Error(`Turn and victory evidence failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-combat-turn-and-victory-evidence.json"), `${JSON.stringify(evidence, null, 2)}\n`);
+  return evidence;
+}
+
 async function assertEnergyLockedHandUx(cdp) {
   const evidence = await evaluate(cdp, `(() => {
     const board = document.querySelector(".combat-board");
@@ -749,7 +931,8 @@ async function assertEnergyLockedHandHover(cdp) {
       tooltipBox.top >= 2 &&
       tooltipBox.right <= window.innerWidth - 2 &&
       tooltipBox.bottom <= window.innerHeight - 2 &&
-      tooltipBox.width >= 320 &&
+      tooltipBox.width >= 276 &&
+      tooltipBox.height <= 240 &&
       Boolean(tooltip?.querySelector(".tooltip-rules")?.innerText.trim());
     const ok =
       Boolean(card) &&
@@ -822,6 +1005,35 @@ async function assertStatusTooltipUx(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Status tooltip UX failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertIntentTooltipUx(cdp) {
+  await hoverSelector(cdp, ".enemy-card .intent");
+  await waitForSelector(cdp, ".intent-portal-tooltip:not([hidden])");
+  const result = await evaluate(cdp, `(() => {
+    const intent = document.querySelector(".enemy-card .intent");
+    const tooltip = document.querySelector(".intent-portal-tooltip:not([hidden])");
+    const icon = tooltip?.querySelector(".intent-tooltip-icon");
+    const title = tooltip?.querySelector("strong")?.innerText.trim() ?? "";
+    const detail = tooltip?.querySelector("small")?.innerText.trim() ?? "";
+    const chips = [...(tooltip?.querySelectorAll("i") ?? [])].map((chip) => chip.innerText.replace(/\\s+/g, " ").trim());
+    const box = tooltip?.getBoundingClientRect();
+    const style = tooltip ? getComputedStyle(tooltip) : null;
+    const withinViewport = Boolean(box && box.left >= 0 && box.top >= 0 && box.right <= window.innerWidth && box.bottom <= window.innerHeight);
+    const ok =
+      Boolean(intent) &&
+      Boolean(tooltip) &&
+      Boolean(icon) &&
+      title.length >= 2 &&
+      detail.length >= 8 &&
+      chips.length >= 1 &&
+      withinViewport &&
+      Number(style?.zIndex ?? 0) > 1000;
+    return { ok, title, detail, chips, withinViewport, zIndex: style?.zIndex ?? "", tooltipCount: document.querySelectorAll(".intent-portal-tooltip:not([hidden])").length };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Intent tooltip UX failed: ${JSON.stringify(result)}`);
   }
 }
 
@@ -1162,6 +1374,44 @@ async function hoverSelector(cdp, selector, ratio = { x: 0.5, y: 0.5 }) {
   await wait(300);
 }
 
+async function triggerHoverSelector(cdp, selector) {
+  const evidence = await evaluate(cdp, `(selector => {
+    const target = document.querySelector(selector);
+    if (!target) return { ok: false, reason: "missing-target" };
+    const box = target.getBoundingClientRect();
+    const options = {
+      bubbles: true,
+      cancelable: true,
+      composed: true,
+      clientX: box.left + box.width / 2,
+      clientY: box.top + box.height * 0.18,
+      relatedTarget: document.body
+    };
+    target.focus?.({ preventScroll: true });
+    target.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true, relatedTarget: document.body }));
+    target.dispatchEvent(new PointerEvent("pointerover", { ...options, pointerType: "mouse", pointerId: 1 }));
+    target.dispatchEvent(new PointerEvent("pointermove", { ...options, pointerType: "mouse", pointerId: 1 }));
+    target.dispatchEvent(new MouseEvent("mouseover", options));
+    target.dispatchEvent(new MouseEvent("mousemove", options));
+    const previewActive = Boolean(document.querySelector(".combat-board.preview-active"));
+    return {
+      ok: previewActive,
+      previewActive,
+      activeElement: document.activeElement === target,
+      cardClass: target.className,
+      cardAria: target.getAttribute("aria-label") ?? "",
+      previewRailHidden: document.querySelector(".combat-card-preview-rail")?.hidden ?? null,
+      tooltipHidden: document.querySelector(".card-portal-tooltip")?.hidden ?? null,
+      targetCount: document.querySelectorAll(".enemy-card.preview-target").length,
+      aimHidden: document.querySelector(".combat-aim-line")?.hidden ?? null,
+      boardClass: document.querySelector(".combat-board")?.className ?? "",
+      handCount: document.querySelectorAll(".hand-zone .game-card[data-action='play-card']").length
+    };
+  })(${JSON.stringify(selector)})`);
+  if (!evidence.ok) throw new Error(`Hover activation failed: ${JSON.stringify({ selector, evidence })}`);
+  await wait(180);
+}
+
 async function assertCardHoverLayout(cdp) {
   const result = await evaluate(cdp, `(() => {
     const tooltip = document.querySelector(".card-portal-tooltip:not([hidden])");
@@ -1181,10 +1431,21 @@ async function assertCardHoverLayout(cdp) {
     const dimmedCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']:not(.previewing-card)")].filter((card) => Number(getComputedStyle(card).opacity) < 0.7).length;
     const keywordText = tooltip.querySelector(".tooltip-keywords span");
     const rulesText = tooltip.querySelector(".tooltip-rules");
+    const previewRail = document.querySelector(".combat-card-preview-rail:not([hidden])");
+    const previewRailText = previewRail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const tooltipPreview = tooltip.querySelector(".tooltip-preview");
+    const tooltipPreviewHidden = !tooltipPreview || getComputedStyle(tooltipPreview).display === "none";
+    const previewRailReadable = Boolean(
+      previewRail &&
+      /사용 가능|사용 불가|피해|방어|전하|표식|바이러스|취약|약화|⚡/.test(previewRailText)
+    );
     const tooltipReadable =
-      box.width >= 320 &&
-      Boolean(rulesText && rulesText.getBoundingClientRect().height >= 24) &&
-      (!keywordText || getComputedStyle(keywordText).whiteSpace === "normal");
+      box.width >= 276 &&
+      box.height <= 240 &&
+      Boolean(rulesText && rulesText.getBoundingClientRect().height >= 18) &&
+      (!keywordText || getComputedStyle(keywordText).whiteSpace === "normal") &&
+      tooltipPreviewHidden &&
+      previewRailReadable;
     const hoverCardStable = Boolean(
       previewingCardBox &&
       previewingCardBox.top >= 0 &&
@@ -1220,6 +1481,9 @@ async function assertCardHoverLayout(cdp) {
       hoverCardStable,
       badgeInsideCard,
       badgeClearTitle,
+      tooltipPreviewHidden,
+      previewRailReadable,
+      previewRailText,
       previewBoardActive,
       previewingCard: Boolean(previewingCard),
       dimmedCards,
@@ -1373,8 +1637,11 @@ async function assertTabletCombatUx(cdp) {
     const energy = document.querySelector(".combat-energy-panel");
     const playPanel = document.querySelector(".combat-play-panel");
     const endTurn = document.querySelector(".end-turn");
+    const arena = document.querySelector(".arena");
     const enemyLine = document.querySelector(".enemy-line");
     const targetAssist = document.querySelector(".target-assist");
+    const playerPlate = document.querySelector(".player-plate");
+    const enemyPlates = [...document.querySelectorAll(".enemy-card:not(.dead) .combatant-plate")];
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
     const handBox = rect(hand);
     const commandBox = rect(command);
@@ -1382,8 +1649,11 @@ async function assertTabletCombatUx(cdp) {
     const energyBox = rect(energy);
     const playBox = rect(playPanel);
     const endBox = rect(endTurn);
+    const arenaBox = rect(arena);
     const enemyLineBox = rect(enemyLine);
     const targetBox = rect(targetAssist);
+    const playerPlateBox = rect(playerPlate);
+    const enemyPlateBoxes = enemyPlates.map(rect);
     const pileBoxes = piles.map(rect);
     const cardBoxes = cards.map(rect);
     const tabletViewport = window.matchMedia("(min-width: 681px) and (max-width: 1040px)").matches;
@@ -1428,8 +1698,17 @@ async function assertTabletCombatUx(cdp) {
       (handStyle?.touchAction ?? "").includes("pan-x") &&
       (cardStyle?.touchAction ?? "").includes("pan-x");
     const combatReadable = Boolean(board && enemyLineBox && enemyLineBox.top >= 0 && enemyLineBox.bottom <= window.innerHeight && document.querySelector(".enemy-card:not(.dead)"));
+    const combatantsFramed = Boolean(
+      arenaBox &&
+      playerPlateBox &&
+      playerPlateBox.left >= 8 &&
+      playerPlateBox.right <= window.innerWidth - 8 &&
+      enemyPlateBoxes.length >= 1 &&
+      enemyPlateBoxes.every((box) => box && box.left >= 8 && box.right <= window.innerWidth - 8)
+    );
+    const arenaUsesVerticalSpace = Boolean(handBox && enemyLineBox && handBox.top - enemyLineBox.bottom <= 300);
     return {
-      ok: tabletViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable,
+      ok: tabletViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable && combatantsFramed && arenaUsesVerticalSpace,
       tabletViewport,
       noPageOverflow,
       scrollWidth: document.documentElement.scrollWidth,
@@ -1444,13 +1723,16 @@ async function assertTabletCombatUx(cdp) {
       noCriticalOverlap,
       touchRailReady,
       combatReadable,
+      combatantsFramed,
+      arenaUsesVerticalSpace,
+      arenaToHandGap: handBox && enemyLineBox ? handBox.top - enemyLineBox.bottom : null,
       handStyle: {
         overflowX: handStyle?.overflowX ?? "",
         touchAction: handStyle?.touchAction ?? "",
         overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
       },
       cardTouchAction: cardStyle?.touchAction ?? "",
-      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, enemyLine: enemyLineBox, targetAssist: targetBox },
+      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, arena: arenaBox, enemyLine: enemyLineBox, playerPlate: playerPlateBox, enemyPlates: enemyPlateBoxes, targetAssist: targetBox },
       cardCount: cards.length,
       cardBoxes: cardBoxes.slice(0, 3),
       pileBoxes
@@ -1512,6 +1794,198 @@ async function assertCombatRiskSingleSource(cdp) {
   }
 }
 
+async function assertCombatRouteBeacon(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const beacon = document.querySelector(".combat-route-beacon");
+    const pips = [...(beacon?.querySelectorAll(".route-pips i") ?? [])];
+    const text = beacon?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const label = beacon?.getAttribute("aria-label") ?? "";
+    const box = beacon?.getBoundingClientRect();
+    const hand = document.querySelector(".hand-zone")?.getBoundingClientRect();
+    const combatantBoxes = [
+      ...document.querySelectorAll(".player-sprite, .player-plate, .enemy-card .character-sprite, .enemy-plate, .enemy-card .intent")
+    ].map((node) => node.getBoundingClientRect()).filter((rect) => rect.width > 1 && rect.height > 1);
+    const visible = Boolean(box && box.width >= 168 && box.height >= 58 && box.left >= 0 && box.top >= 0 && box.right <= window.innerWidth);
+    const intersects = (a, b) => Boolean(a && b && a.left < b.right && a.right > b.left && a.top < b.bottom && a.bottom > b.top);
+    const noCombatantOverlap = Boolean(box) && combatantBoxes.every((combatantBox) => !intersects(box, combatantBox));
+    const noHandOverlap = Boolean(box && hand && box.bottom < hand.top - 12);
+    const hasPlainProgress = /진행/.test(text) && /\\d막/.test(text) && /\\d층/.test(text) && /(보스까지 \\d층|보스전)/.test(text);
+    const hasReward = /카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파/.test(text);
+    const ok = Boolean(beacon) && visible && pips.length === 7 && hasPlainProgress && hasReward && label.includes("현재 위치") && noCombatantOverlap && noHandOverlap;
+    return {
+      ok,
+      text,
+      label,
+      pips: pips.length,
+      visible,
+      hasPlainProgress,
+      hasReward,
+      noCombatantOverlap,
+      noHandOverlap,
+      box: box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null,
+      combatantBoxes: combatantBoxes.map((combatantBox) => ({ left: Math.round(combatantBox.left), top: Math.round(combatantBox.top), right: Math.round(combatantBox.right), bottom: Math.round(combatantBox.bottom) })).slice(0, 6)
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Combat route beacon failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertCardPlayFxSource(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const fx = document.querySelector(".combat-action-fx");
+    const pulse = fx?.querySelector(".fx-source-pulse");
+    const echo = fx?.querySelector(".fx-card-echo, .fx-actor-echo, .fx-card-name");
+    const trail = fx?.querySelector(".fx-trail");
+    const spark = fx?.querySelector(".fx-trail i");
+    const impact = fx?.querySelector(".fx-impact");
+    const targetResult = document.querySelector(".enemy-card.fx-hit .entity-result-stack i, .player-stand.fx-target .entity-result-stack i");
+    const targetPop = document.querySelector(".enemy-card.fx-hit .entity-damage-pop, .player-stand.fx-target .entity-damage-pop");
+    const targetFeedback = targetResult ?? targetPop;
+    const boxes = Object.fromEntries(Object.entries({ fx, pulse, echo, trail, spark, impact, targetResult, targetPop, targetFeedback }).map(([key, node]) => {
+      const box = node?.getBoundingClientRect?.();
+      return [key, box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null];
+    }));
+    const style = pulse ? getComputedStyle(pulse) : null;
+    const echoStyle = echo ? getComputedStyle(echo) : null;
+    const visible = (box) => Boolean(box && box.width > 4 && box.height > 4 && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const ok =
+      Boolean(fx) &&
+      Boolean(pulse) &&
+      Boolean(echo) &&
+      Boolean(trail) &&
+      Boolean(spark) &&
+      Boolean(impact) &&
+      Boolean(targetFeedback) &&
+      visible(boxes.pulse) &&
+      visible(boxes.echo) &&
+      visible(boxes.trail) &&
+      visible(boxes.impact) &&
+      visible(boxes.targetFeedback) &&
+      Number(style?.opacity ?? 0) >= 0.05 &&
+      Number(echoStyle?.opacity ?? 0) >= 0.05 &&
+      /fx-source-player|fx-source-card/.test(fx.className);
+    return {
+      ok,
+      className: fx?.className ?? "",
+      pulseOpacity: style?.opacity ?? "",
+      echoOpacity: echoStyle?.opacity ?? "",
+      boxes
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Card play FX source failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertAttackCardPlayFx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const board = document.querySelector(".combat-board");
+    const fx = document.querySelector(".combat-action-fx.fx-damage.fx-enemy.fx-source-player");
+    const pulse = fx?.querySelector(".fx-source-pulse");
+    const echo = fx?.querySelector(".fx-card-echo");
+    const trail = fx?.querySelector(".fx-trail");
+    const spark = fx?.querySelector(".fx-trail i");
+    const impact = fx?.querySelector(".fx-impact");
+    const hitEnemy = document.querySelector(".enemy-card.fx-hit:not(.fx-defeated)");
+    const targetRing = hitEnemy?.querySelector(".entity-impact-ring.damage, .entity-impact-ring.enemy");
+    const hitSparks = hitEnemy?.querySelector(".entity-hit-sparks.damage, .entity-hit-sparks.enemy");
+    const damagePop = hitEnemy?.querySelector(".entity-damage-pop");
+    const resultStack = hitEnemy?.querySelector(".entity-result-stack i.emphasis, .entity-result-stack i.damage");
+    const playerSource = document.querySelector(".player-stand .sprite-motion-echo, .player-stand .sprite-ground-burst");
+    const boxes = Object.fromEntries(Object.entries({ fx, pulse, echo, trail, spark, impact, hitEnemy, targetRing, hitSparks, damagePop, resultStack, playerSource }).map(([key, node]) => {
+      const box = node?.getBoundingClientRect?.();
+      return [key, box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null];
+    }));
+    const visible = (box) => Boolean(box && box.width > 3 && box.height > 3 && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const damageText = [damagePop?.innerText, resultStack?.innerText].filter(Boolean).join(" ").replace(/\\s+/g, " ").trim();
+    const boardClass = board?.className ?? "";
+    const fxClass = fx?.className ?? "";
+    const ok =
+      Boolean(board) &&
+      Boolean(fx) &&
+      /fx-active/.test(boardClass) &&
+      /fx-tone-damage/.test(boardClass) &&
+      /fx-mode-enemy/.test(boardClass) &&
+      /fx-damage/.test(fxClass) &&
+      /fx-source-player/.test(fxClass) &&
+      Boolean(hitEnemy) &&
+      Boolean(targetRing) &&
+      Boolean(hitSparks) &&
+      Boolean(damagePop) &&
+      Boolean(playerSource) &&
+      /-\\d+/.test(damageText) &&
+      visible(boxes.pulse) &&
+      visible(boxes.echo) &&
+      visible(boxes.trail) &&
+      visible(boxes.spark) &&
+      visible(boxes.impact) &&
+      visible(boxes.hitEnemy) &&
+      visible(boxes.targetRing) &&
+      visible(boxes.hitSparks) &&
+      visible(boxes.damagePop);
+    return {
+      ok,
+      boardClass,
+      fxClass,
+      damageText,
+      combatFxCount: document.querySelectorAll(".combat-action-fx").length,
+      hitEnemyCount: document.querySelectorAll(".enemy-card.fx-hit:not(.fx-defeated)").length,
+      boxes
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Attack card FX failed: ${JSON.stringify(result)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-card-attack-fx.json"), `${JSON.stringify(result, null, 2)}\n`);
+}
+
+async function assertAttackCardHoverTarget(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const card = document.querySelector(".hand-zone .game-card.previewing-card[data-card-id='pulse_lance']");
+    const target = document.querySelector(".enemy-card.preview-target.preview-damage");
+    const line = document.querySelector(".combat-aim-line.damage.aim-hover:not([hidden])");
+    const rail = document.querySelector(".combat-card-preview-rail.damage:not([hidden])");
+    const tooltip = document.querySelector(".card-portal-tooltip:not([hidden])");
+    const boxes = Object.fromEntries(Object.entries({ card, target, line, rail, tooltip }).map(([key, node]) => {
+      const box = node?.getBoundingClientRect?.();
+      return [key, box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null];
+    }));
+    const visible = (box) => Boolean(box && box.width > 4 && box.height > 4 && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const lineStyle = line ? getComputedStyle(line) : null;
+    const lineBefore = line ? getComputedStyle(line, "::before") : null;
+    const markerText = target?.getAttribute("data-preview-text") ?? "";
+    const railText = rail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const ok =
+      Boolean(card) &&
+      Boolean(target) &&
+      Boolean(line) &&
+      Boolean(rail) &&
+      visible(boxes.card) &&
+      visible(boxes.target) &&
+      visible(boxes.line) &&
+      visible(boxes.rail) &&
+      Number(lineStyle?.opacity ?? 0) >= 0.7 &&
+      parseFloat(lineBefore?.height ?? "0") >= 2 &&
+      /피해|처치|-\\d+/.test(markerText) &&
+      /피해|사용 가능|⚡/.test(railText);
+    return {
+      ok,
+      markerText,
+      railText,
+      lineOpacity: lineStyle?.opacity ?? "",
+      lineBeforeHeight: lineBefore?.height ?? "",
+      targetClass: target?.className ?? "",
+      lineClass: line?.className ?? "",
+      boxes
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Attack card hover target failed: ${JSON.stringify(result)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-card-attack-hover.json"), `${JSON.stringify(result, null, 2)}\n`);
+}
+
 async function assertCombatPileDockCompact(cdp) {
   const resting = await evaluate(cdp, `(() => {
     const dock = document.querySelector(".combat-pile-dock");
@@ -1536,7 +2010,7 @@ async function assertCombatPileDockCompact(cdp) {
     const ok =
       Boolean(dock) &&
       piles.length === 4 &&
-      labels.every((label) => label.opacity <= 0.05 && label.position === "absolute" && label.pointerEvents === "none" && /더미 \\d+장 보기/.test(label.aria) && /\\d+장/.test(label.title)) &&
+      labels.every((label) => label.opacity >= 0.85 && label.position === "relative" && label.pointerEvents === "none" && /^(뽑기|손패|버림|소멸)$/.test(label.text) && /더미 \\d+장 보기/.test(label.aria) && /\\d+장/.test(label.title)) &&
       boxes.every((box) => box.width <= 64 && box.height <= 64) &&
       !overflow;
     return { ok, labels, boxes, scrollWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth };
@@ -1554,6 +2028,7 @@ async function assertCombatPileDockCompact(cdp) {
       Boolean(pile) &&
       Boolean(label) &&
       Number(style?.opacity ?? 0) >= 0.85 &&
+      style?.position === "relative" &&
       Boolean(box && box.top >= 0 && box.right <= window.innerWidth && box.left >= 0);
     return {
       ok,
@@ -2083,6 +2558,11 @@ async function assertBossStatusStrip(cdp) {
   const result = await evaluate(cdp, `(() => {
     const strip = document.querySelector(".boss-status-strip");
     const boss = document.querySelector(".enemy-card:has(.enemy-sprite.tier-boss)");
+    const phaseTwoSprite = document.querySelector(".enemy-sprite.tier-boss.phase-two");
+    const phaseTwoArt = phaseTwoSprite?.querySelector(".enemy-sprite-art");
+    const spriteKey = phaseTwoSprite?.dataset.sprite ?? "";
+    const phaseTwoSpriteImage = phaseTwoArt ? getComputedStyle(phaseTwoArt).backgroundImage : "";
+    const expectedPhaseTwoImage = spriteKey ? \`boss-\${spriteKey}-phase2.png\` : "";
     const meter = strip?.querySelector(".boss-status-meter");
     const intent = strip?.querySelector("small");
     const objective = strip?.querySelector(".boss-objective");
@@ -2091,11 +2571,21 @@ async function assertBossStatusStrip(cdp) {
     const objectiveBox = objective?.getBoundingClientRect();
     const meterBox = meter?.getBoundingClientRect();
     const intentBox = intent?.getBoundingClientRect();
+    const handBox = document.querySelector(".hand-zone")?.getBoundingClientRect();
+    const playerPlateBox = document.querySelector(".boss-fight .player-plate")?.getBoundingClientRect();
+    const playerSpriteBox = document.querySelector(".boss-fight .player-sprite")?.getBoundingClientRect();
     const style = strip ? getComputedStyle(strip) : null;
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const aria = strip?.getAttribute("aria-label") ?? "";
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
     const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
+    const playerVitalsClearHand = Boolean(
+      handBox &&
+      playerPlateBox &&
+      playerSpriteBox &&
+      playerPlateBox.bottom <= handBox.top - 10 &&
+      playerSpriteBox.bottom <= handBox.top - 6
+    );
     const ok =
       Boolean(strip) &&
       Boolean(boss) &&
@@ -2103,16 +2593,19 @@ async function assertBossStatusStrip(cdp) {
       Boolean(intent) &&
       Boolean(objective) &&
       text.includes("보스") &&
-      text.includes("목표: 본체 처치") &&
-      /1단계|레퀴엠|침몰|문/.test(text) &&
+      text.includes("본체 처치") &&
+      /2단계|레퀴엠|충돌|폭주|문/.test(text) &&
       aria.includes("보스 본체를 쓰러뜨리면 전투가 끝납니다") &&
       aria.includes("현재 의도") &&
       aria.includes("전환 체력") &&
-      Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36) &&
+      Boolean(phaseTwoSprite) &&
+      Boolean(expectedPhaseTwoImage && phaseTwoSpriteImage.includes(expectedPhaseTwoImage)) &&
+      Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36 && stripBox.width <= 424 && stripBox.height <= 88) &&
       (!bossBox || stripBox.bottom < bossBox.bottom) &&
       style?.pointerEvents === "none" &&
       !overlaps(objectiveBox, meterBox) &&
       !overlaps(objectiveBox, intentBox) &&
+      playerVitalsClearHand &&
       !overflow;
     return {
       ok,
@@ -2120,15 +2613,25 @@ async function assertBossStatusStrip(cdp) {
       aria,
       hasStrip: Boolean(strip),
       hasBoss: Boolean(boss),
+      hasPhaseTwoSprite: Boolean(phaseTwoSprite),
+      spriteKey,
+      phaseTwoSpriteImage,
+      expectedPhaseTwoImage,
       hasMeter: Boolean(meter),
       hasIntent: Boolean(intent),
       hasObjective: Boolean(objective),
       stripTop: stripBox ? Math.round(stripBox.top) : null,
       stripBottom: stripBox ? Math.round(stripBox.bottom) : null,
+      stripWidth: stripBox ? Math.round(stripBox.width) : null,
+      stripHeight: stripBox ? Math.round(stripBox.height) : null,
       bossBottom: bossBox ? Math.round(bossBox.bottom) : null,
       objectiveBox: objectiveBox ? { x: Math.round(objectiveBox.x), y: Math.round(objectiveBox.y), width: Math.round(objectiveBox.width), height: Math.round(objectiveBox.height) } : null,
       meterBox: meterBox ? { x: Math.round(meterBox.x), y: Math.round(meterBox.y), width: Math.round(meterBox.width), height: Math.round(meterBox.height) } : null,
       intentBox: intentBox ? { x: Math.round(intentBox.x), y: Math.round(intentBox.y), width: Math.round(intentBox.width), height: Math.round(intentBox.height) } : null,
+      playerVitalsClearHand,
+      handTop: handBox ? Math.round(handBox.top) : null,
+      playerPlateBox: playerPlateBox ? { top: Math.round(playerPlateBox.top), bottom: Math.round(playerPlateBox.bottom), width: Math.round(playerPlateBox.width), height: Math.round(playerPlateBox.height) } : null,
+      playerSpriteBox: playerSpriteBox ? { top: Math.round(playerSpriteBox.top), bottom: Math.round(playerSpriteBox.bottom), width: Math.round(playerSpriteBox.width), height: Math.round(playerSpriteBox.height) } : null,
       pointerEvents: style?.pointerEvents ?? "",
       scrollWidth: document.documentElement.scrollWidth,
       viewportWidth: window.innerWidth
@@ -2160,6 +2663,32 @@ async function assertFinalBossReadinessUx(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Final boss readiness failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertFinalBossSelectorUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const modal = document.querySelector(".deck-modal");
+    const brief = document.querySelector(".selector-brief.with-boss");
+    const bossBrief = document.querySelector(".selector-boss-brief");
+    const focus = document.querySelector(".selector-focus");
+    const recommended = document.querySelector(".deck-select-option.recommended");
+    const modalText = modal?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const focusText = focus?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const bossText = bossBrief?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const recommendedText = recommended?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const ok =
+      Boolean(modal) &&
+      Boolean(brief) &&
+      bossText.includes("보스 대비") &&
+      bossText.includes("큰 방어") &&
+      focusText.includes("보스 대비") &&
+      focusText.includes("마지막 문") &&
+      recommendedText.includes("창백한 방화벽");
+    return { ok, modalText, bossText, focusText, recommendedText };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Final boss selector failed: ${JSON.stringify(result)}`);
   }
 }
 
@@ -2232,6 +2761,22 @@ async function assertEventSceneUx(cdp) {
   }
 }
 
+async function assertChoicePulseNextStep(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const pulse = document.querySelector(".choice-result-pulse");
+    const chipTexts = [...(pulse?.querySelectorAll("i") ?? [])].map((chip) => chip.innerText.trim());
+    const text = pulse?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const box = pulse?.getBoundingClientRect();
+    const nextChip = chipTexts.includes("다음 경로 선택");
+    const withinViewport = Boolean(box && box.width > 0 && box.height > 0 && box.left >= 0 && box.right <= window.innerWidth + 2 && box.top >= 0);
+    const compact = chipTexts.length <= 4;
+    return { ok: Boolean(pulse) && nextChip && withinViewport && compact, text, chipTexts, withinViewport, compact };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Choice pulse next step failed: ${JSON.stringify(result)}`);
+  }
+}
+
 async function playUntilReward(cdp) {
   let capturedCoda = false;
   const seenCodaIds = new Set();
@@ -2242,7 +2787,9 @@ async function playUntilReward(cdp) {
       coda: Boolean(document.querySelector(".combat-victory-coda")),
       codaId: document.querySelector(".combat-victory-coda")?.dataset?.codaId ?? "",
       codaEnemyCount: document.querySelectorAll(".combat-victory-coda.quick .victory-coda-enemy").length,
+      codaEnemyMaxHeight: Math.max(0, ...[...document.querySelectorAll(".combat-victory-coda.quick .victory-coda-enemy")].map((enemy) => Math.round(enemy.getBoundingClientRect().height))),
       codaRewardCount: document.querySelectorAll(".combat-victory-coda.quick .victory-coda-rewards i").length,
+      codaDismissCount: document.querySelectorAll(".combat-victory-coda.quick [data-action='dismiss-victory-coda']").length,
       codaTopBarVisible: Boolean(document.querySelector(".phase-combat-victory > .top-bar")),
       combat: Boolean(document.querySelector(".combat-board")),
       hand: document.querySelectorAll("[data-action='play-card']:not(:disabled)").length
@@ -2253,6 +2800,9 @@ async function playUntilReward(cdp) {
       if (seenCodaIds.size > 1) throw new Error(`Victory coda duplicated before reward: ${JSON.stringify([...seenCodaIds])}`);
       if (state.codaEnemyCount < 1 || state.codaRewardCount < 1) {
         throw new Error(`Victory coda lacks combat payoff: ${JSON.stringify(state)}`);
+      }
+      if (state.codaEnemyMaxHeight < 108 || state.codaDismissCount !== 1) {
+        throw new Error(`Victory coda lacks clear payoff control: ${JSON.stringify(state)}`);
       }
       if (state.codaTopBarVisible) {
         throw new Error(`Victory coda should hide regular HUD: ${JSON.stringify(state)}`);
@@ -2287,6 +2837,94 @@ async function playUntilReward(cdp) {
   return Boolean(await evaluate(cdp, `Boolean(document.querySelector(".reward-layout"))`));
 }
 
+async function captureVictoryCodaFlow(cdp) {
+  await stageVictoryCodaFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await clickSelector(cdp, ".hand-zone .game-card[data-action='play-card']:not(:disabled)");
+  await waitForSelector(cdp, ".combat-victory-coda.quick");
+  await wait(860);
+  const codaEvidence = await assertVictoryCodaUx(cdp);
+  await capture(cdp, "browser-qa-victory-coda.png");
+  await clickSelector(cdp, "[data-action='dismiss-victory-coda']");
+  await waitForSelector(cdp, ".reward-layout");
+  const rewardEvidence = await assertSingleRewardSurface(cdp);
+  await assertRewardDecisionUx(cdp);
+  await capture(cdp, "browser-qa-reward-refreshed.png");
+  await capture(cdp, "browser-qa-reward-post-victory-refreshed.png");
+  await clearSavedRun(cdp);
+  return {
+    rewardReachedAfterVictory: true,
+    victoryOverlayDuplicated: codaEvidence.codaCount !== 1 || rewardEvidence.victoryCodas !== 0,
+    codaId: codaEvidence.codaId,
+    codaActionText: codaEvidence.actionText,
+    codaEnemyHeight: codaEvidence.enemyHeight,
+    codaSpriteHeight: codaEvidence.spriteHeight,
+    rewardSurfaceCountAfterVictory: rewardEvidence.rewardLayouts,
+    rewardSkipChoices: rewardEvidence.rewardSkipChoices
+  };
+}
+
+async function assertVictoryCodaUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const coda = document.querySelector(".combat-victory-coda.quick");
+    const enemy = coda?.querySelector(".victory-coda-enemy");
+    const enemySprite = enemy?.querySelector(".enemy-sprite");
+    const summary = coda?.querySelector(".victory-coda-summary");
+    const rewards = coda?.querySelector(".victory-coda-rewards");
+    const action = coda?.querySelector("[data-action='dismiss-victory-coda']");
+    const actionHint = coda?.querySelector(".victory-coda-actions small");
+    const boxes = [coda, enemy, enemySprite, summary, rewards, action].map((item) => item?.getBoundingClientRect?.() ?? null);
+    const [codaBox, enemyBox, spriteBox, summaryBox, rewardsBox, actionBox] = boxes;
+    const visible = (box) => Boolean(box && box.width > 0 && box.height > 0 && box.top >= -2 && box.bottom <= window.innerHeight + 2);
+    const order =
+      Boolean(enemyBox && summaryBox && rewardsBox && actionBox) &&
+      enemyBox.top < summaryBox.top &&
+      summaryBox.bottom <= rewardsBox.top + 4 &&
+      rewardsBox.bottom <= actionBox.top + 8;
+    const actionStyle = action ? getComputedStyle(action) : null;
+    const ok =
+      Boolean(coda) &&
+      coda?.dataset?.codaId &&
+      visible(codaBox) &&
+      visible(enemyBox) &&
+      visible(spriteBox) &&
+      visible(actionBox) &&
+      (enemyBox?.height ?? 0) >= 108 &&
+      (spriteBox?.height ?? 0) >= 78 &&
+      order &&
+      actionStyle?.opacity !== "0" &&
+      action?.innerText?.includes("보상 확인") &&
+      actionHint?.innerText?.includes("자동 이동") &&
+      document.querySelectorAll(".combat-victory-coda").length === 1 &&
+      document.querySelectorAll(".reward-layout").length === 0 &&
+      document.querySelectorAll(".phase-transition").length === 0;
+    return {
+      ok,
+      hasCoda: Boolean(coda),
+      codaId: coda?.dataset?.codaId ?? "",
+      enemyHeight: Math.round(enemyBox?.height ?? 0),
+      spriteHeight: Math.round(spriteBox?.height ?? 0),
+      order,
+      actionText: action?.innerText?.replace(/\\s+/g, " ").trim() ?? "",
+      actionOpacity: actionStyle?.opacity ?? "",
+      actionHint: actionHint?.innerText?.replace(/\\s+/g, " ").trim() ?? "",
+      codaCount: document.querySelectorAll(".combat-victory-coda").length,
+      rewardCount: document.querySelectorAll(".reward-layout").length,
+      transitionCount: document.querySelectorAll(".phase-transition").length,
+      boxes: {
+        coda: codaBox ? { top: Math.round(codaBox.top), bottom: Math.round(codaBox.bottom), width: Math.round(codaBox.width), height: Math.round(codaBox.height) } : null,
+        enemy: enemyBox ? { top: Math.round(enemyBox.top), bottom: Math.round(enemyBox.bottom), width: Math.round(enemyBox.width), height: Math.round(enemyBox.height) } : null,
+        sprite: spriteBox ? { top: Math.round(spriteBox.top), bottom: Math.round(spriteBox.bottom), width: Math.round(spriteBox.width), height: Math.round(spriteBox.height) } : null,
+        action: actionBox ? { top: Math.round(actionBox.top), bottom: Math.round(actionBox.bottom), width: Math.round(actionBox.width), height: Math.round(actionBox.height) } : null
+      }
+    };
+  })()`);
+  if (!result.ok) throw new Error(`Victory coda UX failed: ${JSON.stringify(result)}`);
+  return result;
+}
+
 async function assertSingleRewardSurface(cdp) {
   const result = await evaluate(cdp, `(() => ({
     rewardLayouts: document.querySelectorAll(".reward-layout").length,
@@ -2299,6 +2937,7 @@ async function assertSingleRewardSurface(cdp) {
   }))()`);
   const ok = result.rewardLayouts === 1 && result.victoryCodas === 0 && result.phaseTransitions === 0 && result.choicePulses <= 1 && result.rewardActionBars === 0 && result.rewardReadinessPanels === 0 && result.rewardSkipChoices === 1;
   if (!ok) throw new Error(`Reward surface duplicated: ${JSON.stringify(result)}`);
+  return result;
 }
 
 async function assertRewardDecisionUx(cdp) {

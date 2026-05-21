@@ -702,30 +702,65 @@ function selectDeckCard(run) {
     return run.player.deck
       .filter((card) => isUpgradeableCard(card))
       .map((card) => {
-        const template = getCard(card);
+        const baseTemplate = effectiveCard({ ...card, upgraded: false });
         const upgradedTemplate = effectiveCard({ ...card, upgraded: true });
-        const cleanseUpgrade = bossPrep?.needsStatusControl && cardSupportsCleanse(upgradedTemplate) ? 7 : 0;
-        const burstDefenseUpgrade = bossPrep?.needsBurstDefense && cardSupportsBurstDefense(upgradedTemplate) ? 8 : 0;
-        return { card, score: rewardCardScore(run, card.cardId) + cleanseUpgrade + burstDefenseUpgrade + (card.cardId === "pulse_lance" ? 2 : 0) };
+        const bossPrepBonus = bossPrepUpgradeScore(bossPrep, baseTemplate, upgradedTemplate);
+        return { card, score: rewardCardScore(run, card.cardId) + bossPrepBonus + (card.cardId === "pulse_lance" ? 2 : 0) };
       })
       .sort((left, right) => right.score - left.score)[0]?.card ?? run.player.deck[0];
   }
   return removableCard(run) ?? run.player.deck[0];
 }
 
+function bossPrepUpgradeScore(bossPrep, before, after) {
+  if (!bossPrep) return 0;
+  const finalActBonus = bossPrep.finalAct ? 1.45 : 1;
+  let score = 0;
+  if (bossPrep.needsBurstDefense && cardSupportsBurstDefense(after)) score += (cardSupportsBurstDefense(before) ? 8 : 14) * finalActBonus;
+  if (bossPrep.needsDefense && cardSupportsDefense(after)) score += 6 * finalActBonus;
+  if (bossPrep.needsStatusControl && cardSupportsStatusControl(after)) score += (cardSupportsCleanse(after) ? 10 : 7) * finalActBonus;
+  if (bossPrep.needsFinish && cardSupportsFinish(after)) score += 6 * finalActBonus;
+  if (bossPrep.needsDeckSpeed && cardSupportsFlow(after)) score += 5;
+  if ((after.cost ?? 0) < (before.cost ?? 0)) score += bossPrep.close ? 6 : 3;
+  return score;
+}
+
 function removableCard(run) {
   const starterPenalty = new Set(["pulse_lance", "tide_ward", "memory_sift", "null_pin"]);
+  const bossPrep = bossPrepContext(run);
   return run.player.deck
-    .map((card) => ({
-      card,
-      score:
-        getCard(card).rarity === "curse"
-          ? -100
-          : starterPenalty.has(card.cardId)
-            ? -14 + (card.upgraded ? 4 : 0)
-            : rewardCardScore(run, card.cardId) + (card.upgraded ? 3 : 0)
-    }))
+    .map((card) => {
+      const starter = starterPenalty.has(card.cardId);
+      const baseScore = getCard(card).rarity === "curse"
+        ? -100
+        : starter
+          ? -14 + (card.upgraded ? 4 : 0)
+          : rewardCardScore(run, card.cardId) + (card.upgraded ? 3 : 0);
+      return {
+        card,
+        score: baseScore + bossPrepRemovalScore(bossPrep, effectiveCard(card), starter)
+      };
+    })
     .sort((left, right) => left.score - right.score)[0]?.card;
+}
+
+function bossPrepRemovalScore(bossPrep, card, starter) {
+  if (!bossPrep) return 0;
+  const criticalRole =
+    bossPrep.needsBurstDefense && cardSupportsBurstDefense(card) ||
+    bossPrep.needsDefense && cardSupportsDefense(card) ||
+    bossPrep.needsStatusControl && cardSupportsStatusControl(card) ||
+    bossPrep.needsFinish && cardSupportsFinish(card) ||
+    bossPrep.needsDeckSpeed && cardSupportsFlow(card);
+  let score = 0;
+  if (bossPrep.needsBurstDefense && cardSupportsBurstDefense(card)) score += bossPrep.finalAct ? 30 : 20;
+  if (bossPrep.needsDefense && cardSupportsDefense(card)) score += 14;
+  if (bossPrep.needsStatusControl && cardSupportsStatusControl(card)) score += 16;
+  if (bossPrep.needsFinish && cardSupportsFinish(card)) score += 13;
+  if (bossPrep.needsDeckSpeed && cardSupportsFlow(card)) score += 8;
+  if (bossPrep.needsDeckSpeed && starter && !criticalRole) score -= 8;
+  if (bossPrep.finalAct && starter && !criticalRole) score -= 5;
+  return score;
 }
 
 function finishCombatPressure(run) {

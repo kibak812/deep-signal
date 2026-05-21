@@ -22,6 +22,22 @@ TIER_FRAMES = {
     "player": {"max_w": 0.58, "max_h": 0.69, "bottom": 0.1, "safe": 72},
 }
 
+SPRITE_FRAME_OVERRIDES = {
+    "crab": {"max_w": 0.7, "max_h": 0.68, "bottom": 0.108},
+    "drone": {"max_w": 0.68, "max_h": 0.68, "bottom": 0.106},
+    "eel": {"max_w": 0.7, "max_h": 0.67, "bottom": 0.112},
+    "hound": {"max_w": 0.68, "max_h": 0.66, "bottom": 0.108},
+    "jelly": {"max_w": 0.66, "max_h": 0.7, "bottom": 0.106},
+    "leech": {"max_w": 0.66, "max_h": 0.67, "bottom": 0.11},
+    "mite": {"max_w": 0.66, "max_h": 0.66, "bottom": 0.108},
+    "page": {"max_w": 0.64, "max_h": 0.7, "bottom": 0.108},
+    "ray": {"max_w": 0.72, "max_h": 0.6, "bottom": 0.118},
+    "squid": {"max_w": 0.64, "max_h": 0.71, "bottom": 0.106},
+    "wisp": {"max_w": 0.62, "max_h": 0.72, "bottom": 0.106},
+    "engine": {"max_w": 0.68, "max_h": 0.72, "bottom": 0.098},
+    "colossus": {"max_w": 0.66, "max_h": 0.73, "bottom": 0.098},
+}
+
 SPRITES = [
     {"key": "player", "kind": "player", "tier": "player", "hue": 196, "accent": 42, "outputs": ["player-echo-diver.png"]},
     {"key": "cataloger", "kind": "cataloger", "tier": "boss", "hue": 44, "accent": 194, "outputs": ["boss-cataloger.png", "enemy-cataloger.png"]},
@@ -48,6 +64,12 @@ SPRITES = [
     {"key": "squid", "kind": "squid", "tier": "normal", "hue": 220, "accent": 296, "outputs": ["enemy-squid.png"]},
     {"key": "wisp", "kind": "wisp", "tier": "normal", "hue": 184, "accent": 46, "outputs": ["enemy-wisp.png"]},
 ]
+
+PHASE_TWO_OUTPUTS = {
+    "cataloger": "boss-cataloger-phase2.png",
+    "algorithm": "boss-algorithm-phase2.png",
+    "lastgate": "boss-lastgate-phase2.png",
+}
 
 
 def rgba(hue, saturation=0.72, value=0.9, alpha=255):
@@ -587,8 +609,15 @@ def crop_subject(image):
     return image.crop((left, top, right, bottom))
 
 
-def reframe(source, tier):
-    frame = TIER_FRAMES[tier]
+def frame_for(tier, spec=None):
+    frame = dict(TIER_FRAMES[tier])
+    if spec:
+        frame.update(SPRITE_FRAME_OVERRIDES.get(spec["key"], {}))
+    return frame
+
+
+def reframe(source, tier, spec=None):
+    frame = frame_for(tier, spec)
     cutout = crop_subject(remove_chroma_key(source.convert("RGBA")))
     max_w = int(CANVAS[0] * frame["max_w"])
     max_h = int(CANVAS[1] * frame["max_h"])
@@ -606,8 +635,8 @@ def reframe(source, tier):
     return canvas
 
 
-def enforce_sprite_safety(image, tier):
-    frame = TIER_FRAMES[tier]
+def enforce_sprite_safety(image, tier, spec=None):
+    frame = frame_for(tier, spec)
     bbox = subject_bbox(image, threshold=VISIBLE_ALPHA_THRESHOLD)
     if not bbox:
         return image
@@ -707,6 +736,129 @@ def add_ground_shadow(image, hue, tier):
     return final
 
 
+def clipped_to_subject(effect, image, blur=0):
+    mask = image.getchannel("A")
+    if blur:
+        mask = mask.filter(ImageFilter.GaussianBlur(blur))
+    clipped = effect.copy()
+    clipped.putalpha(ImageChops.multiply(clipped.getchannel("A"), mask))
+    return clipped
+
+
+def phase_two_tone(image, spec):
+    alpha = image.getchannel("A")
+    rgb = image.convert("RGB")
+    rgb = ImageEnhance.Color(rgb).enhance(1.24)
+    rgb = ImageEnhance.Contrast(rgb).enhance(1.12)
+    rgb = ImageEnhance.Brightness(rgb).enhance(1.04)
+    toned = rgb.convert("RGBA")
+    toned.putalpha(alpha)
+
+    wash = Image.new("RGBA", CANVAS, rgba(spec["accent"], 0.72, 1.0, 58))
+    wash.putalpha(alpha.point(lambda value: int(value * 0.2)))
+    toned.alpha_composite(wash)
+    return toned
+
+
+def draw_phase_fractures(image, spec, bbox):
+    left, top, right, bottom = bbox
+    rng = random.Random(sum(ord(ch) for ch in spec["key"]) * 131)
+    cracks = layer()
+    draw = ImageDraw.Draw(cracks)
+    for _ in range(10 if spec["key"] != "cataloger" else 8):
+        start_x = rng.randint(left + 34, right - 34)
+        start_y = rng.randint(top + 70, bottom - 140)
+        points = [(start_x, start_y)]
+        for step in range(rng.randint(2, 4)):
+            last_x, last_y = points[-1]
+            points.append((last_x + rng.randint(-70, 70), last_y + rng.randint(44, 118)))
+        color = rgba(spec["accent"] + rng.randint(-18, 18), 0.86, 1.0, rng.randint(82, 138))
+        width = rng.randint(3, 6)
+        draw.line(points, fill=color, width=width)
+        if rng.random() < 0.55:
+            x, y = points[-1]
+            draw.ellipse((x - 7, y - 7, x + 7, y + 7), fill=rgba(spec["hue"], 0.78, 1.0, 110))
+    image.alpha_composite(clipped_to_subject(cracks.filter(ImageFilter.GaussianBlur(0.35)), image))
+
+
+def draw_cataloger_phase(image, spec, bbox):
+    left, top, right, bottom = bbox
+    cx = (left + right) // 2
+    overlay = layer()
+    draw = ImageDraw.Draw(overlay)
+    for offset in [-180, -106, -38, 42, 118, 190]:
+        x = cx + offset
+        draw.rounded_rectangle((x - 16, top + 80, x + 16, bottom - 68), radius=8, fill=rgba(spec["accent"], 0.74, 1.0, 66), outline=rgba(44, 0.82, 1.0, 128), width=3)
+    for radius, alpha in [(250, 84), (188, 118), (118, 92)]:
+        draw.arc((cx - radius, top + 70, cx + radius, bottom - 36), 210, 330, fill=rgba(spec["accent"], 0.78, 1.0, alpha), width=7)
+    image.alpha_composite(overlay.filter(ImageFilter.GaussianBlur(0.4)))
+
+
+def draw_algorithm_phase(image, spec, bbox):
+    left, top, right, bottom = bbox
+    cx = (left + right) // 2
+    cy = (top + bottom) // 2
+    overlay = layer()
+    draw = ImageDraw.Draw(overlay)
+    for radius, start, color_hue in [(250, 18, spec["accent"]), (188, 210, spec["hue"]), (126, 300, spec["accent"] + 56)]:
+        box = (cx - radius, cy - radius * 0.82, cx + radius, cy + radius * 0.82)
+        draw.arc(box, start, start + 250, fill=rgba(color_hue, 0.82, 1.0, 136), width=8)
+    points = []
+    for index in range(7):
+        angle = math.tau * index / 7 + 0.32
+        points.append((cx + math.cos(angle) * 210, cy + math.sin(angle) * 132))
+    for i, p1 in enumerate(points):
+        for p2 in points[i + 1 :]:
+            if (i + int(p2[0])) % 3 == 0:
+                draw.line((p1, p2), fill=rgba(spec["accent"], 0.68, 1.0, 52), width=2)
+    for x, y in points:
+        draw.ellipse((x - 10, y - 10, x + 10, y + 10), fill=rgba(spec["accent"], 0.82, 1.0, 150))
+    image.alpha_composite(overlay.filter(ImageFilter.GaussianBlur(0.3)))
+
+
+def draw_lastgate_phase(image, spec, bbox):
+    left, top, right, bottom = bbox
+    cx = (left + right) // 2
+    overlay = layer()
+    draw = ImageDraw.Draw(overlay)
+    draw.rounded_rectangle((cx - 142, top + 24, cx + 142, bottom - 40), radius=90, outline=rgba(spec["hue"], 0.92, 1.0, 156), width=12)
+    draw.line((cx, top + 38, cx, bottom - 58), fill=rgba(spec["accent"], 0.9, 1.0, 180), width=8)
+    for offset in [-92, -52, 52, 92]:
+        draw.line((cx + offset, top + 132, cx + offset * 0.36, bottom - 86), fill=rgba(spec["accent"] + 18, 0.8, 1.0, 98), width=5)
+    for radius, alpha in [(214, 78), (286, 48)]:
+        draw.arc((cx - radius, top + 8, cx + radius, bottom + 12), 200, 340, fill=rgba(spec["hue"], 0.9, 0.92, alpha), width=8)
+    image.alpha_composite(overlay.filter(ImageFilter.GaussianBlur(0.35)))
+
+
+def compose_phase_two_sprite(spec, base):
+    if spec["tier"] != "boss":
+        return None
+    image = phase_two_tone(base, spec)
+    bbox = subject_bbox(image, threshold=VISIBLE_ALPHA_THRESHOLD)
+    if not bbox:
+        return image
+
+    aura_mask = image.getchannel("A").filter(ImageFilter.MaxFilter(23)).filter(ImageFilter.GaussianBlur(22))
+    aura = Image.new("RGBA", CANVAS, rgba(spec["accent"], 0.78, 1.0, 112))
+    aura.putalpha(aura_mask.point(lambda value: int(value * 0.54)))
+    final = transparent()
+    final.alpha_composite(aura)
+    final.alpha_composite(image)
+    image = final
+
+    if spec["key"] == "cataloger":
+        draw_cataloger_phase(image, spec, bbox)
+    elif spec["key"] == "algorithm":
+        draw_algorithm_phase(image, spec, bbox)
+    elif spec["key"] == "lastgate":
+        draw_lastgate_phase(image, spec, bbox)
+    draw_phase_fractures(image, spec, bbox)
+    image = add_sprite_rim(image, spec["hue"], spec["accent"], "boss")
+    image = enforce_sprite_safety(image, "boss", spec)
+    validate_combatant_canvas(image, f"{spec['key']}-phase2", "boss")
+    return image
+
+
 def compose_sprite(spec):
     source = load_source_sprite(spec)
     if source is not None:
@@ -716,10 +868,10 @@ def compose_sprite(spec):
         seed = sum(ord(char) for char in spec["key"]) * 97
         DRAWERS[spec["kind"]](image, spec, seed)
         circuit_marks(image, spec["hue"], spec["accent"], seed + 23, 4 if spec["tier"] == "normal" else 7)
-    framed = reframe(image, spec["tier"])
+    framed = reframe(image, spec["tier"], spec)
     final = add_sprite_rim(framed, spec["hue"], spec["accent"], spec["tier"])
     final = add_ground_shadow(final, spec["hue"], spec["tier"])
-    final = enforce_sprite_safety(final, spec["tier"])
+    final = enforce_sprite_safety(final, spec["tier"], spec)
     validate_combatant_canvas(final, spec["key"], spec["tier"])
     return final
 
@@ -731,7 +883,8 @@ def validate_combatant_canvas(image, key, tier):
     if not bbox:
         raise ValueError(f"{key} has no visible pixels")
     left, top, right, bottom = bbox
-    margin = TIER_FRAMES[tier]["safe"]
+    frame = frame_for(tier, {"key": key})
+    margin = frame["safe"]
     if left < margin or top < margin or right > CANVAS[0] - margin or bottom > CANVAS[1] - margin:
         raise ValueError(f"{key} touches the canvas edge: {bbox}")
     core_bbox = subject_bbox(image)
@@ -748,7 +901,7 @@ def validate_combatant_canvas(image, key, tier):
     min_height = {"normal": 360, "elite": 520, "boss": 640, "player": 620}[tier]
     if visible_height < min_height or visible_width < 220:
         raise ValueError(f"{key} is too small for combat readability: {bbox}")
-    target_bottom = int(CANVAS[1] * (1 - TIER_FRAMES[tier]["bottom"])) + 42
+    target_bottom = int(CANVAS[1] * (1 - frame["bottom"])) + 42
     if abs(bottom - target_bottom) > 120:
         raise ValueError(f"{key} baseline drifted too far: bottom {bottom}, target {target_bottom}")
 
@@ -806,6 +959,11 @@ def main():
             out_path = OUT_DIR / output_name
             sprite.save(out_path)
             written.append(out_path.relative_to(ROOT))
+        if spec["key"] in PHASE_TWO_OUTPUTS:
+            phase_two = compose_phase_two_sprite(spec, sprite)
+            phase_out = OUT_DIR / PHASE_TWO_OUTPUTS[spec["key"]]
+            phase_two.save(phase_out)
+            written.append(phase_out.relative_to(ROOT))
     print("Rebuilt combatant sprites:")
     for path in written:
         print(f"- {path}")

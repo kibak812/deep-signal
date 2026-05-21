@@ -1,0 +1,99 @@
+{
+  "ok": true,
+  "boardClass": "combat-board feedback-damage arena-act-1 arena-combat fx-active fx-tone-damage fx-mode-enemy arena-variant-0 arena-depth-entry arena-motif-abyss",
+  "fxClass": "combat-action-fx fx-damage fx-enemy fx-card fx-source-player",
+  "damageText": "✦ -6",
+  "combatFxCount": 1,
+  "hitEnemyCount": 1,
+  "boxes": {
+    "fx": {
+      "left": 0,
+      "top": 0,
+      "right": 1280,
+      "bottom": 720,
+      "width": 1280,
+      "height": 720
+    },
+    "pulse": {
+      "left": 220,
+      "top": 132,
+      "right": 335,
+      "bottom": 161,
+      "width": 115,
+      "height": 29
+    },
+    "echo": {
+      "left": 234,
+      "top": 112,
+      "right": 313,
+      "bottom": 180,
+      "width": 79,
+      "height": 68
+    },
+    "trail": {
+      "left": 278,
+      "top": 143,
+      "right": 1010,
+      "bottom": 148,
+      "width": 732,
+      "height": 5
+    },
+    "spark": {
+      "left": 427,
+      "top": 139,
+      "right": 437,
+      "bottom": 151,
+      "width": 11,
+      "height": 12
+    },
+    "impact": {
+      "left": 1034,
+      "top": 78,
+      "right": 1128,
+      "bottom": 139,
+      "width": 94,
+      "height": 62
+    },
+    "hitEnemy": {
+      "left": 967,
+      "top": 25,
+      "right": 1191,
+      "bottom": 385,
+      "width": 224,
+      "height": 360
+    },
+    "targetRing": {
+      "left": 967,
+      "top": 43,
+      "right": 1191,
+      "bottom": 311,
+      "width": 224,
+      "height": 268
+    },
+    "hitSparks": {
+      "left": 994,
+      "top": 127,
+      "right": 1164,
+      "bottom": 239,
+      "width": 170,
+      "height": 112
+    },
+    "damagePop": {
+      "left": 1118,
+      "top": 170,
+      "right": 1171,
+      "bottom": 204,
+      "width": 53,
+      "height": 34
+    },
+    "resultStack": null,
+    "playerSource": {
+      "left": 99,
+      "top": 29,
+      "right": 314,
+      "bottom": 351,
+      "width": 215,
+      "height": 322
+    }
+  }
+}

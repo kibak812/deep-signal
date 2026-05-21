@@ -137,6 +137,10 @@ async function main() {
   const indexSource = await readFile(resolve(root, "index.html"), "utf8");
   const faviconSource = await readFile(resolve(root, "public/assets/favicon.svg"), "utf8");
   const readme = await readFile(resolve(root, "README.md"), "utf8");
+  const buildSource = await readFile(resolve(root, "scripts/build.mjs"), "utf8");
+  const cardArtScriptSource = await readFile(resolve(root, "scripts/rebuild-card-illustrations.py"), "utf8");
+  const combatantScriptSource = await readFile(resolve(root, "scripts/rebuild-combatants.py"), "utf8");
+  const deployWorkflowSource = await readFile(resolve(root, ".github/workflows/deploy-pages.yml"), "utf8").catch(() => "");
   const testSource = `${await readFile(resolve(root, "tests/engine.test.mjs"), "utf8")}\n${await readFile(resolve(root, "tests/content-integrity.test.mjs"), "utf8")}`;
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
   const balance = JSON.parse(await readFile(resolve(root, "qa/balance-report.json"), "utf8"));
@@ -154,13 +158,16 @@ async function main() {
   const catalogerCombatant = await readFile(resolve(root, "public/assets/combatants/boss-cataloger.png"));
   const algorithmCombatant = await readFile(resolve(root, "public/assets/combatants/boss-algorithm.png"));
   const lastGateCombatant = await readFile(resolve(root, "public/assets/combatants/boss-lastgate.png"));
+  const catalogerPhaseTwoCombatant = await readFile(resolve(root, "public/assets/combatants/boss-cataloger-phase2.png"));
+  const algorithmPhaseTwoCombatant = await readFile(resolve(root, "public/assets/combatants/boss-algorithm-phase2.png"));
+  const lastGatePhaseTwoCombatant = await readFile(resolve(root, "public/assets/combatants/boss-lastgate-phase2.png"));
   const bailiffCombatant = await readFile(resolve(root, "public/assets/combatants/elite-bailiff.png"));
   const engineCombatant = await readFile(resolve(root, "public/assets/combatants/elite-engine.png"));
   const knightCombatant = await readFile(resolve(root, "public/assets/combatants/elite-knight.png"));
   const cantorCombatant = await readFile(resolve(root, "public/assets/combatants/elite-cantor.png"));
   const colossusCombatant = await readFile(resolve(root, "public/assets/combatants/elite-colossus.png"));
   const enemyCombatants = await Promise.all([...new Set(ENEMIES.map((enemy) => enemy.sprite))].map((sprite) => readFile(resolve(root, `public/assets/combatants/enemy-${sprite}.png`))));
-  const combatantDimensions = [playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].map(pngDimensions);
+  const combatantDimensions = [playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].map(pngDimensions);
   const axes = axisCoverage();
   const relicTimings = new Set(RELICS.map((relic) => relic.timing));
   const bossPhases = ENEMIES.filter((enemy) => enemy.tier === "boss").every((enemy) => enemy.phaseAt > 0 && enemy.phaseAt < 1 && enemy.phaseName && enemy.moves.some((move) => move.phase === 2));
@@ -172,12 +179,23 @@ async function main() {
     { id: "about", match: /browser-qa-about/ },
     { id: "combat", match: /browser-qa-combat|browser-qa-responsive-combat/ },
     { id: "card-hover", match: /browser-qa-combat-card-hover/ },
+    { id: "card-attack-hover", match: /browser-qa-card-attack-hover/ },
+    { id: "card-attack-fx", match: /browser-qa-card-attack-fx/ },
     { id: "energy-locked-card", match: /browser-qa-combat-energy-locked/ },
+    { id: "status-tooltip", match: /browser-qa-combat-status-tooltip/ },
+    { id: "intent-tooltip", match: /browser-qa-combat-intent-tooltip/ },
+    { id: "victory-coda", match: /browser-qa-victory-coda/ },
+    { id: "boss-status-strip", match: /browser-qa-boss-status-strip/ },
     { id: "map", match: /browser-qa-map/ },
+    { id: "act-interlude", match: /browser-qa-act-interlude-refreshed/ },
+    { id: "act-interlude-one-shot", match: /browser-qa-act-interlude-one-shot/ },
     { id: "final-boss-readiness", match: /browser-qa-final-boss-readiness/ },
+    { id: "final-boss-selector", match: /browser-qa-final-boss-selector/ },
     { id: "reward", match: /browser-qa-reward/ },
+    { id: "reward-card-selected", match: /browser-qa-reward-card-selected/ },
     { id: "reward-relics", match: /browser-qa-reward-relics/ },
     { id: "event", match: /browser-qa-event/ },
+    { id: "choice-pulse-next-step", match: /browser-qa-choice-pulse-next-step/ },
     { id: "shop", match: /browser-qa-shop/ },
     { id: "rest", match: /browser-qa-rest/ },
     { id: "summary-lost", match: /browser-qa-summary-lost/ },
@@ -210,28 +228,46 @@ async function main() {
   record("route-choice", "첫 엘리트 강제 방지", routeHasOptionalEliteFork(run), "각 막의 첫 엘리트 직전에는 비엘리트 대안 경로가 남아야 합니다.");
   record("screens", "필수 화면과 안내", ["새 런 시작", "이어하기", "설정", "게임 정보", "기록", "코덱스", "가이드"].every((text) => mainSource.includes(text)), "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.");
   record("settings-accessibility", "접근성/설정 항목", ["volume", "musicVolume", "preview-sound", "preview-music", "motionSpeed", "textScale", "highContrast", "tacticalAdvisor"].every((key) => mainSource.includes(key)), "효과음/배경음 조절과 미리듣기, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.");
-  record("music-variation", "음악 루프 변주", ["playMusicMotif", "playMusicVariation", "variationEvery", "boss_lastgate_phase2"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프와 긴 간격의 변주 프레이즈를 가져야 합니다.");
+  record("music-variation", "음악 루프 변주와 믹싱", ["playMusicMotif", "playMusicVariation", "playMusicBridge", "playMusicTransition", "variationEvery", "bridgeEvery", "createDynamicsCompressor", "boss_lastgate_phase2"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프, 긴 간격의 변주/브리지 프레이즈, 테마 전환 프레이즈와 기본 믹싱 버스를 가져야 합니다.");
   record("save-records", "저장/이어하기/기록 코드", ["loadRunFromStorage", "saveRunToStorage", "deleteSavedRun", "recordRunSummary"].every((text) => mainSource.includes(text)), "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.");
   record(
     "art-assets",
     "PNG 스프라이트/배경 아틀라스",
-    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
+    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
       cardAtlasSize?.width === 2880 &&
       cardAtlasSize?.height === 2304 &&
       eventBackdropSize?.width === 2304 &&
       eventBackdropSize?.height === 864 &&
       combatantDimensions.every((size) => size?.width === 1024 && size?.height === 1536) &&
       ["sprite-atlas.png", "card-illustrations.png", "arena-backdrops.png", "arena-props.png", "event-backdrops.png", "enemy-portraits.png", "combat-sprites.png", "combatants/player-echo-diver.png"].every((asset) => styleSource.includes(asset)) &&
-      ["combatants/boss-cataloger.png", "combatants/boss-algorithm.png", "combatants/boss-lastgate.png", "combatants/elite-bailiff.png", "combatants/elite-engine.png", "combatants/elite-knight.png", "combatants/elite-cantor.png", "combatants/elite-colossus.png", "combatants/enemy-${template.sprite}.png", "--enemy-sprite-image"].every((asset) => mainSource.includes(asset)) &&
+      styleSource.includes("card-illustrations.png?v=20260521-cardart4") &&
+      ["combatants/boss-cataloger.png", "combatants/boss-algorithm.png", "combatants/boss-lastgate.png", "combatants/boss-cataloger-phase2.png", "combatants/boss-algorithm-phase2.png", "combatants/boss-lastgate-phase2.png", "combatants/elite-bailiff.png", "combatants/elite-engine.png", "combatants/elite-knight.png", "combatants/elite-cantor.png", "combatants/elite-colossus.png", "combatants/enemy-${template.sprite}.png", "--enemy-sprite-image"].every((asset) => mainSource.includes(asset)) &&
+      ["sprite-motion-echo", "sprite-ground-burst", "sprite-action-echo-player", "sprite-action-echo-enemy", "sprite-hit-echo", "sprite-ground-collapse", "--sprite-shift-x"].every((token) => styleSource.includes(token) || mainSource.includes(token)) &&
+      ["draw_identity_motif", "identity_strength", "draw_small_runes"].every((token) => cardArtScriptSource.includes(token)) &&
+      ["PHASE_TWO_OUTPUTS", "compose_phase_two_sprite", "draw_lastgate_phase", "SPRITE_FRAME_OVERRIDES", "frame_for"].every((token) => combatantScriptSource.includes(token)) &&
+      mainSource.includes("ENEMY_SPRITE_POSES") &&
       mainSource.includes("data-atlas-cell") &&
       mainSource.includes("data-portrait-cell"),
-    "카드/적/전투 배경 아트는 PNG 아틀라스와 아틀라스 셀을 사용해야 합니다.",
-    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
+    "카드/적/전투 배경 아트는 PNG 아틀라스와 아틀라스 셀, 카드별 전경 모티프, 적별 포즈 보정, 보스 2단계 전용 PNG, 스프라이트 동작 피드백을 사용해야 합니다.",
+    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
   );
   record("no-card-enemy-svg-placeholders", "카드/적 SVG 플레이스홀더 없음", !/\\.card-art-svg|\\.enemy-sprite svg|<svg class=\"card-art|<svg class=\"enemy/.test(styleSource + mainSource), "카드와 적 아트는 임시 SVG 플레이스홀더가 아니어야 합니다.");
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
   record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });
-  record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물이 있어야 합니다.");
+  record(
+    "pages-deploy-workflow",
+    "GitHub Pages 자동 배포",
+    deployWorkflowSource.includes("branches: [main]") &&
+      deployWorkflowSource.includes("npm test") &&
+      deployWorkflowSource.includes("npm run build") &&
+      deployWorkflowSource.includes("peaceiris/actions-gh-pages@v4") &&
+      deployWorkflowSource.includes("publish_branch: gh-pages") &&
+      deployWorkflowSource.includes("publish_dir: ./dist") &&
+      buildSource.includes(".nojekyll"),
+    "main에 푸시하면 테스트와 정적 빌드 후 dist 폴더가 gh-pages 브랜치에 게시되어야 합니다.",
+    { workflow: ".github/workflows/deploy-pages.yml", sourceBranch: "main", publishBranch: "gh-pages", publishDir: "./dist" }
+  );
+  record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
   record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.7 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });
   record(
     "credits-license",
@@ -251,7 +287,7 @@ async function main() {
     "browser-qa-artifacts",
     "최신 브라우저 QA 산출물",
     requiredBrowserQa.every((item) => browserQa.freshFiles.some((file) => item.match.test(file))) && browserQa.freshFiles.length >= 8,
-    "qa 폴더에는 현재 소스 변경 이후 다시 찍은 전투, 맵, 보상, 설정, 모바일, 코덱스 등 핵심 화면 브라우저 스크린샷이 있어야 합니다.",
+    "qa 폴더에는 현재 소스 변경 이후 다시 찍은 전투, 맵, 보상, 승리 연출, 보스 상태, 설정, 모바일, 코덱스 등 핵심 화면 브라우저 스크린샷이 있어야 합니다.",
     {
       required: requiredBrowserQa.map((item) => item.id),
       ...browserQa

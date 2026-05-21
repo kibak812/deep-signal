@@ -1,6 +1,13 @@
 {
   "enemyTurnFxCountWas": 1,
+  "enemyTurnGrouped": true,
+  "enemyTurnDuplicated": false,
+  "enemyTurnSparkCount": 1,
+  "enemyTurnLockedHand": true,
   "victoryOverlayDuplicated": false,
   "rewardReachedAfterVictory": true,
-  "checkedAt": "2026-05-17T23:27:53.517Z"
+  "rewardSurfaceCountAfterVictory": 1,
+  "codaActionText": "보상 확인",
+  "codaEnemyHeight": 140,
+  "checkedAt": "2026-05-21T07:14:17.319Z"
 }

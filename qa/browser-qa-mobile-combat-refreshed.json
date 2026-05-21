@@ -3,7 +3,7 @@
   "mobileViewport": true,
   "noPageOverflow": true,
   "scrollWidth": 390,
-  "bodyScrollWidth": 397,
+  "bodyScrollWidth": 590,
   "viewport": {
     "width": 390,
     "height": 844
@@ -73,9 +73,9 @@
     },
     "enemyLine": {
       "left": 8,
-      "top": 186,
+      "top": 218,
       "right": 382,
-      "bottom": 276,
+      "bottom": 308,
       "width": 374,
       "height": 90
     }

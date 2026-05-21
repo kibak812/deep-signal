@@ -1,0 +1,51 @@
+{
+  "ok": true,
+  "markerText": "-6",
+  "railText": "✓ ⌖ 로그 흡착자 -6 ⚡2 펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 에너지 2.",
+  "lineOpacity": "0.74",
+  "lineBeforeHeight": "2px",
+  "targetClass": "enemy-card intent-debuff selected preview-target preview-damage",
+  "lineClass": "combat-aim-line damage aim-hover",
+  "boxes": {
+    "card": {
+      "left": 157,
+      "top": 408,
+      "right": 339,
+      "bottom": 688,
+      "width": 181,
+      "height": 280
+    },
+    "target": {
+      "left": 969,
+      "top": 13,
+      "right": 1193,
+      "bottom": 373,
+      "width": 224,
+      "height": 360
+    },
+    "line": {
+      "left": 241,
+      "top": 151,
+      "right": 1086,
+      "bottom": 494,
+      "width": 845,
+      "height": 343
+    },
+    "rail": {
+      "left": 477,
+      "top": 328,
+      "right": 803,
+      "bottom": 362,
+      "width": 326,
+      "height": 34
+    },
+    "tooltip": {
+      "left": 351,
+      "top": 193,
+      "right": 643,
+      "bottom": 324,
+      "width": 292,
+      "height": 131
+    }
+  }
+}

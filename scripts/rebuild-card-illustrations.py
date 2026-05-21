@@ -391,6 +391,18 @@ def symbol_strength(card):
     return 0.045
 
 
+def identity_strength(card):
+    if card["id"] in MINIMAL_OVERLAY_CARD_IDS:
+        return 0
+    if card["rarity"] == "rare":
+        return 0.62
+    if card["rarity"] == "uncommon":
+        return 0.52
+    if card["type"] == "curse":
+        return 0.58
+    return 0.42
+
+
 def line_glow(layer, points, color, width=5, blur=10, opacity=0.7):
     glow = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
     gd = ImageDraw.Draw(glow)
@@ -536,6 +548,173 @@ def draw_landmark(layer, card, hue, seed):
             draw.line((cx, cy, x, y), fill=soft, width=2)
             draw.ellipse((x - 5, y - 5, x + 5, y + 5), fill=accent2)
         ellipse_glow(layer, (cx - 42, cy - 42, cx + 42, cy + 42), (*rgb_from_hue(hue, 0.48, 0.24), 116), accent, 2, 10, 0.4)
+
+
+def draw_small_runes(draw, hue, seed, count=7):
+    for index in range(count):
+        x = 42 + ((seed >> (index + 2)) % 236)
+        y = 38 + ((seed >> (index + 9)) % 186)
+        size = 6 + ((seed >> (index + 14)) % 9)
+        color = (*rgb_from_hue(hue + index * 17, 0.78, 0.64), 72)
+        if index % 3 == 0:
+            draw.ellipse((x - size, y - size, x + size, y + size), outline=color, width=1)
+        elif index % 3 == 1:
+            draw.line((x - size, y, x + size, y), fill=color, width=1)
+            draw.line((x, y - size, x, y + size), fill=color, width=1)
+        else:
+            draw.polygon([(x, y - size), (x + size, y), (x, y + size), (x - size, y)], outline=color)
+
+
+def draw_identity_motif(layer, card, hue, seed):
+    art = card["art"]
+    family = art_family(card)
+    variant = seed_for(art) % 5
+    draw = ImageDraw.Draw(layer)
+    cx = CELL_W // 2 + ((seed >> 4) % 17) - 8
+    cy = CELL_H // 2 + ((seed >> 10) % 15) - 7
+    accent = (*rgb_from_hue(hue, 0.92, 0.66), 230)
+    accent2 = (*rgb_from_hue(hue + 46, 0.84, 0.62), 178)
+    dim = (*rgb_from_hue(hue - 34, 0.55, 0.34), 116)
+
+    draw_small_runes(draw, hue, seed, 5)
+
+    if family == "attack":
+        if art in {"pin", "needle"} or variant == 0:
+            for radius, alpha in [(90, 70), (54, 112), (24, 176)]:
+                draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=(*rgb_from_hue(hue + radius, 0.86, 0.66), alpha), width=3)
+            draw.line((cx, 34, cx, CELL_H - 34), fill=accent2, width=2)
+            draw.line((34, cy, CELL_W - 34, cy), fill=accent2, width=2)
+            polygon_glow(layer, [(cx - 10, cy - 92), (cx + 18, cy - 92), (cx + 8, cy + 94), (cx - 14, cy + 94)], (230, 248, 255, 218), accent, 2, 8, 0.45)
+        elif art in {"harpoon", "beam", "knife", "redaction_blade"} or variant == 1:
+            line_glow(layer, [(42, 224), (276, 48)], accent, 11, 15, 0.62)
+            polygon_glow(layer, [(238, 34), (304, 24), (278, 90)], (236, 248, 243, 224), accent2, 2, 9, 0.48)
+            for offset in [24, 48, 72]:
+                draw.arc((20 + offset, 82 - offset // 3, 280 + offset // 4, 270 - offset // 4), 210, 326, fill=(*rgb_from_hue(hue + offset, 0.8, 0.62), 54), width=3)
+        elif art in {"brass", "bolt", "charge"} or variant == 2:
+            ellipse_glow(layer, (cx - 82, cy - 82, cx + 82, cy + 82), (14, 45, 54, 130), accent, 4, 13, 0.42)
+            polygon_glow(layer, [(cx - 22, 34), (cx + 34, 34), (cx + 8, cy - 8), (cx + 54, cy - 2), (cx - 28, 236), (cx - 2, cy + 20), (cx - 50, cy + 12)], (*rgb_from_hue(hue + 38, 0.9, 0.6), 184), accent2, 2, 10, 0.4)
+        elif art in {"tax", "footnote", "kick"} or variant == 3:
+            polygon_glow(layer, [(62, 64), (248, 46), (270, 168), (94, 220)], (236, 248, 243, 72), accent2, 3, 10, 0.28)
+            line_glow(layer, [(70, 184), (254, 78)], accent, 8, 12, 0.52)
+            line_glow(layer, [(88, 218), (276, 120)], (*rgb_from_hue(hue + 180, 0.74, 0.62), 126), 4, 9, 0.34)
+        else:
+            line_glow(layer, [(42, 202), (150, 42), (278, 212)], accent, 8, 12, 0.52)
+            for x in [92, 150, 208]:
+                draw.line((x, 76, x + 26, 196), fill=accent2, width=2)
+
+    elif family == "shield":
+        if art in {"firewall", "quarantine"} or variant == 0:
+            for x in range(52, 276, 42):
+                draw.rounded_rectangle((x, 58, x + 32, 208), radius=5, fill=dim, outline=accent2, width=2)
+            line_glow(layer, [(42, 214), (278, 214)], accent, 6, 10, 0.42)
+        elif art in {"mirror", "seal"} or variant == 1:
+            ellipse_glow(layer, (50, 28, 270, 224), (18, 58, 65, 92), accent, 5, 16, 0.44)
+            draw.arc((78, 54, 242, 206), 198, 520, fill=accent2, width=5)
+            draw.line((96, 190, 226, 58), fill=(*rgb_from_hue(hue + 180, 0.62, 0.72), 76), width=3)
+        elif art in {"armor", "coat"} or variant == 2:
+            for index in range(4):
+                y = 54 + index * 38
+                draw.rounded_rectangle((72 + index * 8, y, 248 - index * 8, y + 44), radius=11, fill=(*rgb_from_hue(hue + index * 10, 0.48, 0.28), 126), outline=accent2, width=2)
+            polygon_glow(layer, [(cx, 36), (244, 88), (224, 204), (cx, 236), (96, 204), (76, 88)], (7, 30, 36, 102), accent, 3, 11, 0.36)
+        else:
+            polygon_glow(layer, [(cx, 36), (252, 92), (232, 196), (cx, 238), (88, 196), (68, 92)], (8, 42, 50, 122), accent, 4, 13, 0.42)
+            for radius in [42, 70, 98]:
+                draw.arc((cx - radius, cy - radius, cx + radius, cy + radius), 208, 332, fill=(*rgb_from_hue(hue + radius, 0.78, 0.62), 92), width=3)
+
+    elif family == "memory":
+        if art in {"ledger", "dead_letter", "waterlogged_doubt"} or variant == 0:
+            polygon_glow(layer, [(58, 78), (218, 46), (270, 194), (102, 230)], (232, 236, 223, 114), accent2, 2, 8, 0.24)
+            for i in range(5):
+                draw.line((86, 104 + i * 22, 226, 80 + i * 24), fill=(*rgb_from_hue(hue + i * 8, 0.5, 0.42), 126), width=2)
+        elif art in {"cache", "memory_sift", "cleanse"} or variant == 1:
+            ellipse_glow(layer, (78, 34, 242, 220), (10, 50, 62, 110), accent, 5, 13, 0.4)
+            draw.rounded_rectangle((112, 56, 208, 202), radius=18, fill=(8, 34, 44, 152), outline=accent2, width=3)
+            line_glow(layer, [(160, 42), (160, 216)], accent, 4, 8, 0.34)
+        elif art in {"reset", "chrono", "rite"} or variant == 2:
+            for radius in [44, 72, 102]:
+                draw.arc((cx - radius, cy - radius, cx + radius, cy + radius), 20, 314, fill=(*rgb_from_hue(hue + radius, 0.82, 0.64), 118), width=4)
+            polygon_glow(layer, [(242, 80), (288, 76), (262, 116)], accent, None, 1, 6, 0.3)
+        else:
+            for index in range(8):
+                x = 50 + index * 31
+                y = 62 + ((seed >> index) % 74)
+                draw.rounded_rectangle((x, y, x + 22, y + 38), radius=5, fill=(8, 28, 42, 142), outline=accent2, width=1)
+            line_glow(layer, [(42, 206), (122, 148), (200, 164), (278, 72)], accent, 4, 8, 0.42)
+
+    elif family == "virus":
+        if art in {"dead_letter", "waterlogged_doubt", "bargain"} or variant == 0:
+            polygon_glow(layer, [(62, 78), (250, 54), (278, 198), (92, 230)], (238, 232, 228, 82), accent2, 2, 8, 0.22)
+            draw.line((68, 80, 172, 150, 252, 58), fill=(*rgb_from_hue(hue, 0.84, 0.58), 106), width=3)
+            for index in range(26):
+                x = 72 + ((seed >> (index % 17)) % 188)
+                y = 70 + ((seed >> ((index + 6) % 19)) % 146)
+                draw.rectangle((x, y, x + 4, y + 4), fill=(*rgb_from_hue(hue + index * 5, 0.9, 0.55), 86))
+        elif art in {"quarantine", "hex"} or variant == 1:
+            ellipse_glow(layer, (46, 32, 274, 224), (62, 6, 38, 92), accent, 5, 16, 0.46)
+            for angle in range(0, 360, 60):
+                x = cx + math.cos(math.radians(angle)) * 86
+                y = cy + math.sin(math.radians(angle)) * 64
+                draw.line((cx, cy, x, y), fill=accent2, width=2)
+        else:
+            for index in range(17):
+                angle = math.tau * index / 17 + seed / 1000
+                radius = 24 + ((seed >> (index % 15)) % 88)
+                x = cx + math.cos(angle) * radius
+                y = cy + math.sin(angle) * radius * 0.76
+                line_color = (*rgb_from_hue(hue + index * 11, 0.82, 0.54), 84)
+                draw.line((cx, cy, x, y), fill=line_color, width=2)
+                ellipse_glow(layer, (x - 8, y - 8, x + 8, y + 8), (*rgb_from_hue(hue + index * 13, 0.86, 0.62), 150), None, 1, 7, 0.26)
+            ellipse_glow(layer, (cx - 32, cy - 32, cx + 32, cy + 32), (82, 8, 48, 168), accent, 3, 9, 0.36)
+
+    elif family == "charge":
+        if art in {"gate", "cathedral", "royal"} or variant == 0:
+            for x in [86, 122, 198, 234]:
+                draw.rounded_rectangle((x - 9, 58, x + 9, 218), radius=5, fill=dim, outline=accent2, width=2)
+            line_glow(layer, [(70, 218), (250, 218)], accent, 5, 9, 0.4)
+            line_glow(layer, [(160, 44), (160, 214)], (*rgb_from_hue(hue + 44, 0.9, 0.68), 210), 6, 12, 0.52)
+        elif art in {"pearl", "suture"} or variant == 1:
+            ellipse_glow(layer, (86, 42, 234, 206), (218, 246, 255, 180), accent, 5, 18, 0.44)
+            for radius in [96, 122]:
+                draw.arc((cx - radius, cy - radius, cx + radius, cy + radius), 204, 334, fill=accent2, width=3)
+        elif art in {"lantern", "sunrise", "oath", "covenant"} or variant == 2:
+            line_glow(layer, [(160, 30), (160, 232)], accent, 8, 18, 0.62)
+            for angle in range(20, 360, 40):
+                x = cx + math.cos(math.radians(angle)) * 116
+                y = cy + math.sin(math.radians(angle)) * 86
+                draw.line((cx, cy, x, y), fill=(*rgb_from_hue(hue + angle, 0.82, 0.62), 64), width=2)
+            ellipse_glow(layer, (cx - 24, cy - 24, cx + 24, cy + 24), (255, 232, 128, 210), accent, 2, 12, 0.38)
+        else:
+            for radius in [44, 74, 104]:
+                draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), outline=(*rgb_from_hue(hue + radius, 0.84, 0.66), 108), width=3)
+            polygon_glow(layer, [(cx - 24, 44), (cx + 28, 44), (cx + 6, 118), (cx + 42, 118), (cx - 22, 234), (cx, 142), (cx - 38, 142)], (*rgb_from_hue(hue + 32, 0.9, 0.62), 174), accent2, 2, 10, 0.34)
+
+    elif family == "echo":
+        for radius in [44, 72, 102, 132]:
+            draw.arc((cx - radius, cy - radius * 0.62, cx + radius, cy + radius * 0.62), 198, 342, fill=(*rgb_from_hue(hue + radius, 0.82, 0.62), 146 - radius // 2), width=4)
+        line_glow(layer, [(38, cy), (282, cy + ((seed >> 5) % 28) - 14)], accent, 5, 10, 0.44)
+
+    elif family == "tide":
+        points = []
+        for index in range(14):
+            t = index / 13
+            points.append((32 + t * 260, cy + math.sin(t * math.tau * 1.35 + seed) * 48))
+        line_glow(layer, points, accent, 12, 16, 0.46)
+        line_glow(layer, [(x, y + 26) for x, y in points], accent2, 4, 8, 0.28)
+
+    elif family == "void":
+        ellipse_glow(layer, (52, 36, 268, 214), (12, 4, 22, 210), accent, 5, 18, 0.52)
+        polygon_glow(layer, [(cx, 56), (cx + 62, cy), (cx, 188), (cx - 62, cy)], (18, 6, 30, 162), accent2, 2, 9, 0.34)
+        for radius in [34, 68, 100]:
+            draw.arc((cx - radius, cy - radius, cx + radius, cy + radius), 22, 292, fill=(*rgb_from_hue(hue + radius, 0.76, 0.58), 84), width=3)
+
+    elif family == "leviathan":
+        points = []
+        for index in range(16):
+            t = index / 15
+            points.append((36 + t * 252, 60 + t * 140 + math.sin(t * math.tau * 2.25) * 42))
+        line_glow(layer, points, (*rgb_from_hue(hue, 0.62, 0.34), 220), 30, 18, 0.38)
+        line_glow(layer, points, accent, 6, 10, 0.36)
+        polygon_glow(layer, [(244, 176), (304, 196), (258, 232)], (28, 92, 100, 174), accent2, 2, 8, 0.26)
 
 
 def frame_art_panel(image, card, hue):
@@ -753,6 +932,11 @@ def compose_card(card, base):
         landmark = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
         draw_landmark(landmark, card, hue, seed)
         image = Image.alpha_composite(image, soften_alpha(landmark, landmark_strength))
+    motif_strength = identity_strength(card)
+    if motif_strength > 0:
+        identity = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))
+        draw_identity_motif(identity, card, hue, seed)
+        image = Image.alpha_composite(image, soften_alpha(identity, motif_strength))
     sigil_strength = symbol_strength(card)
     if sigil_strength > 0:
         symbol = Image.new("RGBA", (CELL_W, CELL_H), (0, 0, 0, 0))

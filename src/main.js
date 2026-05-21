@@ -105,6 +105,7 @@ const DECK_AXIS_DEFINITIONS = [
   }
 ];
 const PLAYER_HARMFUL_STATUSES = ["virus", "vulnerable", "weak", "frail", "fragile", "mark"];
+const COMBAT_PREVIEW_TONE_CLASSES = ["preview-damage", "preview-block", "preview-resource", "preview-status", "preview-warn", "preview-steady"];
 const CORE_CONCEPT_GUIDE = [
   {
     axisId: "charge",
@@ -176,6 +177,23 @@ const ENEMY_SPRITE_MOTIFS = {
   cataloger: "catalog",
   algorithm: "algorithm",
   lastgate: "gate"
+};
+
+const ENEMY_SPRITE_POSES = {
+  clerk: { scale: 1.03, rotate: -2, shiftY: "1%" },
+  crab: { scale: 1.08, rotate: -3, shiftY: "5%" },
+  drone: { scale: 1.07, rotate: 2, shiftY: "4%" },
+  eel: { scale: 1.05, rotate: -5, shiftX: "-2%", shiftY: "2%" },
+  hound: { scale: 1.06, rotate: -2, shiftX: "2%", shiftY: "3%" },
+  jelly: { scale: 1.05, shiftY: "2%" },
+  leech: { scale: 1.07, rotate: 3, shiftY: "4%" },
+  mite: { scale: 1.09, rotate: 2, shiftY: "5%" },
+  page: { scale: 1.04, rotate: -4, shiftY: "2%" },
+  ray: { scale: 1.08, rotate: -3, shiftY: "3%" },
+  squid: { scale: 1.04, rotate: 3, shiftY: "2%" },
+  wisp: { scale: 1.05, shiftY: "1%" },
+  engine: { scale: 1.04, shiftY: "2%" },
+  colossus: { scale: 1.04, shiftY: "1%" }
 };
 
 const SPRITE_ATLAS_COLUMNS = 8;
@@ -430,6 +448,10 @@ const statusTooltipLayer = document.createElement("div");
 statusTooltipLayer.className = "status-portal-tooltip";
 statusTooltipLayer.hidden = true;
 document.body.append(statusTooltipLayer);
+const intentTooltipLayer = document.createElement("div");
+intentTooltipLayer.className = "intent-portal-tooltip";
+intentTooltipLayer.hidden = true;
+document.body.append(intentTooltipLayer);
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 let saveRecoveryNotice = null;
 const initialRun = loadRun();
@@ -437,6 +459,7 @@ let pointerCardDrag = null;
 let suppressPointerClick = false;
 let cardTooltipSource = null;
 let statusTooltipSource = null;
+let intentTooltipSource = null;
 let cardTooltipSuppressUntil = 0;
 let combatPreviewSource = null;
 let combatPreviewTargetUid = null;
@@ -524,6 +547,7 @@ app.addEventListener("click", (event) => {
   if (event.isTrusted) ensureAudio();
   hideCardPortalTooltip();
   hideStatusPortalTooltip();
+  hideIntentPortalTooltip();
 
   if (suppressPointerClick) {
     suppressPointerClick = false;
@@ -810,6 +834,8 @@ app.addEventListener("pointerover", (event) => {
   if (routeCard && app.contains(routeCard)) previewMapRouteFromElement(routeCard);
   const statusChip = event.target.closest(".status-chip");
   if (statusChip && app.contains(statusChip)) showStatusPortalTooltip(statusChip);
+  const intent = event.target.closest(".intent");
+  if (intent && app.contains(intent)) showIntentPortalTooltip(intent);
   const card = event.target.closest(".game-card");
   if (card && app.contains(card) && !card.closest(".reward-option")) showCardPortalTooltip(card);
   const rewardCard = event.target.closest(".reward-option .game-card[data-action='reward-card']");
@@ -821,6 +847,8 @@ app.addEventListener("pointerout", (event) => {
   if (routeCard && !routeCard.contains(event.relatedTarget)) clearMapRoutePreview();
   const statusChip = event.target.closest(".status-chip");
   if (statusChip && !statusChip.contains(event.relatedTarget)) hideStatusPortalTooltip(statusChip);
+  const intent = event.target.closest(".intent");
+  if (intent && !intent.contains(event.relatedTarget)) hideIntentPortalTooltip(intent);
   const rewardOption = event.target.closest(".reward-option");
   if (rewardOption && !rewardOption.contains(event.relatedTarget)) clearRewardCardPreview();
   const card = event.target.closest(".game-card");
@@ -832,6 +860,8 @@ app.addEventListener("mouseover", (event) => {
   if (pointerCardDrag) return;
   const rewardCard = event.target.closest(".reward-option .game-card[data-action='reward-card']");
   if (rewardCard && app.contains(rewardCard)) previewRewardCardFromElement(rewardCard);
+  const intent = event.target.closest(".intent");
+  if (intent && app.contains(intent)) showIntentPortalTooltip(intent);
   const card = event.target.closest(".game-card");
   if (card && app.contains(card) && !card.closest(".reward-option")) showCardPortalTooltip(card);
 });
@@ -839,6 +869,8 @@ app.addEventListener("mouseover", (event) => {
 app.addEventListener("mouseout", (event) => {
   const rewardOption = event.target.closest(".reward-option");
   if (rewardOption && !rewardOption.contains(event.relatedTarget)) clearRewardCardPreview();
+  const intent = event.target.closest(".intent");
+  if (intent && !intent.contains(event.relatedTarget)) hideIntentPortalTooltip(intent);
   const card = event.target.closest(".game-card");
   if (!card || card.contains(event.relatedTarget)) return;
   hideCardPortalTooltip(card);
@@ -849,6 +881,8 @@ app.addEventListener("focusin", (event) => {
   if (routeCard && app.contains(routeCard)) previewMapRouteFromElement(routeCard);
   const statusChip = event.target.closest(".status-chip");
   if (statusChip && app.contains(statusChip)) showStatusPortalTooltip(statusChip);
+  const enemy = event.target.closest(".enemy-card");
+  if (enemy && app.contains(enemy)) showIntentPortalTooltip(enemy.querySelector(".intent"));
   const card = event.target.closest(".game-card");
   if (card && app.contains(card) && !card.closest(".reward-option")) showCardPortalTooltip(card);
   const rewardCard = event.target.closest(".reward-option .game-card[data-action='reward-card']");
@@ -860,6 +894,8 @@ app.addEventListener("focusout", (event) => {
   if (routeCard && !routeCard.contains(event.relatedTarget)) clearMapRoutePreview();
   const statusChip = event.target.closest(".status-chip");
   if (statusChip && !statusChip.contains(event.relatedTarget)) hideStatusPortalTooltip(statusChip);
+  const enemy = event.target.closest(".enemy-card");
+  if (enemy && !enemy.contains(event.relatedTarget)) hideIntentPortalTooltip(enemy.querySelector(".intent"));
   const rewardOption = event.target.closest(".reward-option");
   if (rewardOption && !rewardOption.contains(event.relatedTarget)) clearRewardCardPreview();
   const card = event.target.closest(".game-card");
@@ -1044,11 +1080,13 @@ document.addEventListener("keydown", (event) => {
 window.addEventListener("resize", () => {
   positionCardPortalTooltip();
   positionStatusPortalTooltip();
+  positionIntentPortalTooltip();
 });
 window.addEventListener("resize", () => positionCombatAimLine());
 window.addEventListener("scroll", () => {
   positionCardPortalTooltip();
   positionStatusPortalTooltip();
+  positionIntentPortalTooltip();
 }, true);
 window.addEventListener("scroll", () => positionCombatAimLine(), true);
 
@@ -1109,6 +1147,7 @@ function playCardWithFx(run, uid, targetUid = null) {
   clearCombatTurnCue();
   cardTooltipSuppressUntil = Date.now() + combatFxDuration() + 900;
   hideCardPortalTooltip();
+  hideIntentPortalTooltip();
   clearCombatCardPreview();
   const victorySnapshot = combatVictorySnapshot(run, uid, targetUid);
   const before = combatFxSnapshot(run);
@@ -1261,7 +1300,7 @@ function clearCombatVictoryCoda() {
 }
 
 function combatVictoryCodaDuration(sourceType = "combat") {
-  return (sourceType === "combat" ? 1900 : 4200) / motionScale();
+  return (sourceType === "combat" ? 2800 : 4200) / motionScale();
 }
 
 function activeCombatVictoryCoda(run = state.run) {
@@ -1947,11 +1986,13 @@ function choicePulseFromDelta(action, before, after) {
   }
   const chips = choicePulseDeltaChips(before, after);
   const selectionChips = choicePulseSelectionChips(action, before, after);
+  const nextChip = choicePulseNextStepChip(action, before, after);
   const meaningful = chips.length || selectionChips.length || choicePulseSelectionChanged(action, before, after) || before.phase !== after.phase;
   if (!meaningful) return null;
   const title = choicePulseTitle(action, before, after);
   const detail = choicePulseDetail(action, before, after);
   if (!chips.length && !title) return null;
+  const visibleChips = choicePulseVisibleChips([...chips, ...selectionChips], nextChip);
   return {
     id: `${Date.now()}-${action}`,
     phase: after.phase,
@@ -1959,7 +2000,7 @@ function choicePulseFromDelta(action, before, after) {
     tone: choicePulseTone(action, before, after),
     title,
     detail,
-    chips: dedupeChoiceChips([...chips, ...selectionChips]).slice(0, 4),
+    chips: visibleChips,
     until: Date.now() + choicePulseDuration()
   };
 }
@@ -2022,6 +2063,24 @@ function choicePulseSelectionChips(action, before, after) {
     return [{ tone: "next", label: "카드 선택 필요" }];
   }
   return [];
+}
+
+function choicePulseVisibleChips(chips, nextChip = null) {
+  const merged = dedupeChoiceChips([...chips, ...(nextChip ? [nextChip] : [])]);
+  if (!nextChip || merged.length <= 4) return merged.slice(0, 4);
+  const nextLabel = nextChip.label;
+  const withoutNext = merged.filter((chip) => chip.label !== nextLabel).slice(0, 3);
+  return [...withoutNext, nextChip];
+}
+
+function choicePulseNextStepChip(action, before, after) {
+  if (after.selector || (before.phase === after.phase && !["shop-card", "shop-relic", "shop-heal"].includes(action))) return null;
+  if (after.phase === "map") return { tone: "next", label: "다음 경로 선택" };
+  if (after.phase === "reward") return { tone: "next", label: "보상 선택" };
+  if (after.phase === "shop") return { tone: "next", label: "정비 계속" };
+  if (after.phase === "rest") return { tone: "next", label: "정비 선택" };
+  if (after.phase === "event") return { tone: "next", label: "선택 계속" };
+  return null;
 }
 
 function choicePulseSelectionChanged(action, before, after) {
@@ -2212,6 +2271,7 @@ function clearTransientRunUi() {
   clearMapRoutePreview();
   hideCardPortalTooltip();
   hideStatusPortalTooltip();
+  hideIntentPortalTooltip();
   state.seenCombatVictoryCodaKeys = new Set();
   state.dismissedCombatVictoryCodaKeys = new Set();
   state.seenActInterludeKeys = new Set();
@@ -2428,6 +2488,64 @@ function hideStatusPortalTooltip(source = null) {
   statusTooltipLayer.innerHTML = "";
 }
 
+function showIntentPortalTooltip(intentElement) {
+  if (!intentElement?.classList?.contains("intent") || state.screen !== "game" || state.run?.phase !== "combat") return;
+  const enemyCard = intentElement.closest(".enemy-card");
+  const uid = Number(enemyCard?.dataset?.id);
+  const enemy = state.run.combat?.enemies.find((item) => item.uid === uid);
+  if (!enemy || enemy.hp <= 0) return;
+  const selected = state.run.combat?.selectedEnemyUid === enemy.uid;
+  const move = enemy.nextMove ?? {};
+  const threat = enemyThreatProfile(enemy, selected);
+  intentTooltipSource = intentElement;
+  intentTooltipLayer.className = `intent-portal-tooltip tone-${threat.tone} intent-${move.type ?? "none"}`;
+  intentTooltipLayer.innerHTML = `
+    <span class="intent-tooltip-icon" aria-hidden="true">${enemyIntentIconLabel(move)}</span>
+    <strong>${enemyMoveLabel(move)}</strong>
+    <small>${threat.detail}</small>
+    <div>
+      ${threat.chips
+        .map((chip) => {
+          const visual = enemyThreatIconVisual(chip);
+          return `<i class="${chip.tone}"><b aria-hidden="true">${visual.icon}</b><em>${visual.value}</em><span>${chip.label}</span></i>`;
+        })
+        .join("")}
+    </div>
+  `;
+  intentTooltipLayer.hidden = false;
+  intentTooltipLayer.style.visibility = "hidden";
+  positionIntentPortalTooltip();
+  if (intentTooltipSource === intentElement) intentTooltipLayer.style.visibility = "visible";
+  requestAnimationFrame(() => {
+    positionIntentPortalTooltip();
+    if (intentTooltipSource === intentElement) intentTooltipLayer.style.visibility = "visible";
+  });
+}
+
+function hideIntentPortalTooltip(source = null) {
+  if (source && intentTooltipSource && source !== intentTooltipSource) return;
+  intentTooltipSource = null;
+  intentTooltipLayer.hidden = true;
+  intentTooltipLayer.style.visibility = "hidden";
+  intentTooltipLayer.innerHTML = "";
+}
+
+function positionIntentPortalTooltip() {
+  if (!intentTooltipSource || intentTooltipLayer.hidden || !document.body.contains(intentTooltipSource)) return;
+  const sourceRect = intentTooltipSource.getBoundingClientRect();
+  const margin = 10;
+  const width = Math.min(304, window.innerWidth - margin * 2);
+  intentTooltipLayer.style.width = `${width}px`;
+  const height = intentTooltipLayer.offsetHeight || 94;
+  let left = sourceRect.left + sourceRect.width / 2 - width / 2;
+  let top = sourceRect.top - height - 12;
+  if (top < 70) top = sourceRect.bottom + 12;
+  left = clamp(left, margin, window.innerWidth - width - margin);
+  top = clamp(top, margin, window.innerHeight - height - margin);
+  intentTooltipLayer.style.left = `${Math.round(left)}px`;
+  intentTooltipLayer.style.top = `${Math.round(top)}px`;
+}
+
 function positionStatusPortalTooltip() {
   if (!statusTooltipSource || statusTooltipLayer.hidden) return;
   const sourceRect = statusTooltipSource.getBoundingClientRect();
@@ -2448,6 +2566,7 @@ function suppressCardPortalTooltip(duration = 900) {
   cardTooltipSuppressUntil = Date.now() + duration;
   hideCardPortalTooltip();
   hideStatusPortalTooltip();
+  hideIntentPortalTooltip();
 }
 
 function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
@@ -2475,7 +2594,7 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
   for (const enemyUid of targetUids) {
     const enemyCard = app.querySelector(`.enemy-card[data-id="${enemyUid}"]`);
     const enemy = aliveEnemies.find((item) => item.uid === enemyUid);
-    enemyCard?.classList.add("preview-target");
+    enemyCard?.classList.add("preview-target", `preview-${tone}`);
     const marker = combatPreviewMarker(preview, enemy ?? selected, targetUids.length, enemy && preview.damage >= enemy.hp ? "처치 가능" : targetBadge);
     enemyCard?.setAttribute("data-preview-label", marker.label);
     enemyCard?.setAttribute("data-preview-icon", marker.icon);
@@ -2486,7 +2605,7 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
   if (!targetUids.length && combatPreviewAffectsSelf(preview)) {
     const playerStand = app.querySelector(".player-stand");
     const selfMarker = combatPreviewMarker(preview, selected, 0, preview.playable ? combatPreviewSelfBadge(preview) : combatPreviewEffectBadge(preview, selected, 0));
-    playerStand?.classList.add("preview-self");
+    playerStand?.classList.add("preview-self", `preview-${tone}`);
     playerStand?.setAttribute("data-preview-label", selfMarker.label);
     playerStand?.setAttribute("data-preview-icon", selfMarker.icon);
     playerStand?.setAttribute("data-preview-value", selfMarker.value);
@@ -2514,7 +2633,7 @@ function clearCombatCardPreview(source = null) {
   }
   restoreCombatPreviewAssist();
   app.querySelectorAll(".preview-target, .preview-lethal, .preview-self").forEach((element) => {
-    element.classList.remove("preview-target", "preview-lethal", "preview-self");
+    element.classList.remove("preview-target", "preview-lethal", "preview-self", ...COMBAT_PREVIEW_TONE_CLASSES);
     element.removeAttribute("data-preview-label");
     element.removeAttribute("data-preview-icon");
     element.removeAttribute("data-preview-value");
@@ -2830,7 +2949,7 @@ function positionCardPortalTooltip() {
   const sourceRect = cardTooltipSource.getBoundingClientRect();
   const margin = 12;
   const isHandCard = Boolean(cardTooltipSource.closest(".hand-zone"));
-  const preferredWidth = Math.min(isHandCard ? 344 : 306, window.innerWidth - margin * 2);
+  const preferredWidth = Math.min(isHandCard ? 292 : 306, window.innerWidth - margin * 2);
   cardTooltipLayer.style.width = `${preferredWidth}px`;
   const layerRect = cardTooltipLayer.getBoundingClientRect();
   const width = layerRect.width || preferredWidth;
@@ -2984,6 +3103,7 @@ function clamp(value, min, max) {
 function setAppHtml(html, resetScroll = true) {
   hideCardPortalTooltip();
   hideStatusPortalTooltip();
+  hideIntentPortalTooltip();
   clearCombatCardPreview();
   app.innerHTML = `${html}${renderStartConfirmOverlay()}${renderDeleteSaveConfirmOverlay()}`;
   if (resetScroll) {
@@ -3069,6 +3189,9 @@ function renderTitle() {
   const selectedProgress = difficultyProgress(selectedDifficulty.id);
   const seedLabel = sanitizeSeed(state.customSeed) || "랜덤";
   const savedLabel = savedRun ? savedRunLine(savedRun) : "저장 없음";
+  const startHint = savedRun
+    ? "저장된 런을 이어가거나, 새 런으로 다시 시작할 수 있습니다."
+    : "선택한 난이도와 시드로 바로 시작합니다.";
   return `
     <main class="title-screen">
       <section class="title-hero">
@@ -3078,14 +3201,20 @@ function renderTitle() {
           <p>심해 네트워크를 내려가며 카드를 고르고, 위험한 경로를 택하고, 마지막 신호를 끊으세요.</p>
         </div>
         <section class="title-start-panel" aria-label="런 시작">
+          <div class="title-start-copy">
+            <small>탐사 준비</small>
+            <strong>${selectedDifficulty.name} · ${seedLabel}</strong>
+            <span>${startHint}</span>
+          </div>
           <div class="title-actions">
             <button class="primary" data-action="new-run">새 런 시작</button>
-            <button data-action="daily-run">데일리 계약</button>
-            <button data-action="continue-run" ${savedRun ? "" : "disabled"}>이어하기</button>
+            <button data-action="daily-run">오늘의 계약</button>
+            <button data-action="continue-run" ${savedRun ? "" : "disabled"} title="${savedRun ? "저장된 런으로 돌아갑니다." : "저장된 런이 없습니다."}">이어하기</button>
           </div>
-          <div class="title-run-readout" aria-label="현재 런 설정">
+          <div class="title-run-readout" aria-label="현재 시작 설정">
             <span><small>난이도</small><b>${selectedDifficulty.name}</b></span>
             <span><small>시드</small><b>${seedLabel}</b></span>
+            <span><small>계약</small><b>${daily.challenge.name}</b></span>
             <span><small>저장</small><b>${savedLabel}</b></span>
           </div>
         </section>
@@ -3097,10 +3226,10 @@ function renderTitle() {
           <button data-action="screen" data-id="about">게임 정보</button>
         </nav>
         ${renderSaveRecoveryNotice()}
-        <details class="run-options" aria-label="런 옵션">
+        <details class="run-options" aria-label="런 준비 옵션">
           <summary>
-            <strong>런 세팅</strong>
-            <span>시드, 데일리 계약, 저장 슬롯</span>
+            <strong>런 준비</strong>
+            <span>시드와 계약, 저장 상태 확인</span>
           </summary>
           <div class="run-options-body">
             <div class="run-setup" aria-label="런 설정">
@@ -3492,7 +3621,7 @@ function mapAdvisor(run) {
     choices[0];
   const eliteStatus = elite ? eliteReadiness(run, elite) : null;
   let pick = saferPick;
-  let title = "다음 경로를 비교";
+  let title = "보상과 위험 비교";
   let detail = "체력, 크레딧, 덱 상태를 보고 지금 가장 필요한 보상을 고르세요.";
   let tone = "steady";
 
@@ -4156,19 +4285,17 @@ function renderCombatVictoryCoda(coda, run) {
           <strong>${coda.cardName}</strong>
           <i>${coda.defeatedNames.length > 1 ? `적 ${coda.defeatedNames.length}명 격파` : "격파"}</i>
         </div>
-        <p class="victory-coda-summary"><b>${defeatedText}</b><span aria-hidden="true">→</span><strong>보상 확인</strong></p>
         <div class="victory-coda-enemies" aria-label="처치한 적">
           ${coda.enemies.slice(0, 3).map((enemy, index) => renderVictoryCodaEnemy(enemy, index)).join("")}
         </div>
+        <p class="victory-coda-summary"><b>${defeatedText}</b><span aria-hidden="true">→</span><strong>보상 확인</strong></p>
         <div class="victory-coda-rewards" aria-label="획득 예정 보상">
           ${rewardChips.map((chip) => `<i><b aria-hidden="true">${chip.icon}</b><span>${chip.label}</span></i>`).join("")}
         </div>
-        ${quick ? "" : `
-          <div class="victory-coda-actions">
-            <button class="primary victory-reward-button" data-action="dismiss-victory-coda" aria-label="전투 보상 확인">보상 확인</button>
-            <small>자동으로 열립니다</small>
-          </div>
-        `}
+        <div class="victory-coda-actions">
+          <button class="primary victory-reward-button" data-action="dismiss-victory-coda" aria-label="전투 보상 확인">보상 확인</button>
+          <small>${quick ? "잠시 후 자동 이동" : "자동으로 열립니다"}</small>
+        </div>
       </div>
     </section>
   `;
@@ -4743,12 +4870,13 @@ function renderRouteFocusPanel(run, routeChoices, routeAdvice = null) {
   const rewardText = routeRewardShortLabel(focusedNode.type);
   const riskText = routeRiskLevel(focusedNode.type, scout);
   const riskDetail = routeDecisionRiskText(focusedNode, detail, scout);
+  const focusSummary = routeFocusSummary(run, focusedNode, routeAdvice, scout, previewing);
   const tone = routeAdvice?.recommendedNodeId === focusedNode.id ? routeAdvice?.tone ?? scout.tone : scout.tone;
   return `
     <section class="route-focus-panel ${focusedNode.type} ${tone} ${previewing ? "is-previewing" : "is-recommended"}" data-focus-node="${focusedNode.id}" aria-label="${previewing ? "검토 중인 경로" : "추천 경로"} 요약">
       <span>${previewing ? "검토 중" : "추천 경로"}</span>
       <strong>${focusedNode.row + 1}층 · ${routePathLabel(run, focusedNode)}</strong>
-      <small>${routeAdvice?.recommendedNodeId === focusedNode.id ? routeAdvice?.title ?? scout.label : scout.label}</small>
+      <small>${focusSummary}</small>
       <div>
         <i title="보상: ${detail.reward}"><b>보상</b><span>${rewardText}</span></i>
         <i title="주의: ${riskDetail}"><b>주의</b><span>${riskText}</span></i>
@@ -4766,13 +4894,17 @@ function renderRouteCard(run, node, routeAdvice = null) {
   const aria = `${routeNodeTitle(run, node)}${recommended ? " · 추천 경로" : ""}`;
   const pathLabel = routePathLabel(run, node);
   const branchText = routeBranchSummaryText(run, node);
+  const trail = renderRouteTrail(run, node);
   return `
     <button class="route-card ${node.type} ${recommended ? "recommended" : ""} ${previewing ? "previewing" : ""}" data-action="enter-node" data-id="${node.id}" aria-label="${aria}">
       <span class="route-icon">${nodeIcon(node.type)}</span>
       <span class="route-copy">
         <span class="route-head">
           <strong>${node.row + 1}층 · ${pathLabel}</strong>
-          ${recommended ? `<span class="route-recommendation">추천</span>` : ""}
+          <span class="route-head-tools">
+            ${trail}
+            ${recommended ? `<span class="route-recommendation">추천</span>` : ""}
+          </span>
         </span>
         <span class="route-meta">
           <em>${routeRewardShortLabel(node.type)}</em>
@@ -4823,7 +4955,10 @@ function renderCombat(run) {
         <article class="player-stand ${state.combatFx?.targetMode === "self" ? "fx-target" : ""}" aria-label="${playerCombatantAriaLabel(run)}">
           ${renderEntityImpactRing("self")}
           ${renderEntityHitSparks("self")}
-          <div class="character-sprite player-sprite"></div>
+          <div class="character-sprite player-sprite">
+            <span class="sprite-motion-echo"></span>
+            <span class="sprite-ground-burst"></span>
+          </div>
           ${renderEntityResultStack("self")}
           <div class="combatant-plate player-plate">
             <h2>${run.player.name}</h2>
@@ -4964,8 +5099,10 @@ function renderCombatDepthRail(run) {
   const act = Math.max(1, Math.min(3, Math.floor(row / 7) + 1));
   const localFloor = (row % 7) + 1;
   const bossDistance = Math.max(0, 7 - localFloor);
-  const visibleLabel = `${act}막 ${localFloor}층`;
-  const detailLabel = `${visibleLabel}. ${bossDistance ? `보스까지 ${bossDistance}층` : "보스전"}`;
+  const nodeType = combatMissionNodeType(run);
+  const rewardLabel = combatRouteRewardLabel(nodeType);
+  const distanceLabel = bossDistance ? `보스까지 ${bossDistance}층` : "보스전";
+  const detailLabel = `${act}막 ${localFloor}층. ${distanceLabel}. 전투 후 ${rewardLabel}.`;
   const pips = Array.from({ length: 7 }, (_, index) => {
     const current = index + 1 === localFloor;
     const completed = index + 1 < localFloor;
@@ -4973,13 +5110,24 @@ function renderCombatDepthRail(run) {
     return `<i class="${current ? "current" : ""} ${completed ? "done" : ""} ${boss ? "boss" : ""}" aria-hidden="true"></i>`;
   }).join("");
   return `
-    <div class="depth-rail" aria-label="현재 위치 ${act}구역 ${localFloor}/7층. ${bossDistance ? `보스까지 ${bossDistance}층` : "보스전"}" title="${detailLabel}">
-      <span>위치</span>
-      <strong>${visibleLabel}</strong>
-      <div>${pips}</div>
-      <small>${bossDistance ? `보스까지 ${bossDistance}층` : "보스전"}</small>
+    <div class="depth-rail combat-route-beacon node-${nodeType} ${bossDistance <= 1 ? "near-boss" : ""}" aria-label="현재 위치 ${act}막 ${localFloor}층. ${distanceLabel}. 전투 후 ${rewardLabel}" title="${detailLabel}">
+      <span class="route-kicker">진행</span>
+      <strong><b>${act}막</b><em>${localFloor}층</em></strong>
+      <div class="route-pips">${pips}</div>
+      <small><i aria-hidden="true">${nodeIcon(nodeType)}</i><b>${distanceLabel}</b><em>${rewardLabel}</em></small>
     </div>
   `;
+}
+
+function combatRouteRewardLabel(type) {
+  return {
+    combat: "카드 선택",
+    elite: "유물 획득",
+    event: "특수 보상",
+    shop: "정비 기회",
+    rest: "휴식",
+    boss: "구역 돌파"
+  }[type] ?? "다음 선택";
 }
 
 function renderCombatEventFeed(run) {
@@ -5022,6 +5170,7 @@ function renderCombatFxLayer(run) {
   if (!fx || run.phase !== "combat") return "";
   return `
     <div class="combat-action-fx fx-${fx.tone} fx-${fx.targetMode}${fx.kind ? ` fx-${fx.kind}` : ""}${fx.sourceMode ? ` fx-source-${fx.sourceMode}` : ""}${fx.lethal ? " fx-lethal" : ""}${fx.actorCount > 1 ? " fx-grouped" : ""}" data-fx-id="${fx.id}" style="${combatFxInlineStyle(fx)}" aria-hidden="true">
+      <span class="fx-source-pulse"></span>
       ${renderCombatFxSource(fx)}
       <span class="fx-action-line">
         <b>${fx.cardName}</b>
@@ -5500,12 +5649,16 @@ function renderBossStatusStrip(boss) {
   const aria = `${enemy.name}. ${phaseLabel}. ${objectiveAria}. 현재 의도 ${enemyIntentReadout(move)}. 2단계 전환 체력 ${threshold} 이하. 현재 체력 ${enemy.hp}/${enemy.maxHp}`;
   return `
     <section class="boss-status-strip ${phaseTwo ? "phase-two" : ""}" style="--boss-hp:${hpPercent}%; --boss-threshold:${thresholdPercent}%;" aria-label="${aria}">
-      <span>보스</span>
-      <strong>${enemy.name}</strong>
-      <b class="boss-objective" title="${objectiveAria}">${objective}</b>
+      <header class="boss-status-head">
+        <span>보스</span>
+        <strong>${enemy.name}</strong>
+        <em>${phaseLabel}</em>
+      </header>
       <div class="boss-status-meter" aria-hidden="true"><i></i><b></b></div>
-      <em>${phaseLabel}</em>
-      <small title="${enemyIntentReadout(move)}"><b aria-hidden="true">${intentIcon}</b><span>${intentLabel}</span><i>${intentValue}</i></small>
+      <div class="boss-status-readout">
+        <b class="boss-objective" title="${objectiveAria}">${objective}</b>
+        <small title="${enemyIntentReadout(move)}"><b aria-hidden="true">${intentIcon}</b><span>${intentLabel}</span><i>${intentValue}</i></small>
+      </div>
     </section>
   `;
 }
@@ -5828,8 +5981,8 @@ function combatPileButton(combat, id) {
   return `
     <button class="pile pile-${id} ${emptyClass}" data-action="open-pile" data-id="${id}" ${selected} aria-label="${pileDef.label} 더미 ${cards.length}장 보기" title="${pileDef.label} ${cards.length}장">
       <span class="pile-icon" aria-hidden="true">${combatPileIcon(id)}</span>
-      <strong>${cards.length}</strong>
       <span class="pile-label">${pileDef.label}</span>
+      <strong><b>${cards.length}</b><small>장</small></strong>
     </button>
   `;
 }
@@ -6229,6 +6382,7 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
   const fxHit = (fxHitAmount > 0 || fxBlockLossAmount > 0) && !fxDefeated;
   const enemyAria = enemyCombatantAriaLabel(enemy, move);
   const intentLabel = enemyMoveLabel(move);
+  const intentVisualLabel = enemyIntentCompactLabel(move);
   const intentText = enemyIntentReadout(move);
   const intentAria = `${enemy.name} 다음 행동: ${intentLabel}${move?.intent ? ` ${move.intent}` : ""}`;
   return `
@@ -6237,10 +6391,10 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       ${selected ? `<span class="enemy-target-marker" aria-hidden="true"></span>` : ""}
       ${renderEntityHitSparks("enemy", enemy.uid)}
       ${renderEnemyIntentLane(move)}
-      <div class="intent" aria-label="${intentAria}" title="${intentText}">
+      <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}">
         <i aria-hidden="true">${enemyIntentIconLabel(move)}</i>
         <span>
-          <em>${intentLabel}</em>
+          <em>${intentVisualLabel}</em>
           <strong>${enemyIntentCompactValue(move)}</strong>
         </span>
       </div>
@@ -6311,6 +6465,16 @@ function enemyIntentIconLabel(move = {}) {
   }[move?.type] ?? "•";
 }
 
+function enemyIntentCompactLabel(move = {}) {
+  if (enemyMoveDamageTotal(move) > 0) return move.hits > 1 ? "연타" : "공격";
+  if (move.block > 0) return "방어";
+  if (move.heal > 0) return "회복";
+  if (move.applyToPlayer?.length) return "상태";
+  if (move.summon?.length) return "소환";
+  if (move.self?.length) return "강화";
+  return enemyMoveLabel(move, "대기");
+}
+
 function enemyIntentCompactValue(move = {}) {
   const damage = enemyMoveDamageTotal(move);
   if (damage > 0) return move.hits > 1 ? `${move.damage}x${move.hits}` : String(damage);
@@ -6341,7 +6505,7 @@ function renderBossMechanic(enemy, template) {
 
 function bossObjectiveText(template, mode = "short") {
   if (!template || template.tier !== "boss") return "";
-  return mode === "aria" ? "보스 본체를 쓰러뜨리면 전투가 끝납니다" : "목표: 본체 처치";
+  return mode === "aria" ? "보스 본체를 쓰러뜨리면 전투가 끝납니다" : "본체 처치";
 }
 
 function renderEnemySprite(enemy, template) {
@@ -6353,7 +6517,9 @@ function renderEnemySprite(enemy, template) {
   const portraitCell = enemyPortraitCell(spriteTemplate);
   const intentCell = enemyIntentSigilCell(enemy.nextMove);
   return `
-    <div class="character-sprite enemy-sprite sprite-${spriteTemplate.sprite} motif-${motif} tier-${spriteTemplate.tier} ${phaseClass}" data-sprite="${spriteTemplate.sprite}" data-atlas-cell="${atlasCell}" data-portrait-cell="${portraitCell}" data-intent-cell="${intentCell}" style="${enemySpriteStyle(spriteTemplate, seed, atlasCell, intentCell, portraitCell)}" aria-hidden="true">
+    <div class="character-sprite enemy-sprite sprite-${spriteTemplate.sprite} motif-${motif} tier-${spriteTemplate.tier} ${phaseClass}" data-sprite="${spriteTemplate.sprite}" data-atlas-cell="${atlasCell}" data-portrait-cell="${portraitCell}" data-intent-cell="${intentCell}" style="${enemySpriteStyle(spriteTemplate, seed, atlasCell, intentCell, portraitCell, enemy)}" aria-hidden="true">
+      <span class="sprite-motion-echo"></span>
+      <span class="sprite-ground-burst"></span>
       <span class="enemy-sprite-art"></span>
       <span class="enemy-intent-sigil"></span>
     </div>
@@ -6373,25 +6539,29 @@ function enemyIntentSigilCell(move) {
   return ENEMY_INTENT_SIGIL_CELLS[move?.type ?? "none"] ?? ENEMY_INTENT_SIGIL_CELLS.none;
 }
 
-function enemySpriteStyle(template, seed, atlasCell, intentCell, portraitCell) {
+function enemySpriteStyle(template, seed, atlasCell, intentCell, portraitCell, enemy = null) {
   const tierHue = { normal: 184, elite: 37, boss: 348 }[template.tier] ?? 184;
   const hue = wrapHue(tierHue + ((seed >>> 2) % 54) - 27);
   const accent = wrapHue(hue + 48 + ((seed >>> 9) % 46));
   const x = 22 + ((seed >>> 5) % 58);
   const y = 18 + ((seed >>> 11) % 54);
-  const scale = 1;
-  const flip = 1;
-  const rotate = 0;
+  const pose = ENEMY_SPRITE_POSES[template.sprite] ?? {};
+  const scale = pose.scale ?? 1;
+  const flip = pose.flip ?? 1;
+  const rotate = pose.rotate ?? 0;
+  const shiftX = pose.shiftX ?? "0px";
+  const shiftY = pose.shiftY ?? "0px";
   const atlas = atlasPosition(atlasCell);
   const intent = atlasPosition(intentCell);
   const portrait = enemyPortraitPosition(portraitCell);
-  return `--sprite-hue:${hue}; --sprite-accent:${accent}; --sprite-x:${x}%; --sprite-y:${y}%; --sprite-scale:${scale}; --sprite-flip:${flip}; --sprite-rotate:${rotate}deg; --sprite-atlas-x:${atlas.x}; --sprite-atlas-y:${atlas.y}; --enemy-portrait-x:${portrait.x}; --enemy-portrait-y:${portrait.y}; --intent-atlas-x:${intent.x}; --intent-atlas-y:${intent.y}; --enemy-sprite-image:url('${enemyCombatantImage(template)}');`;
+  return `--sprite-hue:${hue}; --sprite-accent:${accent}; --sprite-x:${x}%; --sprite-y:${y}%; --sprite-scale:${scale}; --sprite-flip:${flip}; --sprite-rotate:${rotate}deg; --sprite-shift-x:${shiftX}; --sprite-shift-y:${shiftY}; --sprite-atlas-x:${atlas.x}; --sprite-atlas-y:${atlas.y}; --enemy-portrait-x:${portrait.x}; --enemy-portrait-y:${portrait.y}; --intent-atlas-x:${intent.x}; --intent-atlas-y:${intent.y}; --enemy-sprite-image:url('${enemyCombatantImage(template, enemy)}');`;
 }
 
-function enemyCombatantImage(template) {
-  if (template.sprite === "cataloger") return "../public/assets/combatants/boss-cataloger.png";
-  if (template.sprite === "algorithm") return "../public/assets/combatants/boss-algorithm.png";
-  if (template.sprite === "lastgate") return "../public/assets/combatants/boss-lastgate.png";
+function enemyCombatantImage(template, enemy = null) {
+  const phaseTwo = template.tier === "boss" && (enemy?.phase ?? 1) >= 2;
+  if (template.sprite === "cataloger") return phaseTwo ? "../public/assets/combatants/boss-cataloger-phase2.png" : "../public/assets/combatants/boss-cataloger.png";
+  if (template.sprite === "algorithm") return phaseTwo ? "../public/assets/combatants/boss-algorithm-phase2.png" : "../public/assets/combatants/boss-algorithm.png";
+  if (template.sprite === "lastgate") return phaseTwo ? "../public/assets/combatants/boss-lastgate-phase2.png" : "../public/assets/combatants/boss-lastgate.png";
   if (template.sprite === "bailiff") return "../public/assets/combatants/elite-bailiff.png";
   if (template.sprite === "engine") return "../public/assets/combatants/elite-engine.png";
   if (template.sprite === "knight") return "../public/assets/combatants/elite-knight.png";
@@ -6465,7 +6635,7 @@ function renderReward(run) {
               .map(
                 (cardId) => `
                   <article class="reward-option ${reward.selectedCardId === cardId ? "selected" : ""} ${recommendedCardId === cardId ? "recommended" : ""} ${previewCardId === cardId ? "previewing" : ""}" role="group" aria-label="${rewardOptionAriaLabel(run, cardId, recommendedCardId === cardId, previewCardId === cardId, reward.selectedCardId === cardId)}">
-                    ${renderCard({ uid: cardId, cardId, upgraded: false }, { action: "reward-card", id: cardId, recommended: recommendedCardId === cardId, recommendationLabel: "추천 보상", ariaLabel: rewardOptionAriaLabel(run, cardId, recommendedCardId === cardId, previewCardId === cardId, reward.selectedCardId === cardId) })}
+                    ${renderCard({ uid: cardId, cardId, upgraded: false }, { action: "reward-card", id: cardId, recommended: recommendedCardId === cardId, recommendationLabel: "추천", ariaLabel: rewardOptionAriaLabel(run, cardId, recommendedCardId === cardId, previewCardId === cardId, reward.selectedCardId === cardId) })}
                     ${reward.selectedCardId === cardId ? `<em class="reward-selected-stamp">선택됨</em>` : ""}
                     ${renderRewardPickLine(run, cardId)}
                     ${renderRewardOptionDetail(run, cardId)}
@@ -6621,8 +6791,18 @@ function renderRewardSpotlightCardArt(card) {
 function rewardSpotlightDetail(insight) {
   if (!insight) return "이번 보상에서 덱의 중심을 정합니다.";
   if (/보스 대비|보스전/.test(insight.label ?? "")) return `${insight.detail.split(".")[0]}.`.replace(/\s+/g, " ");
-  if (insight.concept?.label) return `${insight.concept.label} 계열과 맞습니다.`;
+  if (insight.concept?.label) return `${rewardConceptPhrase(insight.concept.label)}에 잘 맞습니다.`;
   return `${insight.detail.split(".")[0]}.`.replace(/\s+/g, " ");
+}
+
+function rewardConceptPhrase(label = "") {
+  if (/전하/.test(label)) return "전하를 모아 크게 쓰는 방향";
+  if (/표식/.test(label)) return "표식을 남기고 연달아 공격하는 방향";
+  if (/바이러스|약화/.test(label)) return "바이러스를 쌓고 약화로 버티는 방향";
+  if (/반격|방어|막고|되받아/.test(label)) return "막고 되받아치는 방향";
+  if (/카드|뽑기|찾기|순환/.test(label)) return "카드를 빠르게 돌리는 방향";
+  if (/체력|대가|위험/.test(label)) return "위험을 감수하고 크게 가져가는 방향";
+  return `${String(label).replace(/\s+/g, " ")} 방향`;
 }
 
 function rewardFlowState(run) {
@@ -6769,7 +6949,7 @@ function renderRewardDeckShift(run, cardId) {
 
 function rewardPickLineText(card, insight) {
   if (/보스|마무리|방어|정화|카드 찾기/.test(insight.label)) return insight.detail.split(".")[0] + ".";
-  if (insight.concept?.label) return `${insight.concept.label} 계열을 더 선명하게 만듭니다.`;
+  if (insight.concept?.label) return `${rewardConceptPhrase(insight.concept.label)}을 밀어줍니다.`;
   if (card.type === "attack") return "적을 끝낼 피해 수단을 보탭니다.";
   if (card.type === "skill") return "방어, 정비, 손패 흐름을 보탭니다.";
   if (card.type === "power") return "전투 내내 남는 규칙을 추가합니다.";
@@ -7494,11 +7674,12 @@ function renderShop(run) {
 
 function renderShopSpotlight(run, advice) {
   const chips = (advice?.chips ?? []).slice(0, 4);
+  const detail = shopSpotlightShortDetail(advice);
   return `
     <section class="shop-spotlight ${advice?.tone ?? "steady"}" aria-label="상점 추천 요약">
-      <span>먼저 볼 것</span>
+      <span>추천 판단</span>
       <strong>${advice?.title ?? "필요한 것만 구매"}</strong>
-      <small>${advice?.detail ?? "카드, 유물, 정비 비용을 비교하세요."}</small>
+      <small title="${advice?.detail ?? detail}">${detail}</small>
       <div>
         ${chips.map((chip) => `<i class="${chip.tone}">${chip.text}</i>`).join("")}
       </div>
@@ -7511,9 +7692,9 @@ function renderShopSpendPlan(run, advice, prices) {
   return `
     <section class="shop-spend-plan ${plan.tone}" aria-label="크레딧 사용 계획">
       <div class="shop-plan-copy">
-        <span>구매 우선순위</span>
+        <span>크레딧 쓰는 순서</span>
         <strong>${plan.title}</strong>
-        <small>${plan.detail}</small>
+        <small title="${plan.detail}">${plan.detail}</small>
       </div>
       <div class="shop-plan-wallet" aria-label="${plan.reserveLabel}">
         <span>보유 크레딧</span>
@@ -7526,6 +7707,14 @@ function renderShopSpendPlan(run, advice, prices) {
       </div>
     </section>
   `;
+}
+
+function shopSpotlightShortDetail(advice) {
+  if (!advice) return "카드, 유물, 정비 비용을 비교하세요.";
+  if (advice.recommendedService === "heal") return "체력이 낮으면 구매보다 회복을 먼저 보세요.";
+  if (advice.recommendedService === "remove") return "새 카드보다 방해 카드 한 장을 빼는 편이 좋습니다.";
+  if (advice.recommendedService === "upgrade") return "덱을 늘리지 않고 자주 쓰는 카드 한 장을 키웁니다.";
+  return firstSentence(advice.detail);
 }
 
 function shopSpendPlan(run, advice, prices = shopServicePrices(run)) {
@@ -7557,7 +7746,7 @@ function shopSpendPlan(run, advice, prices = shopServicePrices(run)) {
   let tone = "steady";
   let priority = "save";
   let title = "애매하면 크레딧 보존";
-  let detail = "지금 덱에 바로 쓰일 카드와 유물만 사고, 다음 마켓에 쓸 크레딧을 남겨 두세요.";
+  let detail = "지금 덱에 바로 쓰일 때만 사고, 정비 비용은 남겨 둡니다.";
   let firstStep = "필요한 구매만 하고 나가기";
 
   if ((advice?.recommendedService === "remove" || needsRemove) && canRemove) {
@@ -7565,36 +7754,36 @@ function shopSpendPlan(run, advice, prices = shopServicePrices(run)) {
     priority = "remove";
     title = "카드 제거 먼저";
     detail = analysis.curses > 0
-      ? "저주가 섞여 있습니다. 새 카드를 사기 전에 방해되는 카드를 먼저 빼는 편이 좋습니다."
-      : "덱이 두꺼워졌습니다. 새 카드보다 한 장 줄이는 선택이 다음 전투를 더 깔끔하게 만듭니다.";
+      ? "저주가 있으면 새 카드보다 제거가 먼저입니다."
+      : "덱이 두꺼우면 새 카드보다 한 장 줄이는 편이 좋습니다.";
     firstStep = `카드 제거 ${prices.remove}`;
   } else if ((advice?.recommendedService === "heal" || needsHeal) && canHeal) {
     tone = "guarded";
     priority = "heal";
     title = "회복 먼저";
-    detail = "체력이 낮습니다. 회복으로 다음 전투를 버틸 여유를 만든 뒤 남는 크레딧만 쓰세요.";
+    detail = "회복으로 다음 전투를 버틸 여유를 먼저 만듭니다.";
     firstStep = `체력 회복 ${prices.heal}`;
   } else if ((advice?.recommendedService === "upgrade" || analysis.primary.score >= 4) && canUpgrade) {
     tone = "strong";
     priority = "upgrade";
     title = "강화 먼저";
-    detail = "카드를 늘리지 않고 핵심 카드 한 장을 강하게 만들 수 있습니다.";
+    detail = "덱을 늘리지 않고 핵심 카드 한 장을 키웁니다.";
     firstStep = `카드 강화 ${prices.upgrade}`;
   } else if (affordableRelics > 0) {
     tone = "relic";
     priority = "relic";
     title = "유물부터 확인";
-    detail = "유물은 한 번 사면 런 끝까지 남습니다. 현재 카드와 맞는 효과라면 카드보다 먼저 볼 만합니다.";
+    detail = "유물은 런 끝까지 남습니다. 덱과 맞으면 먼저 확인하세요.";
     firstStep = `유물 ${cheapestRelic?.price ?? "?"}부터`;
   } else if (affordableCards > 0) {
     priority = "card";
     title = "카드는 한 장만 신중하게";
-    detail = "싼 카드라도 덱에 맞지 않으면 손패를 막습니다. 지금 쓰임이 보이는 카드만 고르세요.";
+    detail = "덱에 바로 쓰일 카드 한 장만 고르세요.";
     firstStep = `카드 ${cheapestCard?.price ?? "?"}부터`;
   } else if (openCards.length || openRelics.length) {
     tone = "muted";
     title = "지금은 가격이 높음";
-    detail = "살 수 있는 물건이 없습니다. 무리하지 말고 크레딧을 다음 마켓까지 가져가세요.";
+    detail = "살 수 있는 물건이 없습니다. 크레딧을 다음 마켓까지 가져가세요.";
     firstStep = "구매 보류";
   }
 
@@ -7802,7 +7991,7 @@ function renderShopService(run, service, price, advice = null) {
         ${recommended ? `<em class="service-recommendation">추천</em>` : ""}
       </span>
       <span class="shop-service-result">${preview.detail}</span>
-      <small class="shop-service-cost">${preview.cost}</small>
+      <small class="shop-service-cost" title="${preview.cost}">${preview.cost}</small>
     </button>
   `;
 }
@@ -8039,6 +8228,8 @@ function restActionImpact(run, id, disabled) {
   if (disabled && id === "remove") {
     return { text: "체력이 낮거나 덱이 너무 얇습니다.", chips: [{ tone: "muted", label: "선택 불가" }] };
   }
+  const bossPlan = restActionBossPlan(run, id);
+  if (bossPlan) return bossPlan;
   if (id === "heal") {
     const heal = restHealAmount(run);
     const hpAfter = Math.min(run.player.maxHp, run.player.hp + heal);
@@ -8059,6 +8250,34 @@ function restActionImpact(run, id, disabled) {
     text: `${run.player.hp}/${run.player.maxHp} → ${hpAfter}/${run.player.maxHp}`,
     chips: [{ tone: "craft", label: "덱 -1" }]
   };
+}
+
+function restActionBossPlan(run, id) {
+  const context = deckSelectorBossContext(run);
+  if (!context) return null;
+  if (id === "heal" && context.missing.includes("체력")) {
+    const heal = restHealAmount(run);
+    const hpAfter = Math.min(run.player.maxHp, run.player.hp + heal);
+    return {
+      text: `${context.bossName} 전 체력 ${hpAfter}/${run.player.maxHp}`,
+      chips: [{ tone: "heal", label: "보스 전 회복" }]
+    };
+  }
+  if (id === "upgrade" && context.missing.some((label) => ["큰 방어", "방어", "마무리", "정화·약화"].includes(label))) {
+    const missing = context.missing.includes("큰 방어") ? "큰 방어" : context.missing.find((label) => ["방어", "마무리", "정화·약화"].includes(label));
+    return {
+      text: `${missing} 역할의 핵심 카드를 키웁니다.`,
+      chips: [{ tone: context.missing.includes("큰 방어") ? "guarded" : "craft", label: "보스 대비" }]
+    };
+  }
+  if (id === "remove" && (context.missing.includes("카드 뽑기") || run.player.deck.length >= 26)) {
+    const hpAfter = Math.max(0, run.player.hp - 5);
+    return {
+      text: `덱 -1 · 체력 ${hpAfter}/${run.player.maxHp}`,
+      chips: [{ tone: "craft", label: "보스 전 압축" }]
+    };
+  }
+  return null;
 }
 
 function renderSummary(run) {
@@ -8346,7 +8565,7 @@ function renderSummaryNextRail(summary) {
         ${steps
           .map(
             (step, index) => `
-              <li class="${step.tone}">
+              <li class="${step.tone}" aria-label="${step.title}: ${summaryNextStepShortText(step.detail)}" title="${summaryNextStepShortText(step.detail)}">
                 <b>${index + 1}</b>
                 <strong>${step.title}</strong>
                 <small>${summaryNextStepShortText(step.detail)}</small>
@@ -9388,11 +9607,13 @@ function renderDeckSelectorBrief(run) {
   const mainValue = isUpgrade ? `${upgradeable}장` : `덱 ${Math.max(0, run.player.deck.length - 1)}장`;
   const costLabel = hpCost ? `체력 ${run.player.hp}/${run.player.maxHp} → ${hpAfter}/${run.player.maxHp}` : "취소 무료";
   const deckLabel = analysis.primary.score > 0 ? analysis.primary.label : "아직 탐색 중";
+  const bossContext = deckSelectorBossContext(run);
   return `
-    <section class="selector-brief ${isUpgrade ? "upgrade" : "remove"}" aria-label="카드 선택 전 상태">
+    <section class="selector-brief ${isUpgrade ? "upgrade" : "remove"} ${bossContext ? "with-boss" : ""}" aria-label="카드 선택 전 상태">
       <span><small>${mainLabel}</small><strong>${mainValue}</strong></span>
       <span><small>현재 덱</small><strong>${run.player.deck.length}장 · ${deckLabel}</strong></span>
       <span><small>비용</small><strong>${costLabel}</strong></span>
+      ${bossContext ? `<span class="selector-boss-brief ${bossContext.tone}"><small>보스 대비</small><strong>${bossSelectorBriefText(bossContext)}</strong></span>` : ""}
     </section>
   `;
 }
@@ -9440,8 +9661,8 @@ function deckSelectorRecommendation(run, choices) {
     .map(({ card, preview }) => {
       const score =
         run.selector.mode === "upgrade"
-          ? deckUpgradeRecommendationScore(card, analysis)
-          : deckRemoveRecommendationScore(run, card, analysis);
+          ? deckUpgradeRecommendationScore(card, analysis) + deckUpgradeBossBonus(run, card)
+          : deckRemoveRecommendationScore(run, card, analysis) + deckRemoveBossAdjustment(run, card, analysis);
       return { card, preview, score };
     })
     .filter((entry) => Number.isFinite(entry.score))
@@ -9455,13 +9676,69 @@ function deckSelectorRecommendation(run, choices) {
     tone: pick.preview.tone,
     reason:
       run.selector.mode === "upgrade"
-        ? deckUpgradeRecommendationReason(pick.card, analysis)
+        ? deckUpgradeRecommendationReason(pick.card, analysis, run)
         : deckRemoveRecommendationReason(run, pick.card, analysis),
     chips:
       run.selector.mode === "upgrade"
-        ? deckUpgradeRecommendationChips(pick.card, analysis)
+        ? deckUpgradeRecommendationChips(pick.card, analysis, run)
         : deckRemoveRecommendationChips(run, pick.card, analysis)
   };
+}
+
+function deckSelectorBossContext(run) {
+  const progress = runProgressBrief(run);
+  const readiness = progress.readiness;
+  const missing = bossReadinessMissing(readiness);
+  if (!readiness || !missing.length || progress.distance > 3) return null;
+  const bossName = progress.boss?.name ?? readiness.title.split("까지")[0].replace(" 전투 중", "");
+  return {
+    progress,
+    readiness,
+    missing,
+    bossName,
+    tone: readiness.tone,
+    finalBoss: progress.act >= 3,
+    close: progress.distance <= 1
+  };
+}
+
+function bossSelectorBriefText(context) {
+  const shortMissing = context.missing.slice(0, 2).join(" · ");
+  return `${context.bossName} · ${shortMissing} 부족`;
+}
+
+function deckUpgradeBossBonus(run, cardInstance) {
+  const context = deckSelectorBossContext(run);
+  if (!context) return 0;
+  const before = effectiveCard({ ...cardInstance, upgraded: false });
+  const after = effectiveCard({ ...cardInstance, upgraded: true });
+  const finalBonus = context.finalBoss ? 1.45 : 1;
+  let score = 0;
+  if (context.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) score += (cardSupportsBurstDefense(before) ? 10 : 16) * finalBonus;
+  if (context.missing.includes("방어") && cardSupportsDefense(after)) score += 8 * finalBonus;
+  if (context.missing.includes("정화·약화") && cardSupportsStatusControl(after)) score += 9 * finalBonus;
+  if (context.missing.includes("마무리") && cardSupportsFinish(after)) score += 7 * finalBonus;
+  if (context.missing.includes("카드 뽑기") && cardSupportsFlow(after)) score += 6;
+  if ((after.cost ?? 0) < (before.cost ?? 0)) score += context.close ? 7 : 4;
+  return score;
+}
+
+function deckRemoveBossAdjustment(run, cardInstance, analysis) {
+  const context = deckSelectorBossContext(run);
+  if (!context) return 0;
+  const card = effectiveCard(cardInstance);
+  const primaryMatch = analysis.primary?.score > 0 ? cardAxisMatch(card, analysis.primary).score : 0;
+  const lowRoleFit = primaryMatch <= 0 && !cardSupportsBurstDefense(card) && !cardSupportsStatusControl(card) && !cardSupportsFinish(card);
+  let score = 0;
+  if (context.missing.includes("큰 방어") && cardSupportsBurstDefense(card)) score -= context.finalBoss ? 32 : 22;
+  if (context.missing.includes("방어") && cardSupportsDefense(card)) score -= 18;
+  if (context.missing.includes("정화·약화") && cardSupportsStatusControl(card)) score -= 18;
+  if (context.missing.includes("마무리") && cardSupportsFinish(card)) score -= 15;
+  if (context.missing.includes("카드 뽑기") && cardSupportsFlow(card)) score -= 10;
+  if (context.missing.includes("카드 뽑기") && lowRoleFit) score += 9;
+  if (context.finalBoss && card.rarity === "starter" && lowRoleFit) score += 6;
+  if (context.close && (card.cost ?? 0) >= 2 && lowRoleFit) score += 4;
+  return score;
 }
 
 function deckUpgradeRecommendationScore(cardInstance, analysis) {
@@ -9504,9 +9781,14 @@ function deckRemoveRecommendationScore(run, cardInstance, analysis) {
   return score;
 }
 
-function deckUpgradeRecommendationReason(cardInstance, analysis) {
+function deckUpgradeRecommendationReason(cardInstance, analysis, run = null) {
   const before = effectiveCard({ ...cardInstance, upgraded: false });
   const after = effectiveCard({ ...cardInstance, upgraded: true });
+  const context = run ? deckSelectorBossContext(run) : null;
+  if (context?.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) return "마지막 문 앞입니다. 이 카드를 키우면 문 낙하와 레퀴엠 턴에 버틸 여지가 생깁니다.";
+  if (context?.missing.includes("정화·약화") && cardSupportsStatusControl(after)) return `${context.bossName} 전입니다. 해로운 상태를 줄이거나 적 공격을 낮추는 쪽을 보강합니다.`;
+  if (context?.missing.includes("마무리") && cardSupportsFinish(after)) return `${context.bossName} 전입니다. 2단계로 넘어가기 전 보스 체력을 밀어낼 힘을 키웁니다.`;
+  if (context?.missing.includes("카드 뽑기") && cardSupportsFlow(after)) return `${context.bossName} 전입니다. 필요한 카드를 더 빨리 다시 보게 만드는 강화입니다.`;
   if ((after.cost ?? 0) < (before.cost ?? 0)) return "비용이 낮아져 한 턴에 더 많은 카드를 쓸 수 있습니다.";
   if (analysis.primary?.score > 0 && cardAxisMatch(after, analysis.primary).score > 0) return `${analysis.primary.label} 덱에서 자주 쓰게 될 카드입니다.`;
   if (cardSupportsBurstDefense(after)) return "문 낙하나 레퀴엠처럼 큰 공격을 넘기기 쉬워집니다.";
@@ -9518,17 +9800,23 @@ function deckUpgradeRecommendationReason(cardInstance, analysis) {
 function deckRemoveRecommendationReason(run, cardInstance, analysis) {
   const card = effectiveCard(cardInstance);
   const duplicateCount = run.player.deck.filter((item) => item.cardId === cardInstance.cardId).length;
+  const context = deckSelectorBossContext(run);
   if (card.rarity === "curse" || card.type === "curse" || card.unplayable) return "손패를 막는 카드라 가장 먼저 빼는 편이 좋습니다.";
+  if (context?.missing.includes("카드 뽑기")) return `${context.bossName} 전입니다. 덱을 줄이면 큰 방어와 마무리 카드를 더 빨리 봅니다.`;
   if (card.rarity === "starter" && duplicateCount > 1) return "기본 카드가 여러 장입니다. 한 장 줄이면 핵심 카드가 더 자주 옵니다.";
   if (analysis.primary?.score > 0 && cardAxisMatch(card, analysis.primary).score <= 0) return `${analysis.primary.label} 덱과 덜 맞아 제거 가치가 있습니다.`;
   if (duplicateCount > 1) return "같은 역할이 겹칩니다. 덱을 줄이면 필요한 카드가 빨리 돌아옵니다.";
   return "덱을 한 장 줄여 중요한 카드가 더 자주 보이게 합니다.";
 }
 
-function deckUpgradeRecommendationChips(cardInstance, analysis) {
+function deckUpgradeRecommendationChips(cardInstance, analysis, run = null) {
   const before = effectiveCard({ ...cardInstance, upgraded: false });
   const after = effectiveCard({ ...cardInstance, upgraded: true });
+  const context = run ? deckSelectorBossContext(run) : null;
   const chips = [];
+  if (context?.missing.length) chips.push({ tone: context.tone === "danger" ? "danger" : "strong", label: "보스 대비" });
+  if (context?.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) chips.push({ tone: "guarded", label: "큰 방어" });
+  if (context?.missing.includes("정화·약화") && cardSupportsStatusControl(after)) chips.push({ tone: "warning", label: "정화·약화" });
   const costGain = Math.max(0, (before.cost ?? 0) - (after.cost ?? 0));
   if (costGain > 0) chips.push({ tone: "strong", label: `비용 -${costGain}` });
   if (analysis.primary?.score > 0 && cardAxisMatch(after, analysis.primary).score > 0) chips.push({ tone: "steady", label: analysis.primary.label });
@@ -9541,7 +9829,9 @@ function deckRemoveRecommendationChips(run, cardInstance, analysis) {
   const card = effectiveCard(cardInstance);
   const duplicateCount = run.player.deck.filter((item) => item.cardId === cardInstance.cardId).length;
   const hpCost = run.selector?.hpCost ?? 0;
+  const context = deckSelectorBossContext(run);
   const chips = [{ tone: "steady", label: `덱 ${Math.max(0, run.player.deck.length - 1)}장` }];
+  if (context?.missing.includes("카드 뽑기")) chips.unshift({ tone: context.tone === "danger" ? "danger" : "strong", label: "보스 전 압축" });
   if (card.rarity === "curse" || card.type === "curse" || card.unplayable) chips.unshift({ tone: "warning", label: "저주 제거" });
   else if (card.rarity === "starter") chips.unshift({ tone: "strong", label: "기본 카드 정리" });
   else if (duplicateCount > 1) chips.unshift({ tone: "strong", label: "중복 정리" });
@@ -9941,6 +10231,11 @@ function buildConceptText(tags, emptyText = "주력 미정") {
   return labels.length ? labels.slice(0, 3).join(" / ") : emptyText;
 }
 
+function buildConceptShortText(tags, emptyText = "주력 미정") {
+  const labels = buildConcepts(tags).map((axis) => summaryConceptLabel(axis));
+  return labels.length ? labels.slice(0, 2).join(" · ") : emptyText;
+}
+
 function summaryPrimaryBuildText(summary, emptyText = "주력 미정") {
   const concepts = buildConcepts(summary?.build ?? []);
   if (!concepts.length) return emptyText;
@@ -9968,7 +10263,8 @@ function buildConceptRecordEntries(builds = {}) {
   const counts = new Map();
   for (const [tag, count] of Object.entries(builds ?? {})) {
     for (const axis of buildConcepts([tag])) {
-      counts.set(axis.label, (counts.get(axis.label) ?? 0) + Number(count || 0));
+      const label = summaryConceptLabel(axis);
+      counts.set(label, (counts.get(label) ?? 0) + Number(count || 0));
     }
   }
   return Array.from(counts.entries()).sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0])).slice(0, 8);
@@ -10336,7 +10632,7 @@ function renderRecordsCareer(records, history, conceptCounts, bossEntries) {
         <div><dt>보스</dt><dd>${topBoss}</dd></div>
       </dl>
       <div class="records-career-action">
-        <span>다음 행동</span>
+        <span>다음 런</span>
         <strong>${next.title}</strong>
         <p>${next.detail}</p>
         ${renderRecordsCareerActionButton(next)}
@@ -10347,8 +10643,8 @@ function renderRecordsCareer(records, history, conceptCounts, bossEntries) {
 
 function recordsCareerLine(records, latest, topBuild, topBoss) {
   if (!latest) return "런이 끝나면 시드, 주력, 보스 처치, 막힌 지점이 여기에 쌓입니다.";
-  if (latest.won) return `${topBuild} 선택이 통했습니다. ${topBoss} 기록을 기준으로 다음 난이도나 다른 경로를 시험하세요.`;
-  return `${historyStopPoint(latest)}에서 멈췄습니다. 같은 시드로 들어가면 어떤 선택이 달랐는지 바로 비교할 수 있습니다.`;
+  if (latest.won) return `${topBuild}이 통했습니다. 다음에는 난이도나 보스 전 경로를 바꿔 보세요.`;
+  return `최근 ${historyStopPoint(latest)}에서 멈췄습니다. 같은 시드로 첫 보상과 경로를 바꿔 비교하세요.`;
 }
 
 function recordsCareerNextAction(records, history, conceptCounts) {
@@ -10357,7 +10653,7 @@ function recordsCareerNextAction(records, history, conceptCounts) {
     return {
       tone: "steady",
       title: "표층에서 첫 기록 만들기",
-      detail: "전하, 표식, 바이러스, 반격 중 하나를 골라 같은 키워드의 보상을 이어서 고르세요.",
+      detail: "전하, 표식, 바이러스, 반격 중 하나를 먼저 고르고 같은 계열 보상을 이어서 보세요.",
       action: "new-run",
       actionLabel: "새 런 시작"
     };
@@ -10368,7 +10664,7 @@ function recordsCareerNextAction(records, history, conceptCounts) {
     return {
       tone: "strong",
       title: `${nextDifficulty.name} 도전`,
-      detail: "이미 통했던 초반 선택을 알고 있습니다. 한 단계 깊은 난이도에서 같은 주력이 버티는지 확인하세요.",
+      detail: "이미 통했던 첫 선택을 한 단계 깊은 난이도에서 다시 시험하세요.",
       action: "start-next-difficulty",
       actionLabel: `${nextDifficulty.name} 시작`,
       difficultyId: nextDifficulty.id
@@ -10377,10 +10673,10 @@ function recordsCareerNextAction(records, history, conceptCounts) {
   if (replaySeed) {
     return {
       tone: latest.won ? "strong" : "warning",
-      title: latest.won ? "같은 시드로 더 빠르게" : "같은 시드에서 첫 선택 바꾸기",
+      title: latest.won ? "같은 시드로 더 빠르게" : "같은 시드로 첫 선택 바꾸기",
       detail: latest.won
-        ? "이미 아는 경로에서 덱을 더 얇게 유지하고 완주 시간을 줄여 보세요."
-        : `${historyNextChoice(latest).title}부터 바꾸면 막힌 층의 차이가 가장 선명하게 보입니다.`,
+        ? "아는 경로에서 덱을 더 얇게 유지해 완주 시간을 줄여 보세요."
+        : `${historyNextChoice(latest).title}부터 바꾸면 차이가 바로 보입니다.`,
       action: "replay-seed",
       actionLabel: "시드 재도전",
       seed: replaySeed,
@@ -10390,7 +10686,7 @@ function recordsCareerNextAction(records, history, conceptCounts) {
   return {
     tone: conceptCounts.length ? "steady" : "warning",
     title: "다른 주력으로 새 런",
-    detail: "최근 기록과 다른 보상 계열을 고르면 같은 보스도 전혀 다르게 풀립니다.",
+    detail: "최근과 다른 주력 카드를 고르면 같은 보스도 다른 방식으로 풀립니다.",
     action: "new-run",
     actionLabel: "다른 런 시작"
   };
@@ -10434,13 +10730,13 @@ function renderHistoryReplayCue(entry, replaySeed = "") {
 
 function historyReplayCue(entry, replaySeed = "") {
   const stop = historyStopPoint(entry);
-  const build = buildConceptText(entry.build, "주력 미기록");
+  const build = buildConceptShortText(entry.build, "주력 미기록");
   const nextChoice = historyNextChoice(entry);
   if (entry.won) {
     return {
       tone: "strong",
       title: `${build} 유지`,
-      detail: `${entry.floors}층까지 통했던 선택입니다. 다음에는 난이도나 경로만 바꿔 같은 핵심 카드를 더 빨리 모아 보세요.`,
+      detail: `${entry.floors}층까지 통했습니다. 다음에는 난이도나 경로만 바꿔 보세요.`,
       chips: [
         { label: "유지", value: build },
         { label: "다음", value: "높은 난이도" },
@@ -10451,7 +10747,7 @@ function historyReplayCue(entry, replaySeed = "") {
   return {
     tone: nextChoice.tone,
     title: `${stop}에서 ${nextChoice.title}`,
-    detail: `${nextChoice.detail} 같은 시드로 들어가면 어느 선택이 달랐는지 비교하기 쉽습니다.`,
+    detail: `${nextChoice.detail} 같은 시드로 바로 비교할 수 있습니다.`,
     chips: [
       { label: "막힌 곳", value: stop },
       { label: "먼저", value: nextChoice.title },
@@ -10473,27 +10769,27 @@ function historyNextChoice(entry) {
     return {
       tone: "danger",
       title: "방어와 약화 먼저",
-      detail: "큰 공격을 맞고 끝난 기록입니다. 첫 구역에서 방어 카드와 약화 카드를 더 높게 보세요."
+      detail: "큰 공격에 무너졌습니다. 첫 구역에서는 방어와 약화를 더 높게 보세요."
     };
   }
   if ((entry.deckSize ?? 0) >= 25 && (entry.cardsRemoved ?? 0) <= 1) {
     return {
       tone: "warning",
       title: "카드 제거 먼저",
-      detail: "덱이 커진 기록입니다. 상점이나 휴식에서 구매보다 제거를 먼저 쓰면 핵심 카드가 빨리 옵니다."
+      detail: "덱이 커졌습니다. 상점이나 휴식에서는 구매보다 제거를 먼저 보세요."
     };
   }
   if (!entry.build?.length) {
     return {
       tone: "warning",
       title: "첫 보상에서 방향 정하기",
-      detail: "주력이 늦게 잡힌 기록입니다. 전하, 표식, 바이러스, 반격 중 하나만 먼저 고르세요."
+      detail: "주력이 늦었습니다. 전하, 표식, 바이러스, 반격 중 하나만 먼저 고르세요."
     };
   }
   return {
     tone: "steady",
     title: "보스 전 빈 역할 채우기",
-    detail: "주력은 보였습니다. 다음에는 방어, 마무리, 정화·약화 중 부족했던 역할을 먼저 채우세요."
+    detail: "주력은 보였습니다. 방어, 마무리, 정화·약화 중 빈 역할을 채우세요."
   };
 }
 
@@ -10503,7 +10799,7 @@ function renderRecordsNextGoal(records, history, conceptCounts) {
     <section class="records-next-goal" aria-label="다음 목표">
       <header>
         <span>다음 목표</span>
-        <strong>${history.length ? "최근 기록을 다음 선택으로 바꾸기" : "첫 기록 만들기"}</strong>
+        <strong>${history.length ? "다음 런에서 바꿀 것" : "첫 기록 만들기"}</strong>
       </header>
       <div>
         ${items
@@ -10532,13 +10828,13 @@ function recordsNextGoalItems(records, history, conceptCounts) {
         tone: "steady",
         label: "첫 런",
         title: "표층에서 첫 루프 익히기",
-        detail: "전하, 표식, 바이러스, 반격 중 하나를 골라 같은 스타일의 보상을 이어서 고르세요."
+        detail: "전하, 표식, 바이러스, 반격 중 하나를 먼저 고르세요."
       },
       {
         tone: "strong",
         label: "첫 목표",
         title: "1막 보스까지 도달",
-        detail: "초반에는 일반 전투로 카드를 모으고, 체력이 낮으면 상점이나 휴식 경로를 먼저 보세요."
+        detail: "초반 전투로 카드를 모으고, 체력이 낮으면 상점이나 휴식을 보세요."
       },
       {
         tone: "relic",
@@ -10554,11 +10850,11 @@ function recordsNextGoalItems(records, history, conceptCounts) {
   if (latestSeed) {
     items.push({
       tone: latest.won ? "strong" : "warning",
-      label: latest.won ? "추천 재도전" : "막힌 지점 다시 보기",
+      label: latest.won ? "추천 재도전" : "막힌 지점",
       title: latest.won && nextDifficulty ? `${nextDifficulty.name}에서 같은 시드` : "같은 시드로 다른 선택",
       detail: latest.won && nextDifficulty
-        ? "이미 초반 선택을 아는 지도입니다. 한 단계 깊은 난이도에서 같은 선택이 통하는지 확인해 보세요."
-        : `${latest.floors}층에서 멈춘 기록입니다. 같은 시드로 엘리트, 상점, 휴식 선택을 바꾸면 차이가 바로 보입니다.`,
+        ? "아는 지도에서 한 단계 깊게 내려가 같은 선택을 시험하세요."
+        : `${latest.floors}층에서 멈췄습니다. 첫 경로와 첫 보상을 바꿔 보세요.`,
       action: "replay-seed",
       actionLabel: latest.won && nextDifficulty ? "높은 난이도 재도전" : "같은 시드 재도전",
       seed: latestSeed,
@@ -10577,7 +10873,7 @@ function recordsMaintenanceGoal(latest) {
       tone: "warning",
       label: "덱 손질",
       title: "카드 제거를 한 번 더",
-      detail: `최근 덱은 ${latest.deckSize}장이었습니다. 상점이나 휴식에서 제거를 먼저 쓰면 핵심 카드를 더 자주 봅니다.`
+      detail: `최근 덱은 ${latest.deckSize}장입니다. 제거를 먼저 쓰면 핵심 카드가 더 자주 옵니다.`
     };
   }
   if ((latest.damageTaken ?? 0) >= 80 || (latest.hp ?? 0) <= 0) {
@@ -10585,14 +10881,14 @@ function recordsMaintenanceGoal(latest) {
       tone: "danger",
       label: "생존 목표",
       title: "방어와 약화 먼저 챙기기",
-      detail: `최근 받은 피해가 ${latest.damageTaken ?? 0}입니다. 큰 공격을 예고하는 적 앞에서는 공격보다 방어와 약화가 먼저입니다.`
+      detail: `최근 받은 피해 ${latest.damageTaken ?? 0}. 큰 공격 앞에서는 방어와 약화를 먼저 보세요.`
     };
   }
   return {
     tone: "steady",
     label: "경로 목표",
     title: "상점과 휴식 한 번씩 들르기",
-    detail: "덱이 커지기 전에는 상점 제거, 보스 전에는 휴식 강화나 회복을 챙기면 다음 구역이 안정됩니다."
+    detail: "상점에서는 제거, 보스 전에는 회복이나 강화를 먼저 챙기세요."
   };
 }
 
@@ -10601,24 +10897,24 @@ function recordsBuildGoal(records, conceptCounts, latest) {
   if (topLabel && topCount >= 2) {
     return {
       tone: "strong",
-      label: "덱 실험",
-      title: `${topLabel}에 다른 보조 역할 섞기`,
-      detail: `가장 자주 쓴 주력입니다. 다음에는 방어, 마무리, 정화·약화 중 비어 있던 역할 하나를 더 빨리 붙여 보세요.`
+      label: "주력 보강",
+      title: `${topLabel}에 보조 역할 더하기`,
+      detail: "방어, 마무리, 정화·약화 중 빈 역할 하나만 빨리 붙이세요."
     };
   }
   if ((records.wins ?? 0) <= 0) {
     return {
       tone: "relic",
-      label: "덱 실험",
-      title: "전하 모아 쓰기나 표식 연타부터",
-      detail: "처음 승리를 노릴 때는 피해가 바로 보이는 주력이 좋습니다. 같은 키워드가 붙은 보상을 2장 이상 모아 보세요."
+      label: "첫 승리",
+      title: "전하 피니시나 표식 러시부터",
+      detail: "처음엔 피해가 바로 보이는 주력이 좋습니다. 같은 키워드 카드를 둘 이상 모으세요."
     };
   }
   return {
     tone: "steady",
-    label: "덱 실험",
-    title: buildConceptText(latest.build, "새 방향 찾기"),
-    detail: "최근 기록과 다른 보상 계열을 골라 보세요. 주력이 바뀌면 같은 보스도 요구하는 답이 달라집니다."
+    label: "다른 주력",
+    title: buildConceptShortText(latest.build, "새 방향 찾기"),
+    detail: "최근과 다른 주력 카드를 고르면 같은 보스도 다르게 풀립니다."
   };
 }
 
@@ -11064,18 +11360,27 @@ function renderCardTooltipPreview(preview) {
   return `
     <div class="tooltip-preview">
       <strong>이번 사용</strong>
-      <small>${target.replace(/^대상: /, "대상 ")} · 에너지 ${Math.max(0, preview.energyAfter)}</small>
+      <small class="tooltip-preview-summary">${target.replace(/^대상: /, "대상 ")} · 사용 후 ⚡${Math.max(0, preview.energyAfter)}</small>
       <div>
         ${visibleChips
           .map((chip) => {
             const visual = cardOutcomeVisual(chip);
-            return `<span class="${chip.tone}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardOutcomeText(chip, visual)}</em></span>`;
+            return `<span class="${chip.tone}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardTooltipChipText(chip, visual)}</em></span>`;
           })
           .join("")}
         ${hiddenChipCount ? `<span class="control">+${hiddenChipCount}</span>` : ""}
       </div>
     </div>
   `;
+}
+
+function cardTooltipChipText(chip, visual) {
+  let chipText = String(chip?.label ?? "").replace(/\s+/g, " ").trim();
+  if (!chipText) return cardOutcomeText(chip, visual);
+  if (chipText.startsWith("광역 ")) chipText = `전체 ${chipText.slice(3)}`;
+  if (chipText.startsWith("잔향 x")) chipText = `잔향 ×${chipText.slice(4)}`;
+  return chipText
+    .replace(/ · /g, " / ");
 }
 
 function cardPreviewTargetText(preview) {
@@ -11891,6 +12196,9 @@ function runProgressBrief(run) {
     bossText,
     distanceText: distance === 0 ? "보스층" : `보스까지 ${distance}층`,
     nextText,
+    act,
+    distance,
+    boss,
     readiness: boss && distance <= 3 ? bossReadiness(run, boss, distance) : null
   };
 }
@@ -12213,7 +12521,7 @@ function routeEnemyIds(tier, act) {
 function routeConnectionSummary(run, node) {
   const nextLabels = routeBranchLabels(run, node);
   if (!nextLabels.length) return "다음: 최종 분기";
-  return `다음: ${nextLabels.slice(0, 3).join(" / ")}${nextLabels.length > 3 ? " ..." : ""}`;
+  return `다음: ${nextLabels.slice(0, 3).join(" · ")}${nextLabels.length > 3 ? ` 외 ${nextLabels.length - 3}` : ""}`;
 }
 
 function routeBranchSummaryText(run, node) {
@@ -12221,8 +12529,8 @@ function routeBranchSummaryText(run, node) {
   const lookaheadLabels = routeLookaheadBranchLabels(run, node);
   const labels = lookaheadLabels.length ? lookaheadLabels : immediateLabels;
   if (!labels.length) return "마지막 분기";
-  const prefix = immediateLabels.every((label) => label === "전투") && labels.some((label) => label !== "전투") ? "곧" : "다음";
-  return `${prefix} ${labels.slice(0, 2).join("/")}${labels.length > 2 ? ` +${labels.length - 2}` : ""}`;
+  const prefix = immediateLabels.every((label) => label === "전투") && labels.some((label) => label !== "전투") ? "곧" : "이후";
+  return `${prefix} ${labels.slice(0, 2).join(" · ")}${labels.length > 2 ? ` 외 ${labels.length - 2}` : ""}`;
 }
 
 function routeBranchLabels(run, node) {
@@ -12260,24 +12568,60 @@ function routeLookaheadBranchLabels(run, node, maxDepth = 3) {
 }
 
 function routePathLabel(run, node) {
-  const typeLabelText = nodeTypeLabel(node.type);
-  if (node.type !== "combat") return `${typeLabelText} 경로`;
+  if (node.type !== "combat") return routeDirectPathLabel(node);
   const branchLabels = routeLookaheadBranchLabels(run, node);
   const primary = routePrimaryBranchLabel(branchLabels);
-  const extra = branchLabels.length > 1 ? ` +${branchLabels.length - 1}` : "";
-  return `${primary}${extra}`;
+  return primary;
+}
+
+function routeDirectPathLabel(node) {
+  if (node.type === "elite") return "엘리트전";
+  if (node.type === "event") return "이벤트";
+  if (node.type === "shop") return "상점";
+  if (node.type === "rest") return "세이프룸";
+  if (node.type === "boss") return "보스전";
+  return nodeTypeLabel(node.type) ?? "경로";
 }
 
 function routePrimaryBranchLabel(branchLabels = []) {
   const priority = [
-    ["엘리트", "엘리트 방향"],
-    ["상점", "상점 방향"],
-    ["휴식", "휴식 방향"],
-    ["이벤트", "이벤트 방향"],
+    ["엘리트", "엘리트 노림"],
+    ["상점", "상점 쪽"],
+    ["휴식", "휴식 쪽"],
+    ["이벤트", "이벤트 쪽"],
     ["보스", "보스 앞"],
-    ["전투", "전투 계속"]
+    ["전투", "전투 중심"]
   ];
-  return priority.find(([label]) => branchLabels.includes(label))?.[1] ?? "전투 경로";
+  return priority.find(([label]) => branchLabels.includes(label))?.[1] ?? "전투 중심";
+}
+
+function routeFocusSummary(run, node, routeAdvice, scout, previewing) {
+  if (!previewing && routeAdvice?.recommendedNodeId === node.id) {
+    return routeAdvice.title === "보상과 위험 비교" ? "현재 체력과 크레딧 기준 추천" : routeAdvice.title;
+  }
+  if (node.type === "combat") return routeBranchSummaryText(run, node);
+  return scout.label;
+}
+
+function renderRouteTrail(run, node) {
+  const labels = routeLookaheadBranchLabels(run, node).slice(0, 3);
+  if (!labels.length) return "";
+  return `
+    <span class="route-trail" aria-hidden="true">
+      ${labels.map((label) => `<i class="${routeTypeFromLabel(label)}" title="${label}">${nodeIcon(routeTypeFromLabel(label))}</i>`).join("")}
+    </span>
+  `;
+}
+
+function routeTypeFromLabel(label) {
+  return {
+    전투: "combat",
+    엘리트: "elite",
+    이벤트: "event",
+    상점: "shop",
+    휴식: "rest",
+    보스: "boss"
+  }[label] ?? "combat";
 }
 
 function routeNodeTitle(run, node) {
@@ -12603,6 +12947,7 @@ function clearTabOnlyStorageNotice(scope) {
 }
 
 const MUSIC_GAIN_SCALE = 0.35;
+const MUSIC_DEFAULT_BRIDGE_EVERY = 96;
 
 function effectVolume() {
   const value = Number(state.settings.volume);
@@ -12689,7 +13034,10 @@ const MUSIC_THEMES = {
     variation: [12, 7, 10, 3, 0],
     variationEvery: 32,
     variationWave: "square",
-    variationGain: 0.13
+    variationGain: 0.13,
+    bridge: [0, 3, 7, 12, 15, 12],
+    bridgeEvery: 96,
+    bridgeWave: "triangle"
   },
   boss: {
     bpm: 108,
@@ -12703,7 +13051,10 @@ const MUSIC_THEMES = {
     variation: [0, -1, 7, 8, 13],
     variationEvery: 32,
     variationWave: "sawtooth",
-    variationGain: 0.14
+    variationGain: 0.14,
+    bridge: [0, 7, 13, 8, 5, -1],
+    bridgeEvery: 96,
+    transition: [0, -1, 7, 13]
   },
   boss_cataloger: {
     bpm: 106,
@@ -12793,7 +13144,11 @@ const MUSIC_THEMES = {
     variation: [19, 15, 12, 7, 24],
     variationEvery: 40,
     variationWave: "sine",
-    variationGain: 0.15
+    variationGain: 0.15,
+    bridge: [0, 7, 12, 19, 24, 19, 12],
+    bridgeEvery: 80,
+    bridgeWave: "sine",
+    transition: [0, 7, 12, 19]
   },
   boss_lastgate_phase2: {
     bpm: 122,
@@ -12811,7 +13166,13 @@ const MUSIC_THEMES = {
     variation: [24, 19, 15, 12, 7, 0],
     variationEvery: 24,
     variationWave: "sawtooth",
-    variationGain: 0.18
+    variationGain: 0.18,
+    bridge: [0, 6, 13, 19, 24, 31, 24, 19],
+    bridgeEvery: 72,
+    bridgeWave: "sawtooth",
+    transition: [0, 6, 13, 24],
+    transitionGain: 0.12,
+    filterFrequency: 1260
   },
   reward: {
     bpm: 70,
@@ -12835,7 +13196,9 @@ const MUSIC_THEMES = {
     chords: [[0, 7, 12], [5, 9, 16]],
     variation: [12, 16, 19, 24],
     variationEvery: 32,
-    variationGain: 0.14
+    variationGain: 0.14,
+    bridge: [0, 7, 12, 16, 24, 28],
+    bridgeEvery: 64
   },
   defeat: {
     bpm: 54,
@@ -12847,7 +13210,10 @@ const MUSIC_THEMES = {
     chords: [[0, 3, 7], [-5, -2, 3]],
     variation: [-5, -2, 0, -7],
     variationEvery: 48,
-    variationGain: 0.1
+    variationGain: 0.1,
+    bridge: [0, -2, -5, -7, -12],
+    bridgeEvery: 96,
+    filterFrequency: 980
   }
 };
 
@@ -13029,18 +13395,40 @@ function startMusicTheme(themeName) {
   stopMusic();
   const theme = MUSIC_THEMES[themeName];
   if (!theme || !state.audio || state.audio.state !== "running") return;
+  const now = state.audio.currentTime;
   const gain = state.audio.createGain();
-  gain.gain.setValueAtTime(0.0001, state.audio.currentTime);
-  gain.gain.exponentialRampToValueAtTime(musicGainFor(theme), state.audio.currentTime + 1.2);
-  gain.connect(state.audio.destination);
+  const filter = state.audio.createBiquadFilter();
+  const compressor = state.audio.createDynamicsCompressor?.();
+  const filterFrequency = theme.filterFrequency ?? (theme.wave === "sawtooth" ? 1040 : 1480);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(musicGainFor(theme), now + 1.2);
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(Math.max(420, filterFrequency * 0.58), now);
+  filter.frequency.exponentialRampToValueAtTime(filterFrequency, now + 1.4);
+  filter.Q.setValueAtTime(theme.filterQ ?? 0.72, now);
+  gain.connect(filter);
+  if (compressor) {
+    compressor.threshold.setValueAtTime(-27, now);
+    compressor.knee.setValueAtTime(18, now);
+    compressor.ratio.setValueAtTime(3.2, now);
+    compressor.attack.setValueAtTime(0.018, now);
+    compressor.release.setValueAtTime(0.18, now);
+    filter.connect(compressor);
+    compressor.connect(state.audio.destination);
+  } else {
+    filter.connect(state.audio.destination);
+  }
   state.music = {
     theme,
     themeName,
     gain,
-    nextTime: state.audio.currentTime + 0.08,
+    filter,
+    compressor,
+    nextTime: now + 0.08,
     step: 0,
     timer: null
   };
+  playMusicTransition(theme, now + 0.12);
   scheduleMusic();
   state.music.timer = window.setInterval(scheduleMusic, 180);
 }
@@ -13053,7 +13441,11 @@ function stopMusic() {
     const now = state.audio.currentTime;
     music.gain.gain.cancelScheduledValues(now);
     music.gain.gain.setTargetAtTime(0.0001, now, 0.12);
-    window.setTimeout(() => music.gain.disconnect(), 700);
+    window.setTimeout(() => {
+      music.gain?.disconnect();
+      music.filter?.disconnect();
+      music.compressor?.disconnect();
+    }, 700);
   }
   state.music = null;
 }
@@ -13085,10 +13477,25 @@ function scheduleMusic() {
     if (note !== null) playMusicVoice(midiToFrequency(theme.root + note), music.nextTime, beatLength * 0.82, theme.wave, 0.62, step % 4 < 2 ? 0.2 : -0.2);
     playMusicMotif(theme, music.nextTime, beatLength, phraseStep);
     playMusicVariation(theme, music.nextTime, beatLength, phraseStep);
+    playMusicBridge(theme, music.nextTime, beatLength, phraseStep);
     if (theme.pulse && phraseStep % 2 === 0) playMusicPulse(music.nextTime, theme.pulse);
     music.nextTime += beatLength;
     music.step += 1;
   }
+}
+
+function playMusicTransition(theme, start) {
+  const intervals = theme.transition ?? [0, 7, 12, 19];
+  intervals.forEach((offset, index) => {
+    playMusicVoice(
+      midiToFrequency(theme.root + offset),
+      start + index * 0.055,
+      0.34 + index * 0.045,
+      theme.transitionWave ?? theme.motifWave ?? theme.wave,
+      (theme.transitionGain ?? 0.09) / Math.sqrt(intervals.length),
+      index % 2 === 0 ? -0.22 : 0.22
+    );
+  });
 }
 
 function playMusicMotif(theme, start, beatLength, step) {
@@ -13115,6 +13522,23 @@ function playMusicVariation(theme, start, beatLength, step) {
       theme.variationWave ?? theme.motifWave ?? theme.wave,
       (theme.variationGain ?? 0.12) / Math.sqrt(theme.variation.length),
       index % 2 === 0 ? -0.28 : 0.28
+    );
+  });
+}
+
+function playMusicBridge(theme, start, beatLength, step) {
+  const bridge = theme.bridge ?? theme.variation?.slice().reverse();
+  const every = theme.bridgeEvery ?? Math.max(MUSIC_DEFAULT_BRIDGE_EVERY, (theme.variationEvery ?? 48) * 2);
+  if (!bridge?.length || step === 0 || step % every !== 0) return;
+  bridge.forEach((offset, index) => {
+    const pan = index % 3 === 0 ? -0.34 : index % 3 === 1 ? 0 : 0.34;
+    playMusicVoice(
+      midiToFrequency(theme.root + offset),
+      start + index * beatLength * 0.3,
+      beatLength * 0.78,
+      theme.bridgeWave ?? theme.variationWave ?? theme.wave,
+      (theme.bridgeGain ?? 0.16) / Math.sqrt(bridge.length),
+      pan
     );
   });
 }

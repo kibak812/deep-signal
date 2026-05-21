@@ -17,6 +17,9 @@
   "noCriticalOverlap": true,
   "touchRailReady": true,
   "combatReadable": true,
+  "combatantsFramed": true,
+  "arenaUsesVerticalSpace": true,
+  "arenaToHandGap": 286,
   "handStyle": {
     "overflowX": "auto",
     "touchAction": "pan-x",
@@ -33,9 +36,9 @@
       "height": 244
     },
     "command": {
-      "left": 17,
+      "left": 303,
       "top": 105,
-      "right": 18,
+      "right": 304,
       "bottom": 106,
       "width": 1,
       "height": 1
@@ -72,14 +75,40 @@
       "width": 92,
       "height": 92
     },
+    "arena": {
+      "left": 18,
+      "top": 14,
+      "right": 802,
+      "bottom": 642,
+      "width": 784,
+      "height": 628
+    },
     "enemyLine": {
       "left": 292,
-      "top": 146,
+      "top": 205,
       "right": 786,
-      "bottom": 583,
+      "bottom": 642,
       "width": 494,
       "height": 437
     },
+    "playerPlate": {
+      "left": 60,
+      "top": 597,
+      "right": 322,
+      "bottom": 642,
+      "width": 262,
+      "height": 45
+    },
+    "enemyPlates": [
+      {
+        "left": 467,
+        "top": 585,
+        "right": 690,
+        "bottom": 630,
+        "width": 223,
+        "height": 45
+      }
+    ],
     "targetAssist": {
       "left": 0,
       "top": 0,
