@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "text": "⚡ 5 /5",
+  "pipCountVar": "5",
+  "gridTemplateColumns": "10px 10px 10px 10px 10px",
+  "oneRow": true,
+  "barsInsidePanel": true,
+  "barsReadable": true,
+  "panelBox": {
+    "left": 13,
+    "right": 103,
+    "bottom": 694,
+    "width": 90,
+    "height": 90
+  },
+  "pipsBox": {
+    "left": 27,
+    "right": 89,
+    "bottom": 686,
+    "width": 62,
+    "height": 6
+  },
+  "bars": [
+    {
+      "left": 27,
+      "top": 680,
+      "width": 10,
+      "height": 6
+    },
+    {
+      "left": 40,
+      "top": 680,
+      "width": 10,
+      "height": 6
+    },
+    {
+      "left": 53,
+      "top": 680,
+      "width": 10,
+      "height": 6
+    },
+    {
+      "left": 66,
+      "top": 680,
+      "width": 10,
+      "height": 6
+    },
+    {
+      "left": 79,
+      "top": 680,
+      "width": 10,
+      "height": 6
+    }
+  ]
+}

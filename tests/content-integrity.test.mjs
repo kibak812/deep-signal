@@ -1031,6 +1031,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
   assert.match(mainSource, /aria-live="assertive"/);
   assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
+  assert.match(mainSource, /const visiblePipCount = Math\.min\(8, pipCount\)/);
+  assert.match(mainSource, /style="--energy-pip-count:\$\{visiblePipCount\}"/);
   assert.match(mainSource, /function combatTurnLockReason\(run = state\.run\)/);
   assert.match(mainSource, /function combatEndTurnButtonState\(run, preview\)/);
   assert.match(mainSource, /ariaLabel:\s*"내 턴 준비 중"/);
@@ -1365,6 +1367,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-energy-panel/);
   assert.match(styleSource, /\.combat-energy-panel\.empty/);
   assert.match(styleSource, /\.energy-pips/);
+  assert.match(styleSource, /\.energy-pips[\s\S]*grid-template-columns:\s*repeat\(var\(--energy-pip-count, 3\), minmax\(0, 1fr\)\)/);
+  assert.match(styleSource, /\.energy-pips i[\s\S]*min-width:\s*0/);
+  assert.match(captureSource, /stageHighEnergyHudFixture\(cdp\)/);
+  assert.match(captureSource, /assertHighEnergyHud\(cdp\)/);
+  assert.match(captureSource, /browser-qa-combat-high-energy-hud\.json/);
   assert.match(styleSource, /\.forecast-chip/);
   assert.match(styleSource, /\.combat-command-row/);
   assert.match(styleSource, /\.combat-command-row:has\(\.turn-plan\[open\]\)/);

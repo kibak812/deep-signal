@@ -256,6 +256,14 @@ try {
   await capture(cdp, "browser-qa-combat-energy-locked.png");
   await clearSavedRun(cdp);
 
+  await stageHighEnergyHudFixture(cdp);
+  await navigate(cdp, qaUrl("high-energy-hud"));
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board");
+  await assertHighEnergyHud(cdp);
+  await capture(cdp, "browser-qa-combat-high-energy-hud.png");
+  await clearSavedRun(cdp);
+
   const victoryCodaEvidence = await captureVictoryCodaFlow(cdp);
 
   await stageBossFixture(cdp);
@@ -822,6 +830,35 @@ async function stageEnergyLockedHandFixture(cdp) {
   })()`);
 }
 
+async function stageHighEnergyHudFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-high-energy-hud", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA high energy HUD fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA high energy HUD fixture combat not started");
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 5;
+    run.combat.energy = 5;
+    run.combat.hand = [
+      { uid: 7721, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7722, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7723, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7724, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, energy: run.combat.energy, maxEnergy: run.combat.maxEnergy, hand: run.combat.hand.length };
+  })()`);
+}
+
 async function stageDesktopHandReadabilityFixture(cdp) {
   await evaluate(cdp, `(async () => {
     const { newRun, enterNode } = await import("./src/engine/game.js");
@@ -1283,6 +1320,47 @@ async function assertEnergyLockedHandHover(cdp) {
   if (!evidence.ok) {
     throw new Error(`Energy locked hand hover failed: ${JSON.stringify(evidence)}`);
   }
+}
+
+async function assertHighEnergyHud(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const panel = document.querySelector(".combat-energy-panel");
+    const pips = document.querySelector(".energy-pips");
+    const bars = [...document.querySelectorAll(".energy-pips i")];
+    const panelBox = panel?.getBoundingClientRect();
+    const pipsBox = pips?.getBoundingClientRect();
+    const barBoxes = bars.map((bar) => bar.getBoundingClientRect());
+    const style = pips ? getComputedStyle(pips) : null;
+    const text = panel?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const oneRow = barBoxes.every((box) => Math.abs(box.top - barBoxes[0].top) <= 1);
+    const barsInsidePanel = Boolean(panelBox && pipsBox && pipsBox.left >= panelBox.left && pipsBox.right <= panelBox.right && pipsBox.bottom <= panelBox.bottom);
+    const barsReadable = barBoxes.length === 5 && barBoxes.every((box) => box.width >= 8 && box.height >= 5);
+    const ok =
+      Boolean(panel) &&
+      Boolean(pips) &&
+      /5\\s*\\/\\s*5/.test(text) &&
+      pips?.style.getPropertyValue("--energy-pip-count") === "5" &&
+      style?.gridTemplateColumns.split(" ").length === 5 &&
+      oneRow &&
+      barsInsidePanel &&
+      barsReadable;
+    return {
+      ok,
+      text,
+      pipCountVar: pips?.style.getPropertyValue("--energy-pip-count") ?? "",
+      gridTemplateColumns: style?.gridTemplateColumns ?? "",
+      oneRow,
+      barsInsidePanel,
+      barsReadable,
+      panelBox: panelBox ? { left: Math.round(panelBox.left), right: Math.round(panelBox.right), bottom: Math.round(panelBox.bottom), width: Math.round(panelBox.width), height: Math.round(panelBox.height) } : null,
+      pipsBox: pipsBox ? { left: Math.round(pipsBox.left), right: Math.round(pipsBox.right), bottom: Math.round(pipsBox.bottom), width: Math.round(pipsBox.width), height: Math.round(pipsBox.height) } : null,
+      bars: barBoxes.map((box) => ({ left: Math.round(box.left), top: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) }))
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`High energy HUD failed: ${JSON.stringify(evidence)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-combat-high-energy-hud.json"), `${JSON.stringify(evidence, null, 2)}\n`);
 }
 
 async function assertStatusTooltipUx(cdp) {

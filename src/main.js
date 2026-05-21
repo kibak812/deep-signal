@@ -5955,14 +5955,15 @@ function renderCombatPileDock(combat) {
 
 function renderCombatEnergyPanel(combat) {
   const pipCount = Math.max(combat.maxEnergy, combat.energy);
+  const visiblePipCount = Math.min(8, pipCount);
   const playableCount = combat.hand.filter((card) => cardCost(card, combat) <= combat.energy).length;
   const energyState = combat.energy > 0 ? "ready" : "empty";
-  const pips = Array.from({ length: pipCount }, (_, index) => `<i class="${index < combat.energy ? "filled" : ""}" aria-hidden="true"></i>`).join("");
+  const pips = Array.from({ length: visiblePipCount }, (_, index) => `<i class="${index < combat.energy ? "filled" : ""}" aria-hidden="true"></i>`).join("");
   return `
     <section class="combat-energy-panel ${energyState}" aria-label="에너지 ${combat.energy}/${combat.maxEnergy}. 지금 낼 수 있는 카드 ${playableCount}장">
       <span aria-hidden="true">⚡</span>
       <strong><b>${combat.energy}</b><small>/${combat.maxEnergy}</small></strong>
-      <div class="energy-pips">${pips}</div>
+      <div class="energy-pips" style="--energy-pip-count:${visiblePipCount}">${pips}</div>
       <em>${playableCount ? `지금 낼 수 있는 카드 ${playableCount}장` : "전하 부족"}</em>
     </section>
   `;
