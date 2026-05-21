@@ -1272,7 +1272,15 @@ async function assertEnergyLockedHandHover(cdp) {
     const tooltipBox = tooltip?.getBoundingClientRect();
     const cardBox = card?.getBoundingClientRect();
     const hitTarget = cardBox ? document.elementFromPoint(cardBox.left + cardBox.width * 0.5, cardBox.top + cardBox.height * 0.18) : null;
-    const railText = rail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const compactText = (element) => {
+      if (!element) return "";
+      const clone = element.cloneNode(true);
+      clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      return clone.innerText.replace(/\\s+/g, " ").trim();
+    };
+    const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const railText = compactText(rail);
+    const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
     const cardRaised =
       Boolean(cardBox) &&
       cardBox.top >= 0 &&
@@ -1293,10 +1301,11 @@ async function assertEnergyLockedHandHover(cdp) {
       Boolean(rail) &&
       tooltipReadable &&
       cardRaised &&
-      /사용 불가|전하 부족|전하/.test(railText);
+      /사용 불가|전하 부족|전하|⚡/.test(railText + " " + railAssistiveText);
     return {
       ok,
       railText,
+      railAssistiveText,
       tooltipReadable,
       cardRaised,
       cardDisabled: card?.disabled ?? null,
@@ -1310,7 +1319,7 @@ async function assertEnergyLockedHandHover(cdp) {
       portalHidden: portal?.hidden ?? null,
       portalTextLength: portal?.innerText?.length ?? 0,
       previewRailHidden: previewRail?.hidden ?? null,
-      previewRailTextLength: previewRail?.innerText?.length ?? 0,
+      previewRailTextLength: railText.length,
       hitTargetClass: hitTarget?.className ?? hitTarget?.tagName ?? "",
       hitTargetText: hitTarget?.textContent?.replace(/\\s+/g, " ").trim().slice(0, 80) ?? "",
       cardBox: cardBox ? { top: Math.round(cardBox.top), bottom: Math.round(cardBox.bottom), height: Math.round(cardBox.height) } : null,
@@ -1825,13 +1834,28 @@ async function assertCardHoverLayout(cdp) {
     const dimmedCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']:not(.previewing-card)")].filter((card) => Number(getComputedStyle(card).opacity) < 0.7).length;
     const keywordText = tooltip.querySelector(".tooltip-keywords span");
     const rulesText = tooltip.querySelector(".tooltip-rules");
+    const compactText = (element) => {
+      if (!element) return "";
+      const clone = element.cloneNode(true);
+      clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      return clone.innerText.replace(/\\s+/g, " ").trim();
+    };
+    const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const previewRail = document.querySelector(".combat-card-preview-rail:not([hidden])");
-    const previewRailText = previewRail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const previewRailText = compactText(previewRail);
+    const previewRailAssistiveText = readableText(previewRail?.querySelector(".sr-only"));
     const tooltipPreview = tooltip.querySelector(".tooltip-preview");
     const tooltipPreviewHidden = !tooltipPreview || getComputedStyle(tooltipPreview).display === "none";
+    const previewRailCompact = Boolean(
+      previewRail &&
+      previewRailText.length <= 58 &&
+      !/사용 가능.*대상|사용 불가.*대상|놓으면 사용.*대상/.test(previewRailText)
+    );
     const previewRailReadable = Boolean(
       previewRail &&
-      /사용 가능|사용 불가|피해|방어|전하|표식|바이러스|취약|약화|⚡/.test(previewRailText)
+      /피해|방어|전하|표식|바이러스|취약|약화|⚡/.test(previewRailText) &&
+      /사용 가능|사용 불가|놓으면 사용/.test(previewRailAssistiveText) &&
+      previewRailCompact
     );
     const tooltipReadable =
       box.width >= 276 &&
@@ -1869,7 +1893,7 @@ async function assertCardHoverLayout(cdp) {
     const selfBlockAfter = selfBlockPreview?.querySelector("strong")?.getAttribute("data-preview-after") ?? "";
     const selfBlockStyle = selfBlockPreview ? getComputedStyle(selfBlockPreview) : null;
     const selfBlockProjectionOk = Boolean(selfBlockPreview && /^\\+\\d+/.test(selfBlockResult) && Number(selfBlockAfter) > 0 && selfBlockStyle?.display !== "none");
-    const selfUtilityProjectionOk = selfPreview && /뽑기|전하|회복|정화|비용|⚡/.test(previewRailText);
+    const selfUtilityProjectionOk = selfPreview && /뽑기|전하|회복|정화|비용|⚡/.test(previewRailText + " " + previewRailAssistiveText);
     const selfProjectionOk = !selfPreview || selfBlockProjectionOk || selfUtilityProjectionOk;
     const enemyPreview = Boolean(document.querySelector(".enemy-card.preview-target"));
     const aimLine = document.querySelector(".combat-aim-line");
@@ -1884,7 +1908,9 @@ async function assertCardHoverLayout(cdp) {
       badgeClearTitle,
       tooltipPreviewHidden,
       previewRailReadable,
+      previewRailCompact,
       previewRailText,
+      previewRailAssistiveText,
       previewBoardActive,
       previewingCard: Boolean(previewingCard),
       dimmedCards,
@@ -1911,6 +1937,12 @@ async function assertCardHoverLayout(cdp) {
 async function assertCardOutcomeReadability(cdp) {
   const result = await evaluate(cdp, `(() => {
     const cleanText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const visibleText = (element) => {
+      if (!element) return "";
+      const clone = element.cloneNode(true);
+      clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      return cleanText(clone);
+    };
     const handOutcomeNodes = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card'] .card-outcome .primary em")];
     const rail = document.querySelector(".combat-card-preview-rail:not([hidden])");
     const railEffectNodes = [...(rail?.querySelectorAll(".preview-effect-icons em") ?? [])];
@@ -1928,9 +1960,14 @@ async function assertCardOutcomeReadability(cdp) {
       width: Math.round(item.clientWidth),
       scrollWidth: Math.round(item.scrollWidth)
     }));
-    const railText = cleanText(rail);
+    const railText = visibleText(rail);
+    const railAssistiveText = cleanText(rail?.querySelector(".sr-only"));
     const semanticPattern = /(피해|방어|뽑기|전하|정화|회복|처치|표식|바이러스|취약|약화|집중|생성|버림|소멸|강화|비용|효과)/;
     const bareNumberPattern = /^[+−-]?\\d+$/;
+    const railCompact =
+      Boolean(railText) &&
+      railText.length <= 58 &&
+      !/사용 가능.*대상|사용 불가.*대상|놓으면 사용.*대상/.test(railText);
     const hasReadableHand =
       outcomeTexts.length >= 6 &&
       outcomeTexts.some((text) => /피해\\s*\\d+/.test(text)) &&
@@ -1940,15 +1977,19 @@ async function assertCardOutcomeReadability(cdp) {
       outcomeFits.every((item) => item.fit);
     const hasReadableRail =
       Boolean(rail) &&
-      /전하\\s*\\d+/.test(railText) &&
+      /(?:전하|⚡)\\s*\\d+/.test(railText) &&
       railEffectTexts.length >= 1 &&
       railEffectTexts.every((text) => semanticPattern.test(text) && !bareNumberPattern.test(text)) &&
-      railEffectsFit.every((item) => item.fit);
+      railEffectsFit.every((item) => item.fit) &&
+      railCompact &&
+      /사용 후 남은 전하/.test(railAssistiveText);
     return {
       ok: hasReadableHand && hasReadableRail,
       outcomeTexts,
       outcomeFits,
       railText,
+      railAssistiveText,
+      railCompact,
       railEffectTexts,
       railEffectsFit,
       hasReadableHand,
@@ -2569,7 +2610,15 @@ async function assertAttackCardHoverTarget(cdp) {
     const lineStyle = line ? getComputedStyle(line) : null;
     const lineBefore = line ? getComputedStyle(line, "::before") : null;
     const markerText = target?.getAttribute("data-preview-text") ?? "";
-    const railText = rail?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const compactText = (element) => {
+      if (!element) return "";
+      const clone = element.cloneNode(true);
+      clone.querySelectorAll(".sr-only").forEach((node) => node.remove());
+      return clone.innerText.replace(/\\s+/g, " ").trim();
+    };
+    const readableText = (element) => element?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const railText = compactText(rail);
+    const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
     const targetStyle = target ? getComputedStyle(target) : null;
     const healthResult = health?.getAttribute("data-preview-result") ?? "";
     const previewHpLoss = targetStyle?.getPropertyValue("--preview-hp-loss").trim() ?? "";
@@ -2588,13 +2637,15 @@ async function assertAttackCardHoverTarget(cdp) {
       parseFloat(previewHpLoss) > 0 &&
       /피해|처치|-\\d+/.test(markerText) &&
       /처치|-\\d+/.test(healthResult) &&
-      /피해|사용 가능|⚡/.test(railText);
+      /피해|⚡/.test(railText) &&
+      /펄스 랜스.*사용 가능.*대상/.test(railAssistiveText);
     return {
       ok,
       markerText,
       healthResult,
       previewHpLoss,
       railText,
+      railAssistiveText,
       lineOpacity: lineStyle?.opacity ?? "",
       lineBeforeHeight: lineBefore?.height ?? "",
       targetClass: target?.className ?? "",

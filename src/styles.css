@@ -7098,10 +7098,10 @@ dd,
 
 .combat-card-preview-rail {
   min-width: 0;
-  width: min(348px, 100%);
+  width: min(326px, 100%);
   justify-self: center;
   display: grid;
-  grid-template-columns: 23px minmax(72px, 1fr) minmax(88px, auto) minmax(58px, auto);
+  grid-template-columns: 23px minmax(72px, 1fr) minmax(82px, auto) minmax(38px, auto);
   gap: 6px;
   align-items: center;
   border: 1px solid color-mix(in srgb, currentColor 42%, rgba(236, 248, 243, 0.16));
@@ -7159,12 +7159,12 @@ dd,
 .combat-card-preview-rail .preview-target-name {
   min-width: 0;
   display: grid;
-  grid-template-columns: 16px minmax(0, 1fr);
+  grid-template-columns: 14px minmax(0, 1fr);
   align-items: center;
   gap: 4px;
   overflow: hidden;
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -7188,7 +7188,7 @@ dd,
   display: flex;
   justify-content: flex-end;
   gap: 4px;
-  max-width: 104px;
+  max-width: 98px;
   overflow: hidden;
 }
 
@@ -7243,12 +7243,12 @@ dd,
 }
 
 .preview-energy-after {
-  min-width: 50px;
+  min-width: 36px;
   justify-self: end;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   border: 1px solid rgba(125, 211, 252, 0.2);
   border-radius: 4px;
   background:
@@ -7265,9 +7265,9 @@ dd,
 }
 
 .preview-energy-after span {
-  color: rgba(236, 248, 243, 0.64);
-  font-size: 0.62rem;
-  font-weight: 800;
+  color: rgba(125, 211, 252, 0.86);
+  font-size: 0.7rem;
+  font-weight: 1000;
 }
 
 .combat-aim-line[hidden] {

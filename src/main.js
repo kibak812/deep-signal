@@ -3012,7 +3012,7 @@ function renderCombatCardPreviewRail(card, preview, selected, targetCount, mode 
         })
         .join("")}
     </div>
-    <b class="preview-energy-after" title="사용 후 남은 전하" aria-hidden="true"><span>전하</span>${Math.max(0, preview.energyAfter)}</b>
+    <b class="preview-energy-after" title="사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}" aria-hidden="true"><span>⚡</span>${Math.max(0, preview.energyAfter)}</b>
     <span class="sr-only">${card.name}. ${actionLabel}. 대상 ${targetName}. ${detail}. 사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}.</span>
   `;
 }
