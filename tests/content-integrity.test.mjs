@@ -307,9 +307,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /distribution-polish/);
   assert.match(auditSource, /pages-deploy-workflow/);
   assert.match(auditSource, /dist\/\.nojekyll/);
-  assert.match(auditSource, /actions\/configure-pages@v5/);
-  assert.match(auditSource, /actions\/upload-pages-artifact@v3/);
-  assert.match(auditSource, /actions\/deploy-pages@v4/);
+  assert.match(auditSource, /actions\/configure-pages@v6/);
+  assert.match(auditSource, /actions\/upload-pages-artifact@v5/);
+  assert.match(auditSource, /actions\/deploy-pages@v5/);
   assert.match(auditSource, /github-actions-pages/);
   assert.match(auditSource, /favicon\.svg/);
   assert.match(auditSource, /verified-flow-coverage/);
@@ -518,9 +518,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
     assert.match(deployWorkflowSource, /npm run build/);
     assert.match(deployWorkflowSource, /pages:\s*write/);
     assert.match(deployWorkflowSource, /id-token:\s*write/);
-    assert.match(deployWorkflowSource, /actions\/configure-pages@v5/);
-    assert.match(deployWorkflowSource, /actions\/upload-pages-artifact@v3/);
-    assert.match(deployWorkflowSource, /actions\/deploy-pages@v4/);
+    assert.match(deployWorkflowSource, /actions\/configure-pages@v6/);
+    assert.match(deployWorkflowSource, /actions\/upload-pages-artifact@v5/);
+    assert.match(deployWorkflowSource, /actions\/deploy-pages@v5/);
     assert.match(deployWorkflowSource, /path:\s*dist/);
     assert.doesNotMatch(deployWorkflowSource, /peaceiris\/actions-gh-pages/);
     assert.doesNotMatch(deployWorkflowSource, /publish_branch:/);

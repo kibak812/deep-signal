@@ -260,9 +260,9 @@ async function main() {
     deployWorkflowSource.includes("npm run build") &&
     deployWorkflowSource.includes("pages: write") &&
     deployWorkflowSource.includes("id-token: write") &&
-    deployWorkflowSource.includes("actions/configure-pages@v5") &&
-    deployWorkflowSource.includes("actions/upload-pages-artifact@v3") &&
-    deployWorkflowSource.includes("actions/deploy-pages@v4") &&
+    deployWorkflowSource.includes("actions/configure-pages@v6") &&
+    deployWorkflowSource.includes("actions/upload-pages-artifact@v5") &&
+    deployWorkflowSource.includes("actions/deploy-pages@v5") &&
     deployWorkflowSource.includes("path: dist");
   record(
     "pages-deploy-workflow",
