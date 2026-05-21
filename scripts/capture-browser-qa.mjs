@@ -3431,6 +3431,11 @@ async function assertRewardDecisionUx(cdp) {
     const collapsedRelicEffects = relicChoices.filter((choice) => getComputedStyle(choice.querySelector(".reward-relic-effect")).display === "none").length;
     const relicChoiceHeights = relicChoices.map((choice) => Math.round(choice.getBoundingClientRect().height));
     const pickLines = [...document.querySelectorAll(".reward-pick-line")];
+    const metricRows = [...document.querySelectorAll(".reward-pick-metrics")];
+    const metricRowTexts = metricRows.map((row) => row.innerText.replace(/\\s+/g, " ").trim());
+    const metricChipCounts = metricRows.map((row) => row.querySelectorAll("i").length);
+    const metricRowsCompact = metricRows.every((row) => row.getBoundingClientRect().height <= 24);
+    const metricChipsFit = metricRows.every((row) => [...row.querySelectorAll("i")].every((chip) => chip.scrollWidth <= chip.clientWidth + 2));
     const expandedPickLines = pickLines.filter((line) => getComputedStyle(line.querySelector("small")).display !== "none").length;
     const visibleDetailButtons = [...document.querySelectorAll(".reward-option-detail")].filter((detail) => {
       const style = getComputedStyle(detail);
@@ -3481,6 +3486,11 @@ async function assertRewardDecisionUx(cdp) {
       skipBox.height >= 32 &&
       skipCompact &&
       pickLines.length >= 3 &&
+      metricRows.length === pickLines.length &&
+      metricChipCounts.every((count) => count === 2) &&
+      metricRowTexts.every((text) => /→/.test(text) && /비용/.test(text)) &&
+      metricRowsCompact &&
+      metricChipsFit &&
       expandedPickLines <= 1 &&
       visibleDetailButtons <= 1 &&
       (relicChoices.length === 0 || collapsedRelicEffects === relicChoices.length) &&
@@ -3506,6 +3516,11 @@ async function assertRewardDecisionUx(cdp) {
       skipLabelWidth: Math.round(skipLabelBox.width),
       skipExpandedByState,
       pickLineCount: pickLines.length,
+      pickMetricRows: metricRows.length,
+      metricChipCounts,
+      metricRowTexts,
+      metricRowsCompact,
+      metricChipsFit,
       expandedPickLines,
       visibleDetailButtons,
       relicChoices: relicChoices.length,

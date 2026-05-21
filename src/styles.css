@@ -12524,7 +12524,7 @@ dd,
     linear-gradient(90deg, color-mix(in srgb, currentColor 12%, transparent), transparent 72%),
     rgba(5, 11, 18, 0.5);
   color: var(--cyan);
-  min-height: 30px;
+  min-height: 45px;
   padding: 5px 7px;
   text-align: left;
   transition:
@@ -12536,7 +12536,9 @@ dd,
 
 .reward-pick-line span,
 .reward-pick-line strong,
-.reward-pick-line small {
+.reward-pick-line small,
+.reward-pick-metrics,
+.reward-pick-metrics i {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -12565,6 +12567,40 @@ dd,
   line-height: 1.1;
 }
 
+.reward-pick-metrics {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 4px;
+}
+
+.reward-pick-metrics i {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 16px;
+  border: 1px solid color-mix(in srgb, currentColor 24%, rgba(236, 248, 243, 0.1));
+  background: rgba(236, 248, 243, 0.05);
+  color: rgba(236, 248, 243, 0.74);
+  padding: 2px 5px;
+  font-size: 0.59rem;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.reward-pick-metrics i.strong {
+  color: #a7f3d0;
+}
+
+.reward-pick-metrics i.warn {
+  color: #ffc1cf;
+}
+
+.reward-pick-metrics i.steady {
+  color: rgba(236, 248, 243, 0.72);
+}
+
 .reward-pick-line small {
   grid-column: 1 / -1;
   display: none;
@@ -12581,7 +12617,7 @@ dd,
 .reward-option.selected .reward-pick-line,
 .reward-option:hover .reward-pick-line,
 .reward-option:focus-within .reward-pick-line {
-  min-height: 48px;
+  min-height: 64px;
   transform: translateY(-1px);
 }
 
@@ -21655,6 +21691,8 @@ input[type="range"] {
 .high-contrast .reward-spotlight article,
 .high-contrast .reward-spotlight-card-art,
 .high-contrast .reward-card-choices,
+.high-contrast .reward-pick-line,
+.high-contrast .reward-pick-metrics i,
 .high-contrast .reward-option-detail,
 .high-contrast .reward-deck-shift,
 .high-contrast .reward-deck-shift i,

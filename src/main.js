@@ -7106,9 +7106,16 @@ function renderRewardPickLine(run, cardId) {
     <div class="reward-pick-line ${insight.tone}" aria-label="${card.name} 선택 시 덱 변화">
       <span title="${conceptLabel}">${rewardCompactConceptLabel(conceptLabel)}</span>
       <strong>${rewardInsightShortLabel(insight)}</strong>
+      <div class="reward-pick-metrics" aria-hidden="true">
+        ${rewardPickMetricChips(run, cardId).map((chip) => `<i class="${chip.tone}" title="${chip.label}">${chip.label}</i>`).join("")}
+      </div>
       <small>${rewardPickLineText(card, insight)}</small>
     </div>
   `;
+}
+
+function rewardPickMetricChips(run, cardId) {
+  return rewardDeckShift(run, cardId).chips.slice(0, 2);
 }
 
 function rewardOptionAriaLabel(run, cardId, recommended = false, previewing = false, selected = false) {

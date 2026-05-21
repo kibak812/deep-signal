@@ -470,6 +470,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /await assertRewardDecisionUx\(cdp\);/);
   assert.match(captureSource, /Reward decision UX failed/);
   assert.match(captureSource, /collapsedRelicEffects === relicChoices\.length/);
+  assert.match(captureSource, /metricRows\.length === pickLines\.length/);
+  assert.match(captureSource, /metricChipCounts\.every\(\(count\) => count === 2\)/);
+  assert.match(captureSource, /metricRowTexts\.every\(\(text\) => \/→\/\.test\(text\) && \/비용\/\.test\(text\)\)/);
+  assert.match(captureSource, /metricChipsFit/);
   assert.match(captureSource, /Reward relic hover detail failed/);
   assert.match(captureSource, /await hoverSelector\(cdp, "\.reward-relic-choice"\)/);
   assert.match(captureSource, /function assertRewardSelectionProgress\(cdp\)/);
@@ -2891,6 +2895,7 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /function rewardAxisShortLabel\(axis\)/);
   assert.match(mainSource, /function rewardCardRoleLabel\(card\)/);
   assert.match(mainSource, /function rewardPickLineText\(card, insight\)/);
+  assert.match(mainSource, /function rewardPickMetricChips\(run, cardId\)/);
   assert.match(mainSource, /function renderRewardFlow\(run\)/);
   assert.match(mainSource, /function renderRewardSkipChoice\(run, skipRecommended = false\)/);
   assert.match(mainSource, /function renderRewardCompass\(run\)/);
@@ -3040,6 +3045,9 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /class="reward-choice-stage \$\{relicChoices\.length \? "with-relics" : "cards-only"\} \$\{previewCardId \? "preview-active" : ""\} \$\{cardReady \? "card-ready" : ""\} \$\{run\.reward\.selectedRelicId \? "relic-ready" : ""\}"/);
   assert.match(mainSource, /class="reward-section-heading reward-card-heading"[\s\S]*\$\{renderRewardSkipChoice\(run, skipRecommended\)\}/);
   assert.match(mainSource, /class="reward-pick-line \$\{insight\.tone\}"/);
+  assert.match(mainSource, /class="reward-pick-metrics" aria-hidden="true"/);
+  assert.match(mainSource, /rewardPickMetricChips\(run, cardId\)\.map/);
+  assert.match(mainSource, /rewardDeckShift\(run, cardId\)\.chips\.slice\(0, 2\)/);
   assert.match(mainSource, /class="reward-deck-shift \$\{shift\.tone\}"/);
   assert.match(mainSource, /선택 시 덱 변화/);
   assert.match(mainSource, /선택 뒤 덱 변화/);
@@ -3109,6 +3117,11 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(styleSource, /\.card-art-image[\s\S]*background-size:\s*900% 800%/);
   assert.match(styleSource, /\.reward-pick-line/);
   assert.match(styleSource, /\.reward-pick-line[\s\S]*grid-template-columns:\s*auto minmax\(0, 1fr\)/);
+  assert.match(styleSource, /\.reward-pick-metrics/);
+  assert.match(styleSource, /\.reward-pick-metrics[\s\S]*grid-template-columns:\s*minmax\(0, 0\.82fr\) minmax\(0, 1\.18fr\)/);
+  assert.match(styleSource, /\.reward-pick-metrics i/);
+  assert.match(styleSource, /\.reward-pick-metrics i\.warn/);
+  assert.match(styleSource, /\.high-contrast \.reward-pick-metrics i/);
   assert.match(styleSource, /\.reward-pick-line small[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.reward-option\.previewing \.reward-pick-line small,[\s\S]*\.reward-option\.selected \.reward-pick-line small,[\s\S]*display:\s*-webkit-box/);
   assert.match(styleSource, /\.reward-pick-line small[\s\S]*-webkit-line-clamp:\s*2/);
