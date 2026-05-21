@@ -15,17 +15,17 @@
       "height": 720
     },
     "pulse": {
-      "left": 227,
+      "left": 225,
       "top": 133,
-      "right": 329,
+      "right": 330,
       "bottom": 160,
-      "width": 103,
-      "height": 26
+      "width": 105,
+      "height": 27
     },
     "echo": {
-      "left": 232,
+      "left": 233,
       "top": 113,
-      "right": 311,
+      "right": 312,
       "bottom": 180,
       "width": 79,
       "height": 67
@@ -33,49 +33,49 @@
     "trail": {
       "left": 278,
       "top": 143,
-      "right": 818,
+      "right": 856,
       "bottom": 148,
-      "width": 541,
+      "width": 578,
       "height": 5
     },
     "spark": {
-      "left": 378,
+      "left": 387,
       "top": 140,
-      "right": 385,
+      "right": 396,
       "bottom": 151,
-      "width": 7,
+      "width": 8,
       "height": 11
     },
     "impact": {
       "left": 1033,
-      "top": 77,
+      "top": 78,
       "right": 1129,
       "bottom": 140,
       "width": 96,
       "height": 63
     },
     "hitEnemy": {
-      "left": 977,
+      "left": 976,
       "top": 25,
-      "right": 1201,
+      "right": 1200,
       "bottom": 385,
       "width": 224,
       "height": 360
     },
     "targetRing": {
-      "left": 980,
-      "top": 47,
+      "left": 979,
+      "top": 46,
       "right": 1197,
-      "bottom": 307,
-      "width": 217,
-      "height": 260
+      "bottom": 308,
+      "width": 218,
+      "height": 261
     },
     "hitSparks": {
-      "left": 1004,
+      "left": 1003,
       "top": 128,
       "right": 1173,
       "bottom": 239,
-      "width": 168,
+      "width": 169,
       "height": 111
     },
     "damagePop": {

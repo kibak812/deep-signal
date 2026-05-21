@@ -576,6 +576,10 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /lossMoves/);
   assert.match(balanceSource, /timelineSamples/);
   assert.match(balanceSource, /lowBurstDefenseLosses/);
+  assert.match(balanceSource, /function finalBossPressureProfile\(losses\)/);
+  assert.match(balanceSource, /sequenceLosses/);
+  assert.match(balanceSource, /averageRequiemHandBurstDefense/);
+  assert.match(balanceSource, /문 낙하→호출→레퀴엠/);
   assert.match(balanceSource, /burstDefense/);
   assert.match(balanceSource, /primaryIssue/);
   assert.match(balanceSource, /최종 보스 도달/);
@@ -1818,6 +1822,8 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /문 낙하를 맞을 체력이 남지 않았습니다/);
   assert.match(mainSource, /보스 전 회복·단타 방어 챙기기/);
   assert.match(mainSource, /레퀴엠 턴을 넘길 방어가 부족했습니다/);
+  assert.match(mainSource, /레퀴엠 대비 연속 방어 챙기기/);
+  assert.match(mainSource, /문 낙하→호출→레퀴엠/);
   assert.match(mainSource, /본체를 쓰러뜨리면 전투가 끝납니다/);
   assert.match(mainSource, /profile\.stoppedType === "boss"/);
   assert.match(mainSource, /보스 전 정비 먼저 보기/);

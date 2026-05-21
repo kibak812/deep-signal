@@ -9269,7 +9269,8 @@ function summaryFinalBossCue(finalCombat = {}) {
   const move = finalCombat?.bossMove ?? "";
   const forecast = finalCombat?.forecast ?? {};
   const virus = finalCombat?.playerStatuses?.virus ?? 0;
-  if (hpRatio <= 0.18) {
+  const moveSpecificThreat = ["gate_slam", "gate_call", "phase_requiem"].includes(move) || (forecast.incomingDamage ?? 0) >= 20;
+  if (hpRatio <= 0.18 && !moveSpecificThreat) {
     return {
       title: "마지막 한 턴의 마무리 피해가 부족했습니다",
       detail: "본체 체력이 얼마 남지 않았습니다. 다음에는 큰 공격 카드, 취약, 전하 소모 카드를 같은 턴에 잡는 쪽을 우선하세요.",
@@ -9291,7 +9292,7 @@ function summaryFinalBossCue(finalCombat = {}) {
   if (move === "gate_slam" || ((finalCombat?.playerHp ?? 99) <= 12 && (forecast.incomingDamage ?? 0) > 0)) {
     return {
       title: "문 낙하를 맞을 체력이 남지 않았습니다",
-      detail: "마지막 문은 레퀴엠만큼 단타 공격도 위험합니다. 보스 직전에는 강화보다 회복, 단타 방어, 약화 중 하나를 먼저 계산하세요.",
+      detail: "마지막 문은 문 낙하로 체력을 깎은 뒤 호출과 레퀴엠으로 시간을 빼앗습니다. 보스 직전에는 강화보다 회복, 단타 방어, 약화 중 하나를 먼저 계산하세요.",
       brief: "최종 보스 전 체력이 낮으면 강화보다 회복이나 단타 방어 수단을 우선하세요.",
       action: "보스 전 회복·단타 방어 챙기기",
       retryTitle: "마지막 휴식 선택 바꿔보기",
@@ -9329,19 +9330,19 @@ function summaryFinalBossCue(finalCombat = {}) {
   if (move === "phase_requiem" || (forecast.incomingDamage ?? 0) >= 20) {
     return {
       title: "레퀴엠 턴을 넘길 방어가 부족했습니다",
-      detail: "2단계 연속 공격은 방어와 약화가 함께 있어야 안정적으로 넘길 수 있습니다.",
-      brief: "최종 보스 전에는 큰 방어 카드와 약화 카드 중 하나를 반드시 남겨두세요.",
-      action: "레퀴엠 대비 방어·약화 챙기기",
+      detail: "2단계는 문 낙하→호출→레퀴엠 순서로 체력을 깎습니다. 큰 방어 한 장만 기다리기보다 도금, 약화, 가벼운 방어를 이어서 준비해야 합니다.",
+      brief: "레퀴엠 전에는 도금, 약화, 가벼운 방어를 이어서 쓸 수 있게 덱을 정리하세요.",
+      action: "레퀴엠 대비 연속 방어 챙기기",
       retryTitle: "2단계 방어 턴 다시 준비",
-      chips: ["방어", "약화", "2단계"],
-      planTitle: "큰 공격 턴을 넘길 카드 남기기",
-      planDetail: "마지막 문 2단계에서는 공격 카드만으로 밀기 어렵습니다. 도금, 큰 방어, 약화 중 하나를 마무리 카드와 함께 잡으세요.",
-      threatTitle: "2단계 연속 공격에 체력 손실",
-      threatDetail: "레퀴엠 턴은 한 번만 넘겨도 마무리 기회가 생깁니다. 방어와 약화를 마지막 구역에서 더 높게 평가하세요.",
+      chips: ["연속 방어", "도금", "약화"],
+      planTitle: "문 낙하 다음 턴까지 이어서 막기",
+      planDetail: "마지막 문 2단계에서는 공격 카드만으로 밀기 어렵습니다. 도금, 큰 방어, 약화, 추가 뽑기 중 둘 이상을 마무리 카드와 함께 잡으세요.",
+      threatTitle: "문 낙하 뒤 레퀴엠에 체력 손실",
+      threatDetail: "레퀴엠 턴은 한 번만 넘겨도 마무리 기회가 생깁니다. 마지막 구역에서는 한 턴짜리 방어보다 다음 턴까지 이어지는 방어를 더 높게 보세요.",
       steps: [
-        { tone: "danger", title: "큰 방어 카드 확보", detail: "한 턴에 18 이상 막을 수 있는 카드나 도금 유물을 준비합니다." },
-        { tone: "warning", title: "약화로 연타 줄이기", detail: "약화 1만 있어도 연속 공격의 체력 손실이 크게 줄어듭니다." },
-        { tone: "strong", title: "막은 다음 바로 마무리", detail: "방어 턴 다음에 본체를 끝낼 공격 카드를 손패에 남겨둡니다." }
+        { tone: "danger", title: "문 낙하 뒤 체력 남기기", detail: "단타 공격을 막고도 다음 레퀴엠을 맞을 체력이 남아야 합니다." },
+        { tone: "warning", title: "도금·약화 같이 쓰기", detail: "도금이나 약화가 있으면 연속 공격의 체력 손실이 크게 줄어듭니다." },
+        { tone: "strong", title: "막은 다음 바로 마무리", detail: "방어 턴 다음에 본체를 끝낼 공격이나 추가 뽑기를 손패에 남겨둡니다." }
       ]
     };
   }

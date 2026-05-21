@@ -1469,6 +1469,8 @@ test("balance report highlights death causes, floor bands, and build performance
   assert.ok(Array.isArray(report.finalBossAnalysis.timelineSamples));
   assert.equal(typeof report.finalBossAnalysis.primaryIssue, "string");
   assert.equal(typeof report.finalBossAnalysis.lowBurstDefenseLosses, "number");
+  assert.equal(typeof report.finalBossAnalysis.pressureProfile.sequenceLosses, "number");
+  assert.equal(typeof report.finalBossAnalysis.pressureProfile.averageRequiemHandBurstDefense, "number");
   assert.equal(typeof report.finalBossAnalysis.roleAverages.wins.burstDefense, "number");
   assert.ok(report.runs.every((run) => Array.isArray(run.finalBossTimeline)));
   assert.ok(report.runs.every((run) => typeof run.roleProfile.burstDefense === "number"));

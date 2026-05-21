@@ -1187,6 +1187,7 @@ function aggregateFinalBossAnalysis(runs) {
   const summonWindowLosses = losses.filter((run) => finalBossMoveSeen(run, "gate_call")).length;
   const lowHpEntryLosses = losses.filter((run) => (run.finalBossTimeline?.[0]?.playerHp ?? run.finalBoss?.playerHp ?? Infinity) <= 18).length;
   const lowBurstDefenseLosses = losses.filter((run) => (run.finalBoss?.roles?.burstDefense ?? run.roleProfile?.burstDefense ?? 0) < 2).length;
+  const pressureProfile = finalBossPressureProfile(losses);
   return {
     reached: reached.length,
     wins: wins.length,
@@ -1199,13 +1200,14 @@ function aggregateFinalBossAnalysis(runs) {
     summonWindowLosses,
     lowHpEntryLosses,
     lowBurstDefenseLosses,
+    pressureProfile,
     timelineCoverage: losses.length ? round(timelineLosses.length / losses.length) : 0,
     roleAverages: {
       wins: averageFinalBossRoles(wins),
       losses: averageFinalBossRoles(losses)
     },
     timelineSamples: losses.slice(0, 4).map(finalBossTimelineSample),
-    primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses })
+    primaryIssue: finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses, pressureProfile })
   };
 }
 
@@ -1255,6 +1257,52 @@ function finalBossTimelineSample(run) {
   };
 }
 
+function finalBossPressureProfile(losses) {
+  const requiemTurns = losses
+    .map((run) => firstFinalBossTimelineEntry(run, "phase_requiem"))
+    .filter(Boolean);
+  const requiemHandBurstCounts = requiemTurns.map((entry) => handBurstDefenseCount(entry.hand));
+  return {
+    sequenceLosses: losses.filter((run) => finalBossMoveSequenceSeen(run, ["gate_slam", "gate_call", "phase_requiem"])).length,
+    lowHpAfterSlamLosses: losses.filter((run) => playerHpAfterBossMove(run, "gate_slam") <= 18).length,
+    lowHpAtRequiemLosses: losses.filter((run) => (firstFinalBossTimelineEntry(run, "phase_requiem")?.playerHp ?? Infinity) <= 18).length,
+    noBurstDefenseAtRequiemLosses: losses.filter((run) => handBurstDefenseCount(firstFinalBossTimelineEntry(run, "phase_requiem")?.hand ?? []) === 0).length,
+    averageRequiemHandBurstDefense: requiemHandBurstCounts.length
+      ? round(requiemHandBurstCounts.reduce((sum, count) => sum + count, 0) / requiemHandBurstCounts.length)
+      : 0,
+    averageRequiemIncomingDamage: requiemTurns.length
+      ? round(requiemTurns.reduce((sum, entry) => sum + (entry.incomingDamage ?? 0), 0) / requiemTurns.length)
+      : 0
+  };
+}
+
+function finalBossMoveSequenceSeen(run, moves) {
+  let index = 0;
+  for (const entry of run.finalBossTimeline ?? []) {
+    if (entry.bossMove === moves[index]) index += 1;
+    if (index >= moves.length) return true;
+  }
+  return false;
+}
+
+function firstFinalBossTimelineEntry(run, moveId) {
+  return run.finalBossTimeline?.find((entry) => entry.bossMove === moveId) ?? null;
+}
+
+function playerHpAfterBossMove(run, moveId) {
+  const timeline = run.finalBossTimeline ?? [];
+  const index = timeline.findIndex((entry) => entry.bossMove === moveId);
+  if (index < 0) return Infinity;
+  return timeline[index + 1]?.playerHp ?? run.finalBoss?.playerHp ?? Infinity;
+}
+
+function handBurstDefenseCount(cardIds = []) {
+  return cardIds.reduce((count, cardId) => {
+    const card = CARD_BY_ID[cardId];
+    return count + (card && cardSupportsBurstDefense(card) ? 1 : 0);
+  }, 0);
+}
+
 function compactFinalBossTimelineEntry(entry) {
   return {
     turn: entry.turn,
@@ -1281,8 +1329,9 @@ function averageFinalBossRoles(runs) {
   );
 }
 
-function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses }) {
+function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses, pressureProfile }) {
   if (!losses.length) return "현재 표본에서는 최종 보스 패배가 없습니다.";
+  if ((pressureProfile?.sequenceLosses ?? 0) >= Math.max(3, losses.length * 0.6)) return "2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요.";
   if (lowBurstDefenseLosses >= Math.max(3, losses.length * 0.3)) return "문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 수단을 먼저 확인하세요.";
   if (requiemLosses >= Math.max(3, losses.length * 0.35)) return "종말 레퀴엠 턴을 버티는 방어 카드와 정화 수단을 먼저 확인하세요.";
   if (closeLosses.length >= Math.max(3, losses.length * 0.25)) return "본체 체력이 낮게 남는 패배가 많아 마무리 카드 접근성을 먼저 확인하세요.";
@@ -1347,11 +1396,16 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
       .slice(0, 3)
       .map((entry) => `${entry.label} ${entry.count}건`)
       .join(", ");
+    const pressure = finalBossAnalysis.pressureProfile ?? {};
+    const sequenceSummary =
+      pressure.sequenceLosses > 0
+        ? ` 문 낙하→호출→레퀴엠을 모두 지난 패배는 ${pressure.sequenceLosses}건이고, 레퀴엠 진입 시 큰 방어 카드가 손패에 없던 패배는 ${pressure.noBurstDefenseAtRequiemLosses}건입니다.`
+        : "";
     const closeSummary = finalBossAnalysis.closeLosses > 0 ? ` 본체 체력이 낮게 남은 패배는 ${finalBossAnalysis.closeLosses}건입니다.` : "";
     recommendations.push({
       tone: "steady",
       area: "최종 보스",
-      text: `최종 보스 도달 ${finalBossAnalysis.reached}런 중 ${finalBossAnalysis.losses}패입니다. 패배 직전 행동은 ${moveSummary || "표본 부족"}입니다.${closeSummary} ${finalBossAnalysis.primaryIssue}`
+      text: `최종 보스 도달 ${finalBossAnalysis.reached}런 중 ${finalBossAnalysis.losses}패입니다. 패배 직전 행동은 ${moveSummary || "표본 부족"}입니다.${closeSummary}${sequenceSummary} ${finalBossAnalysis.primaryIssue}`
     });
   }
   const earlyLossBand = floorBands.find((band) => band.id === "early");
