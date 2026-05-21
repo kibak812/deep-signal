@@ -5894,7 +5894,9 @@ function renderBossStatusStrip(boss) {
   const phaseLabel = phaseTwo ? template.phaseName : "1단계";
   const objective = bossObjectiveText(template);
   const objectiveAria = bossObjectiveText(template, "aria");
-  const aria = `${enemy.name}. ${phaseLabel}. ${objectiveAria}. 현재 의도 ${enemyIntentReadout(move)}. 2단계 전환 체력 ${threshold} 이하. 현재 체력 ${enemy.hp}/${enemy.maxHp}`;
+  const patternCue = bossPatternCue(enemy, template);
+  const patternAria = patternCue ? `. ${patternCue.title}. ${patternCue.detail}` : "";
+  const aria = `${enemy.name}. ${phaseLabel}. ${objectiveAria}. 현재 의도 ${enemyIntentReadout(move)}. 2단계 전환 체력 ${threshold} 이하. 현재 체력 ${enemy.hp}/${enemy.maxHp}${patternAria}`;
   return `
     <section class="boss-status-strip ${phaseTwo ? "phase-two" : ""}" style="--boss-hp:${hpPercent}%; --boss-threshold:${thresholdPercent}%;" aria-label="${aria}">
       <header class="boss-status-head">
@@ -5907,8 +5909,59 @@ function renderBossStatusStrip(boss) {
         <b class="boss-objective" title="${objectiveAria}">${objective}</b>
         <small title="${enemyIntentReadout(move)}"><b aria-hidden="true">${intentIcon}</b><span>${intentLabel}</span><i>${intentValue}</i></small>
       </div>
+      ${renderBossPatternCue(patternCue)}
     </section>
   `;
+}
+
+function renderBossPatternCue(cue) {
+  if (!cue) return "";
+  return `
+    <div class="boss-pattern-cue ${cue.tone}" aria-label="${cue.title}. ${cue.detail}">
+      <strong>${cue.title}</strong>
+      <ol>
+        ${cue.steps.map((step) => `
+          <li class="${step.tone} ${step.state}" title="${step.title}">
+            <span>${step.label}</span>
+          </li>
+        `).join("")}
+      </ol>
+      <p>${cue.detail}</p>
+    </div>
+  `;
+}
+
+function bossPatternCue(enemy, template) {
+  if (template?.id !== "last_gate_choir") return null;
+  const phaseTwo = (enemy.phase ?? 1) >= 2;
+  const currentId = enemy.nextMove?.id ?? "";
+  const chain = [
+    { id: "gate_slam", label: "문 낙하", title: "문 낙하: 큰 단타 뒤 호출이 이어집니다.", tone: "danger" },
+    { id: "gate_call", label: "문지기 호출", title: "문지기 호출: 다음 레퀴엠을 앞두고 소환체가 시간을 빼앗습니다.", tone: "summon" },
+    { id: "phase_requiem", label: "레퀴엠", title: "종말 레퀴엠: 4연타를 넘기면 마무리 기회가 열립니다.", tone: "danger" }
+  ];
+  const currentIndex = chain.findIndex((step) => step.id === currentId);
+  const nextId = currentIndex >= 0 ? chain[(currentIndex + 1) % chain.length].id : chain[0].id;
+  const title = phaseTwo ? "2페이즈 연쇄" : "2페이즈 예고";
+  const detail = finalBossPatternDetail(currentId, phaseTwo);
+  const tone = currentId === "phase_requiem" ? "danger" : currentId === "gate_call" ? "warning" : phaseTwo ? "pressure" : "steady";
+  return {
+    title,
+    detail,
+    tone,
+    steps: chain.map((step) => ({
+      ...step,
+      state: step.id === currentId ? "current" : step.id === nextId ? "next" : ""
+    }))
+  };
+}
+
+function finalBossPatternDetail(currentId, phaseTwo) {
+  if (currentId === "gate_slam") return "문 낙하 뒤 호출과 레퀴엠이 이어집니다. 체력과 다음 턴 방어를 남기세요.";
+  if (currentId === "gate_call") return "다음은 레퀴엠입니다. 도금, 약화, 0-1비용 방어를 손패에 남기세요.";
+  if (currentId === "phase_requiem") return "이번 턴은 연속 방어가 핵심입니다. 넘기면 마무리 기회가 열립니다.";
+  if (phaseTwo) return "곧 문 낙하→호출→레퀴엠 순서가 옵니다. 체력과 방어 카드 순서를 아껴두세요.";
+  return "2단계부터 문 낙하→호출→레퀴엠이 이어집니다. 진입 전 체력과 연속 방어를 보존하세요.";
 }
 
 function handLayoutStyle(count) {

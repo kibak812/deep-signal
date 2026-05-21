@@ -667,7 +667,7 @@ async function stageBossFixture(cdp) {
     const { newRun, enterNode } = await import("./src/engine/game.js");
     const { ENEMY_BY_ID } = await import("./src/data/enemies.js");
     const run = newRun({ seed: "qa-boss-status", difficulty: 1 });
-    const node = run.map.flat().find((item) => item.type === "boss" && item.act === 2) ?? run.map.flat().find((item) => item.type === "boss");
+    const node = run.map.flat().find((item) => item.type === "boss" && item.act === 3) ?? run.map.flat().find((item) => item.type === "boss");
     if (!node) throw new Error("QA boss fixture node not found");
     run.availableNodeIds = [node.id];
     enterNode(run, node.id);
@@ -3413,16 +3413,19 @@ async function assertBossStatusStrip(cdp) {
     const meter = strip?.querySelector(".boss-status-meter");
     const intent = strip?.querySelector("small");
     const objective = strip?.querySelector(".boss-objective");
+    const pattern = strip?.querySelector(".boss-pattern-cue");
     const stripBox = strip?.getBoundingClientRect();
     const bossBox = boss?.getBoundingClientRect();
     const objectiveBox = objective?.getBoundingClientRect();
     const meterBox = meter?.getBoundingClientRect();
     const intentBox = intent?.getBoundingClientRect();
+    const patternBox = pattern?.getBoundingClientRect();
     const handBox = document.querySelector(".hand-zone")?.getBoundingClientRect();
     const playerPlateBox = document.querySelector(".boss-fight .player-plate")?.getBoundingClientRect();
     const playerSpriteBox = document.querySelector(".boss-fight .player-sprite")?.getBoundingClientRect();
     const style = strip ? getComputedStyle(strip) : null;
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const patternText = pattern?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const aria = strip?.getAttribute("aria-label") ?? "";
     const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
     const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
@@ -3439,25 +3442,33 @@ async function assertBossStatusStrip(cdp) {
       Boolean(meter) &&
       Boolean(intent) &&
       Boolean(objective) &&
+      Boolean(pattern) &&
       text.includes("보스") &&
       text.includes("본체 처치") &&
+      text.includes("2페이즈 연쇄") &&
+      patternText.includes("문 낙하") &&
+      patternText.includes("문지기 호출") &&
+      patternText.includes("레퀴엠") &&
       /2단계|레퀴엠|충돌|폭주|문/.test(text) &&
       aria.includes("보스 본체를 쓰러뜨리면 전투가 끝납니다") &&
       aria.includes("현재 의도") &&
       aria.includes("전환 체력") &&
+      aria.includes("다음은 레퀴엠") &&
       Boolean(phaseTwoSprite) &&
       Boolean(expectedPhaseTwoImage && phaseTwoSpriteImage.includes(expectedPhaseTwoImage)) &&
-      Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36 && stripBox.width <= 424 && stripBox.height <= 88) &&
+      Boolean(stripBox && stripBox.top >= 0 && stripBox.bottom < window.innerHeight * 0.36 && stripBox.width <= 432 && stripBox.height <= 128) &&
       (!bossBox || stripBox.bottom < bossBox.bottom) &&
       style?.pointerEvents === "none" &&
       !overlaps(objectiveBox, meterBox) &&
       !overlaps(objectiveBox, intentBox) &&
+      !overlaps(patternBox, meterBox) &&
       playerVitalsClearHand &&
       !overflow;
     return {
       ok,
       text,
       aria,
+      patternText,
       hasStrip: Boolean(strip),
       hasBoss: Boolean(boss),
       hasPhaseTwoSprite: Boolean(phaseTwoSprite),
@@ -3467,6 +3478,7 @@ async function assertBossStatusStrip(cdp) {
       hasMeter: Boolean(meter),
       hasIntent: Boolean(intent),
       hasObjective: Boolean(objective),
+      hasPattern: Boolean(pattern),
       stripTop: stripBox ? Math.round(stripBox.top) : null,
       stripBottom: stripBox ? Math.round(stripBox.bottom) : null,
       stripWidth: stripBox ? Math.round(stripBox.width) : null,
@@ -3475,6 +3487,7 @@ async function assertBossStatusStrip(cdp) {
       objectiveBox: objectiveBox ? { x: Math.round(objectiveBox.x), y: Math.round(objectiveBox.y), width: Math.round(objectiveBox.width), height: Math.round(objectiveBox.height) } : null,
       meterBox: meterBox ? { x: Math.round(meterBox.x), y: Math.round(meterBox.y), width: Math.round(meterBox.width), height: Math.round(meterBox.height) } : null,
       intentBox: intentBox ? { x: Math.round(intentBox.x), y: Math.round(intentBox.y), width: Math.round(intentBox.width), height: Math.round(intentBox.height) } : null,
+      patternBox: patternBox ? { x: Math.round(patternBox.x), y: Math.round(patternBox.y), width: Math.round(patternBox.width), height: Math.round(patternBox.height) } : null,
       playerVitalsClearHand,
       handTop: handBox ? Math.round(handBox.top) : null,
       playerPlateBox: playerPlateBox ? { top: Math.round(playerPlateBox.top), bottom: Math.round(playerPlateBox.bottom), width: Math.round(playerPlateBox.width), height: Math.round(playerPlateBox.height) } : null,

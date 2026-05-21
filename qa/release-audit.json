@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T21:04:49.908Z",
+  "generatedAt": "2026-05-21T21:22:19.075Z",
   "summary": {
     "passed": 25,
     "failed": 0,
@@ -1046,11 +1046,11 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-21T20:50:57.323Z",
+        "sourceFreshAfter": "2026-05-21T21:18:45.653Z",
         "files": [
           {
             "file": "browser-qa-about-refreshed.png",
-            "mtime": "2026-05-21T20:53:40.707Z",
+            "mtime": "2026-05-21T21:20:41.794Z",
             "fresh": true
           },
           {
@@ -1060,12 +1060,12 @@
           },
           {
             "file": "browser-qa-act-interlude-one-shot.png",
-            "mtime": "2026-05-21T20:53:47.032Z",
+            "mtime": "2026-05-21T21:20:48.451Z",
             "fresh": true
           },
           {
             "file": "browser-qa-act-interlude-refreshed.png",
-            "mtime": "2026-05-21T20:53:44.684Z",
+            "mtime": "2026-05-21T21:20:46.046Z",
             "fresh": true
           },
           {
@@ -1080,27 +1080,27 @@
           },
           {
             "file": "browser-qa-boss-status-strip.png",
-            "mtime": "2026-05-21T20:54:30.451Z",
+            "mtime": "2026-05-21T21:21:31.024Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-fx.png",
-            "mtime": "2026-05-21T20:54:20.839Z",
+            "mtime": "2026-05-21T21:21:21.757Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-hover.png",
-            "mtime": "2026-05-21T20:54:19.273Z",
+            "mtime": "2026-05-21T21:21:20.291Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-play-fx.png",
-            "mtime": "2026-05-21T20:54:10.648Z",
+            "mtime": "2026-05-21T21:21:11.927Z",
             "fresh": true
           },
           {
             "file": "browser-qa-choice-pulse-next-step.png",
-            "mtime": "2026-05-21T20:53:50.753Z",
+            "mtime": "2026-05-21T21:20:52.166Z",
             "fresh": true
           },
           {
@@ -1155,7 +1155,7 @@
           },
           {
             "file": "browser-qa-codex-refreshed.png",
-            "mtime": "2026-05-21T20:53:42.201Z",
+            "mtime": "2026-05-21T21:20:43.418Z",
             "fresh": true
           },
           {
@@ -1260,7 +1260,7 @@
           },
           {
             "file": "browser-qa-combat-card-hover.png",
-            "mtime": "2026-05-21T20:54:09.132Z",
+            "mtime": "2026-05-21T21:21:10.439Z",
             "fresh": true
           },
           {
@@ -1270,7 +1270,7 @@
           },
           {
             "file": "browser-qa-combat-energy-locked.png",
-            "mtime": "2026-05-21T20:54:23.677Z",
+            "mtime": "2026-05-21T21:21:24.332Z",
             "fresh": true
           },
           {
@@ -1300,7 +1300,7 @@
           },
           {
             "file": "browser-qa-combat-high-energy-hud.png",
-            "mtime": "2026-05-21T20:54:24.935Z",
+            "mtime": "2026-05-21T21:21:25.545Z",
             "fresh": true
           },
           {
@@ -1320,7 +1320,7 @@
           },
           {
             "file": "browser-qa-combat-intent-tooltip.png",
-            "mtime": "2026-05-21T20:54:33.561Z",
+            "mtime": "2026-05-21T21:21:33.874Z",
             "fresh": true
           },
           {
@@ -1355,7 +1355,7 @@
           },
           {
             "file": "browser-qa-combat-refreshed.png",
-            "mtime": "2026-05-21T20:54:07.768Z",
+            "mtime": "2026-05-21T21:21:09.228Z",
             "fresh": true
           },
           {
@@ -1400,7 +1400,7 @@
           },
           {
             "file": "browser-qa-combat-status-tooltip.png",
-            "mtime": "2026-05-21T20:54:32.212Z",
+            "mtime": "2026-05-21T21:21:32.734Z",
             "fresh": true
           },
           {
@@ -1465,22 +1465,22 @@
           },
           {
             "file": "browser-qa-end-turn-risk-block-preview.png",
-            "mtime": "2026-05-21T20:54:13.319Z",
+            "mtime": "2026-05-21T21:21:14.295Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-kill-preview.png",
-            "mtime": "2026-05-21T20:54:16.354Z",
+            "mtime": "2026-05-21T21:21:17.371Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-preview.png",
-            "mtime": "2026-05-21T20:54:12.020Z",
+            "mtime": "2026-05-21T21:21:13.134Z",
             "fresh": true
           },
           {
             "file": "browser-qa-enemy-grouped-fx.png",
-            "mtime": "2026-05-21T20:54:36.034Z",
+            "mtime": "2026-05-21T21:21:36.240Z",
             "fresh": true
           },
           {
@@ -1525,7 +1525,7 @@
           },
           {
             "file": "browser-qa-event-refreshed.png",
-            "mtime": "2026-05-21T20:53:49.860Z",
+            "mtime": "2026-05-21T21:20:51.316Z",
             "fresh": true
           },
           {
@@ -1535,17 +1535,17 @@
           },
           {
             "file": "browser-qa-final-boss-readiness.png",
-            "mtime": "2026-05-21T20:54:03.565Z",
+            "mtime": "2026-05-21T21:21:05.052Z",
             "fresh": true
           },
           {
             "file": "browser-qa-final-boss-selector.png",
-            "mtime": "2026-05-21T20:54:05.891Z",
+            "mtime": "2026-05-21T21:21:07.361Z",
             "fresh": true
           },
           {
             "file": "browser-qa-guide-refreshed.png",
-            "mtime": "2026-05-21T20:53:42.992Z",
+            "mtime": "2026-05-21T21:20:44.291Z",
             "fresh": true
           },
           {
@@ -1610,7 +1610,7 @@
           },
           {
             "file": "browser-qa-map-refreshed.png",
-            "mtime": "2026-05-21T20:54:01.917Z",
+            "mtime": "2026-05-21T21:21:03.405Z",
             "fresh": true
           },
           {
@@ -1640,7 +1640,7 @@
           },
           {
             "file": "browser-qa-map-route-preview.png",
-            "mtime": "2026-05-21T20:54:02.681Z",
+            "mtime": "2026-05-21T21:21:04.159Z",
             "fresh": true
           },
           {
@@ -1700,7 +1700,7 @@
           },
           {
             "file": "browser-qa-mobile-combat-refreshed.png",
-            "mtime": "2026-05-21T20:54:39.853Z",
+            "mtime": "2026-05-21T21:21:40.056Z",
             "fresh": true
           },
           {
@@ -1740,7 +1740,7 @@
           },
           {
             "file": "browser-qa-mobile-refreshed.png",
-            "mtime": "2026-05-21T20:54:41.957Z",
+            "mtime": "2026-05-21T21:21:42.361Z",
             "fresh": true
           },
           {
@@ -1800,7 +1800,7 @@
           },
           {
             "file": "browser-qa-records-refreshed.png",
-            "mtime": "2026-05-21T20:53:43.760Z",
+            "mtime": "2026-05-21T21:20:45.132Z",
             "fresh": true
           },
           {
@@ -1825,7 +1825,7 @@
           },
           {
             "file": "browser-qa-rest-refreshed.png",
-            "mtime": "2026-05-21T20:53:55.808Z",
+            "mtime": "2026-05-21T21:20:57.211Z",
             "fresh": true
           },
           {
@@ -1880,7 +1880,7 @@
           },
           {
             "file": "browser-qa-reward-card-selected.png",
-            "mtime": "2026-05-21T20:53:59.113Z",
+            "mtime": "2026-05-21T21:21:00.533Z",
             "fresh": true
           },
           {
@@ -1920,17 +1920,17 @@
           },
           {
             "file": "browser-qa-reward-post-victory-refreshed.png",
-            "mtime": "2026-05-21T20:54:29.106Z",
+            "mtime": "2026-05-21T21:21:29.690Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-refreshed.png",
-            "mtime": "2026-05-21T20:54:28.758Z",
+            "mtime": "2026-05-21T21:21:29.334Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-relics-refreshed.png",
-            "mtime": "2026-05-21T20:53:58.293Z",
+            "mtime": "2026-05-21T21:20:59.697Z",
             "fresh": true
           },
           {
@@ -2030,7 +2030,7 @@
           },
           {
             "file": "browser-qa-settings-refreshed.png",
-            "mtime": "2026-05-21T20:53:41.444Z",
+            "mtime": "2026-05-21T21:20:42.552Z",
             "fresh": true
           },
           {
@@ -2100,7 +2100,7 @@
           },
           {
             "file": "browser-qa-shop-refreshed.png",
-            "mtime": "2026-05-21T20:53:53.508Z",
+            "mtime": "2026-05-21T21:20:54.905Z",
             "fresh": true
           },
           {
@@ -2140,7 +2140,7 @@
           },
           {
             "file": "browser-qa-summary-lost-refreshed.png",
-            "mtime": "2026-05-21T20:53:59.991Z",
+            "mtime": "2026-05-21T21:21:01.435Z",
             "fresh": true
           },
           {
@@ -2150,7 +2150,7 @@
           },
           {
             "file": "browser-qa-summary-won-refreshed.png",
-            "mtime": "2026-05-21T20:54:00.916Z",
+            "mtime": "2026-05-21T21:21:02.386Z",
             "fresh": true
           },
           {
@@ -2160,7 +2160,7 @@
           },
           {
             "file": "browser-qa-tablet-combat-refreshed.png",
-            "mtime": "2026-05-21T20:54:41.191Z",
+            "mtime": "2026-05-21T21:21:41.596Z",
             "fresh": true
           },
           {
@@ -2230,7 +2230,7 @@
           },
           {
             "file": "browser-qa-title-refreshed.png",
-            "mtime": "2026-05-21T20:53:39.868Z",
+            "mtime": "2026-05-21T21:20:40.101Z",
             "fresh": true
           },
           {
@@ -2305,7 +2305,7 @@
           },
           {
             "file": "browser-qa-turn-player-cue-minimal.png",
-            "mtime": "2026-05-21T20:54:38.990Z",
+            "mtime": "2026-05-21T21:21:39.128Z",
             "fresh": true
           },
           {
@@ -2340,7 +2340,7 @@
           },
           {
             "file": "browser-qa-victory-coda.png",
-            "mtime": "2026-05-21T20:54:27.456Z",
+            "mtime": "2026-05-21T21:21:28.023Z",
             "fresh": true
           }
         ],

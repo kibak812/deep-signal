@@ -468,6 +468,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /phaseTwoSpriteImage/);
   assert.match(captureSource, /expectedPhaseTwoImage = spriteKey/);
   assert.match(captureSource, /phaseTwoSpriteImage\.includes\(expectedPhaseTwoImage\)/);
+  assert.match(captureSource, /patternText\.includes\("문 낙하"\)/);
+  assert.match(captureSource, /aria\.includes\("다음은 레퀴엠"\)/);
   assert.match(captureSource, /Boss status strip failed/);
   assert.match(captureSource, /function assertShopFocusUx\(cdp\)/);
   assert.match(captureSource, /await assertShopFocusUx\(cdp\);/);
@@ -1997,6 +1999,9 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(mainSource, /function renderBossPhaseShock\(run, boss\)/);
   assert.match(mainSource, /function renderBossCurtain\(boss\)/);
   assert.match(mainSource, /function renderBossStatusStrip\(boss\)/);
+  assert.match(mainSource, /function renderBossPatternCue\(cue\)/);
+  assert.match(mainSource, /function bossPatternCue\(enemy, template\)/);
+  assert.match(mainSource, /function finalBossPatternDetail\(currentId, phaseTwo\)/);
   assert.match(mainSource, /function renderBossPhaseChip\(enemy, template\)/);
   assert.match(mainSource, /function bossPhaseCue\(run\)/);
   assert.match(mainSource, /function isFreshBossPhaseLog\(run, template\)/);
@@ -2011,6 +2016,9 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(mainSource, /const label = `보스전 상황:/);
   assert.match(mainSource, /aria-label="\$\{label\}"/);
   assert.match(mainSource, /현재 의도/);
+  assert.match(mainSource, /2페이즈 연쇄/);
+  assert.match(mainSource, /문 낙하 뒤 호출과 레퀴엠/);
+  assert.match(mainSource, /다음은 레퀴엠입니다/);
   assert.match(mainSource, /심층 보스/);
   assert.match(mainSource, /bossPhase:\s*\{\s*notes:/);
   assert.match(mainSource, /playTone\(phaseCue \? "bossPhase" : soundCueFor/);
@@ -2037,11 +2045,15 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(styleSource, /\.boss-status-strip/);
   assert.match(styleSource, /\.boss-status-head/);
   assert.match(styleSource, /\.boss-status-readout/);
+  assert.match(styleSource, /\.boss-pattern-cue/);
+  assert.match(styleSource, /\.boss-pattern-cue ol/);
+  assert.match(styleSource, /\.boss-pattern-cue li\.danger\.current/);
   assert.match(styleSource, /\.boss-fight \.player-stand[\s\S]*translate:\s*0 clamp\(-92px, -12vh, -76px\)/);
   assert.match(styleSource, /\.boss-fight \.player-plate[\s\S]*transform:\s*translateY\(clamp\(-104px, -13vh, -72px\)\)/);
   assert.match(styleSource, /\.boss-status-meter/);
   assert.match(styleSource, /\.boss-status-strip\.phase-two/);
   assert.match(styleSource, /\.high-contrast \.boss-status-strip/);
+  assert.match(styleSource, /\.high-contrast \.boss-pattern-cue/);
   assert.match(styleSource, /\.boss-curtain-readout[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.boss-cataloger \.combat-background/);
   assert.match(styleSource, /\.boss-algorithm \.combat-background/);
