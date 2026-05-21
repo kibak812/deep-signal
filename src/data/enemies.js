@@ -316,7 +316,7 @@ export const ENEMIES = [
       { id: "intonation", label: "개문 선율", intent: "바이러스 3", type: "debuff", applyToPlayer: [{ status: "virus", amount: 3 }] },
       { id: "choir_wall", label: "합창벽", intent: "방어 28", type: "defend", block: 28 },
       { id: "gate_slam", label: "문 낙하", intent: "공격 21", type: "attack", damage: 21 },
-      { id: "gate_call", phase: 2, label: "문지기 호출", intent: "소환", type: "summon", summon: [{ enemyId: "mirror_jelly", count: 1, hpScale: 0.7 }] },
+      { id: "gate_call", phase: 2, label: "문지기 호출", intent: "소환", type: "summon", summon: [{ enemyId: "mirror_jelly", count: 1, hpScale: 0.6 }] },
       { id: "phase_requiem", phase: 2, label: "종말 레퀴엠", intent: "공격 4 x4", type: "attack", damage: 4, hits: 4 }
     ]
   })

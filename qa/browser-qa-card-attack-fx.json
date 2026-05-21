@@ -37,7 +37,7 @@
     },
     "echo": {
       "left": 234,
-      "top": 112,
+      "top": 111,
       "right": 313,
       "bottom": 179,
       "width": 80,
@@ -55,7 +55,7 @@
       "left": 448,
       "top": 141,
       "right": 457,
-      "bottom": 150,
+      "bottom": 149,
       "width": 9,
       "height": 9
     },
@@ -63,7 +63,7 @@
       "left": 1035,
       "top": 78,
       "right": 1127,
-      "bottom": 139,
+      "bottom": 138,
       "width": 92,
       "height": 60
     },

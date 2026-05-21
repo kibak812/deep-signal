@@ -25,6 +25,7 @@ import {
   skipReward
 } from "../src/engine/game.js";
 import { CARD_BY_ID } from "../src/data/cards.js";
+import { ENEMY_BY_ID } from "../src/data/enemies.js";
 import { EVENT_BY_ID } from "../src/data/events.js";
 import { RELIC_BY_ID } from "../src/data/relics.js";
 
@@ -347,10 +348,16 @@ function estimateAttackDamage(run, target, amount) {
 
 function chooseTarget(run) {
   return livingEnemies(run)
-    .map((enemy) => ({
-      enemy,
-      score: expectedEnemyDamage(run, enemy) * 1.2 + (enemy.templateId.includes("boss") ? 8 : 0) + (enemy.maxHp - enemy.hp) * 0.04 - enemy.hp * 0.02
-    }))
+    .map((enemy) => {
+      const template = ENEMY_BY_ID[enemy.templateId];
+      const bossPriority = template?.tier === "boss" ? (run.combat?.type === "boss" ? 24 : 10) : 0;
+      const summonedPenalty = run.combat?.type === "boss" && enemy.summoned ? -8 : 0;
+      const finishWindow = template?.tier === "boss" && enemy.phase >= 2 ? 8 : 0;
+      return {
+        enemy,
+        score: expectedEnemyDamage(run, enemy) * 1.2 + bossPriority + summonedPenalty + finishWindow + (enemy.maxHp - enemy.hp) * 0.04 - enemy.hp * 0.02
+      };
+    })
     .sort((left, right) => right.score - left.score)[0]?.enemy;
 }
 

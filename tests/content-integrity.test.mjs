@@ -684,6 +684,7 @@ test("enemy pressure spikes stay readable across the run", () => {
   assert.ok(playerStatus(move("last_gate_choir", "intonation"), "virus") <= 4, "final boss opening 바이러스 should be threatening but readable");
   assert.ok(totalDamage(move("last_gate_choir", "gate_slam")) <= 21, "final boss heavy attack should leave room for a prepared block turn");
   assert.equal(playerStatus(move("last_gate_choir", "gate_call"), "weak"), 0, "final boss summon turn should not also weaken the finisher turn");
+  assert.ok(move("last_gate_choir", "gate_call").summon?.[0]?.hpScale <= 0.6, "final boss summon should pressure targeting without burying the boss behind a durable minion");
   assert.equal(selfStatus(move("last_gate_choir", "choir_wall"), "strength"), 0, "final boss wall should stall the fight without turning later multi-hits into sudden one-turn kills");
   assert.ok(totalDamage(move("last_gate_choir", "phase_requiem")) <= 24, "final boss finisher should test defense without erasing medium decks");
 });

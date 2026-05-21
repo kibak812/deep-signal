@@ -29,18 +29,18 @@ export const DIFFICULTIES = [
   {
     id: 1,
     name: "냉수층",
-    text: "적 체력과 피해가 기본값보다 조금 높습니다.",
-    enemyHp: 1.04,
-    enemyDamage: 1,
+    text: "적 체력 +12%, 적 피해 +6%.",
+    enemyHp: 1.12,
+    enemyDamage: 1.06,
     gold: 1,
     playerMaxHp: 0
   },
   {
     id: 2,
     name: "무광층",
-    text: "적 체력 +10%, 적 피해 +4%.",
-    enemyHp: 1.1,
-    enemyDamage: 1.04,
+    text: "적 체력 +13%, 적 피해 +8%.",
+    enemyHp: 1.13,
+    enemyDamage: 1.08,
     gold: 1,
     playerMaxHp: 0
   },
@@ -48,8 +48,8 @@ export const DIFFICULTIES = [
     id: 3,
     name: "압력층",
     text: "적이 강하고 시작 최대 체력이 5 감소합니다.",
-    enemyHp: 1.15,
-    enemyDamage: 1.07,
+    enemyHp: 1.17,
+    enemyDamage: 1.08,
     gold: 1,
     playerMaxHp: -5
   },
@@ -57,8 +57,8 @@ export const DIFFICULTIES = [
     id: 4,
     name: "무호흡층",
     text: "보상 크레딧 -12%, 시작 최대 체력 -8.",
-    enemyHp: 1.2,
-    enemyDamage: 1.1,
+    enemyHp: 1.26,
+    enemyDamage: 1.14,
     gold: 0.88,
     playerMaxHp: -8
   },

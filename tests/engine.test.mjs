@@ -358,9 +358,9 @@ test("enemy intent forecast exposes exact incoming damage and pressure", () => {
 
   const forecast = enemyIntentForecast(run);
 
-  assert.equal(forecast.incomingDamage, 38);
+  assert.equal(forecast.incomingDamage, 42);
   assert.equal(forecast.blockedDamage, 5);
-  assert.equal(forecast.hpLoss, 33);
+  assert.equal(forecast.hpLoss, 37);
   assert.deepEqual(forecast.incomingStatuses, [{ status: "weak", amount: 1 }]);
   assert.deepEqual(forecast.enemyBuffs, [{ status: "strength", amount: 1 }]);
   assert.equal(forecast.enemyBlock, 7);
