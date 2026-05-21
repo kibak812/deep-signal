@@ -3897,6 +3897,7 @@ function combatAdvisor(run) {
   const incomingStatusText = forecast.incomingStatuses.length
     ? forecast.incomingStatuses.map((item) => `${STATUS_LABELS[item.status] ?? item.status} ${item.amount}`).join(" / ")
     : "해로운 상태 없음";
+  const finisherReserve = finalBossFinisherReserveCue(run);
 
   if (plan.tone === "danger") {
     return {
@@ -3904,6 +3905,14 @@ function combatAdvisor(run) {
       title: plan.survival.title,
       detail: "방어, 약화, 처치 중 하나로 이번 턴 손실을 줄이세요.",
       chips: combatAdvisorChips(forecast, playableCount, selected, incomingStatusText)
+    };
+  }
+  if (finisherReserve && forecast.hpLoss <= 0) {
+    return {
+      tone: finisherReserve.tone,
+      title: finisherReserve.title,
+      detail: finisherReserve.detail,
+      chips: [...finisherReserve.chips, ...combatAdvisorChips(forecast, playableCount, selected, incomingStatusText)].slice(0, 4)
     };
   }
   if (plan.pressure.title.includes("처치 가능")) {
@@ -5983,11 +5992,126 @@ function renderCombatPlayPanel(run, recommendedCardUid) {
       <div class="combat-guidance-stack">
         ${renderCombatActionRecap(run)}
         ${renderTargetAssist(run, recommendedCardUid)}
+        ${renderFinalBossFinisherReserve(run)}
         ${renderRequiemReadiness(run)}
         <section class="combat-card-preview-rail" aria-label="카드 대상 미리보기" aria-live="polite" hidden></section>
       </div>
     </section>
   `;
+}
+
+function renderFinalBossFinisherReserve(run) {
+  const cue = finalBossFinisherReserveCue(run);
+  if (!cue) return "";
+  const aria = [cue.kicker, cue.title, cue.detail, ...cue.metrics.map((metric) => `${metric.label} ${metric.value}`)].join(". ");
+  return `
+    <section class="requiem-readiness finisher-reserve ${cue.tone}" aria-label="${aria}">
+      <div class="requiem-readiness-copy">
+        <span>${cue.kicker}</span>
+        <strong>${cue.title}</strong>
+        <p>${cue.detail}</p>
+      </div>
+      <div class="requiem-readiness-metrics" aria-hidden="true">
+        ${cue.metrics.map((metric) => `<i class="${metric.tone}"><b>${metric.label}</b><span>${metric.value}</span></i>`).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function finalBossFinisherReserveCue(run) {
+  const boss = activeCombatBoss(run);
+  if (!boss || boss.template.id !== "last_gate_choir" || (boss.enemy.phase ?? 1) >= 2) return null;
+  const combat = run.combat;
+  const threshold = Math.round(boss.enemy.maxHp * (boss.template.phaseAt ?? 0));
+  const damageToPhase = Math.max(0, boss.enemy.hp - threshold);
+  const previewEntries = (combat?.hand ?? [])
+    .map((card) => {
+      const preview = cardPlayPreview(run, card, boss.enemy.uid);
+      return {
+        card,
+        preview,
+        bossDamage: combatPreviewDamageToEnemy(preview, boss.enemy.uid)
+      };
+    })
+    .filter((entry) => entry.preview.playable);
+  if (!previewEntries.length) return null;
+
+  const bossDamagePreviews = previewEntries.map((entry) => ({ ...entry.preview, bossDamage: entry.bossDamage }));
+  const bestBossDamage = bestPreviewTotal(bossDamagePreviews, combat?.energy ?? 0, "bossDamage");
+  const finisherCards = previewEntries
+    .filter((entry) => cardSupportsFinish(effectiveCard(entry.card)))
+    .map((entry) => effectiveCard(entry.card).name);
+  const finisherNames = [...new Set(finisherCards)].slice(0, 2);
+  const finisherText = finisherNames.length ? finisherNames.join(" · ") : "없음";
+  const canFinishBoss = bestBossDamage >= boss.enemy.hp;
+  const canOpenPhase = damageToPhase > 0 && bestBossDamage >= damageToPhase && !canFinishBoss;
+  const nearPhaseLine = damageToPhase > 0 && damageToPhase <= Math.max(8, Math.ceil(boss.enemy.maxHp * 0.08));
+
+  if (canFinishBoss) {
+    return {
+      tone: "pressure",
+      kicker: "마지막 문",
+      title: "본체 처치 우선",
+      detail: "소환수가 남아도 본체를 쓰러뜨리면 전투가 끝납니다. 큰 피해 카드는 지금 본체에 모으세요.",
+      chips: [
+        { tone: "pressure", text: "본체 처치" },
+        { tone: "danger", text: `피해 ${bestBossDamage}/${boss.enemy.hp}` },
+        { tone: finisherNames.length ? "strong" : "steady", text: `마무리 ${finisherText}` }
+      ],
+      metrics: [
+        requiemMetric("본체 체력", boss.enemy.hp, "danger"),
+        requiemMetric("본체 피해", bestBossDamage, "pressure"),
+        requiemMetric("마무리", finisherCards.length, finisherCards.length ? "guarded" : "warning"),
+        requiemMetric("에너지", combat?.energy ?? 0, "steady")
+      ]
+    };
+  }
+
+  if (canOpenPhase) {
+    return {
+      tone: "warning",
+      kicker: "2단계 전환선",
+      title: "2단계 진입 전 마무리 보존",
+      detail: `이번 손패로 전환선까지 ${damageToPhase} 피해를 밀 수 있습니다. 본체 처치가 아니면 큰 피해 카드를 모두 쓰지 마세요.`,
+      chips: [
+        { tone: "warning", text: `전환선 ${damageToPhase}` },
+        { tone: "pressure", text: `본체 피해 ${bestBossDamage}` },
+        { tone: finisherNames.length ? "strong" : "danger", text: `보존 ${finisherText}` }
+      ],
+      metrics: [
+        requiemMetric("전환선", damageToPhase, "warning"),
+        requiemMetric("본체 피해", bestBossDamage, "pressure"),
+        requiemMetric("마무리", finisherCards.length, finisherCards.length ? "guarded" : "danger"),
+        requiemMetric("체력", boss.enemy.hp, "steady")
+      ]
+    };
+  }
+
+  if (nearPhaseLine && finisherCards.length) {
+    return {
+      tone: "guarded",
+      kicker: "마무리 카드 보존",
+      title: "문을 열 카드와 끝낼 카드 분리",
+      detail: `2단계 전환선까지 ${damageToPhase} 피해 남았습니다. 문 낙하 뒤 바로 끝낼 큰 피해나 뽑기 카드를 한 장 남기세요.`,
+      chips: [
+        { tone: "guarded", text: `전환선 ${damageToPhase}` },
+        { tone: "strong", text: `보존 ${finisherText}` },
+        { tone: "steady", text: `본체 체력 ${boss.enemy.hp}` }
+      ],
+      metrics: [
+        requiemMetric("전환선", damageToPhase, "guarded"),
+        requiemMetric("본체 피해", bestBossDamage, bestBossDamage > 0 ? "pressure" : "steady"),
+        requiemMetric("마무리", finisherCards.length, "guarded"),
+        requiemMetric("에너지", combat?.energy ?? 0, "steady")
+      ]
+    };
+  }
+
+  return null;
+}
+
+function combatPreviewDamageToEnemy(preview, enemyUid) {
+  return preview.enemyDeltas?.find((delta) => delta.uid === enemyUid)?.damage ?? 0;
 }
 
 function renderRequiemReadiness(run) {

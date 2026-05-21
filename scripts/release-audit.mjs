@@ -194,6 +194,7 @@ async function main() {
     { id: "act-interlude", match: /browser-qa-act-interlude-refreshed/ },
     { id: "act-interlude-one-shot", match: /browser-qa-act-interlude-one-shot/ },
     { id: "final-boss-readiness", match: /browser-qa-final-boss-readiness/ },
+    { id: "final-boss-finisher-reserve", match: /browser-qa-final-boss-finisher-reserve/ },
     { id: "final-boss-selector", match: /browser-qa-final-boss-selector/ },
     { id: "reward", match: /browser-qa-reward/ },
     { id: "reward-card-selected", match: /browser-qa-reward-card-selected/ },

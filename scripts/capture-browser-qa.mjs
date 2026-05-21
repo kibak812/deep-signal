@@ -276,6 +276,15 @@ try {
   await capture(cdp, "browser-qa-boss-status-strip.png");
   await clearSavedRun(cdp);
 
+  await stageFinalBossFinisherReserveFixture(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board.boss-fight");
+  await waitForSelector(cdp, ".finisher-reserve");
+  await assertFinalBossFinisherReserveUx(cdp);
+  await capture(cdp, "browser-qa-final-boss-finisher-reserve.png");
+  await clearSavedRun(cdp);
+
   await stageStatusTooltipFixture(cdp);
   await navigate(cdp, baseUrl);
   await clickText(cdp, "이어하기");
@@ -684,6 +693,55 @@ async function stageBossFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return { phase: run.phase, boss: boss.name, bossPhase: boss.phase, bossHp: boss.hp, nextMove: boss.nextMove?.id };
+  })()`);
+}
+
+async function stageFinalBossFinisherReserveFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const { ENEMY_BY_ID } = await import("./src/data/enemies.js");
+    const run = newRun({ seed: "qa-final-boss-finisher-reserve", difficulty: 2 });
+    const node = run.map.flat().find((item) => item.type === "boss" && item.act === 3);
+    if (!node) throw new Error("QA final boss finisher reserve node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA final boss finisher combat not started");
+    const boss = run.combat.enemies.find((enemy) => enemy.templateId === "last_gate_choir");
+    if (!boss) throw new Error("QA final boss enemy not found");
+    const template = ENEMY_BY_ID[boss.templateId];
+    const threshold = Math.round(boss.maxHp * (template.phaseAt ?? 0.5));
+    boss.phase = 1;
+    boss.hp = threshold + 14;
+    boss.block = 0;
+    boss.statuses = {};
+    boss.nextMove = template.moves.find((move) => move.id === "intonation") ?? boss.nextMove;
+    run.player.hp = run.player.maxHp;
+    run.player.block = 0;
+    run.player.statuses = {};
+    run.combat.selectedEnemyUid = boss.uid;
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [
+      { uid: 9701, cardId: "recursion_bolt", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9702, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9703, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9704, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [
+      { uid: 9705, cardId: "keyhole_beam", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 9706, cardId: "harpoon_query", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    const settings = JSON.parse(localStorage.getItem("abyssalArchive.settings.v1") ?? "{}");
+    settings.tacticalAdvisor = true;
+    localStorage.setItem("abyssalArchive.settings.v1", JSON.stringify(settings));
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, boss: boss.name, bossHp: boss.hp, threshold, hand: run.combat.hand.map((card) => card.cardId) };
   })()`);
 }
 
@@ -3538,6 +3596,68 @@ async function assertBossStatusStrip(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Boss status strip failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertFinalBossFinisherReserveUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const advisor = document.querySelector(".tactical-advisor");
+    const reserve = document.querySelector(".finisher-reserve");
+    const targetAssist = document.querySelector(".target-assist");
+    const bossStrip = document.querySelector(".boss-status-strip");
+    const hand = document.querySelector(".hand-zone");
+    const reserveBox = reserve?.getBoundingClientRect();
+    const targetBox = targetAssist?.getBoundingClientRect();
+    const bossBox = bossStrip?.getBoundingClientRect();
+    const handBox = hand?.getBoundingClientRect();
+    const reserveStyle = reserve ? getComputedStyle(reserve) : null;
+    const advisorText = advisor?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const reserveText = reserve?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const reserveAria = reserve?.getAttribute("aria-label") ?? "";
+    const overflow = document.documentElement.scrollWidth > window.innerWidth + 2;
+    const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
+    const advisorOk = !advisor || (
+      advisorText.includes("2단계 진입 전 마무리 보존") &&
+      advisorText.includes("본체 처치가 아니면 큰 피해 카드를 모두 쓰지 마세요")
+    );
+    const ok =
+      Boolean(reserve) &&
+      Boolean(targetAssist) &&
+      Boolean(bossStrip) &&
+      advisorOk &&
+      reserveText.includes("2단계 전환선") &&
+      reserveText.includes("2단계 진입 전 마무리 보존") &&
+      reserveText.includes("전환선") &&
+      reserveText.includes("본체 피해") &&
+      reserveText.includes("마무리") &&
+      reserveAria.includes("본체 처치가 아니면 큰 피해 카드를 모두 쓰지 마세요") &&
+      reserveAria.includes("전환선") &&
+      reserveStyle?.pointerEvents === "none" &&
+      Boolean(reserveBox && handBox && reserveBox.bottom <= handBox.top - 6 && reserveBox.width <= Math.min(480, window.innerWidth - 16)) &&
+      !overlaps(reserveBox, targetBox) &&
+      !overlaps(reserveBox, bossBox) &&
+      !overflow;
+    return {
+      ok,
+      advisorText,
+      advisorOk,
+      reserveText,
+      reserveAria,
+      hasAdvisor: Boolean(advisor),
+      hasReserve: Boolean(reserve),
+      hasTargetAssist: Boolean(targetAssist),
+      hasBossStrip: Boolean(bossStrip),
+      reserveBox: reserveBox ? { x: Math.round(reserveBox.x), y: Math.round(reserveBox.y), width: Math.round(reserveBox.width), height: Math.round(reserveBox.height), bottom: Math.round(reserveBox.bottom) } : null,
+      targetBox: targetBox ? { x: Math.round(targetBox.x), y: Math.round(targetBox.y), width: Math.round(targetBox.width), height: Math.round(targetBox.height), bottom: Math.round(targetBox.bottom) } : null,
+      bossBox: bossBox ? { x: Math.round(bossBox.x), y: Math.round(bossBox.y), width: Math.round(bossBox.width), height: Math.round(bossBox.height), bottom: Math.round(bossBox.bottom) } : null,
+      handTop: handBox ? Math.round(handBox.top) : null,
+      pointerEvents: reserveStyle?.pointerEvents ?? "",
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Final boss finisher reserve failed: ${JSON.stringify(result)}`);
   }
 }
 

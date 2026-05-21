@@ -6947,6 +6947,28 @@ dd,
     rgba(4, 14, 14, 0.72);
 }
 
+.finisher-reserve {
+  border-color: rgba(125, 211, 252, 0.28);
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.12), rgba(246, 193, 119, 0.08)),
+    rgba(3, 8, 14, 0.74);
+}
+
+.finisher-reserve.pressure {
+  border-color: rgba(246, 193, 119, 0.44);
+  background:
+    linear-gradient(90deg, rgba(246, 193, 119, 0.15), rgba(251, 113, 133, 0.08)),
+    rgba(12, 10, 17, 0.78);
+}
+
+.finisher-reserve.warning {
+  border-color: rgba(246, 193, 119, 0.48);
+}
+
+.finisher-reserve.guarded {
+  border-color: rgba(52, 211, 153, 0.38);
+}
+
 .requiem-readiness-copy {
   min-width: 0;
   display: grid;
@@ -7025,6 +7047,12 @@ dd,
   border-color: rgba(52, 211, 153, 0.34);
   background: rgba(52, 211, 153, 0.1);
   color: #baf7d4;
+}
+
+.requiem-readiness-metrics i.pressure {
+  border-color: rgba(246, 193, 119, 0.38);
+  background: rgba(246, 193, 119, 0.11);
+  color: #ffe2ad;
 }
 
 .requiem-readiness-metrics b,

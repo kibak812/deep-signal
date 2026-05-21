@@ -282,6 +282,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-about-refreshed\.png/);
   assert.match(readme, /browser-qa-act-interlude-refreshed\.png/);
   assert.match(readme, /browser-qa-act-interlude-one-shot\.png/);
+  assert.match(readme, /browser-qa-final-boss-finisher-reserve\.png/);
   assert.match(readme, /browser-qa-final-boss-selector\.png/);
   assert.match(readme, /browser-qa-combat-status-tooltip\.png/);
   assert.match(readme, /browser-qa-combat-intent-tooltip\.png/);
@@ -318,6 +319,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /favicon\.svg/);
   assert.match(auditSource, /verified-flow-coverage/);
   assert.match(auditSource, /requiredBrowserQa/);
+  assert.match(auditSource, /final-boss-finisher-reserve/);
   assert.match(auditSource, /card-hover/);
   assert.match(auditSource, /card-attack-hover/);
   assert.match(auditSource, /card-attack-fx/);
@@ -465,6 +467,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function stageBossFixture\(cdp\)/);
   assert.match(captureSource, /function assertBossStatusStrip\(cdp\)/);
   assert.match(captureSource, /browser-qa-boss-status-strip\.png/);
+  assert.match(captureSource, /function stageFinalBossFinisherReserveFixture\(cdp\)/);
+  assert.match(captureSource, /function assertFinalBossFinisherReserveUx\(cdp\)/);
+  assert.match(captureSource, /browser-qa-final-boss-finisher-reserve\.png/);
+  assert.match(captureSource, /Final boss finisher reserve failed/);
+  assert.match(captureSource, /advisorText\.includes\("2단계 진입 전 마무리 보존"\)/);
+  assert.match(captureSource, /reserveAria\.includes\("본체 처치가 아니면 큰 피해 카드를 모두 쓰지 마세요"\)/);
   assert.match(captureSource, /phaseTwoSpriteImage/);
   assert.match(captureSource, /expectedPhaseTwoImage = spriteKey/);
   assert.match(captureSource, /phaseTwoSpriteImage\.includes\(expectedPhaseTwoImage\)/);
@@ -1036,6 +1044,12 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function tacticalAdvisor\(run\)/);
   assert.match(mainSource, /function mapAdvisor\(run\)/);
   assert.match(mainSource, /function combatAdvisor\(run\)/);
+  assert.match(mainSource, /function finalBossFinisherReserveCue\(run\)/);
+  assert.match(mainSource, /function renderFinalBossFinisherReserve\(run\)/);
+  assert.match(mainSource, /function combatPreviewDamageToEnemy\(preview, enemyUid\)/);
+  assert.match(mainSource, /2단계 진입 전 마무리 보존/);
+  assert.match(mainSource, /본체 처치가 아니면 큰 피해 카드를 모두 쓰지 마세요/);
+  assert.match(mainSource, /renderFinalBossFinisherReserve\(run\)/);
   assert.match(mainSource, /function rewardAdvisor\(run\)/);
   assert.match(mainSource, /function shopAdvisor\(run\)/);
   assert.match(mainSource, /function bossPreparationServiceAdvice\(run, options = \{\}\)/);
@@ -2074,7 +2088,10 @@ test("boss fights surface mechanics and phase state in combat UI", () => {
   assert.match(styleSource, /\.boss-pattern-cue ol/);
   assert.match(styleSource, /\.boss-pattern-cue li\.danger\.current/);
   assert.match(styleSource, /\.requiem-readiness/);
+  assert.match(styleSource, /\.finisher-reserve/);
+  assert.match(styleSource, /\.finisher-reserve\.pressure/);
   assert.match(styleSource, /\.requiem-readiness-metrics/);
+  assert.match(styleSource, /\.requiem-readiness-metrics i\.pressure/);
   assert.match(styleSource, /\.requiem-readiness\.danger/);
   assert.match(styleSource, /\.boss-fight \.player-stand[\s\S]*translate:\s*0 clamp\(-92px, -12vh, -76px\)/);
   assert.match(styleSource, /\.boss-fight \.player-plate[\s\S]*transform:\s*translateY\(clamp\(-104px, -13vh, -72px\)\)/);
@@ -2150,6 +2167,8 @@ test("boss approach briefing checks survival and deck readiness", () => {
   assert.match(mainSource, /문 낙하를 막을 큰 방어와 레퀴엠을 이어 받을 보존, 도금, 약화/);
   assert.match(mainSource, /문 낙하 뒤 레퀴엠까지 버틸 도금, 약화, 가벼운 방어/);
   assert.match(mainSource, /2단계 전환 전에 큰 피해 카드를 남겨 두세요/);
+  assert.match(mainSource, /2단계 전환선까지 \$\{damageToPhase\} 피해 남았습니다/);
+  assert.match(mainSource, /문을 열 카드와 끝낼 카드 분리/);
   assert.match(mainSource, /function bossHorizonTags\(boss, readiness = null\)/);
   assert.match(mainSource, /missing\.map\(\(label\) => `\$\{label\} 보강`\)\.slice\(0, 3\)/);
   assert.match(mainSource, /function cardSupportsDefense\(card\)/);
