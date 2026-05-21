@@ -168,7 +168,7 @@ try {
   await navigate(cdp, baseUrl);
   await clickText(cdp, "이어하기");
   await waitForSelector(cdp, ".map-layout");
-  await waitForText(cdp, "큰 방어");
+  await waitForText(cdp, "연속 방어");
   await assertFinalBossReadinessUx(cdp);
   await capture(cdp, "browser-qa-final-boss-readiness.png");
   await clearSavedRun(cdp);
@@ -3275,13 +3275,13 @@ async function assertFinalBossReadinessUx(cdp) {
     const horizon = document.querySelector(".map-horizon");
     const horizonText = horizon?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const tags = [...document.querySelectorAll(".map-horizon-boss i")].map((item) => item.innerText.replace(/\\s+/g, " ").trim());
-    const bigDefense = tags.find((text) => text.includes("큰 방어"));
+    const serialDefense = tags.find((text) => text.includes("연속 방어"));
     const ok =
       Boolean(horizon) &&
       horizonText.includes("마지막 문 성가대") &&
-      horizonText.includes("큰 방어") &&
+      horizonText.includes("연속 방어") &&
       horizonText.includes("보스층") &&
-      Boolean(bigDefense);
+      Boolean(serialDefense);
     return {
       ok,
       horizonText,
@@ -3315,7 +3315,7 @@ async function assertFinalBossSelectorUx(cdp) {
       modal?.classList.contains("selector-modal") &&
       Boolean(brief) &&
       bossText.includes("보스 대비") &&
-      bossText.includes("큰 방어") &&
+      bossText.includes("연속 방어") &&
       focusText.includes("보스 대비") &&
       focusText.includes("마지막 문") &&
       recommendedText.includes("창백한 방화벽") &&

@@ -4081,7 +4081,7 @@ function bossPreparationServiceAdvice(run, options = {}) {
   const missingText = missing.slice(0, 3).join(", ");
   const needsHp = missing.includes("체력");
   const needsDeckSpeed = missing.includes("카드 뽑기") || options.analysis?.total >= 25;
-  const needsRole = missing.some((label) => ["방어", "큰 방어", "마무리", "정화·약화"].includes(label));
+  const needsRole = missing.some((label) => ["방어", "큰 방어", "연속 방어", "마무리", "정화·약화"].includes(label));
   if (needsHp && options.canHeal) {
     return {
       tone: "guarded",
@@ -4202,7 +4202,7 @@ function bossPreparationRestAdvice(run, options = {}) {
       missing
     };
   }
-  if (missing.some((label) => ["방어", "큰 방어", "마무리", "정화·약화"].includes(label)) && options.canUpgrade) {
+  if (missing.some((label) => ["방어", "큰 방어", "연속 방어", "마무리", "정화·약화"].includes(label)) && options.canUpgrade) {
     return {
       tone: "strong",
       title: "보스용 카드 강화",
@@ -7165,6 +7165,7 @@ function rewardOptionAriaLabel(run, cardId, recommended = false, previewing = fa
 }
 
 function rewardCompactConceptLabel(label = "") {
+  if (/연속 방어/.test(label)) return "연속 방어";
   if (/큰 방어/.test(label)) return "큰 방어";
   if (/전하/.test(label)) return "전하";
   if (/표식/.test(label)) return "표식";
@@ -8532,11 +8533,15 @@ function restActionBossPlan(run, id) {
       chips: [{ tone: "heal", label: "보스 전 회복" }]
     };
   }
-  if (id === "upgrade" && context.missing.some((label) => ["큰 방어", "방어", "마무리", "정화·약화"].includes(label))) {
-    const missing = context.missing.includes("큰 방어") ? "큰 방어" : context.missing.find((label) => ["방어", "마무리", "정화·약화"].includes(label));
+  if (id === "upgrade" && context.missing.some((label) => ["연속 방어", "큰 방어", "방어", "마무리", "정화·약화"].includes(label))) {
+    const missing = context.missing.includes("연속 방어")
+      ? "연속 방어"
+      : context.missing.includes("큰 방어")
+        ? "큰 방어"
+        : context.missing.find((label) => ["방어", "마무리", "정화·약화"].includes(label));
     return {
       text: `${missing} 역할의 핵심 카드를 키웁니다.`,
-      chips: [{ tone: context.missing.includes("큰 방어") ? "guarded" : "craft", label: "보스 대비" }]
+      chips: [{ tone: context.missing.includes("연속 방어") || context.missing.includes("큰 방어") ? "guarded" : "craft", label: "보스 대비" }]
     };
   }
   if (id === "remove" && (context.missing.includes("카드 뽑기") || run.player.deck.length >= 26)) {
@@ -10001,7 +10006,7 @@ function deckUpgradeBossBonus(run, cardInstance) {
   const after = effectiveCard({ ...cardInstance, upgraded: true });
   const finalBonus = context.finalBoss ? 1.45 : 1;
   let score = 0;
-  if (context.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) score += (cardSupportsBurstDefense(before) ? 10 : 16) * finalBonus;
+  if ((context.missing.includes("연속 방어") || context.missing.includes("큰 방어")) && cardSupportsBurstDefense(after)) score += (cardSupportsBurstDefense(before) ? 10 : 16) * finalBonus;
   if (context.missing.includes("방어") && cardSupportsDefense(after)) score += 8 * finalBonus;
   if (context.missing.includes("정화·약화") && cardSupportsStatusControl(after)) score += 9 * finalBonus;
   if (context.missing.includes("마무리") && cardSupportsFinish(after)) score += 7 * finalBonus;
@@ -10017,7 +10022,7 @@ function deckRemoveBossAdjustment(run, cardInstance, analysis) {
   const primaryMatch = analysis.primary?.score > 0 ? cardAxisMatch(card, analysis.primary).score : 0;
   const lowRoleFit = primaryMatch <= 0 && !cardSupportsBurstDefense(card) && !cardSupportsStatusControl(card) && !cardSupportsFinish(card);
   let score = 0;
-  if (context.missing.includes("큰 방어") && cardSupportsBurstDefense(card)) score -= context.finalBoss ? 32 : 22;
+  if ((context.missing.includes("연속 방어") || context.missing.includes("큰 방어")) && cardSupportsBurstDefense(card)) score -= context.finalBoss ? 32 : 22;
   if (context.missing.includes("방어") && cardSupportsDefense(card)) score -= 18;
   if (context.missing.includes("정화·약화") && cardSupportsStatusControl(card)) score -= 18;
   if (context.missing.includes("마무리") && cardSupportsFinish(card)) score -= 15;
@@ -10072,6 +10077,7 @@ function deckUpgradeRecommendationReason(cardInstance, analysis, run = null) {
   const before = effectiveCard({ ...cardInstance, upgraded: false });
   const after = effectiveCard({ ...cardInstance, upgraded: true });
   const context = run ? deckSelectorBossContext(run) : null;
+  if (context?.missing.includes("연속 방어") && cardSupportsBurstDefense(after)) return "마지막 문 앞입니다. 이 카드를 키우면 문 낙하 뒤 레퀴엠까지 버틸 여지가 생깁니다.";
   if (context?.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) return "마지막 문 앞입니다. 이 카드를 키우면 문 낙하와 레퀴엠 턴에 버틸 여지가 생깁니다.";
   if (context?.missing.includes("정화·약화") && cardSupportsStatusControl(after)) return `${context.bossName} 전입니다. 해로운 상태를 줄이거나 적 공격을 낮추는 쪽을 보강합니다.`;
   if (context?.missing.includes("마무리") && cardSupportsFinish(after)) return `${context.bossName} 전입니다. 2단계로 넘어가기 전 보스 체력을 밀어낼 힘을 키웁니다.`;
@@ -10089,7 +10095,7 @@ function deckRemoveRecommendationReason(run, cardInstance, analysis) {
   const duplicateCount = run.player.deck.filter((item) => item.cardId === cardInstance.cardId).length;
   const context = deckSelectorBossContext(run);
   if (card.rarity === "curse" || card.type === "curse" || card.unplayable) return "손패를 막는 카드라 가장 먼저 빼는 편이 좋습니다.";
-  if (context?.missing.includes("카드 뽑기")) return `${context.bossName} 전입니다. 덱을 줄이면 큰 방어와 마무리 카드를 더 빨리 봅니다.`;
+  if (context?.missing.includes("카드 뽑기")) return `${context.bossName} 전입니다. 덱을 줄이면 방어와 마무리 카드를 더 빨리 봅니다.`;
   if (card.rarity === "starter" && duplicateCount > 1) return "기본 카드가 여러 장입니다. 한 장 줄이면 핵심 카드가 더 자주 옵니다.";
   if (analysis.primary?.score > 0 && cardAxisMatch(card, analysis.primary).score <= 0) return `${analysis.primary.label} 덱과 덜 맞아 제거 가치가 있습니다.`;
   if (duplicateCount > 1) return "같은 역할이 겹칩니다. 덱을 줄이면 필요한 카드가 빨리 돌아옵니다.";
@@ -10102,6 +10108,7 @@ function deckUpgradeRecommendationChips(cardInstance, analysis, run = null) {
   const context = run ? deckSelectorBossContext(run) : null;
   const chips = [];
   if (context?.missing.length) chips.push({ tone: context.tone === "danger" ? "danger" : "strong", label: "보스 대비" });
+  if (context?.missing.includes("연속 방어") && cardSupportsBurstDefense(after)) chips.push({ tone: "guarded", label: "연속 방어" });
   if (context?.missing.includes("큰 방어") && cardSupportsBurstDefense(after)) chips.push({ tone: "guarded", label: "큰 방어" });
   if (context?.missing.includes("정화·약화") && cardSupportsStatusControl(after)) chips.push({ tone: "warning", label: "정화·약화" });
   const costGain = Math.max(0, (before.cost ?? 0) - (after.cost ?? 0));
@@ -12234,6 +12241,9 @@ function rewardBossPreparationNeed(run, card) {
       .map((metric) => metric.label) ?? []
   );
   if (!weak.size) return null;
+  if (weak.has("연속 방어") && cardSupportsBurstDefense(card)) {
+    return { label: "보스 대비 연속 방어", detail: "문 낙하 뒤 레퀴엠까지 버틸 방어, 약화, 도금 수단입니다.", scoreBonus: 22 };
+  }
   if (weak.has("큰 방어") && cardSupportsBurstDefense(card)) {
     return { label: "보스 대비 큰 방어", detail: "문 낙하와 레퀴엠을 넘길 방어, 약화, 도금 수단입니다.", scoreBonus: 20 };
   }
@@ -12739,7 +12749,7 @@ function bossReadiness(run, boss, distance) {
   const metrics = [
     readinessMetric("체력", `${run.player.hp}/${run.player.maxHp}`, bossHpReadinessTone(hpRatio, requirements.hp)),
     requirements.finalBoss
-      ? readinessMetric("큰 방어", `${burstDefenseCards}/${requirements.burstDefense.steady}장`, countReadinessTone(burstDefenseCards, requirements.burstDefense))
+      ? readinessMetric("연속 방어", `${burstDefenseCards}/${requirements.burstDefense.steady}장`, countReadinessTone(burstDefenseCards, requirements.burstDefense))
       : readinessMetric("방어", `${defenseCards}/${requirements.defense.steady}장`, countReadinessTone(defenseCards, requirements.defense)),
     readinessMetric("마무리", `${finishCards}/${requirements.finish.steady}장`, countReadinessTone(finishCards, requirements.finish)),
     readinessMetric("정화·약화", `${statusCards}/${requirements.status.steady}장`, countReadinessTone(statusCards, requirements.status)),
@@ -12809,6 +12819,7 @@ function countReadinessTone(count, requirement) {
 function bossReadinessAction(weakLabels, requirements, distance) {
   if (!weakLabels.length) return "지금 흐름을 유지하고 보스전에서는 2단계 전환 전 손패를 아끼세요.";
   if (weakLabels.includes("체력")) return "다음 선택은 회복이나 안전 경로를 먼저 보세요.";
+  if (weakLabels.includes("연속 방어")) return "문 낙하 뒤 레퀴엠까지 버틸 도금, 약화, 가벼운 방어를 먼저 챙기세요.";
   if (weakLabels.includes("큰 방어")) return "문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 카드를 먼저 챙기세요.";
   if (weakLabels.includes("방어")) return "방어, 약화, 도금 카드나 방어 유물을 우선하세요.";
   if (weakLabels.includes("정화·약화")) return "정화 카드나 적을 약화시키는 카드를 한 장 더 찾으세요.";

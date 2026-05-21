@@ -472,7 +472,7 @@ function bossPrepContext(run) {
   const needsDeckSpeed = deckSize >= 25 || flow < flowTarget;
   const missing = [
     needsHp ? "체력" : "",
-    needsBurstDefense ? "큰 방어" : "",
+    needsBurstDefense ? "연속 방어" : "",
     !needsBurstDefense && needsDefense ? "방어" : "",
     needsFinish ? "마무리" : "",
     needsStatusControl ? "정화·약화" : "",
@@ -1332,7 +1332,7 @@ function averageFinalBossRoles(runs) {
 function finalBossPrimaryIssue({ losses, lossMoves, closeLosses, requiemLosses, summonWindowLosses, lowHpEntryLosses, lowBurstDefenseLosses, pressureProfile }) {
   if (!losses.length) return "현재 표본에서는 최종 보스 패배가 없습니다.";
   if ((pressureProfile?.sequenceLosses ?? 0) >= Math.max(3, losses.length * 0.6)) return "2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요.";
-  if (lowBurstDefenseLosses >= Math.max(3, losses.length * 0.3)) return "문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 수단을 먼저 확인하세요.";
+  if (lowBurstDefenseLosses >= Math.max(3, losses.length * 0.3)) return "문 낙하 뒤 레퀴엠까지 버틸 연속 방어, 약화, 도금 수단을 먼저 확인하세요.";
   if (requiemLosses >= Math.max(3, losses.length * 0.35)) return "종말 레퀴엠 턴을 버티는 방어 카드와 정화 수단을 먼저 확인하세요.";
   if (closeLosses.length >= Math.max(3, losses.length * 0.25)) return "본체 체력이 낮게 남는 패배가 많아 마무리 카드 접근성을 먼저 확인하세요.";
   if (summonWindowLosses >= Math.max(3, losses.length * 0.25)) return "문지기 호출 이후 본체를 계속 때릴 수 있는 선택지가 충분한지 확인하세요.";
@@ -1399,7 +1399,7 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
     const pressure = finalBossAnalysis.pressureProfile ?? {};
     const sequenceSummary =
       pressure.sequenceLosses > 0
-        ? ` 문 낙하→호출→레퀴엠을 모두 지난 패배는 ${pressure.sequenceLosses}건이고, 레퀴엠 진입 시 큰 방어 카드가 손패에 없던 패배는 ${pressure.noBurstDefenseAtRequiemLosses}건입니다.`
+        ? ` 문 낙하→호출→레퀴엠을 모두 지난 패배는 ${pressure.sequenceLosses}건이고, 레퀴엠 진입 시 연속 방어 카드가 손패에 없던 패배는 ${pressure.noBurstDefenseAtRequiemLosses}건입니다.`
         : "";
     const closeSummary = finalBossAnalysis.closeLosses > 0 ? ` 본체 체력이 낮게 남은 패배는 ${finalBossAnalysis.closeLosses}건입니다.` : "";
     recommendations.push({

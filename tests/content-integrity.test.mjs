@@ -562,6 +562,7 @@ test("balance pilot prepares intentionally before late bosses", () => {
   assert.match(balanceSource, /bossPrep\.needsDeckSpeed && run\.player\.gold >= prices\.remove/);
   assert.match(balanceSource, /bossPrep\.needsRole && run\.player\.gold >= prices\.upgrade/);
   assert.match(balanceSource, /bossPrep\?\.missing\.length[\s\S]*deckSize < 24 \? 3 : 7/);
+  assert.match(balanceSource, /needsBurstDefense \? "연속 방어" : ""/);
   assert.match(balanceSource, /context\.act >= 3 \? 1\.55 : 1/);
   assert.match(balanceSource, /let finalBossSnapshot = null/);
   assert.match(balanceSource, /const finalBossTimeline = \[\]/);
@@ -2034,12 +2035,12 @@ test("boss approach briefing checks survival and deck readiness", () => {
   assert.match(mainSource, /const finalBoss = boss\?\.id === "last_gate_choir" \|\| boss\?\.act >= 3/);
   assert.match(mainSource, /const extraPressure = \(finalBoss \? 2 : lateBoss \? 1 : 0\) \+ \(close \? 1 : 0\) \+ \(difficulty >= 4 \? 1 : 0\)/);
   assert.match(mainSource, /const burstDefenseCards = cards\.filter\(\(card\) => cardSupportsBurstDefense\(card\)\)\.length/);
-  assert.match(mainSource, /requirements\.finalBoss[\s\S]*readinessMetric\("큰 방어"/);
+  assert.match(mainSource, /requirements\.finalBoss[\s\S]*readinessMetric\("연속 방어"/);
   assert.match(mainSource, /function cardSupportsBurstDefense\(card\)/);
   assert.match(mainSource, /function cardDefenseProfile\(card\)/);
   assert.match(mainSource, /function bossReadinessAction\(weakLabels, requirements, distance\)/);
   assert.match(mainSource, /다음 선택은 회복이나 안전 경로를 먼저 보세요/);
-  assert.match(mainSource, /문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 카드/);
+  assert.match(mainSource, /문 낙하 뒤 레퀴엠까지 버틸 도금, 약화, 가벼운 방어/);
   assert.match(mainSource, /2단계 전환 전에 큰 피해 카드를 남겨 두세요/);
   assert.match(mainSource, /function bossHorizonTags\(boss, readiness = null\)/);
   assert.match(mainSource, /missing\.map\(\(label\) => `\$\{label\} 보강`\)\.slice\(0, 3\)/);
@@ -3086,7 +3087,7 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /function rewardBossPreparationNeed\(run, card\)/);
   assert.match(mainSource, /if \(\/보스 대비\|보스전\/\.test\(insight\.label \?\? ""\)\)/);
   assert.match(mainSource, /\^보스 대비.*rewardCardRoleLabel\(card\)/);
-  assert.match(mainSource, /if \(\/큰 방어\/\.test\(label\)\) return "큰 방어"/);
+  assert.match(mainSource, /if \(\/연속 방어\/\.test\(label\)\) return "연속 방어"/);
   assert.match(mainSource, /scoreBonus/);
   assert.match(mainSource, /function rewardComparisonChips\(run, cardId\)/);
   assert.match(mainSource, /function rewardRelicChoices\(reward\)/);
@@ -3104,9 +3105,9 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /마무리 보강/);
   assert.match(mainSource, /정화·약화 보강/);
   assert.match(mainSource, /if \(cardSupportsBurstDefense\(card\)\) return "큰 방어"/);
-  assert.match(mainSource, /weak\.has\("큰 방어"\) && cardSupportsBurstDefense\(card\)/);
-  assert.match(mainSource, /보스 대비 큰 방어/);
-  assert.match(mainSource, /문 낙하와 레퀴엠을 넘길 방어, 약화, 도금 수단/);
+  assert.match(mainSource, /weak\.has\("연속 방어"\) && cardSupportsBurstDefense\(card\)/);
+  assert.match(mainSource, /보스 대비 연속 방어/);
+  assert.match(mainSource, /문 낙하 뒤 레퀴엠까지 버틸 방어, 약화, 도금 수단/);
   assert.match(mainSource, /scoreBonus:\s*20/);
   assert.match(mainSource, /보스 대비 방어/);
   assert.match(mainSource, /보스 대비 정화/);

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T15:19:16.459Z",
+  "generatedAt": "2026-05-21T15:31:59.636Z",
   "runs": [
     {
       "seed": "balance-01-d0",
@@ -321,7 +321,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 19
+      "durationMs": 15
     },
     {
       "seed": "balance-02-d0",
@@ -419,7 +419,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-03-d0",
@@ -612,7 +612,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "seed": "balance-05-d0",
@@ -709,7 +709,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-06-d0",
@@ -808,7 +808,7 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-07-d0",
@@ -863,7 +863,7 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 2
     },
     {
       "seed": "balance-08-d0",
@@ -960,7 +960,7 @@
       ],
       "steps": 154,
       "problems": [],
-      "durationMs": 9
+      "durationMs": 6
     },
     {
       "seed": "balance-09-d0",
@@ -1057,7 +1057,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 4
     },
     {
       "seed": "balance-10-d0",
@@ -1154,7 +1154,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-11-d0",
@@ -1251,7 +1251,7 @@
       ],
       "steps": 103,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d0",
@@ -1348,7 +1348,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-13-d0",
@@ -1394,7 +1394,7 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 0
     },
     {
       "seed": "balance-14-d0",
@@ -1926,7 +1926,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-02-d1",
@@ -2022,7 +2022,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-03-d1",
@@ -2077,7 +2077,7 @@
       ],
       "steps": 81,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "seed": "balance-04-d1",
@@ -2363,7 +2363,7 @@
       ],
       "steps": 106,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-07-d1",
@@ -2461,7 +2461,7 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "seed": "balance-08-d1",
@@ -2858,7 +2858,7 @@
       ],
       "steps": 101,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-10-d1",
@@ -2953,7 +2953,7 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "seed": "balance-11-d1",
@@ -3050,7 +3050,7 @@
       ],
       "steps": 96,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d1",
@@ -3148,7 +3148,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-13-d1",
@@ -3248,7 +3248,7 @@
       ],
       "steps": 135,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-14-d1",
@@ -3344,7 +3344,7 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d1",
@@ -3445,7 +3445,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-16-d1",
@@ -3544,7 +3544,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 2
     },
     {
       "seed": "balance-17-d1",
@@ -3640,7 +3640,7 @@
       ],
       "steps": 106,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d1",
@@ -3738,7 +3738,7 @@
       ],
       "steps": 165,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-01-d2",
@@ -3835,7 +3835,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-02-d2",
@@ -3932,7 +3932,7 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-03-d2",
@@ -4031,7 +4031,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d2",
@@ -4227,7 +4227,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-06-d2",
@@ -4469,7 +4469,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-09-d2",
@@ -4570,7 +4570,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-10-d2",
@@ -4667,7 +4667,7 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-11-d2",
@@ -4769,7 +4769,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-12-d2",
@@ -4964,7 +4964,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-14-d2",
@@ -5065,7 +5065,7 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d2",
@@ -5164,7 +5164,7 @@
       ],
       "steps": 106,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-16-d2",
@@ -5359,7 +5359,7 @@
       ],
       "steps": 155,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-18-d2",
@@ -5405,7 +5405,7 @@
       ],
       "steps": 27,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-01-d3",
@@ -5503,7 +5503,7 @@
       ],
       "steps": 147,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d3",
@@ -5601,7 +5601,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-03-d3",
@@ -5696,7 +5696,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d3",
@@ -6011,7 +6011,7 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-05-d3",
@@ -6463,7 +6463,7 @@
       ],
       "steps": 137,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-08-d3",
@@ -6780,7 +6780,7 @@
       ],
       "steps": 155,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d3",
@@ -6823,7 +6823,7 @@
       ],
       "steps": 21,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-10-d3",
@@ -7073,7 +7073,7 @@
       ],
       "steps": 84,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-13-d3",
@@ -7169,7 +7169,7 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-14-d3",
@@ -7265,7 +7265,7 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-15-d3",
@@ -7737,7 +7737,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d3",
@@ -7929,7 +7929,7 @@
       ],
       "steps": 152,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-02-d4",
@@ -7977,7 +7977,7 @@
       ],
       "steps": 46,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-03-d4",
@@ -8074,7 +8074,7 @@
       ],
       "steps": 125,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d4",
@@ -8637,7 +8637,7 @@
       ],
       "steps": 110,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-08-d4",
@@ -8735,7 +8735,7 @@
       ],
       "steps": 152,
       "problems": [],
-      "durationMs": 8
+      "durationMs": 3
     },
     {
       "seed": "balance-09-d4",
@@ -8834,7 +8834,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 4
     },
     {
       "seed": "balance-10-d4",
@@ -8882,7 +8882,7 @@
       ],
       "steps": 46,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-11-d4",
@@ -8978,7 +8978,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d4",
@@ -9078,7 +9078,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-13-d4",
@@ -10061,7 +10061,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-01-d5",
@@ -10156,7 +10156,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-02-d5",
@@ -10309,7 +10309,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-04-d5",
@@ -10364,7 +10364,7 @@
       ],
       "steps": 82,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-05-d5",
@@ -10714,7 +10714,7 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-09-d5",
@@ -10910,7 +10910,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 2
     },
     {
       "seed": "balance-11-d5",
@@ -10965,7 +10965,7 @@
       ],
       "steps": 87,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-12-d5",
@@ -11024,7 +11024,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 1
     },
     {
       "seed": "balance-13-d5",
@@ -11079,7 +11079,7 @@
       ],
       "steps": 85,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 1
     },
     {
       "seed": "balance-14-d5",
@@ -11415,7 +11415,7 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-15-d5",
@@ -13329,7 +13329,7 @@
     {
       "tone": "steady",
       "area": "최종 보스",
-      "text": "최종 보스 도달 88런 중 12패입니다. 패배 직전 행동은 종말 레퀴엠 7건, 개문 선율 4건, 문 낙하 1건입니다. 본체 체력이 낮게 남은 패배는 4건입니다. 문 낙하→호출→레퀴엠을 모두 지난 패배는 10건이고, 레퀴엠 진입 시 큰 방어 카드가 손패에 없던 패배는 12건입니다. 2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
+      "text": "최종 보스 도달 88런 중 12패입니다. 패배 직전 행동은 종말 레퀴엠 7건, 개문 선율 4건, 문 낙하 1건입니다. 본체 체력이 낮게 남은 패배는 4건입니다. 문 낙하→호출→레퀴엠을 모두 지난 패배는 10건이고, 레퀴엠 진입 시 연속 방어 카드가 손패에 없던 패배는 12건입니다. 2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
     }
   ]
 }
