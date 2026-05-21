@@ -15,6 +15,7 @@ import {
   enemyIdsForNode,
   enterNode,
   enemyIntentForecast,
+  enemyIntentForecastAfterDefeat,
   hasUpgradeableCards,
   isUpgradeableCard,
   buyShopCard,
@@ -365,6 +366,47 @@ test("enemy intent forecast exposes exact incoming damage and pressure", () => {
   assert.equal(forecast.enemyBlock, 7);
   assert.equal(forecast.summons, 2);
   assert.equal(forecast.attackIntents, 1);
+});
+
+test("enemy intent forecast can ignore enemies predicted to die", () => {
+  const run = newRun({ seed: "intent-forecast-defeat-preview", difficulty: 0 });
+  enterNode(run, run.availableNodeIds[0]);
+  run.player.block = 3;
+  run.player.statuses = {};
+  run.combat.enemies = [
+    {
+      uid: 901,
+      id: "qa_attacker_one",
+      name: "QA 공격자 1",
+      hp: 6,
+      maxHp: 12,
+      block: 0,
+      statuses: {},
+      nextMove: { id: "qa_hit_one", label: "공격", type: "attack", damage: 12 }
+    },
+    {
+      uid: 902,
+      id: "qa_attacker_two",
+      name: "QA 공격자 2",
+      hp: 10,
+      maxHp: 10,
+      block: 0,
+      statuses: {},
+      nextMove: { id: "qa_hit_two", label: "공격", type: "attack", damage: 7 }
+    }
+  ];
+
+  const forecast = enemyIntentForecast(run);
+  const afterFirstDefeat = enemyIntentForecastAfterDefeat(run, [901]);
+  const afterBothDefeat = enemyIntentForecastAfterDefeat(run, [901, 902]);
+
+  assert.equal(forecast.incomingDamage, 18);
+  assert.equal(forecast.hpLoss, 15);
+  assert.equal(afterFirstDefeat.incomingDamage, 7);
+  assert.equal(afterFirstDefeat.blockedDamage, 3);
+  assert.equal(afterFirstDefeat.hpLoss, 4);
+  assert.equal(afterBothDefeat.incomingDamage, 0);
+  assert.equal(afterBothDefeat.hpLoss, 0);
 });
 
 test("every playable card and upgrade executes safely in combat", () => {

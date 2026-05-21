@@ -196,6 +196,29 @@ try {
   await capture(cdp, "browser-qa-card-play-fx.png");
   await clearSavedRun(cdp);
 
+  await stageIncomingDamageFixture(cdp);
+  await navigate(cdp, qaUrl("end-turn-risk-preview"));
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board.enemy-aiming-danger");
+  await assertIncomingHealthProjection(cdp);
+  await capture(cdp, "browser-qa-end-turn-risk-preview.png");
+  await hoverSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7501']", { x: 0.5, y: 0.18 });
+  await assertIncomingHealthProjectionPreview(cdp);
+  await capture(cdp, "browser-qa-end-turn-risk-block-preview.png");
+  await clearSavedRun(cdp);
+
+  await stageIncomingKillPreventionFixture(cdp);
+  await navigate(cdp, qaUrl("end-turn-risk-kill-preview"));
+  await clickText(cdp, "이어하기");
+  await waitForSelector(cdp, ".combat-board.enemy-aiming-danger");
+  await wait(1000);
+  await hoverSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7552']", { x: 0.5, y: 0.18 });
+  await triggerHoverSelector(cdp, ".hand-zone .game-card[data-action='play-card'][data-id='7552']");
+  await waitForSelector(cdp, ".player-stand.preview-threat-reduced .health-bar.preview-incoming-health");
+  await assertIncomingHealthProjectionKillPreview(cdp);
+  await capture(cdp, "browser-qa-end-turn-risk-kill-preview.png");
+  await clearSavedRun(cdp);
+
   await stageAttackFxFixture(cdp);
   await navigate(cdp, qaUrl("card-attack-hover"));
   await clickText(cdp, "이어하기");
@@ -705,6 +728,100 @@ async function stageAttackFxFixture(cdp) {
     localStorage.setItem("abyssalArchive.save.v1", payload);
     localStorage.setItem("abyssalArchive.save.backup.v1", payload);
     return { phase: run.phase, target: target.name, targetHp: target.hp, hand: run.combat.hand.map((card) => card.cardId) };
+  })()`);
+}
+
+async function stageIncomingDamageFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-end-turn-risk-preview", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA incoming damage fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA incoming damage fixture combat not started");
+    run.player.hp = run.player.maxHp;
+    run.player.block = 0;
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.enemies = run.combat.enemies.slice(0, 2);
+    run.combat.enemies.forEach((enemy, index) => {
+      enemy.block = 0;
+      enemy.statuses = {};
+      enemy.nextMove = index === 0
+        ? { id: "qa_pressure_slam", label: "압력 강타", intent: "공격 18", type: "attack", damage: 18 }
+        : { id: "qa_follow_cut", label: "추격 베기", intent: "공격 10", type: "attack", damage: 10 };
+    });
+    run.combat.hand = [
+      { uid: 7501, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7502, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7503, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7504, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, hp: run.player.hp, enemies: run.combat.enemies.map((enemy) => enemy.nextMove.intent) };
+  })()`);
+}
+
+async function stageIncomingKillPreventionFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-end-turn-risk-kill-preview", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA incoming kill fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA incoming kill fixture combat not started");
+    if (run.combat.enemies.length < 2) {
+      const base = run.combat.enemies[0];
+      run.combat.enemies.push({
+        ...base,
+        uid: base.uid + 9000,
+        name: base.name + " 잔상",
+        hp: base.maxHp,
+        block: 0,
+        statuses: {},
+        nextMove: null
+      });
+    }
+    run.player.hp = run.player.maxHp;
+    run.player.block = 0;
+    run.player.statuses = {};
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.enemies = run.combat.enemies.slice(0, 2);
+    run.combat.enemies.forEach((enemy, index) => {
+      enemy.block = 0;
+      enemy.statuses = {};
+      enemy.maxHp = Math.max(enemy.maxHp ?? 1, index === 0 ? 6 : 12);
+      enemy.hp = index === 0 ? 6 : Math.min(enemy.maxHp, Math.max(10, enemy.hp));
+      enemy.nextMove = index === 0
+        ? { id: "qa_lethal_pressure", label: "압박", intent: "공격 18", type: "attack", damage: 18 }
+        : { id: "qa_leftover_cut", label: "추격", intent: "공격 10", type: "attack", damage: 10 };
+    });
+    run.combat.selectedEnemyUid = run.combat.enemies[0].uid;
+    run.combat.hand = [
+      { uid: 7552, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7551, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7553, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7554, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, selected: run.combat.selectedEnemyUid, hp: run.player.hp, enemies: run.combat.enemies.map((enemy) => ({ hp: enemy.hp, intent: enemy.nextMove.intent })) };
   })()`);
 }
 
@@ -1511,7 +1628,9 @@ async function assertCardHoverLayout(cdp) {
     const selfBlockResult = selfBlockPreview?.getAttribute("data-preview-result") ?? "";
     const selfBlockAfter = selfBlockPreview?.querySelector("strong")?.getAttribute("data-preview-after") ?? "";
     const selfBlockStyle = selfBlockPreview ? getComputedStyle(selfBlockPreview) : null;
-    const selfProjectionOk = !selfPreview || Boolean(selfBlockPreview && /^\\+\\d+/.test(selfBlockResult) && Number(selfBlockAfter) > 0 && selfBlockStyle?.display !== "none");
+    const selfBlockProjectionOk = Boolean(selfBlockPreview && /^\\+\\d+/.test(selfBlockResult) && Number(selfBlockAfter) > 0 && selfBlockStyle?.display !== "none");
+    const selfUtilityProjectionOk = selfPreview && /뽑기|전하|회복|정화|비용|⚡/.test(previewRailText);
+    const selfProjectionOk = !selfPreview || selfBlockProjectionOk || selfUtilityProjectionOk;
     const enemyPreview = Boolean(document.querySelector(".enemy-card.preview-target"));
     const aimLine = document.querySelector(".combat-aim-line");
     const aimLineHidden = !aimLine || aimLine.hidden || getComputedStyle(aimLine).display === "none";
@@ -1532,6 +1651,8 @@ async function assertCardHoverLayout(cdp) {
       selfPreview,
       selfBlockResult,
       selfBlockAfter,
+      selfBlockProjectionOk,
+      selfUtilityProjectionOk,
       selfProjectionOk,
       enemyPreview,
       aimLineHidden,
@@ -1836,6 +1957,127 @@ async function assertCombatRiskSingleSource(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Combat risk single source failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertIncomingHealthProjection(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const board = document.querySelector(".combat-board.enemy-aiming-danger");
+    const health = document.querySelector(".player-stand .health-bar.incoming-health-loss[data-incoming-result][data-incoming-after]");
+    const endTurn = document.querySelector(".end-turn.risk-danger");
+    const healthStyle = health ? getComputedStyle(health) : null;
+    const lossStyle = health ? getComputedStyle(health, "::after") : null;
+    const markerStyle = health ? getComputedStyle(health, "::before") : null;
+    const hpText = health?.querySelector("strong")?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const resultText = health?.getAttribute("data-incoming-result") ?? "";
+    const hpAfter = Number(health?.getAttribute("data-incoming-after") ?? 0);
+    const aria = health?.getAttribute("aria-label") ?? "";
+    const endText = endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const ok =
+      Boolean(board) &&
+      Boolean(health) &&
+      Boolean(endTurn) &&
+      /^-\\d+/.test(resultText) &&
+      hpAfter > 0 &&
+      /턴 종료 시 예상 손실/.test(aria) &&
+      /체력 -\\d+/.test(endText) &&
+      healthStyle?.borderColor !== "" &&
+      lossStyle?.content !== "none" &&
+      markerStyle?.content !== "none" &&
+      Number(lossStyle?.opacity ?? 0) > 0.1 &&
+      /\\d+\\/\\d+/.test(hpText);
+    return {
+      ok,
+      resultText,
+      hpAfter,
+      aria,
+      endText,
+      hpText,
+      lossOpacity: lossStyle?.opacity ?? "",
+      markerContent: markerStyle?.content ?? "",
+      healthClass: health?.className ?? ""
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Incoming health projection failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertIncomingHealthProjectionPreview(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const health = document.querySelector(".player-stand.preview-self .health-bar.preview-incoming-health[data-preview-incoming-result][data-preview-prevented]");
+    const block = document.querySelector(".player-stand.preview-self .block-readout.preview-block[data-preview-result]");
+    const lossStyle = health ? getComputedStyle(health, "::after") : null;
+    const badgeStyle = health ? getComputedStyle(health, "::before") : null;
+    const baseLoss = Math.abs(Number((health?.getAttribute("data-incoming-result") ?? "0").replace(/[^0-9-]/g, "")));
+    const previewLoss = Math.abs(Number((health?.getAttribute("data-preview-incoming-result") ?? "0").replace(/[^0-9-]/g, "")));
+    const prevented = Math.abs(Number((health?.getAttribute("data-preview-prevented") ?? "0").replace(/[^0-9-]/g, "")));
+    const label = health?.getAttribute("data-preview-incoming-label") ?? "";
+    const aria = health?.getAttribute("aria-label") ?? "";
+    const ok =
+      Boolean(health) &&
+      Boolean(block) &&
+      baseLoss > previewLoss &&
+      prevented > 0 &&
+      /방어 후|방어 완료/.test(label) &&
+      /예상 손실/.test(aria) &&
+      badgeStyle?.content !== "none" &&
+      (previewLoss === 0 || Number(lossStyle?.opacity ?? 0) > 0.1);
+    return {
+      ok,
+      baseLoss,
+      previewLoss,
+      prevented,
+      label,
+      aria,
+      blockResult: block?.getAttribute("data-preview-result") ?? "",
+      badgeContent: badgeStyle?.content ?? "",
+      lossOpacity: lossStyle?.opacity ?? "",
+      healthClass: health?.className ?? ""
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Incoming health projection preview failed: ${JSON.stringify(result)}`);
+  }
+}
+
+async function assertIncomingHealthProjectionKillPreview(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const player = document.querySelector(".player-stand.preview-threat-reduced");
+    const health = player?.querySelector(".health-bar.preview-incoming-health[data-preview-incoming-result][data-preview-prevented]");
+    const target = document.querySelector(".enemy-card.preview-target.preview-lethal");
+    const lossStyle = health ? getComputedStyle(health, "::after") : null;
+    const badgeStyle = health ? getComputedStyle(health, "::before") : null;
+    const baseLoss = Math.abs(Number((health?.getAttribute("data-incoming-result") ?? "0").replace(/[^0-9-]/g, "")));
+    const previewLoss = Math.abs(Number((health?.getAttribute("data-preview-incoming-result") ?? "0").replace(/[^0-9-]/g, "")));
+    const prevented = Math.abs(Number((health?.getAttribute("data-preview-prevented") ?? "0").replace(/[^0-9-]/g, "")));
+    const label = health?.getAttribute("data-preview-incoming-label") ?? "";
+    const aria = health?.getAttribute("aria-label") ?? "";
+    const ok =
+      Boolean(player) &&
+      Boolean(health) &&
+      Boolean(target) &&
+      baseLoss > previewLoss &&
+      prevented > 0 &&
+      /처치 후|위험 제거/.test(label) &&
+      /적을 처치해/.test(aria) &&
+      badgeStyle?.content !== "none" &&
+      (previewLoss === 0 || Number(lossStyle?.opacity ?? 0) > 0.1);
+    return {
+      ok,
+      baseLoss,
+      previewLoss,
+      prevented,
+      label,
+      aria,
+      targetLabel: target?.getAttribute("data-preview-label") ?? "",
+      badgeContent: badgeStyle?.content ?? "",
+      lossOpacity: lossStyle?.opacity ?? "",
+      playerClass: player?.className ?? ""
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Incoming kill projection preview failed: ${JSON.stringify(result)}`);
   }
 }
 

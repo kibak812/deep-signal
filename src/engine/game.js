@@ -248,21 +248,23 @@ export function getDifficulty(run) {
   return DIFFICULTIES.find((item) => item.id === run.difficulty) ?? DIFFICULTIES[0];
 }
 
-export function enemyIntentForecast(run) {
+function emptyEnemyIntentForecast() {
+  return {
+    incomingDamage: 0,
+    blockedDamage: 0,
+    hpLoss: 0,
+    incomingStatuses: [],
+    enemyBlock: 0,
+    enemyHealing: 0,
+    enemyBuffs: [],
+    summons: 0,
+    attackIntents: 0
+  };
+}
+
+function enemyIntentForecastForEnemies(run, enemies) {
   const combat = run.combat;
-  if (!combat) {
-    return {
-      incomingDamage: 0,
-      blockedDamage: 0,
-      hpLoss: 0,
-      incomingStatuses: [],
-      enemyBlock: 0,
-      enemyHealing: 0,
-      enemyBuffs: [],
-      summons: 0,
-      attackIntents: 0
-    };
-  }
+  if (!combat) return emptyEnemyIntentForecast();
 
   let incomingDamage = 0;
   let simulatedPlayerMark = getStatus(run.player, "mark");
@@ -273,7 +275,7 @@ export function enemyIntentForecast(run) {
   let summons = 0;
   let attackIntents = 0;
 
-  for (const enemy of getAliveEnemies(run)) {
+  for (const enemy of enemies) {
     const move = enemy.nextMove;
     if (!move) continue;
     if (move.damage) {
@@ -316,6 +318,16 @@ export function enemyIntentForecast(run) {
     summons,
     attackIntents
   };
+}
+
+export function enemyIntentForecast(run) {
+  return enemyIntentForecastForEnemies(run, getAliveEnemies(run));
+}
+
+export function enemyIntentForecastAfterDefeat(run, defeatedUids = []) {
+  const defeated = new Set(defeatedUids.map(Number));
+  const remainingEnemies = getAliveEnemies(run).filter((enemy) => !defeated.has(enemy.uid));
+  return enemyIntentForecastForEnemies(run, remainingEnemies);
 }
 
 export function cardPlayPreview(run, cardInstance, targetUid = null) {

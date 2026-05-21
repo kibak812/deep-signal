@@ -17,6 +17,7 @@ import {
   eventChoiceBlockReason,
   enterNode,
   enemyIntentForecast,
+  enemyIntentForecastAfterDefeat,
   hasUpgradeableCards,
   isUpgradeableCard,
   leaveShop,
@@ -2642,11 +2643,13 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
   app.querySelector(".combat-board")?.classList.add("preview-active");
   cardElement.classList.add("previewing-card");
   setCombatPreviewAssist(card, preview, selected, aliveEnemies, mode, tone);
+  const lethalTargetUids = [];
   for (const enemyUid of targetUids) {
     const enemyCard = app.querySelector(`.enemy-card[data-id="${enemyUid}"]`);
     const enemy = aliveEnemies.find((item) => item.uid === enemyUid);
     const delta = combatPreviewEnemyDelta(preview, enemy ?? selected);
     const lethal = Boolean(delta?.lethal) || Boolean(enemy && !delta && preview.damage >= enemy.hp);
+    if (lethal && enemy) lethalTargetUids.push(enemy.uid);
     enemyCard?.classList.add("preview-target", `preview-${tone}`);
     setCombatPreviewHealthProjection(enemyCard, enemy, delta);
     const marker = combatPreviewMarker(preview, enemy ?? selected, targetUids.length, lethal ? "처치 가능" : targetBadge);
@@ -2665,6 +2668,9 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
     playerStand?.setAttribute("data-preview-icon", selfMarker.icon);
     playerStand?.setAttribute("data-preview-value", selfMarker.value);
     playerStand?.setAttribute("data-preview-text", combatPreviewMarkerText(selfMarker));
+  }
+  if (preview.playable && lethalTargetUids.length) {
+    setCombatPreviewThreatReduction(app.querySelector(".player-stand"), lethalTargetUids);
   }
   previewRail.className = `combat-card-preview-rail ${tone} preview-${mode}${preview.playable ? "" : " blocked"}`;
   previewRail.setAttribute("aria-label", combatPreviewRailLabel(card, preview, selected, targetUids.length, mode));
@@ -2687,8 +2693,8 @@ function clearCombatCardPreview(source = null) {
     previewRail.setAttribute("aria-label", "카드 대상 미리보기");
   }
   restoreCombatPreviewAssist();
-  app.querySelectorAll(".preview-target, .preview-lethal, .preview-self").forEach((element) => {
-    element.classList.remove("preview-target", "preview-lethal", "preview-self", ...COMBAT_PREVIEW_TONE_CLASSES);
+  app.querySelectorAll(".preview-target, .preview-lethal, .preview-self, .preview-threat-reduced").forEach((element) => {
+    element.classList.remove("preview-target", "preview-lethal", "preview-self", "preview-threat-reduced", ...COMBAT_PREVIEW_TONE_CLASSES);
     clearCombatPreviewHealthProjection(element);
     clearCombatPreviewSelfProjection(element);
     element.removeAttribute("data-preview-label");
@@ -2733,6 +2739,7 @@ function setCombatPreviewSelfProjection(playerStand, preview) {
   blockReadout?.classList.add("preview-block");
   blockReadout?.setAttribute("data-preview-result", `+${preview.block}`);
   blockValue?.setAttribute("data-preview-after", String(currentBlock + preview.block));
+  setCombatPreviewSelfHealthProjection(playerStand, preview, currentBlock);
 }
 
 function clearCombatPreviewSelfProjection(element) {
@@ -2742,6 +2749,83 @@ function clearCombatPreviewSelfProjection(element) {
   blockReadout?.classList.remove("preview-block");
   blockReadout?.removeAttribute("data-preview-result");
   blockValue?.removeAttribute("data-preview-after");
+  clearCombatPreviewSelfHealthProjection(element);
+}
+
+function setCombatPreviewIncomingHealthProjection(playerStand, forecast, projectedHpLoss, options = {}) {
+  const run = state.run;
+  if (!playerStand || !run?.combat || run.phase !== "combat") return;
+  if ((forecast?.hpLoss ?? 0) <= 0 || projectedHpLoss >= forecast.hpLoss) return;
+  const health = playerStand.querySelector(".health-bar.incoming-health-loss");
+  if (!health) return;
+  const hpAfter = Math.max(0, run.player.hp - projectedHpLoss);
+  const prevented = Math.max(0, forecast.hpLoss - projectedHpLoss);
+  const maxHp = Math.max(1, run.player.maxHp);
+  const hpLossPercent = clamp((Math.min(projectedHpLoss, run.player.hp) / maxHp) * 100, 0, 100);
+  const hpAfterPercent = clamp((hpAfter / maxHp) * 100, 0, 100);
+  if (!health.dataset.previewBaseHpAfter) {
+    health.dataset.previewBaseHpAfter = health.style.getPropertyValue("--incoming-hp-after");
+    health.dataset.previewBaseHpLoss = health.style.getPropertyValue("--incoming-hp-loss");
+    health.dataset.previewBaseAria = health.getAttribute("aria-label") ?? "";
+  }
+  health.classList.add("preview-incoming-health");
+  health.classList.toggle("preview-safe", projectedHpLoss <= 0);
+  health.style.setProperty("--incoming-hp-after", `${hpAfterPercent.toFixed(2)}%`);
+  health.style.setProperty("--incoming-hp-loss", `${hpLossPercent.toFixed(2)}%`);
+  health.setAttribute("data-preview-incoming-result", projectedHpLoss > 0 ? `-${projectedHpLoss}` : "0");
+  health.setAttribute("data-preview-incoming-label", options.label ?? (projectedHpLoss > 0 ? `예상 -${projectedHpLoss}` : "위험 제거"));
+  health.setAttribute("data-preview-prevented", `+${prevented}`);
+  health.setAttribute(
+    "aria-label",
+    options.aria ?? `이 카드를 쓰면 턴 종료 시 예상 손실 ${forecast.hpLoss}에서 ${projectedHpLoss}로 줄어듭니다. 남은 체력 ${hpAfter}.`
+  );
+}
+
+function setCombatPreviewSelfHealthProjection(playerStand, preview, currentBlock = 0) {
+  const run = state.run;
+  if (!run?.combat || run.phase !== "combat") return;
+  const forecast = enemyIntentForecast(run);
+  if ((forecast?.hpLoss ?? 0) <= 0 || (forecast?.incomingDamage ?? 0) <= 0) return;
+  const projectedBlock = currentBlock + Math.max(0, Number(preview.block ?? 0));
+  const projectedHpLoss = Math.max(0, forecast.incomingDamage - projectedBlock);
+  setCombatPreviewIncomingHealthProjection(playerStand, forecast, projectedHpLoss, {
+    label: projectedHpLoss > 0 ? `방어 후 -${projectedHpLoss}` : "방어 완료",
+    aria: `이 카드를 쓰면 턴 종료 시 예상 손실 ${forecast.hpLoss}에서 ${projectedHpLoss}로 줄어듭니다. 남은 체력 ${Math.max(0, run.player.hp - projectedHpLoss)}.`
+  });
+}
+
+function setCombatPreviewThreatReduction(playerStand, defeatedUids = []) {
+  const run = state.run;
+  if (!playerStand || !run?.combat || run.phase !== "combat" || !defeatedUids.length) return;
+  const forecast = enemyIntentForecast(run);
+  if ((forecast?.hpLoss ?? 0) <= 0) return;
+  const projectedForecast = enemyIntentForecastAfterDefeat(run, defeatedUids);
+  const projectedHpLoss = Math.max(0, projectedForecast.hpLoss ?? 0);
+  if (projectedHpLoss >= forecast.hpLoss) return;
+  playerStand.classList.add("preview-threat-reduced");
+  setCombatPreviewIncomingHealthProjection(playerStand, forecast, projectedHpLoss, {
+    label: projectedHpLoss > 0 ? `처치 후 -${projectedHpLoss}` : "위험 제거",
+    aria: `이 카드를 쓰면 적을 처치해 턴 종료 시 예상 손실 ${forecast.hpLoss}에서 ${projectedHpLoss}로 줄어듭니다. 남은 체력 ${Math.max(0, run.player.hp - projectedHpLoss)}.`
+  });
+}
+
+function clearCombatPreviewSelfHealthProjection(element) {
+  const health = element.querySelector?.(".health-bar.preview-incoming-health");
+  if (!health) return;
+  const baseAfter = health.dataset.previewBaseHpAfter ?? "";
+  const baseLoss = health.dataset.previewBaseHpLoss ?? "";
+  if (baseAfter) health.style.setProperty("--incoming-hp-after", baseAfter);
+  else health.style.removeProperty("--incoming-hp-after");
+  if (baseLoss) health.style.setProperty("--incoming-hp-loss", baseLoss);
+  else health.style.removeProperty("--incoming-hp-loss");
+  if (health.dataset.previewBaseAria) health.setAttribute("aria-label", health.dataset.previewBaseAria);
+  health.classList.remove("preview-incoming-health", "preview-safe");
+  health.removeAttribute("data-preview-incoming-result");
+  health.removeAttribute("data-preview-incoming-label");
+  health.removeAttribute("data-preview-prevented");
+  delete health.dataset.previewBaseHpAfter;
+  delete health.dataset.previewBaseHpLoss;
+  delete health.dataset.previewBaseAria;
 }
 
 function setCombatPreviewAssist(card, preview, selected, aliveEnemies, mode, tone) {
@@ -5064,7 +5148,7 @@ function renderCombat(run) {
           ${renderEntityResultStack("self")}
           <div class="combatant-plate player-plate">
             <h2>${run.player.name}</h2>
-            ${healthBar(run.player.hp, run.player.maxHp)}
+            ${playerHealthBar(run)}
             ${renderBlockReadout(run.player.block)}
             ${renderStatuses(run.player.statuses)}
           </div>
@@ -12169,10 +12253,30 @@ function renderLog(run) {
   `;
 }
 
-function healthBar(hp, maxHp) {
+function playerHealthBar(run) {
+  const forecast = enemyIntentForecast(run);
+  const hpLoss = Math.max(0, Number(forecast?.hpLoss ?? 0));
+  if (hpLoss <= 0) return healthBar(run.player.hp, run.player.maxHp);
+  const hpAfter = Math.max(0, run.player.hp - hpLoss);
+  const maxHp = Math.max(1, run.player.maxHp);
+  const hpLossPercent = Math.max(0, Math.min(100, (Math.min(hpLoss, run.player.hp) / maxHp) * 100));
+  const hpAfterPercent = Math.max(0, Math.min(100, (hpAfter / maxHp) * 100));
+  return healthBar(run.player.hp, run.player.maxHp, {
+    className: "incoming-health-loss",
+    style: `--incoming-hp-after:${hpAfterPercent}%;--incoming-hp-loss:${hpLossPercent}%;`,
+    attrs: `data-incoming-result="-${hpLoss}" data-incoming-after="${hpAfter}"`,
+    ariaLabel: `체력 ${run.player.hp}/${run.player.maxHp}. 턴 종료 시 예상 손실 ${hpLoss}, 남은 체력 ${hpAfter}.`
+  });
+}
+
+function healthBar(hp, maxHp, options = {}) {
   const percent = Math.max(0, Math.min(100, (hp / maxHp) * 100));
+  const className = ["health-bar", options.className].filter(Boolean).join(" ");
+  const attrs = options.attrs ? ` ${options.attrs}` : "";
+  const style = options.style ? ` style="${options.style}"` : "";
+  const ariaLabel = options.ariaLabel ?? `체력 ${hp}/${maxHp}`;
   return `
-    <div class="health-bar" aria-label="체력 ${hp}/${maxHp}">
+    <div class="${className}" aria-label="${ariaLabel}"${style}${attrs}>
       <span style="width:${percent}%"></span>
       <strong>${hp}/${maxHp}</strong>
     </div>
