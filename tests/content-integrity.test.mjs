@@ -1250,6 +1250,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /data-action="preview-music"/);
   assert.match(mainSource, /data-setting-value="\$\{key\}"/);
   assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}"/);
+  assert.match(mainSource, /function renderTopRouteCompass\(run\)/);
+  assert.match(mainSource, /class="top-route-compass \$\{progress\.tone\}"/);
+  assert.match(mainSource, /class="top-route-pips" aria-hidden="true"/);
+  assert.match(mainSource, /aria-label="\$\{aria\}"/);
+  assert.match(mainSource, /map:\s*"경로 선택"/);
   assert.match(mainSource, /function renderSettingRange\(key, label, detail, min, max, step\)/);
   assert.match(mainSource, /function renderSettingSwitch\(key, label, detail, checked\)/);
   assert.match(mainSource, /class="settings-grid"/);
@@ -1260,6 +1265,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.relic\.active/);
   assert.match(styleSource, /\.save-status/);
   assert.match(styleSource, /\.top-objective/);
+  assert.match(styleSource, /\.top-route-compass/);
+  assert.match(styleSource, /\.top-route-pips/);
+  assert.match(styleSource, /\.phase-combat > \.top-bar \.top-route-compass/);
+  assert.match(styleSource, /\.phase-map > \.top-bar \.top-route-compass/);
+  assert.match(styleSource, /\.phase-reward > \.top-bar \.top-route-compass/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.top-objective/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.brand-button::before/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.deck-toggle-button::before/);

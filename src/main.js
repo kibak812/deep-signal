@@ -4254,6 +4254,7 @@ function renderTopBar(run) {
       <div class="hud-stat"><span>층</span><strong>${Math.max(1, run.stats.floors)}</strong></div>
       <div class="hud-stat"><span>난이도</span><strong>${difficulty?.name ?? "표층"}</strong></div>
       ${renderTopObjective(run)}
+      ${renderTopRouteCompass(run)}
       <div class="save-status" aria-label="자동 저장 상태"><span>자동 저장</span><strong>${formatSavedAt(run.updatedAt)}</strong></div>
       <button class="relic-row relic-row-button" data-action="open-relics" aria-label="유물 ${run.player.relics.length}개 상세 보기" title="유물 상세 보기">
         ${run.player.relics.map((id) => renderRelic(id, false, activeRelics.has(id), run)).join("")}
@@ -4263,6 +4264,30 @@ function renderTopBar(run) {
       <button class="icon-button" data-action="screen" data-id="guide" title="가이드">가이드</button>
       <button class="icon-button" data-action="screen" data-id="settings" title="설정">설정</button>
     </header>
+  `;
+}
+
+function renderTopRouteCompass(run) {
+  const progress = runProgressBrief(run);
+  const currentStep = clamp(Math.round((progress.progress / 100) * 6), 0, 6);
+  const phaseLabel = phaseBriefLabel(run.phase);
+  const aria = `${progress.actLabel}. ${currentStep + 1}/7. ${progress.distanceText}. 현재 ${phaseLabel}.`;
+  return `
+    <section class="top-route-compass ${progress.tone}" aria-label="${aria}">
+      <span><b>${progress.act}막</b><em>${phaseLabel}</em></span>
+      <div class="top-route-pips" aria-hidden="true">
+        ${Array.from({ length: 7 }, (_, index) => {
+          const classes = [
+            index < currentStep ? "done" : "",
+            index === currentStep ? "current" : "",
+            index === 6 ? "boss" : ""
+          ].filter(Boolean).join(" ");
+          const label = index === 6 ? nodeIcon("boss") : "";
+          return `<i class="${classes}" data-step="${index + 1}">${label}</i>`;
+        }).join("")}
+      </div>
+      <strong>${progress.distanceText}</strong>
+    </section>
   `;
 }
 
@@ -12859,6 +12884,7 @@ function actName(act) {
 function phaseBriefLabel(phase) {
   return {
     combat: "전투",
+    map: "경로 선택",
     reward: "보상 선택",
     event: "이벤트",
     shop: "상점 정비",

@@ -1061,6 +1061,105 @@ h3 {
     rgba(7, 23, 18, 0.52);
 }
 
+.top-route-compass {
+  min-width: 154px;
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: auto minmax(62px, 1fr) auto;
+  gap: 6px;
+  align-items: center;
+  border: 1px solid rgba(125, 211, 252, 0.2);
+  background:
+    linear-gradient(90deg, rgba(125, 211, 252, 0.08), transparent 72%),
+    rgba(5, 14, 21, 0.5);
+  padding: 7px 8px;
+}
+
+.top-route-compass > span {
+  display: grid;
+  gap: 2px;
+  min-width: 36px;
+}
+
+.top-route-compass b,
+.top-route-compass em,
+.top-route-compass strong {
+  min-width: 0;
+  overflow: hidden;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.top-route-compass b {
+  color: var(--cyan);
+  font-size: 0.66rem;
+}
+
+.top-route-compass em {
+  color: var(--muted);
+  font-size: 0.58rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.top-route-compass strong {
+  justify-self: end;
+  color: var(--text);
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.top-route-pips {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(5px, 1fr));
+  gap: 3px;
+  align-items: center;
+}
+
+.top-route-pips i {
+  position: relative;
+  height: 5px;
+  border: 1px solid rgba(236, 248, 243, 0.12);
+  background: rgba(236, 248, 243, 0.1);
+  color: var(--amber);
+  font-size: 0;
+  font-style: normal;
+}
+
+.top-route-pips i.done {
+  border-color: rgba(125, 211, 252, 0.28);
+  background: rgba(125, 211, 252, 0.42);
+}
+
+.top-route-pips i.current {
+  height: 9px;
+  border-color: rgba(246, 193, 119, 0.76);
+  background: var(--amber);
+  box-shadow: 0 0 14px rgba(246, 193, 119, 0.28);
+}
+
+.top-route-pips i.boss {
+  height: 12px;
+  display: grid;
+  place-items: center;
+  border-color: rgba(251, 113, 133, 0.52);
+  background: rgba(251, 113, 133, 0.18);
+  font-size: 0.54rem;
+  line-height: 1;
+}
+
+.top-route-compass.warning {
+  border-color: rgba(246, 193, 119, 0.32);
+}
+
+.top-route-compass.danger {
+  border-color: rgba(251, 113, 133, 0.4);
+  background:
+    linear-gradient(90deg, rgba(251, 113, 133, 0.1), transparent 72%),
+    rgba(26, 10, 18, 0.5);
+}
+
 button.pile {
   appearance: none;
   min-width: 74px;
@@ -1138,7 +1237,7 @@ dd,
   right: 0;
   min-height: 66px;
   display: grid;
-  grid-template-columns: auto repeat(4, auto) minmax(200px, 0.75fr) minmax(118px, auto) minmax(140px, 0.6fr) repeat(4, auto);
+  grid-template-columns: auto repeat(4, auto) minmax(200px, 0.75fr) minmax(142px, auto) minmax(118px, auto) minmax(140px, 0.6fr) repeat(4, auto);
   gap: 8px;
   align-items: center;
   padding: 8px 16px;
@@ -9724,6 +9823,11 @@ dd,
   display: none;
 }
 
+.phase-combat > .top-bar .top-route-compass,
+.phase-combat-victory > .top-bar .top-route-compass {
+  display: none;
+}
+
 .phase-combat > .top-bar .top-objective span,
 .phase-combat-victory > .top-bar .top-objective span {
   font-size: 0.58rem;
@@ -9914,6 +10018,11 @@ dd,
   grid-column: 7;
 }
 
+.phase-reward > .top-bar .top-route-compass {
+  grid-column: 5;
+  justify-self: stretch;
+}
+
 .phase-map > .top-bar {
   min-height: 54px;
   grid-template-columns: auto auto auto auto minmax(0, 1fr) auto auto;
@@ -9956,6 +10065,11 @@ dd,
   grid-column: 7;
 }
 
+.phase-map > .top-bar .top-route-compass {
+  grid-column: 5;
+  justify-self: stretch;
+}
+
 .phase-summary > .top-bar {
   min-height: 48px;
   grid-template-columns: auto auto auto minmax(0, 1fr) auto auto;
@@ -9964,6 +10078,7 @@ dd,
 }
 
 .phase-summary > .top-bar .top-objective,
+.phase-summary > .top-bar .top-route-compass,
 .phase-summary > .top-bar .save-status,
 .phase-summary > .top-bar .relic-row-button,
 .phase-summary > .top-bar .hud-stat:nth-of-type(n + 3),
@@ -22154,6 +22269,8 @@ input[type="range"] {
 .high-contrast .guide-concept-loop i,
 .high-contrast .guide-card,
 .high-contrast .concept-codex-more,
+.high-contrast .top-route-compass,
+.high-contrast .top-route-pips i,
 .high-contrast .route-scout,
 .high-contrast .route-card.recommended,
 .high-contrast .route-recommendation,
@@ -22585,7 +22702,8 @@ input[type="range"] {
   .icon-button,
   .hud-stat,
   .save-status,
-  .top-objective {
+  .top-objective,
+  .top-route-compass {
     flex: 0 0 auto;
   }
 
@@ -22600,6 +22718,10 @@ input[type="range"] {
 
   .top-objective {
     flex: 1 1 260px;
+  }
+
+  .top-route-compass {
+    flex: 1 1 220px;
   }
 
   .game-screen {
@@ -23413,6 +23535,13 @@ input[type="range"] {
     padding: 7px;
   }
 
+  .top-route-compass {
+    grid-column: 1 / -1;
+    min-height: 40px;
+    grid-template-columns: auto minmax(84px, 1fr) auto;
+    padding: 7px;
+  }
+
   .icon-button {
     min-height: 42px;
     padding: 8px 6px;
@@ -23462,6 +23591,15 @@ input[type="range"] {
   .phase-combat > .top-bar .top-objective {
     grid-column: auto;
     min-width: 0;
+  }
+
+  .phase-combat > .top-bar .top-route-compass {
+    display: none;
+  }
+
+  .phase-map > .top-bar .top-route-compass,
+  .phase-reward > .top-bar .top-route-compass {
+    grid-column: 1 / -1;
   }
 
   .phase-combat > .top-bar .top-objective small {
