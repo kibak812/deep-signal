@@ -8681,7 +8681,7 @@ function renderSummaryVerdict(summary, replaySeed, nextDifficulty = null, verdic
 
 function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   const stop = summaryStopPoint(summary);
-  const focus = summaryBuildLine(summary, "주력 미정");
+  const focus = summaryBuildCompactLine(summary, "주력 미정");
   const headlineFocus = summaryPrimaryBuildText(summary, "선택한 방향");
   const firstStep = summaryNextRunSteps(summary)[0];
   const failureAdvice = summary.won ? null : summaryFailureAdvice(summary);
@@ -8730,7 +8730,7 @@ function summaryRetryBriefChips(summary, replaySeed, nextDifficulty = null) {
 
 function renderSummaryFocusStrip(summary, verdict) {
   const stop = summary.won ? `${summary.floors ?? 0}층 완주` : summaryStopPoint(summary);
-  const focus = summaryBuildLine(summary, "주력 미정");
+  const focus = summaryBuildCompactLine(summary, "주력 미정");
   const note = summaryBuildShortNote(summary);
   return `
     <section class="summary-focus-strip ${summary.won ? "won" : "lost"}" aria-label="이번 런과 다음 선택">
@@ -10443,7 +10443,7 @@ function buildConceptText(tags, emptyText = "주력 미정") {
 }
 
 function buildConceptShortText(tags, emptyText = "주력 미정") {
-  const labels = buildConcepts(tags).map((axis) => summaryConceptLabel(axis));
+  const labels = buildConcepts(tags).map((axis) => summaryConceptCompactLabel(axis));
   return labels.length ? labels.slice(0, 2).join(" · ") : emptyText;
 }
 
@@ -10461,8 +10461,26 @@ function summaryBuildLine(summary, emptyText = "주력 미정") {
   return `${summaryConceptLabel(concepts[0])} · ${summaryConceptLabel(concepts[1])} 외 ${concepts.length - 2}`;
 }
 
+function summaryBuildCompactLine(summary, emptyText = "주력 미정") {
+  const concepts = buildConcepts(summary?.build ?? []);
+  if (!concepts.length) return emptyText;
+  if (concepts.length <= 2) return concepts.map(summaryConceptCompactLabel).join(" · ");
+  return `${summaryConceptCompactLabel(concepts[0])} · ${summaryConceptCompactLabel(concepts[1])} +${concepts.length - 2}`;
+}
+
 function summaryConceptLabel(axis) {
   return axis?.shortLabel ?? axis?.label ?? "주력";
+}
+
+function summaryConceptCompactLabel(axis) {
+  return {
+    charge: "전하",
+    mark: "표식",
+    virus: "바이러스",
+    ward: "반격",
+    cycle: "순환",
+    risk: "위험"
+  }[axis?.id] ?? summaryConceptLabel(axis);
 }
 
 function renderBuildTags(tags, emptyText = "주력 미정") {

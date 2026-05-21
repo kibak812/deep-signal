@@ -16065,6 +16065,8 @@ dd,
   color: var(--text);
   font-size: clamp(1.24rem, 2.1vw, 1.72rem);
   line-height: 1.16;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-verdict-copy > p {
@@ -16073,6 +16075,8 @@ dd,
   color: var(--muted);
   font-size: 0.88rem;
   line-height: 1.42;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-verdict-stats {
@@ -16101,7 +16105,8 @@ dd,
   color: var(--text);
   font-weight: 900;
   line-height: 1.28;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-verdict-cta {
@@ -16145,6 +16150,8 @@ dd,
   color: var(--text);
   font-size: 0.98rem;
   line-height: 1.25;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-verdict-cta small {
@@ -16154,6 +16161,7 @@ dd,
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
+  word-break: keep-all;
 }
 
 .summary-verdict-cta-chips {
@@ -16387,12 +16395,16 @@ dd,
 .summary-focus-strip strong {
   color: var(--text);
   line-height: 1.24;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-focus-strip small {
   color: var(--muted);
   font-size: 0.8rem;
   line-height: 1.38;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-replay-prompt {
@@ -16430,6 +16442,8 @@ dd,
   color: var(--text);
   font-size: 0.98rem;
   line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-replay-prompt > p {
@@ -16442,6 +16456,7 @@ dd,
   overflow: hidden;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
+  word-break: keep-all;
 }
 
 .summary-replay-prompt > div {
@@ -16572,6 +16587,8 @@ dd,
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-next-rail li small {
@@ -16579,6 +16596,7 @@ dd,
   font-size: 0.68rem;
   line-height: 1.15;
   white-space: nowrap;
+  word-break: keep-all;
 }
 
 .summary-command-panel .summary-next-rail li {
@@ -17727,6 +17745,8 @@ dd,
   color: var(--text);
   font-size: 0.94rem;
   line-height: 1.12;
+  overflow-wrap: break-word;
+  word-break: keep-all;
 }
 
 .summary-action-main small {
@@ -17737,6 +17757,7 @@ dd,
   line-height: 1.16;
   text-overflow: ellipsis;
   white-space: nowrap;
+  word-break: keep-all;
 }
 
 .summary-action-secondary {

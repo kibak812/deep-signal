@@ -502,6 +502,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function assertSummaryActionsVisible\(cdp\)/);
   assert.match(captureSource, /await assertSummaryActionsVisible\(cdp\);/);
   assert.match(captureSource, /Summary actions not visible in first viewport/);
+  assert.match(captureSource, /compactBuildStat/);
+  assert.match(captureSource, /summaryKeepAll/);
+  assert.match(captureSource, /visibleSummaryTextFits/);
   assert.match(captureSource, /const seenCodaIds = new Set\(\)/);
   assert.match(captureSource, /Victory coda duplicated before reward/);
   assert.match(buildSource, /\.nojekyll/);
@@ -1775,6 +1778,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /class="summary-next-steps"/);
   assert.match(mainSource, /첫 세 보상 안에 하나만 고르기/);
   assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*-webkit-line-clamp:\s*2/);
+  assert.match(styleSource, /\.summary-next-rail li strong[\s\S]*word-break:\s*keep-all/);
   assert.match(styleSource, /\.summary-command-panel \.summary-next-rail li small[\s\S]*display:\s*none/);
   assert.match(mainSource, /function summaryStoppedAct\(summary\)/);
   assert.match(mainSource, /function summaryFailureProfile\(summary\)/);
@@ -1807,8 +1811,12 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(mainSource, /function buildConceptText\(tags, emptyText = "주력 미정"\)/);
   assert.match(mainSource, /function summaryPrimaryBuildText\(summary, emptyText = "주력 미정"\)/);
   assert.match(mainSource, /function summaryBuildLine\(summary, emptyText = "주력 미정"\)/);
+  assert.match(mainSource, /function summaryBuildCompactLine\(summary, emptyText = "주력 미정"\)/);
   assert.match(mainSource, /shortLabel:\s*"표식 러시"/);
   assert.match(mainSource, /function summaryConceptLabel\(axis\)/);
+  assert.match(mainSource, /function summaryConceptCompactLabel\(axis\)/);
+  assert.match(mainSource, /virus:\s*"바이러스"/);
+  assert.match(mainSource, /ward:\s*"반격"/);
   assert.match(mainSource, /title:\s*`\$\{headlineFocus\}로 코어를 회수했습니다`/);
   assert.match(mainSource, /concept-build-tags/);
   assert.match(mainSource, /function nextDifficultyAfter\(difficultyId\)/);
@@ -1828,6 +1836,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(styleSource, /\.summary-snapshot/);
   assert.match(styleSource, /\.summary-verdict/);
   assert.match(styleSource, /\.summary-verdict-stats/);
+  assert.match(styleSource, /\.summary-verdict-stats dd[\s\S]*word-break:\s*keep-all/);
   assert.match(styleSource, /\.summary-verdict-cta/);
   assert.match(styleSource, /\.summary-verdict-cta-main/);
   assert.match(styleSource, /\.summary-verdict-cta-chips/);
@@ -1842,6 +1851,7 @@ test("run summary surfaces replay-relevant build evidence", () => {
   assert.match(styleSource, /\.summary-path-strip article\.defeated/);
   assert.match(styleSource, /\.summary-focus-strip/);
   assert.match(styleSource, /\.summary-focus-strip article/);
+  assert.match(styleSource, /\.summary-focus-strip strong[\s\S]*word-break:\s*keep-all/);
   assert.match(styleSource, /\.high-contrast \.summary-path-strip/);
   assert.match(styleSource, /\.summary-details > summary/);
   assert.match(styleSource, /\.summary-route/);

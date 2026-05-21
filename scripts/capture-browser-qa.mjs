@@ -2569,10 +2569,18 @@ async function assertSummaryActionsVisible(cdp) {
     const nextRailItems = document.querySelectorAll(".summary-next-rail li").length;
     const ctaChips = document.querySelectorAll(".summary-verdict-cta-chips i, .summary-finale-chips i").length;
     const actionCount = document.querySelectorAll(".summary-actions button").length;
+    const statValues = [...document.querySelectorAll(".summary-verdict-stats dd")].map((item) => item.innerText.replace(/\\s+/g, " ").trim());
+    const buildStat = document.querySelector(".summary-verdict-stats div:last-child dd");
+    const compactBuildStat = !buildStat || buildStat.innerText.replace(/\\s+/g, " ").trim().length <= 12;
+    const summaryKeepAll = [...document.querySelectorAll(".summary-verdict-copy > strong, .summary-verdict-stats dd, .summary-verdict-cta strong, .summary-focus-strip strong, .summary-next-rail li strong, .summary-action-main strong")].every((item) => getComputedStyle(item).wordBreak === "keep-all");
+    const visibleSummaryTextFits = [...document.querySelectorAll(".summary-verdict-stats dd, .summary-next-rail li strong, .summary-action-main strong")].every((item) => item.scrollWidth <= item.clientWidth + 2 || getComputedStyle(item).display.includes("box"));
     const ok =
       actionCount >= 2 &&
       nextRailItems === 3 &&
       ctaChips === 3 &&
+      compactBuildStat &&
+      summaryKeepAll &&
+      visibleSummaryTextFits &&
       verdictCtaText.includes("다음 런 브리핑") &&
       finaleOk &&
       !topObjectiveVisible &&
@@ -2594,6 +2602,10 @@ async function assertSummaryActionsVisible(cdp) {
       actionCount,
       nextRailItems,
       ctaChips,
+      statValues,
+      compactBuildStat,
+      summaryKeepAll,
+      visibleSummaryTextFits,
       viewportH,
       top: Math.round(actionsBox.top),
       bottom: Math.round(actionsBox.bottom),
