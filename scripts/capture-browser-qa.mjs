@@ -3173,19 +3173,30 @@ async function assertFinalBossSelectorUx(cdp) {
     const bossBrief = document.querySelector(".selector-boss-brief");
     const focus = document.querySelector(".selector-focus");
     const recommended = document.querySelector(".deck-select-option.recommended");
+    const metricRows = [...document.querySelectorAll(".deck-choice-metrics")];
     const modalText = modal?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const focusText = focus?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const bossText = bossBrief?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const recommendedText = recommended?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const metricText = metricRows.map((row) => row.innerText.replace(/\\s+/g, " ").trim()).join(" ");
+    const metricChipsFit = metricRows.every((row) => [...row.querySelectorAll("i")].every((chip) => chip.scrollWidth <= chip.clientWidth + 2));
+    const modalBox = modal?.getBoundingClientRect();
+    const modalFits = modalBox ? modalBox.width <= window.innerWidth && modalBox.height <= window.innerHeight : false;
     const ok =
       Boolean(modal) &&
+      modal?.classList.contains("selector-modal") &&
       Boolean(brief) &&
       bossText.includes("보스 대비") &&
       bossText.includes("큰 방어") &&
       focusText.includes("보스 대비") &&
       focusText.includes("마지막 문") &&
-      recommendedText.includes("창백한 방화벽");
-    return { ok, modalText, bossText, focusText, recommendedText };
+      recommendedText.includes("창백한 방화벽") &&
+      metricRows.length >= 5 &&
+      metricText.includes("선택 확정") &&
+      /비용|덱/.test(metricText) &&
+      metricChipsFit &&
+      modalFits;
+    return { ok, modalText, bossText, focusText, recommendedText, metricText, metricRows: metricRows.length, metricChipsFit, modalFits };
   })()`);
   if (!result.ok) {
     throw new Error(`Final boss selector failed: ${JSON.stringify(result)}`);

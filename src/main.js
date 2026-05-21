@@ -9800,7 +9800,7 @@ function renderDeckSelector(run) {
     : choices;
   return `
     <div class="modal-backdrop">
-      <section class="deck-modal">
+      <section class="deck-modal selector-modal ${isUpgrade ? "upgrade" : "remove"}">
         <header>
           <h2>${title}</h2>
           <button data-action="deck-cancel">취소</button>
@@ -9870,11 +9870,13 @@ function renderDeckSelectorFocus(run, recommendation) {
 }
 
 function renderDeckChoicePreview(preview, recommended = false) {
+  const metrics = (preview.metrics ?? []).map((metric) => `<i class="${metric.tone}">${metric.label}</i>`).join("");
   return `
     <div class="deck-choice-preview ${preview.tone} ${recommended ? "recommended" : ""}">
       <strong>${recommended ? "추천 · " : ""}${preview.label}</strong>
-      <span>${preview.detail}</span>
-      ${preview.after ? `<small>${preview.after}</small>` : ""}
+      ${metrics ? `<div class="deck-choice-metrics" aria-label="선택 결과">${metrics}</div>` : ""}
+      <span title="${preview.detail}">${preview.detail}</span>
+      ${preview.after ? `<small title="${preview.after}">${preview.after}</small>` : ""}
     </div>
   `;
 }
@@ -10086,11 +10088,16 @@ function upgradeChoicePreview(cardInstance) {
       tone: "muted",
       label: "강화 불가",
       detail: cardInstance.upgraded ? "이미 강화된 카드입니다." : "강화해도 비용이나 효과가 바뀌지 않습니다.",
-      after: ""
+      after: "",
+      metrics: [{ tone: "muted", label: "선택 불가" }]
     };
   }
   const before = effectiveCard({ ...cardInstance, upgraded: false });
   const after = effectiveCard({ ...cardInstance, upgraded: true });
+  const costMetric =
+    before.cost === after.cost
+      ? { tone: "steady", label: "비용 그대로" }
+      : { tone: "strong", label: `비용 ${formatCardCost(before.cost)}→${formatCardCost(after.cost)}` };
   const costChange =
     before.cost === after.cost
       ? "비용은 그대로"
@@ -10102,7 +10109,12 @@ function upgradeChoicePreview(cardInstance) {
     tone: after.cost < before.cost ? "strong" : "steady",
     label: "강화 가능",
     detail: costChange,
-    after: textChange
+    after: textChange,
+    metrics: [
+      costMetric,
+      { tone: before.text === after.text ? "steady" : "strong", label: before.text === after.text ? "구조 유지" : "효과 강화" },
+      { tone: "confirm", label: "선택 확정" }
+    ]
   };
 }
 
@@ -10131,7 +10143,12 @@ function removeChoicePreview(run, cardInstance) {
     tone,
     label,
     detail: `덱 -1장${hpCost ? ` · 체력 -${run.player.hp - hpAfter}` : ""}`,
-    after: `${card.name} 빠짐 · 남은 덱 ${deckAfter}장 · ${role}`
+    after: `${card.name} 빠짐 · 남은 덱 ${deckAfter}장 · ${role}`,
+    metrics: [
+      { tone: "strong", label: `덱 ${run.player.deck.length}→${deckAfter}장` },
+      hpCost ? { tone: "warning", label: `체력 -${run.player.hp - hpAfter}` } : { tone: "steady", label: "체력 변화 없음" },
+      { tone: "confirm", label: "선택 확정" }
+    ]
   };
 }
 

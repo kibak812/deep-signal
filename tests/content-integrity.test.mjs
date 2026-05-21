@@ -3377,14 +3377,23 @@ test("upgrade service UI avoids dead-end deck choices", () => {
   assert.match(mainSource, /보스 전 압축/);
   assert.match(mainSource, /강화 가능/);
   assert.match(mainSource, /recommendationLabel:\s*"추천"/);
+  assert.match(mainSource, /class="deck-modal selector-modal/);
+  assert.match(mainSource, /class="deck-choice-metrics"/);
+  assert.match(mainSource, /metrics:\s*\[/);
+  assert.match(mainSource, /선택 확정/);
   assert.match(mainSource, /function compactEffectText\(text\)/);
   assert.match(mainSource, /비용 \$\{formatCardCost\(before\.cost\)\}에서 \$\{formatCardCost\(after\.cost\)\}로 감소/);
+  assert.match(mainSource, /비용 \$\{formatCardCost\(before\.cost\)\}→\$\{formatCardCost\(after\.cost\)\}/);
   assert.match(styleSource, /\.selector-hint/);
+  assert.match(styleSource, /\.selector-modal/);
   assert.match(styleSource, /\.selector-brief\.with-boss/);
   assert.match(styleSource, /\.selector-boss-brief/);
   assert.match(styleSource, /\.selector-focus/);
   assert.match(styleSource, /\.deck-select-grid/);
   assert.match(styleSource, /\.deck-choice-preview/);
+  assert.match(styleSource, /\.deck-choice-metrics/);
+  assert.match(styleSource, /\.deck-choice-metrics i\.confirm/);
+  assert.match(styleSource, /\.high-contrast \.deck-choice-metrics i/);
   assert.match(styleSource, /\.deck-select-option\.recommended/);
 });
 
