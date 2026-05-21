@@ -287,6 +287,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-choice-pulse-next-step\.png/);
   assert.match(readme, /browser-qa-reward-card-selected\.png/);
   assert.match(readme, /browser-qa-combat-turn-and-victory-evidence\.json/);
+  assert.match(readme, /browser-qa-combat-route-beacon\.json/);
   assert.match(readme, /rewardReachedAfterVictory/);
   assert.match(readme, /browser-qa-mobile-combat-refreshed\.png/);
   assert.match(readme, /browser-qa-mobile-combat-refreshed\.json/);
@@ -404,6 +405,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function assertVictoryCodaUx\(cdp\)/);
   assert.match(captureSource, /function writeTurnAndVictoryEvidence\(groupedEnemyFx, victoryCodaEvidence\)/);
   assert.match(captureSource, /browser-qa-combat-turn-and-victory-evidence\.json/);
+  assert.match(captureSource, /browser-qa-combat-route-beacon\.json/);
+  assert.match(captureSource, /hasBossTarget/);
+  assert.match(captureSource, /hasRewardContext/);
   assert.match(captureSource, /rewardReachedAfterVictory/);
   assert.match(captureSource, /enemyTurnDuplicated/);
   assert.match(captureSource, /Player turn cue button mismatch/);
@@ -914,9 +918,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /function renderCombatDepthRail\(run\)/);
   assert.match(mainSource, /function combatRouteRewardLabel\(type\)/);
   assert.match(mainSource, /const rewardLabel = combatRouteRewardLabel\(nodeType\)/);
+  assert.match(mainSource, /const bossTargetLabel = boss\?\.name \?\? "보스 미확인"/);
   assert.match(mainSource, /class="depth-rail combat-route-beacon node-\$\{nodeType\}/);
   assert.match(mainSource, /<span class="route-kicker">진행<\/span>/);
-  assert.match(mainSource, /<small><i aria-hidden="true">\$\{nodeIcon\(nodeType\)\}<\/i><b>\$\{distanceLabel\}<\/b><em>\$\{rewardLabel\}<\/em><\/small>/);
+  assert.match(mainSource, /목표 \$\{bossTargetLabel\}\. 전투 후 \$\{rewardLabel\}/);
+  assert.match(mainSource, /<small><i aria-hidden="true">\$\{nodeIcon\(nodeType\)\}<\/i><b>\$\{distanceLabel\}<\/b><em>\$\{bossTargetLabel\}<\/em><\/small>/);
   assert.match(mainSource, /function renderCombatMissionStrip\(run\)/);
   assert.match(mainSource, /function renderCombatReadinessStrip\(readiness\)/);
   assert.match(mainSource, /function combatReadinessHighlights\(readiness\)/);
@@ -1293,6 +1299,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-board \.combat-route-beacon/);
   assert.match(styleSource, /\.combat-board \.combat-route-beacon \.route-kicker/);
   assert.match(styleSource, /\.combat-board \.combat-route-beacon small/);
+  assert.match(styleSource, /\.combat-board \.combat-route-beacon small em[\s\S]*max-width:\s*88px/);
   assert.match(styleSource, /\.high-contrast \.top-objective/);
   assert.match(styleSource, /\.relic-pulse-stack/);
   assert.match(styleSource, /\.phase-combat \.relic-pulse-stack[\s\S]*top:\s*7px[\s\S]*left:\s*56px/);

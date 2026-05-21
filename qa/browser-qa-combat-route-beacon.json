@@ -1,0 +1,53 @@
+{
+  "ok": true,
+  "text": "진행 1막 1층 보스까지 6층 대분류자 칼리스",
+  "label": "현재 위치 1막 1층. 보스까지 6층. 목표 대분류자 칼리스. 전투 후 카드 선택",
+  "target": "대분류자 칼리스",
+  "pips": 7,
+  "visible": true,
+  "hasPlainProgress": true,
+  "hasBossTarget": true,
+  "hasRewardContext": true,
+  "noCombatantOverlap": true,
+  "noHandOverlap": true,
+  "box": {
+    "left": 371,
+    "top": 59,
+    "right": 550,
+    "bottom": 125,
+    "width": 179,
+    "height": 66
+  },
+  "combatantBoxes": [
+    {
+      "left": 137,
+      "top": 33,
+      "right": 344,
+      "bottom": 342
+    },
+    {
+      "left": 110,
+      "top": 340,
+      "right": 372,
+      "bottom": 385
+    },
+    {
+      "left": 1042,
+      "top": 89,
+      "right": 1120,
+      "bottom": 127
+    },
+    {
+      "left": 1002,
+      "top": 13,
+      "right": 1160,
+      "bottom": 251
+    },
+    {
+      "left": 985,
+      "top": 328,
+      "right": 1177,
+      "bottom": 373
+    }
+  ]
+}

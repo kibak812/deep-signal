@@ -5335,8 +5335,10 @@ function renderCombatDepthRail(run) {
   const bossDistance = Math.max(0, 7 - localFloor);
   const nodeType = combatMissionNodeType(run);
   const rewardLabel = combatRouteRewardLabel(nodeType);
+  const boss = bossForAct(act);
+  const bossTargetLabel = boss?.name ?? "보스 미확인";
   const distanceLabel = bossDistance ? `보스까지 ${bossDistance}층` : "보스전";
-  const detailLabel = `${act}막 ${localFloor}층. ${distanceLabel}. 전투 후 ${rewardLabel}.`;
+  const detailLabel = `${act}막 ${localFloor}층. ${distanceLabel}. 목표 ${bossTargetLabel}. 전투 후 ${rewardLabel}.`;
   const pips = Array.from({ length: 7 }, (_, index) => {
     const current = index + 1 === localFloor;
     const completed = index + 1 < localFloor;
@@ -5344,11 +5346,11 @@ function renderCombatDepthRail(run) {
     return `<i class="${current ? "current" : ""} ${completed ? "done" : ""} ${boss ? "boss" : ""}" aria-hidden="true"></i>`;
   }).join("");
   return `
-    <div class="depth-rail combat-route-beacon node-${nodeType} ${bossDistance <= 1 ? "near-boss" : ""}" aria-label="현재 위치 ${act}막 ${localFloor}층. ${distanceLabel}. 전투 후 ${rewardLabel}" title="${detailLabel}">
+    <div class="depth-rail combat-route-beacon node-${nodeType} ${bossDistance <= 1 ? "near-boss" : ""}" aria-label="현재 위치 ${act}막 ${localFloor}층. ${distanceLabel}. 목표 ${bossTargetLabel}. 전투 후 ${rewardLabel}" title="${detailLabel}">
       <span class="route-kicker">진행</span>
       <strong><b>${act}막</b><em>${localFloor}층</em></strong>
       <div class="route-pips">${pips}</div>
-      <small><i aria-hidden="true">${nodeIcon(nodeType)}</i><b>${distanceLabel}</b><em>${rewardLabel}</em></small>
+      <small><i aria-hidden="true">${nodeIcon(nodeType)}</i><b>${distanceLabel}</b><em>${bossTargetLabel}</em></small>
     </div>
   `;
 }

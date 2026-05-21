@@ -2382,6 +2382,7 @@ async function assertCombatRouteBeacon(cdp) {
   const result = await evaluate(cdp, `(() => {
     const beacon = document.querySelector(".combat-route-beacon");
     const pips = [...(beacon?.querySelectorAll(".route-pips i") ?? [])];
+    const target = beacon?.querySelector("small em")?.innerText.trim() ?? "";
     const text = beacon?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const label = beacon?.getAttribute("aria-label") ?? "";
     const box = beacon?.getBoundingClientRect();
@@ -2394,16 +2395,19 @@ async function assertCombatRouteBeacon(cdp) {
     const noCombatantOverlap = Boolean(box) && combatantBoxes.every((combatantBox) => !intersects(box, combatantBox));
     const noHandOverlap = Boolean(box && hand && box.bottom < hand.top - 12);
     const hasPlainProgress = /진행/.test(text) && /\\d막/.test(text) && /\\d층/.test(text) && /(보스까지 \\d층|보스전)/.test(text);
-    const hasReward = /카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파/.test(text);
-    const ok = Boolean(beacon) && visible && pips.length === 7 && hasPlainProgress && hasReward && label.includes("현재 위치") && noCombatantOverlap && noHandOverlap;
+    const hasBossTarget = target.length >= 3 && !/카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파/.test(target) && label.includes("목표 " + target);
+    const hasRewardContext = /전투 후 (카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파)/.test(label);
+    const ok = Boolean(beacon) && visible && pips.length === 7 && hasPlainProgress && hasBossTarget && hasRewardContext && label.includes("현재 위치") && noCombatantOverlap && noHandOverlap;
     return {
       ok,
       text,
       label,
+      target,
       pips: pips.length,
       visible,
       hasPlainProgress,
-      hasReward,
+      hasBossTarget,
+      hasRewardContext,
       noCombatantOverlap,
       noHandOverlap,
       box: box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null,
@@ -2413,6 +2417,7 @@ async function assertCombatRouteBeacon(cdp) {
   if (!result.ok) {
     throw new Error(`Combat route beacon failed: ${JSON.stringify(result)}`);
   }
+  await writeFile(resolve(qaDir, "browser-qa-combat-route-beacon.json"), `${JSON.stringify(result, null, 2)}\n`);
 }
 
 async function assertCardPlayFxSource(cdp) {
