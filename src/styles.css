@@ -1346,7 +1346,7 @@ dd,
 
 .boss-readiness-list {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
   gap: 6px;
 }
 
@@ -23089,7 +23089,7 @@ input[type="range"] {
   }
 
   .boss-readiness-list {
-    grid-template-columns: repeat(5, minmax(92px, 1fr));
+    grid-template-columns: repeat(6, minmax(92px, 1fr));
     overflow-x: auto;
     padding-bottom: 2px;
   }

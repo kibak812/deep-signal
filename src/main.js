@@ -12445,7 +12445,9 @@ function rewardAxisShortLabel(axis) {
 }
 
 function rewardCardRoleLabel(card) {
+  if (cardCoversBossDefensePair(card)) return "방어 묶음";
   if (cardSupportsBurstDefense(card)) return "큰 방어";
+  if (cardSupportsSustainedDefense(card)) return "연속 방어";
   if (cardSupportsStatusControl(card)) return "상태 관리";
   if (cardSupportsDefense(card)) return "방어";
   if (cardSupportsFlow(card)) return "카드 찾기";
@@ -12565,8 +12567,11 @@ function rewardBossPreparationNeed(run, card) {
       .map((metric) => metric.label) ?? []
   );
   if (!weak.size) return null;
-  if (weak.has("연속 방어") && cardSupportsBurstDefense(card)) {
-    return { label: "보스 대비 연속 방어", detail: "문 낙하 뒤 레퀴엠까지 버틸 방어, 약화, 도금 수단입니다.", scoreBonus: 22 };
+  if (weak.has("큰 방어") && weak.has("연속 방어") && cardCoversBossDefensePair(card)) {
+    return { label: "보스 대비 방어 묶음", detail: "문 낙하를 막고 레퀴엠까지 이어 받을 큰 방어와 보존 방어를 함께 보탭니다.", scoreBonus: 30 };
+  }
+  if (weak.has("연속 방어") && cardSupportsSustainedDefense(card)) {
+    return { label: "보스 대비 연속 방어", detail: "문 낙하 뒤 레퀴엠까지 이어 받을 보존, 도금, 가벼운 방어 수단입니다.", scoreBonus: 24 };
   }
   if (weak.has("큰 방어") && cardSupportsBurstDefense(card)) {
     return { label: "보스 대비 큰 방어", detail: "문 낙하와 레퀴엠을 넘길 방어, 약화, 도금 수단입니다.", scoreBonus: 20 };
@@ -13138,15 +13143,22 @@ function bossReadiness(run, boss, distance) {
   const hpRatio = run.player.hp / Math.max(1, run.player.maxHp);
   const defenseCards = cards.filter((card) => cardSupportsDefense(card)).length;
   const burstDefenseCards = cards.filter((card) => cardSupportsBurstDefense(card)).length;
+  const sustainedDefenseCards = cards.filter((card) => cardSupportsSustainedDefense(card)).length;
   const finishCards = cards.filter((card) => cardSupportsFinish(card)).length;
   const statusCards = cards.filter((card) => cardSupportsStatusControl(card)).length;
   const flowCards = cards.filter((card) => cardSupportsFlow(card)).length;
   const requirements = bossReadinessRequirements(run, boss, distance, cards);
+  const defenseMetrics = requirements.finalBoss
+    ? [
+        readinessMetric("큰 방어", `${burstDefenseCards}/${requirements.burstDefense.steady}장`, countReadinessTone(burstDefenseCards, requirements.burstDefense)),
+        readinessMetric("연속 방어", `${sustainedDefenseCards}/${requirements.sustainedDefense.steady}장`, countReadinessTone(sustainedDefenseCards, requirements.sustainedDefense))
+      ]
+    : [
+        readinessMetric("방어", `${defenseCards}/${requirements.defense.steady}장`, countReadinessTone(defenseCards, requirements.defense))
+      ];
   const metrics = [
     readinessMetric("체력", `${run.player.hp}/${run.player.maxHp}`, bossHpReadinessTone(hpRatio, requirements.hp)),
-    requirements.finalBoss
-      ? readinessMetric("연속 방어", `${burstDefenseCards}/${requirements.burstDefense.steady}장`, countReadinessTone(burstDefenseCards, requirements.burstDefense))
-      : readinessMetric("방어", `${defenseCards}/${requirements.defense.steady}장`, countReadinessTone(defenseCards, requirements.defense)),
+    ...defenseMetrics,
     readinessMetric("마무리", `${finishCards}/${requirements.finish.steady}장`, countReadinessTone(finishCards, requirements.finish)),
     readinessMetric("정화·약화", `${statusCards}/${requirements.status.steady}장`, countReadinessTone(statusCards, requirements.status)),
     readinessMetric("카드 뽑기", `${flowCards}/${requirements.flow.steady}장`, countReadinessTone(flowCards, requirements.flow))
@@ -13178,6 +13190,7 @@ function bossReadinessRequirements(run, boss, distance, cards = run.player.deck.
   const extraPressure = (finalBoss ? 2 : lateBoss ? 1 : 0) + (close ? 1 : 0) + (difficulty >= 4 ? 1 : 0);
   const defenseSteady = 4 + Math.min(3, extraPressure);
   const burstDefenseSteady = finalBoss ? (close ? 3 : 2) : 1;
+  const sustainedDefenseSteady = finalBoss ? (close ? 4 : 3) : Math.max(2, defenseSteady - 2);
   const finishSteady = 5 + Math.min(3, extraPressure);
   const flowSteady = deckSize >= 26 ? 5 : deckSize >= 22 || finalBoss ? 4 : 3;
   const statusSteady = needsStatusControl ? (finalBoss ? 3 : 2) : 1;
@@ -13189,6 +13202,7 @@ function bossReadinessRequirements(run, boss, distance, cards = run.player.deck.
     },
     defense: { strong: defenseSteady + 2, steady: defenseSteady, danger: Math.max(2, defenseSteady - 3) },
     burstDefense: { strong: burstDefenseSteady + 1, steady: burstDefenseSteady, danger: Math.max(0, burstDefenseSteady - 2) },
+    sustainedDefense: { strong: sustainedDefenseSteady + 1, steady: sustainedDefenseSteady, danger: Math.max(1, sustainedDefenseSteady - 2) },
     finish: { strong: finishSteady + 2, steady: finishSteady, danger: Math.max(3, finishSteady - 3) },
     status: { strong: statusSteady + 1, steady: statusSteady, danger: needsStatusControl ? 1 : 0 },
     flow: { strong: flowSteady + 1, steady: flowSteady, danger: Math.max(1, flowSteady - 2) },
@@ -13215,6 +13229,7 @@ function countReadinessTone(count, requirement) {
 function bossReadinessAction(weakLabels, requirements, distance) {
   if (!weakLabels.length) return "지금 흐름을 유지하고 보스전에서는 2단계 전환 전 손패를 아끼세요.";
   if (weakLabels.includes("체력")) return "다음 선택은 회복이나 안전 경로를 먼저 보세요.";
+  if (weakLabels.includes("큰 방어") && weakLabels.includes("연속 방어")) return "문 낙하를 막을 큰 방어와 레퀴엠을 이어 받을 보존, 도금, 약화를 함께 챙기세요.";
   if (weakLabels.includes("연속 방어")) return "문 낙하 뒤 레퀴엠까지 버틸 도금, 약화, 가벼운 방어를 먼저 챙기세요.";
   if (weakLabels.includes("큰 방어")) return "문 낙하와 레퀴엠을 넘길 큰 방어, 약화, 도금 카드를 먼저 챙기세요.";
   if (weakLabels.includes("방어")) return "방어, 약화, 도금 카드나 방어 유물을 우선하세요.";
@@ -13237,6 +13252,24 @@ function bossReadinessMissing(readiness) {
 function cardSupportsBurstDefense(card) {
   const profile = cardDefenseProfile(card);
   return profile.block >= 11 || profile.weak >= 1 || profile.plated >= 2;
+}
+
+function cardSupportsSustainedDefense(card) {
+  const profile = cardDefenseProfile(card);
+  const cost = card.cost ?? 99;
+  return (
+    profile.plated >= 2 ||
+    profile.weak >= 1 ||
+    card.retain && profile.block >= 6 ||
+    cost <= 1 && profile.block >= 5 ||
+    cardEffects(card).some((effect) => effect.op === "gainStatus" && effect.target === "self" && effect.status === "nextEnergy")
+  );
+}
+
+function cardCoversBossDefensePair(card) {
+  const profile = cardDefenseProfile(card);
+  const carriesDefense = profile.plated >= 2 || profile.weak >= 1 || card.retain && profile.block >= 6 || cardEffects(card).some((effect) => effect.op === "gainStatus" && effect.target === "self" && effect.status === "nextEnergy");
+  return cardSupportsBurstDefense(card) && carriesDefense;
 }
 
 function cardDefenseProfile(card) {
