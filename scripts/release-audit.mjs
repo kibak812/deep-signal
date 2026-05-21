@@ -258,20 +258,18 @@ async function main() {
     deployWorkflowSource.includes("branches: [main]") &&
     deployWorkflowSource.includes("npm test") &&
     deployWorkflowSource.includes("npm run build") &&
-    deployWorkflowSource.includes("peaceiris/actions-gh-pages@v4") &&
-    deployWorkflowSource.includes("publish_branch: gh-pages") &&
-    deployWorkflowSource.includes("publish_dir: ./dist");
-  const manualPagesDeployReady =
-    readme.includes("https://kibak812.github.io/deep-signal/") &&
-    readme.includes("gh-pages") &&
-    readme.includes("dist/.nojekyll") &&
-    buildSource.includes(".nojekyll");
+    deployWorkflowSource.includes("pages: write") &&
+    deployWorkflowSource.includes("id-token: write") &&
+    deployWorkflowSource.includes("actions/configure-pages@v5") &&
+    deployWorkflowSource.includes("actions/upload-pages-artifact@v3") &&
+    deployWorkflowSource.includes("actions/deploy-pages@v4") &&
+    deployWorkflowSource.includes("path: dist");
   record(
     "pages-deploy-workflow",
     "GitHub Pages 배포 준비",
-    (hasPagesWorkflow || manualPagesDeployReady) && buildSource.includes(".nojekyll"),
-    "자동 워크플로 또는 gh-pages 직접 게시 흐름으로 dist 폴더를 Pages에 올릴 수 있어야 합니다.",
-    { workflow: ".github/workflows/deploy-pages.yml", mode: hasPagesWorkflow ? "actions" : "manual-gh-pages", publishBranch: "gh-pages", publishDir: "./dist" }
+    hasPagesWorkflow && readme.includes("https://kibak812.github.io/deep-signal/") && readme.includes("Pages artifact") && buildSource.includes(".nojekyll"),
+    "GitHub Actions가 테스트와 빌드를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
+    { workflow: ".github/workflows/deploy-pages.yml", mode: "github-actions-pages", publishDir: "dist" }
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
   record("balance-report", "밸런스 리포트 안정성", balance.totals?.runs >= 108 && balance.totals?.problemRuns === 0 && balance.totals?.winRate >= 0.25 && balance.totals?.winRate <= 0.7 && easiest?.winRate >= 0.45 && hardest?.winRate <= 0.45, "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률이 허용 범위에 있어야 합니다.", { totals: balance.totals, easiest, hardest });

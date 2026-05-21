@@ -307,8 +307,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /distribution-polish/);
   assert.match(auditSource, /pages-deploy-workflow/);
   assert.match(auditSource, /dist\/\.nojekyll/);
-  assert.match(auditSource, /manualPagesDeployReady/);
-  assert.match(auditSource, /manual-gh-pages/);
+  assert.match(auditSource, /actions\/configure-pages@v5/);
+  assert.match(auditSource, /actions\/upload-pages-artifact@v3/);
+  assert.match(auditSource, /actions\/deploy-pages@v4/);
+  assert.match(auditSource, /github-actions-pages/);
   assert.match(auditSource, /favicon\.svg/);
   assert.match(auditSource, /verified-flow-coverage/);
   assert.match(auditSource, /requiredBrowserQa/);
@@ -514,9 +516,14 @@ test("release documentation lists QA artifacts and current combat feedback", () 
     assert.match(deployWorkflowSource, /branches: \[main\]/);
     assert.match(deployWorkflowSource, /npm test/);
     assert.match(deployWorkflowSource, /npm run build/);
-    assert.match(deployWorkflowSource, /peaceiris\/actions-gh-pages@v4/);
-    assert.match(deployWorkflowSource, /publish_branch: gh-pages/);
-    assert.match(deployWorkflowSource, /publish_dir: \.\/dist/);
+    assert.match(deployWorkflowSource, /pages:\s*write/);
+    assert.match(deployWorkflowSource, /id-token:\s*write/);
+    assert.match(deployWorkflowSource, /actions\/configure-pages@v5/);
+    assert.match(deployWorkflowSource, /actions\/upload-pages-artifact@v3/);
+    assert.match(deployWorkflowSource, /actions\/deploy-pages@v4/);
+    assert.match(deployWorkflowSource, /path:\s*dist/);
+    assert.doesNotMatch(deployWorkflowSource, /peaceiris\/actions-gh-pages/);
+    assert.doesNotMatch(deployWorkflowSource, /publish_branch:/);
   } else {
     assert.match(readme, /https:\/\/kibak812\.github\.io\/deep-signal\//);
     assert.match(readme, /dist\/.*gh-pages/s);

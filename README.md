@@ -21,7 +21,7 @@ npm run audit
 
 ## 배포
 
-GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다. 현재 공개 빌드는 `npm run build`로 만든 `dist/`를 `gh-pages` 브랜치에 게시하는 방식으로 운영합니다. 빌드 스크립트는 Pages에서 정적 에셋을 그대로 서빙하도록 `dist/.nojekyll`을 함께 생성합니다. GitHub Actions를 연결할 때도 `npm test`, `npm run build`, `gh-pages` 게시 순서만 유지하면 같은 배포 흐름을 쓸 수 있습니다.
+GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다. 소스 기준 브랜치는 `main`이며, 공개 빌드는 GitHub Actions 워크플로 `.github/workflows/deploy-pages.yml`이 `npm test`, `npm run build`를 통과한 뒤 `dist/`를 Pages artifact로 게시하는 방식으로 운영합니다. 빌드 스크립트는 Pages에서 정적 에셋을 그대로 서빙하도록 `dist/.nojekyll`을 함께 생성합니다.
 
 ## 구현 범위
 
