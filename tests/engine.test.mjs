@@ -956,6 +956,10 @@ test("shop, rest, final boss victory, and defeat flows are reachable", () => {
   assert.equal(finalBossLossRun.summary.finalCombat.bossHp, 34);
   assert.equal(finalBossLossRun.summary.finalCombat.bossMove, "phase_requiem");
   assert.equal(finalBossLossRun.summary.finalCombat.forecast.incomingDamage, 16);
+  assert.equal(finalBossLossRun.summary.finalCombat.handPlan.handSize, 0);
+  assert.equal(finalBossLossRun.summary.finalCombat.handPlan.bestBlock, 0);
+  assert.equal(finalBossLossRun.summary.finalCombat.handPlan.retainedBurstDefense, 0);
+  assert.equal(finalBossLossRun.summary.finalCombat.handPlan.remainingRisk, 16);
   assert.equal(finalBossLossRun.summary.route.acts[2].stoppedAt.type, "boss");
   assert.equal(finalBossLossRun.summary.route.acts[2].stoppedAt.completed, false);
 

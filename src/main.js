@@ -8989,7 +8989,7 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   return {
     label: "실패 지점",
     title: failureAdvice?.title ?? `${stop}에서 멈췄습니다`,
-    detail: firstStep?.detail ?? "첫 보상에서 주력을 빨리 정하고, 맞지 않는 카드는 과감히 넘기세요.",
+    detail: failureAdvice?.verdictDetail ?? failureAdvice?.detail ?? firstStep?.detail ?? "첫 보상에서 주력을 빨리 정하고, 맞지 않는 카드는 과감히 넘기세요.",
     action: replaySeed ? failureAdvice?.action ?? "같은 시드에서 첫 선택 바꿔보기" : "새 런에서 첫 선택부터 바꾸기",
     stats
   };
@@ -9185,7 +9185,7 @@ function summaryReplayPrompt(summary, replaySeed, nextDifficulty = null) {
     ? [
         { label: "목표", value: firstPlan?.title ?? "최종 보스 정비" },
         summaryFinalBossRetryChip(summary),
-        summaryFinalBossHpChip(summary, replaySeed)
+        summaryFinalBossReadinessChip(summary, replaySeed)
       ]
     : [
         { label: "목표", value: firstPlan?.title ?? "첫 방향 정하기" },
@@ -9220,6 +9220,17 @@ function summaryFinalBossHpChip(summary, replaySeed) {
     return { label: "본체", value: `${Math.max(0, finalCombat.bossHp)}/${finalCombat.bossMaxHp}` };
   }
   return { label: "시드", value: replaySeed || "랜덤" };
+}
+
+function summaryFinalBossReadinessChip(summary, replaySeed) {
+  const handPlan = summary.finalCombat?.handPlan;
+  if (handPlan && Number.isFinite(handPlan.retainedBurstDefense) && handPlan.retainedBurstDefense <= 0) {
+    return { label: "공백", value: "보존 방어 0" };
+  }
+  if (handPlan && Number.isFinite(handPlan.bestBlock)) {
+    return { label: "손패", value: `방어 ${handPlan.bestBlock}` };
+  }
+  return summaryFinalBossHpChip(summary, replaySeed);
 }
 
 function summaryFinalBossMoveLabel(move = "") {
@@ -9525,6 +9536,7 @@ function summaryFinalBossAdvice(profile) {
     tone: "danger",
     title: cue.title,
     detail: `${cue.detail} ${bossState}`,
+    verdictDetail: summaryFinalBossVerdictDetail(cue, profile.finalCombat),
     brief: cue.brief,
     action: cue.action,
     retryTitle: cue.retryTitle,
@@ -9544,10 +9556,17 @@ function summaryFinalBossAdvice(profile) {
   };
 }
 
+function summaryFinalBossVerdictDetail(cue, finalCombat = {}) {
+  const hand = summaryFinalBossHandPlanText(finalCombat.handPlan);
+  if (hand) return `${cue.brief} ${hand}`;
+  return cue.brief;
+}
+
 function summaryFinalBossCue(finalCombat = {}) {
   const hpRatio = finalCombat?.bossMaxHp ? (finalCombat.bossHp ?? 0) / Math.max(1, finalCombat.bossMaxHp) : 1;
   const move = finalCombat?.bossMove ?? "";
   const forecast = finalCombat?.forecast ?? {};
+  const handPlan = finalCombat?.handPlan ?? {};
   const virus = finalCombat?.playerStatuses?.virus ?? 0;
   const moveSpecificThreat = ["gate_slam", "gate_call", "phase_requiem"].includes(move) || (forecast.incomingDamage ?? 0) >= 20;
   if (hpRatio <= 0.18 && !moveSpecificThreat) {
@@ -9589,6 +9608,25 @@ function summaryFinalBossCue(finalCombat = {}) {
     };
   }
   if (move === "gate_call" || (forecast.summons ?? 0) > 0 || (finalCombat?.enemyCount ?? 1) >= 2) {
+    if (Number.isFinite(handPlan.retainedBurstDefense) && handPlan.retainedBurstDefense <= 0) {
+      return {
+        title: "다음 레퀴엠에 남길 보존 방어가 없었습니다",
+        detail: "문지기 호출 다음에는 레퀴엠이 옵니다. 당시 보존 방어가 0장이어서 다음 턴에 쓸 방어를 손패에 남기기 어려웠습니다.",
+        brief: "문지기 호출 턴에는 본체 처치 각이 없으면 보존 방어, 도금, 뽑기 수단을 우선 남기세요.",
+        action: "보존 방어와 도금 먼저 남기기",
+        retryTitle: "호출 턴 손패 관리 바꿔보기",
+        chips: ["보존 방어", "도금", "뽑기"],
+        planTitle: "호출 턴에 다음 턴 방어 남기기",
+        planDetail: "마지막 문 2단계에서는 이번 턴 방어보다 다음 레퀴엠 턴에 남는 방어가 중요합니다. 보존 방어, 도금, 추가 뽑기 중 둘 이상을 준비하세요.",
+        threatTitle: "호출 뒤 레퀴엠 손패 공백",
+        threatDetail: "소환수를 정리하느라 손패를 비우면 다음 레퀴엠을 맞습니다. 본체 처치가 보이지 않을 때는 보존 카드와 도금을 남기는 쪽을 먼저 계산하세요.",
+        steps: [
+          { tone: "danger", title: "보존 방어 1장 이상 확보", detail: "보존이 붙은 방어, 약화, 도금 카드를 최종 보스 전까지 남겨 둡니다." },
+          { tone: "warning", title: "호출 턴에 손패 비우지 않기", detail: "소환수 처치보다 다음 레퀴엠 턴에 남을 카드를 먼저 계산합니다." },
+          { tone: "strong", title: "도금과 뽑기 같이 챙기기", detail: "도금은 다음 턴 방어를 예약하고, 뽑기는 레퀴엠 턴의 공백을 줄입니다." }
+        ]
+      };
+    }
     return {
       title: "소환수에 시선이 갈 때 본체 피해가 끊겼습니다",
       detail: "마지막 문은 소환수로 시간을 벌지만, 승리 조건은 본체 처치입니다. 다음에는 소환수 정리와 본체 피해 중 어느 쪽이 빠른지 먼저 비교하세요.",
@@ -9608,9 +9646,12 @@ function summaryFinalBossCue(finalCombat = {}) {
     };
   }
   if (move === "phase_requiem" || (forecast.incomingDamage ?? 0) >= 20) {
+    const handDetail = Number.isFinite(handPlan.bestBlock)
+      ? ` 당시 손패 방어 가능치는 ${handPlan.bestBlock}, 보존 방어는 ${handPlan.retainedBurstDefense ?? 0}장이었습니다.`
+      : "";
     return {
-      title: "레퀴엠 턴을 넘길 방어가 부족했습니다",
-      detail: "2단계는 문 낙하→호출→레퀴엠 순서로 체력을 깎습니다. 큰 방어 한 장만 기다리기보다 도금, 약화, 가벼운 방어를 이어서 준비해야 합니다.",
+      title: Number.isFinite(handPlan.bestBlock) && handPlan.bestBlock <= 0 ? "레퀴엠 턴 손패 방어가 비었습니다" : "레퀴엠 턴을 넘길 방어가 부족했습니다",
+      detail: `2단계는 문 낙하→호출→레퀴엠 순서로 체력을 깎습니다.${handDetail} 큰 방어 한 장만 기다리기보다 도금, 약화, 가벼운 방어를 이어서 준비해야 합니다.`,
       brief: "레퀴엠 전에는 도금, 약화, 가벼운 방어를 이어서 쓸 수 있게 덱을 정리하세요.",
       action: "레퀴엠 대비 연속 방어 챙기기",
       retryTitle: "2단계 방어 턴 다시 준비",
@@ -9671,7 +9712,15 @@ function summaryFinalBossStateText(finalCombat = {}) {
       ? `당시 ${finalCombat.bossName} 체력은 ${Math.max(0, finalCombat.bossHp)}/${finalCombat.bossMaxHp}였습니다.`
       : `${finalCombat.bossName}전에서 멈췄습니다.`;
   const intent = finalCombat.bossIntent ? ` 예고는 ${finalCombat.bossIntent}였습니다.` : "";
-  return `${hp}${intent}`;
+  const hand = summaryFinalBossHandPlanText(finalCombat.handPlan);
+  return `${hp}${intent}${hand}`;
+}
+
+function summaryFinalBossHandPlanText(handPlan = null) {
+  if (!handPlan || !Number.isFinite(handPlan.bestBlock)) return "";
+  const retained = Number.isFinite(handPlan.retainedBurstDefense) ? handPlan.retainedBurstDefense : 0;
+  const plated = Number.isFinite(handPlan.plated) ? handPlan.plated : 0;
+  return ` 마지막 손패 방어 가능치는 ${handPlan.bestBlock}, 보존 방어 ${retained}장, 도금 ${plated}이었습니다.`;
 }
 
 function renderSummaryRunHook(summary) {

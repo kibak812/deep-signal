@@ -2138,6 +2138,7 @@ function summarizeFinalCombat(run) {
     null;
   const focusEnemy = boss ?? aliveEnemies[0] ?? run.combat.enemies[0] ?? null;
   const template = focusEnemy ? ENEMY_BY_ID[focusEnemy.templateId] : null;
+  const forecast = enemyIntentForecast(run);
   return {
     type: run.combat.type,
     turn: run.combat.turn,
@@ -2156,12 +2157,86 @@ function summarizeFinalCombat(run) {
     playerHp: run.player.hp,
     playerBlock: run.player.block,
     playerStatuses: summarizePositiveStatuses(run.player.statuses),
-    forecast: enemyIntentForecast(run)
+    forecast,
+    handPlan: summarizeFinalCombatHandPlan(run, focusEnemy, forecast)
   };
 }
 
 function summarizePositiveStatuses(statuses = {}) {
   return Object.fromEntries(Object.entries(statuses).filter(([, value]) => value > 0));
+}
+
+function summarizeFinalCombatHandPlan(run, target, forecast = enemyIntentForecast(run)) {
+  const combat = run.combat;
+  if (!combat) return null;
+  const previews = combat.hand
+    .map((card) => cardPlayPreview(run, card, target?.uid))
+    .filter((preview) => preview.playable);
+  const bestBlock = bestPreviewTotalForSummary(previews, combat.energy, "block");
+  const retainedCards = combat.hand.map((card) => effectiveCard(card)).filter((card) => card.retain);
+  const retainedProfiles = retainedCards.map((card) => finalCombatCardDefenseProfile(card));
+  const retainedDefenseBlock = retainedProfiles.reduce((total, profile) => total + profile.block, 0);
+  const retainedWeak = retainedProfiles.reduce((total, profile) => total + profile.weak, 0);
+  const retainedPlated = retainedProfiles.reduce((total, profile) => total + profile.plated, 0);
+  const retainedBurstCards = retainedCards
+    .map((card, index) => ({ card, profile: retainedProfiles[index] }))
+    .filter((entry) => finalCombatSupportsBurstDefense(entry.profile));
+  const incomingDamage = Math.max(0, forecast?.incomingDamage ?? 0);
+  const currentCover = Math.max(0, run.player.block + bestBlock);
+  return {
+    handSize: combat.hand.length,
+    playableCards: previews.length,
+    energy: combat.energy,
+    bestBlock,
+    currentCover,
+    incomingDamage,
+    remainingRisk: Math.max(0, incomingDamage - currentCover),
+    retainedCards: retainedCards.length,
+    retainedBurstDefense: retainedBurstCards.length,
+    retainedDefenseBlock,
+    retainedWeak,
+    retainedPlated,
+    plated: getStatus(run.player, "plated"),
+    retainedDefenseNames: retainedBurstCards.map((entry) => entry.card.name).slice(0, 3)
+  };
+}
+
+function bestPreviewTotalForSummary(previews, energy, key) {
+  const budget = Math.max(0, Math.floor(energy));
+  const totals = Array(budget + 1).fill(0);
+  for (const preview of previews) {
+    const value = Math.max(0, Math.floor(preview[key] ?? 0));
+    if (value <= 0) continue;
+    const cost = Math.max(0, Math.min(budget, Math.floor(preview.cost ?? 0)));
+    for (let spent = budget; spent >= cost; spent -= 1) {
+      totals[spent] = Math.max(totals[spent], totals[spent - cost] + value);
+    }
+  }
+  return Math.max(...totals);
+}
+
+function finalCombatCardDefenseProfile(card) {
+  const profile = { block: 0, weak: 0, plated: 0 };
+  for (const effect of finalCombatCardEffects(card.effects ?? [])) {
+    if (effect.op === "block") profile.block += effect.amount ?? 0;
+    if (effect.op === "blockPerHand") profile.block += (effect.amount ?? 0) * 5;
+    if (effect.op === "gainStatus" && effect.target === "self" && effect.status === "plated") profile.plated += effect.amount ?? 0;
+    if (effect.op === "apply" && effect.status === "weak" && ["enemy", "allEnemies"].includes(effect.target)) profile.weak += effect.amount ?? 0;
+  }
+  return profile;
+}
+
+function finalCombatCardEffects(effects = []) {
+  const output = [];
+  for (const effect of effects) {
+    output.push(effect);
+    if (effect.effects) output.push(...finalCombatCardEffects(effect.effects));
+  }
+  return output;
+}
+
+function finalCombatSupportsBurstDefense(profile) {
+  return profile.block >= 11 || profile.weak >= 1 || profile.plated >= 2;
 }
 
 function summarizeRoute(run) {

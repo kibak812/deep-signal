@@ -1715,6 +1715,22 @@ function summaryFinalBossFixture() {
     playerHp: 0,
     playerBlock: 0,
     playerStatuses: { virus: 1 },
+    handPlan: {
+      handSize: 3,
+      playableCards: 1,
+      energy: 1,
+      bestBlock: 0,
+      currentCover: 0,
+      incomingDamage: 25,
+      remainingRisk: 25,
+      retainedCards: 0,
+      retainedBurstDefense: 0,
+      retainedDefenseBlock: 0,
+      retainedWeak: 0,
+      retainedPlated: 0,
+      plated: 0,
+      retainedDefenseNames: []
+    },
     forecast: {
       incomingDamage: 25,
       blockedDamage: 0,
@@ -2916,6 +2932,8 @@ async function assertSummaryActionsVisible(cdp) {
     const lostSummary = panel.classList.contains("lost");
     const retryChipText = [...document.querySelectorAll(".summary-verdict-cta-chips i, .summary-replay-prompt i")].map((item) => item.innerText.replace(/\\s+/g, " ").trim()).join(" ");
     const finalBossRetryCueOk = !lostSummary || (retryChipText.includes("패턴") && retryChipText.includes("문 낙하"));
+    const summaryText = panel.innerText.replace(/\\s+/g, " ").trim();
+    const finalBossHandPlanOk = !lostSummary || (summaryText.includes("마지막 손패 방어 가능치") && retryChipText.includes("보존 방어 0"));
     const summaryKeepAll = [...document.querySelectorAll(".summary-verdict-copy > strong, .summary-verdict-stats dd, .summary-verdict-cta strong, .summary-focus-strip strong, .summary-next-rail li strong, .summary-action-main strong")].every((item) => getComputedStyle(item).wordBreak === "keep-all");
     const visibleSummaryTextFits = [...document.querySelectorAll(".summary-verdict-stats dd, .summary-next-rail li strong, .summary-action-main strong")].every((item) => item.scrollWidth <= item.clientWidth + 2 || getComputedStyle(item).display.includes("box"));
     const ok =
@@ -2924,6 +2942,7 @@ async function assertSummaryActionsVisible(cdp) {
       ctaChips === 3 &&
       compactBuildStat &&
       finalBossRetryCueOk &&
+      finalBossHandPlanOk &&
       summaryKeepAll &&
       visibleSummaryTextFits &&
       verdictCtaText.includes("다음 런 브리핑") &&
@@ -2950,7 +2969,9 @@ async function assertSummaryActionsVisible(cdp) {
       statValues,
       compactBuildStat,
       finalBossRetryCueOk,
+      finalBossHandPlanOk,
       retryChipText,
+      summaryText,
       summaryKeepAll,
       visibleSummaryTextFits,
       viewportH,
