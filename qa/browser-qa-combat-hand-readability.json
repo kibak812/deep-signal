@@ -5,6 +5,8 @@
   "handVisible": true,
   "cardFacesVisible": true,
   "sixCardReadability": true,
+  "cardsInsideHand": true,
+  "handClearsEndTurn": true,
   "identityTagsReadable": true,
   "identityTags": [
     {
@@ -78,17 +80,24 @@
   "minWidth": 170,
   "maxWidth": 171,
   "averageWidth": 171,
-  "maxOverlap": 9,
+  "maxOverlap": 11,
+  "endTurnGap": 16,
   "cssVars": {
     "width": "168px",
     "height": "276px",
-    "overlap": "12px"
+    "overlap": "14px"
   },
   "handBox": {
     "left": 148,
-    "right": 1130,
+    "right": 1134,
     "bottom": 706,
-    "width": 982
+    "width": 986
+  },
+  "endTurnBox": {
+    "left": 1150,
+    "right": 1262,
+    "width": 112,
+    "height": 112
   },
   "boxes": [
     {
@@ -98,32 +107,32 @@
       "height": 278
     },
     {
-      "left": 315,
-      "right": 486,
+      "left": 313,
+      "right": 484,
       "width": 171,
       "height": 278
     },
     {
-      "left": 477,
-      "right": 647,
+      "left": 473,
+      "right": 643,
       "width": 170,
       "height": 277
     },
     {
-      "left": 643,
-      "right": 813,
+      "left": 637,
+      "right": 807,
       "width": 170,
       "height": 277
     },
     {
-      "left": 804,
-      "right": 975,
+      "left": 796,
+      "right": 967,
       "width": 171,
       "height": 278
     },
     {
-      "left": 971,
-      "right": 1142,
+      "left": 961,
+      "right": 1132,
       "width": 171,
       "height": 278
     }

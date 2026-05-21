@@ -2419,6 +2419,7 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.enemy-line[\s\S]*order:\s*-1/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.enemy-card[\s\S]*scroll-snap-align:\s*start/);
   assert.match(styleSource, /@media \(min-width: 1041px\) and \(max-width: 1400px\)[\s\S]*\.hand-zone[\s\S]*left:\s*148px/);
+  assert.match(styleSource, /@media \(min-width: 1041px\) and \(max-width: 1400px\)[\s\S]*\.hand-zone[\s\S]*right:\s*146px/);
   assert.match(styleSource, /@media \(min-width: 1041px\) and \(max-width: 1400px\)[\s\S]*\.hand-zone[\s\S]*overflow-x:\s*auto/);
   assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.combat-command-row,[\s\S]*position:\s*relative/);
   assert.match(styleSource, /@media \(min-width: 681px\) and \(max-width: 1040px\)[\s\S]*\.combat-command-row \.turn-plan[\s\S]*display:\s*grid/);
@@ -2689,11 +2690,14 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(mainSource, /function handLayoutStyle\(count\)/);
   assert.match(mainSource, /const cardWidth = count >= 8 \? 158 : count === 7 \? 164 : count === 6 \? 168 : 180/);
   assert.match(mainSource, /const cardHeight = count >= 6 \? 276 : 278/);
-  assert.match(mainSource, /const targetWidth = 988/);
+  assert.match(mainSource, /const targetWidth = 980/);
   assert.match(mainSource, /const overlap = count > 5 \? Math\.min\(108/);
-  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /async function assertDesktopHandReadability\(cdp\)/);
-  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /stageDesktopHandReadabilityFixture\(cdp\)/);
-  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /browser-qa-combat-hand-readability\.json/);
+  assert.match(captureSource, /async function assertDesktopHandReadability\(cdp\)/);
+  assert.match(captureSource, /stageDesktopHandReadabilityFixture\(cdp\)/);
+  assert.match(captureSource, /cardsInsideHand/);
+  assert.match(captureSource, /handClearsEndTurn/);
+  assert.match(captureSource, /endTurnGap/);
+  assert.match(captureSource, /browser-qa-combat-hand-readability\.json/);
   assert.match(readFileSync(new URL("../README.md", import.meta.url), "utf8"), /6장 이상 손패도 데스크톱에서 잘리지 않는 부채꼴 배치/);
 });
 

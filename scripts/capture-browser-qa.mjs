@@ -2587,7 +2587,9 @@ async function assertDesktopHandReadability(cdp) {
   const result = await evaluate(cdp, `(() => {
     const hand = document.querySelector(".hand-zone");
     const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const endTurn = document.querySelector(".end-turn");
     const handBox = hand?.getBoundingClientRect();
+    const endBox = endTurn?.getBoundingClientRect();
     const boxes = cards.map((card) => {
       const box = card.getBoundingClientRect();
       return { left: box.left, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
@@ -2602,6 +2604,9 @@ async function assertDesktopHandReadability(cdp) {
     const handVisible = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight + 1);
     const sixCardReadability = cards.length < 6 || (minWidth >= 164 && maxOverlap <= 12 && averageWidth < 178);
     const cardFacesVisible = boxes.every((box) => box.height >= 270 && box.bottom <= window.innerHeight + 1);
+    const cardsInsideHand = Boolean(handBox && boxes.every((box) => box.left >= handBox.left - 2 && box.right <= handBox.right + 2));
+    const endTurnGap = handBox && endBox ? endBox.left - handBox.right : null;
+    const handClearsEndTurn = !endBox || !handBox || endTurnGap >= 14;
     const overlaps = (left, right) => Boolean(
       left &&
       right &&
@@ -2650,12 +2655,14 @@ async function assertDesktopHandReadability(cdp) {
       overlap: hand?.style.getPropertyValue("--hand-overlap") ?? ""
     };
     return {
-      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability && identityTagsReadable,
+      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability && cardsInsideHand && handClearsEndTurn && identityTagsReadable,
       desktopViewport,
       noPageOverflow,
       handVisible,
       cardFacesVisible,
       sixCardReadability,
+      cardsInsideHand,
+      handClearsEndTurn,
       identityTagsReadable,
       identityTags,
       cardCount: cards.length,
@@ -2663,8 +2670,10 @@ async function assertDesktopHandReadability(cdp) {
       maxWidth: Math.round(maxWidth),
       averageWidth: Math.round(averageWidth),
       maxOverlap: Math.round(maxOverlap),
+      endTurnGap: endTurnGap === null ? null : Math.round(endTurnGap),
       cssVars,
       handBox: handBox ? { left: Math.round(handBox.left), right: Math.round(handBox.right), bottom: Math.round(handBox.bottom), width: Math.round(handBox.width) } : null,
+      endTurnBox: endBox ? { left: Math.round(endBox.left), right: Math.round(endBox.right), width: Math.round(endBox.width), height: Math.round(endBox.height) } : null,
       boxes: boxes.map((box) => ({ left: Math.round(box.left), right: Math.round(box.right), width: Math.round(box.width), height: Math.round(box.height) }))
     };
   })()`);
