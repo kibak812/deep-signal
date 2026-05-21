@@ -1507,12 +1507,17 @@ async function assertCardHoverLayout(cdp) {
       })
       .filter(Boolean);
     const selfPreview = Boolean(document.querySelector(".player-stand.preview-self"));
+    const selfBlockPreview = document.querySelector(".player-stand.preview-self .block-readout.preview-block[data-preview-result]");
+    const selfBlockResult = selfBlockPreview?.getAttribute("data-preview-result") ?? "";
+    const selfBlockAfter = selfBlockPreview?.querySelector("strong")?.getAttribute("data-preview-after") ?? "";
+    const selfBlockStyle = selfBlockPreview ? getComputedStyle(selfBlockPreview) : null;
+    const selfProjectionOk = !selfPreview || Boolean(selfBlockPreview && /^\\+\\d+/.test(selfBlockResult) && Number(selfBlockAfter) > 0 && selfBlockStyle?.display !== "none");
     const enemyPreview = Boolean(document.querySelector(".enemy-card.preview-target"));
     const aimLine = document.querySelector(".combat-aim-line");
     const aimLineHidden = !aimLine || aimLine.hidden || getComputedStyle(aimLine).display === "none";
     const aimLineMatchesTarget = selfPreview ? aimLineHidden : enemyPreview ? !aimLineHidden : true;
     return {
-      ok: withinViewport && tooltipReadable && hoverCardStable && overlaps.length === 0 && combatantOverlaps.length === 0 && badgeInsideCard && badgeClearTitle && aimLineMatchesTarget && previewBoardActive && Boolean(previewingCard) && dimmedCards >= 1,
+      ok: withinViewport && tooltipReadable && hoverCardStable && overlaps.length === 0 && combatantOverlaps.length === 0 && badgeInsideCard && badgeClearTitle && aimLineMatchesTarget && selfProjectionOk && previewBoardActive && Boolean(previewingCard) && dimmedCards >= 1,
       withinViewport,
       tooltipReadable,
       hoverCardStable,
@@ -1525,6 +1530,9 @@ async function assertCardHoverLayout(cdp) {
       previewingCard: Boolean(previewingCard),
       dimmedCards,
       selfPreview,
+      selfBlockResult,
+      selfBlockAfter,
+      selfProjectionOk,
       enemyPreview,
       aimLineHidden,
       aimLineMatchesTarget,

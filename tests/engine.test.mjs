@@ -292,6 +292,25 @@ test("card play preview reflects damage, block, and energy without mutating comb
   assert.equal(run.combat.energy, before.energy);
 });
 
+test("card play preview exposes self block without mutating combatants", () => {
+  const run = newRun({ seed: "block-preview", difficulty: 0 });
+  enterNode(run, run.availableNodeIds[0]);
+  const enemy = run.combat.enemies[0];
+  run.player.block = 2;
+  run.combat.hand = [{ uid: 920, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 }];
+  run.combat.energy = 3;
+  const before = { playerBlock: run.player.block, enemyHp: enemy.hp, enemyBlock: enemy.block };
+
+  const preview = cardPlayPreview(run, run.combat.hand[0], enemy.uid);
+
+  assert.equal(preview.playable, true);
+  assert.equal(preview.block, 5);
+  assert.deepEqual(preview.enemyDeltas, []);
+  assert.equal(run.player.block, before.playerBlock);
+  assert.equal(enemy.hp, before.enemyHp);
+  assert.equal(enemy.block, before.enemyBlock);
+});
+
 test("all playable cards expose complete use previews", () => {
   const run = newRun({ seed: "card-preview-coverage", difficulty: 0 });
   enterNode(run, run.availableNodeIds[0]);

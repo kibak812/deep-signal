@@ -2660,6 +2660,7 @@ function showCombatCardPreview(cardElement, targetUid = null, mode = "hover") {
     const playerStand = app.querySelector(".player-stand");
     const selfMarker = combatPreviewMarker(preview, selected, 0, preview.playable ? combatPreviewSelfBadge(preview) : combatPreviewEffectBadge(preview, selected, 0));
     playerStand?.classList.add("preview-self", `preview-${tone}`);
+    setCombatPreviewSelfProjection(playerStand, preview);
     playerStand?.setAttribute("data-preview-label", selfMarker.label);
     playerStand?.setAttribute("data-preview-icon", selfMarker.icon);
     playerStand?.setAttribute("data-preview-value", selfMarker.value);
@@ -2689,6 +2690,7 @@ function clearCombatCardPreview(source = null) {
   app.querySelectorAll(".preview-target, .preview-lethal, .preview-self").forEach((element) => {
     element.classList.remove("preview-target", "preview-lethal", "preview-self", ...COMBAT_PREVIEW_TONE_CLASSES);
     clearCombatPreviewHealthProjection(element);
+    clearCombatPreviewSelfProjection(element);
     element.removeAttribute("data-preview-label");
     element.removeAttribute("data-preview-icon");
     element.removeAttribute("data-preview-value");
@@ -2721,6 +2723,25 @@ function clearCombatPreviewHealthProjection(element) {
   element.style.removeProperty("--preview-hp-loss");
   const health = element.querySelector?.(".health-bar");
   health?.removeAttribute("data-preview-result");
+}
+
+function setCombatPreviewSelfProjection(playerStand, preview) {
+  if (!playerStand || !preview?.playable || preview.block <= 0) return;
+  const blockReadout = playerStand.querySelector(".block-readout");
+  const blockValue = blockReadout?.querySelector("strong");
+  const currentBlock = Math.max(0, Number(state.run?.player?.block ?? 0));
+  blockReadout?.classList.add("preview-block");
+  blockReadout?.setAttribute("data-preview-result", `+${preview.block}`);
+  blockValue?.setAttribute("data-preview-after", String(currentBlock + preview.block));
+}
+
+function clearCombatPreviewSelfProjection(element) {
+  if (!element) return;
+  const blockReadout = element.querySelector?.(".block-readout.preview-block");
+  const blockValue = blockReadout?.querySelector("strong");
+  blockReadout?.classList.remove("preview-block");
+  blockReadout?.removeAttribute("data-preview-result");
+  blockValue?.removeAttribute("data-preview-after");
 }
 
 function setCombatPreviewAssist(card, preview, selected, aliveEnemies, mode, tone) {
