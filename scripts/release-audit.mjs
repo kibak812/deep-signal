@@ -175,6 +175,9 @@ async function main() {
   const run = newRun({ seed: "release-audit-route", difficulty: 0 });
   const hardest = balance.byDifficulty?.find((entry) => entry.difficulty === Math.max(...balance.byDifficulty.map((entry) => entry.difficulty))) ?? null;
   const easiest = balance.byDifficulty?.find((entry) => entry.difficulty === 0) ?? null;
+  const longDifficulties = longBalance.byDifficulty ?? [];
+  const longEasiest = longDifficulties.find((entry) => entry.difficulty === 0) ?? null;
+  const longHardest = longDifficulties.find((entry) => entry.difficulty === Math.max(...longDifficulties.map((entry) => entry.difficulty))) ?? null;
   const requiredBrowserQa = [
     { id: "title", match: /browser-qa-title/ },
     { id: "about", match: /browser-qa-about/ },
@@ -282,9 +285,13 @@ async function main() {
       longBalance.totals?.problemRuns === 0 &&
       longBalance.totals?.winRate >= 0.25 &&
       longBalance.totals?.winRate <= 0.75 &&
+      longEasiest?.winRate >= 0.45 &&
+      longHardest?.winRate >= 0.2 &&
+      longHardest?.winRate <= 0.45 &&
+      longHardest?.averageFloors >= 16 &&
       longBalance.byDifficulty?.every((entry) => entry.problemRuns === 0),
-    "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 합니다.",
-    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty }
+    "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도는 어렵지만 초중반 절벽이 아니어야 합니다.",
+    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest }
   );
   record(
     "credits-license",

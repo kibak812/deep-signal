@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T20:17:54.528Z",
+  "generatedAt": "2026-05-21T20:26:23.018Z",
   "summary": {
     "passed": 25,
     "failed": 0,
@@ -343,8 +343,8 @@
           "runs": 108,
           "wins": 68,
           "winRate": 0.63,
-          "averageFloors": 19.27,
-          "averageSteps": 114.44,
+          "averageFloors": 19.45,
+          "averageSteps": 115.73,
           "problemRuns": 0
         },
         "easiest": {
@@ -404,10 +404,10 @@
           "difficultyName": "최심층",
           "runs": 18,
           "wins": 8,
-          "averageFloors": 18.44,
-          "averageDeckSize": 21.39,
-          "averageRelics": 7.33,
-          "averageDamageTaken": 178.33,
+          "averageFloors": 19.56,
+          "averageDeckSize": 21.67,
+          "averageRelics": 7.56,
+          "averageDamageTaken": 191.17,
           "problemRuns": 0,
           "floorBands": [
             {
@@ -420,41 +420,37 @@
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 5,
+              "runs": 2,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "late",
               "label": "후반 15-20층",
-              "runs": 2,
+              "runs": 3,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 11,
+              "runs": 13,
               "wins": 8,
-              "winRate": 0.73
+              "winRate": 0.62
             }
           ],
           "lossReasons": [
             {
-              "label": "중반 강적",
-              "count": 4
-            },
-            {
               "label": "최종 보스",
-              "count": 3
-            },
-            {
-              "label": "상태 누적",
-              "count": 2
+              "count": 5
             },
             {
               "label": "후반 체력 부족",
-              "count": 1
+              "count": 3
+            },
+            {
+              "label": "중반 강적",
+              "count": 2
             }
           ],
           "winRate": 0.4444444444444444
@@ -465,7 +461,7 @@
       "id": "balance-long-report",
       "label": "장시간 밸런스 리포트",
       "ok": true,
-      "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 합니다.",
+      "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도는 어렵지만 초중반 절벽이 아니어야 합니다.",
       "evidence": {
         "config": {
           "seedCount": 36,
@@ -481,10 +477,10 @@
         },
         "totals": {
           "runs": 216,
-          "wins": 134,
-          "winRate": 0.62,
-          "averageFloors": 19.1,
-          "averageSteps": 113,
+          "wins": 137,
+          "winRate": 0.63,
+          "averageFloors": 19.29,
+          "averageSteps": 114.04,
           "problemRuns": 0
         },
         "byDifficulty": [
@@ -780,24 +776,24 @@
             "difficulty": 5,
             "difficultyName": "최심층",
             "runs": 36,
-            "wins": 9,
-            "averageFloors": 16.08,
-            "averageDeckSize": 19.89,
-            "averageRelics": 6.22,
-            "averageDamageTaken": 166.47,
+            "wins": 12,
+            "averageFloors": 17.22,
+            "averageDeckSize": 20.39,
+            "averageRelics": 6.72,
+            "averageDamageTaken": 173.06,
             "problemRuns": 0,
             "floorBands": [
               {
                 "id": "early",
                 "label": "초반 1-7층",
-                "runs": 5,
+                "runs": 3,
                 "wins": 0,
                 "winRate": 0
               },
               {
                 "id": "middle",
                 "label": "중반 8-14층",
-                "runs": 11,
+                "runs": 9,
                 "wins": 0,
                 "winRate": 0
               },
@@ -811,9 +807,9 @@
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 16,
-                "wins": 9,
-                "winRate": 0.56
+                "runs": 20,
+                "wins": 12,
+                "winRate": 0.6
               }
             ],
             "lossReasons": [
@@ -823,24 +819,148 @@
               },
               {
                 "label": "최종 보스",
-                "count": 7
+                "count": 8
               },
               {
-                "label": "상태 누적",
+                "label": "후반 체력 부족",
                 "count": 4
               },
               {
                 "label": "초반 성장 실패",
-                "count": 4
+                "count": 2
               },
               {
-                "label": "후반 체력 부족",
-                "count": 3
+                "label": "상태 누적",
+                "count": 1
               }
             ],
-            "winRate": 0.25
+            "winRate": 0.3333333333333333
           }
-        ]
+        ],
+        "easiest": {
+          "difficulty": 0,
+          "difficultyName": "표층",
+          "runs": 36,
+          "wins": 30,
+          "averageFloors": 19.47,
+          "averageDeckSize": 23.25,
+          "averageRelics": 8.78,
+          "averageDamageTaken": 139.81,
+          "problemRuns": 0,
+          "floorBands": [
+            {
+              "id": "early",
+              "label": "초반 1-7층",
+              "runs": 2,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "middle",
+              "label": "중반 8-14층",
+              "runs": 3,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "late",
+              "label": "후반 15-20층",
+              "runs": 0,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "final",
+              "label": "최종 21층",
+              "runs": 31,
+              "wins": 30,
+              "winRate": 0.97
+            }
+          ],
+          "lossReasons": [
+            {
+              "label": "중반 강적",
+              "count": 2
+            },
+            {
+              "label": "초반 성장 실패",
+              "count": 2
+            },
+            {
+              "label": "상태 누적",
+              "count": 1
+            },
+            {
+              "label": "최종 보스",
+              "count": 1
+            }
+          ],
+          "winRate": 0.8333333333333334
+        },
+        "hardest": {
+          "difficulty": 5,
+          "difficultyName": "최심층",
+          "runs": 36,
+          "wins": 12,
+          "averageFloors": 17.22,
+          "averageDeckSize": 20.39,
+          "averageRelics": 6.72,
+          "averageDamageTaken": 173.06,
+          "problemRuns": 0,
+          "floorBands": [
+            {
+              "id": "early",
+              "label": "초반 1-7층",
+              "runs": 3,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "middle",
+              "label": "중반 8-14층",
+              "runs": 9,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "late",
+              "label": "후반 15-20층",
+              "runs": 4,
+              "wins": 0,
+              "winRate": 0
+            },
+            {
+              "id": "final",
+              "label": "최종 21층",
+              "runs": 20,
+              "wins": 12,
+              "winRate": 0.6
+            }
+          ],
+          "lossReasons": [
+            {
+              "label": "중반 강적",
+              "count": 9
+            },
+            {
+              "label": "최종 보스",
+              "count": 8
+            },
+            {
+              "label": "후반 체력 부족",
+              "count": 4
+            },
+            {
+              "label": "초반 성장 실패",
+              "count": 2
+            },
+            {
+              "label": "상태 누적",
+              "count": 1
+            }
+          ],
+          "winRate": 0.3333333333333333
+        }
       }
     },
     {

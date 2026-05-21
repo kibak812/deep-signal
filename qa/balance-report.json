@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T20:16:29.975Z",
+  "generatedAt": "2026-05-21T20:24:00.428Z",
   "config": {
     "seedCount": 18,
     "difficulties": [
@@ -109,7 +109,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 23
+      "durationMs": 20
     },
     {
       "seed": "balance-02-d0",
@@ -207,7 +207,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 9
+      "durationMs": 4
     },
     {
       "seed": "balance-03-d0",
@@ -304,7 +304,7 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-04-d0",
@@ -401,7 +401,7 @@
       ],
       "steps": 156,
       "problems": [],
-      "durationMs": 8
+      "durationMs": 7
     },
     {
       "seed": "balance-05-d0",
@@ -496,7 +496,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 4
     },
     {
       "seed": "balance-06-d0",
@@ -595,7 +595,7 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 4
     },
     {
       "seed": "balance-07-d0",
@@ -748,7 +748,7 @@
       ],
       "steps": 151,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 5
     },
     {
       "seed": "balance-09-d0",
@@ -845,7 +845,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 9
+      "durationMs": 5
     },
     {
       "seed": "balance-10-d0",
@@ -942,7 +942,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 3
     },
     {
       "seed": "balance-11-d0",
@@ -1039,7 +1039,7 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 6
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d0",
@@ -1138,7 +1138,7 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-13-d0",
@@ -1325,7 +1325,7 @@
       ],
       "steps": 32,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-16-d0",
@@ -1523,7 +1523,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d0",
@@ -1716,7 +1716,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-02-d1",
@@ -2445,7 +2445,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-05-d1",
@@ -2541,7 +2541,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-06-d1",
@@ -2643,7 +2643,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 7
+      "durationMs": 4
     },
     {
       "seed": "balance-07-d1",
@@ -2741,7 +2741,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-08-d1",
@@ -2839,7 +2839,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5
     },
     {
       "seed": "balance-09-d1",
@@ -2935,7 +2935,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 5
     },
     {
       "seed": "balance-10-d1",
@@ -3031,7 +3031,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-11-d1",
@@ -3339,7 +3339,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d1",
@@ -3842,7 +3842,7 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d1",
@@ -3937,7 +3937,7 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 3
     },
     {
       "seed": "balance-16-d1",
@@ -4648,7 +4648,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-03-d2",
@@ -5166,7 +5166,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-06-d2",
@@ -5214,7 +5214,7 @@
       ],
       "steps": 48,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-07-d2",
@@ -6021,7 +6021,7 @@
       ],
       "steps": 103,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-11-d2",
@@ -6119,7 +6119,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-12-d2",
@@ -6317,7 +6317,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-14-d2",
@@ -6419,7 +6419,7 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 5
+      "durationMs": 2
     },
     {
       "seed": "balance-15-d2",
@@ -6613,7 +6613,7 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-17-d2",
@@ -7035,7 +7035,7 @@
       ],
       "steps": 135,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-01-d3",
@@ -7134,7 +7134,7 @@
       ],
       "steps": 157,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-02-d3",
@@ -7544,7 +7544,7 @@
       ],
       "steps": 143,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d3",
@@ -7856,7 +7856,7 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-05-d3",
@@ -7955,7 +7955,7 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-06-d3",
@@ -8003,7 +8003,7 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-07-d3",
@@ -8155,7 +8155,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 6
     },
     {
       "seed": "balance-09-d3",
@@ -8198,7 +8198,7 @@
       ],
       "steps": 21,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 1
     },
     {
       "seed": "balance-10-d3",
@@ -8754,7 +8754,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 3
     },
     {
       "seed": "balance-14-d3",
@@ -8851,7 +8851,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 4
     },
     {
       "seed": "balance-15-d3",
@@ -9750,7 +9750,7 @@
       ],
       "steps": 169,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 7
     },
     {
       "seed": "balance-02-d4",
@@ -9848,7 +9848,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-03-d4",
@@ -9945,7 +9945,7 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     },
     {
       "seed": "balance-04-d4",
@@ -10003,7 +10003,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-05-d4",
@@ -10416,7 +10416,7 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-07-d4",
@@ -10467,7 +10467,7 @@
       ],
       "steps": 51,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 0
     },
     {
       "seed": "balance-08-d4",
@@ -10522,7 +10522,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-09-d4",
@@ -11179,7 +11179,7 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d4",
@@ -11372,7 +11372,7 @@
       ],
       "steps": 100,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-14-d4",
@@ -11467,7 +11467,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-15-d4",
@@ -11660,7 +11660,7 @@
       ],
       "steps": 142,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-17-d4",
@@ -11720,7 +11720,7 @@
       ],
       "steps": 82,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d4",
@@ -11823,72 +11823,283 @@
       "seed": "balance-01-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": true,
-      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "won": false,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 3,
-      "hp": 1,
+      "bossesDefeated": 2,
+      "hp": 0,
       "maxHp": 78,
-      "deckSize": 23,
-      "relics": 10,
-      "gold": 107,
+      "deckSize": 21,
+      "relics": 8,
+      "gold": 33,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1952,
+      "damageDealt": 1244,
       "damageTaken": 227,
       "build": [
         "ward",
         "mark",
-        "cycle",
-        "virus"
+        "charge",
+        "cycle"
       ],
       "roleProfile": {
-        "defense": 12,
-        "burstDefense": 3,
-        "finish": 10,
-        "statusControl": 5,
-        "cleanse": 3,
-        "flow": 8,
-        "upgraded": 1
+        "defense": 7,
+        "burstDefense": 2,
+        "finish": 11,
+        "statusControl": 2,
+        "cleanse": 2,
+        "flow": 9,
+        "upgraded": 6
       },
       "finalBoss": {
-        "turn": 31,
-        "playerHp": 10,
+        "turn": 17,
+        "playerHp": 8,
         "playerBlock": 0,
         "playerStatuses": {
-          "counter": 131,
-          "charge": 6,
-          "virus": 1
+          "charge": 14,
+          "focus": 3
         },
-        "incomingDamage": 25,
-        "bossHp": 27,
-        "bossMaxHp": 438,
-        "bossBlock": 28,
+        "incomingDamage": 20,
+        "bossHp": 179,
+        "bossMaxHp": 411,
+        "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "gate_slam",
-        "bossIntent": "공격 21",
+        "bossMove": "phase_requiem",
+        "bossIntent": "공격 4 x4",
         "hand": [
-          "tide_ward",
-          "tide_ward",
+          "harpoon_query",
           "pulse_lance",
-          "tidal_mirror",
-          "echo_tap"
+          "cleanse_cache",
+          "redaction_blade",
+          "pulse_lance"
         ],
-        "drawPile": 15,
-        "discardPile": 0,
-        "exhaustPile": 2,
+        "drawPile": 1,
+        "discardPile": 11,
+        "exhaustPile": 4,
         "roles": {
-          "defense": 11,
+          "defense": 7,
           "burstDefense": 2,
-          "finish": 9,
-          "statusControl": 4,
-          "cleanse": 3,
-          "flow": 8,
-          "upgraded": 1
+          "finish": 11,
+          "statusControl": 2,
+          "cleanse": 2,
+          "flow": 9,
+          "upgraded": 6
         }
       },
-      "finalBossTimeline": [],
+      "finalBossTimeline": [
+        {
+          "turn": 10,
+          "playerHp": 30,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3
+          },
+          "incomingDamage": 25,
+          "bossHp": 281,
+          "bossMaxHp": 411,
+          "bossBlock": 28,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "tide_ward",
+            "tide_ward",
+            "null_pin",
+            "redaction_blade",
+            "memory_sift"
+          ],
+          "drawPile": 6,
+          "discardPile": 6,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 11,
+          "playerHp": 24,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 281,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "reef_bastion",
+            "spiral_armor",
+            "undertow_kick",
+            "pulse_lance",
+            "pulse_lance"
+          ],
+          "drawPile": 1,
+          "discardPile": 11,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 12,
+          "playerHp": 21,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 255,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "cleanse_cache",
+            "pulse_lance",
+            "tide_ward",
+            "undertow_kick",
+            "redaction_blade"
+          ],
+          "drawPile": 12,
+          "discardPile": 0,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 13,
+          "playerHp": 21,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3
+          },
+          "incomingDamage": 25,
+          "bossHp": 235,
+          "bossMaxHp": 411,
+          "bossBlock": 28,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "tide_ward",
+            "reef_bastion",
+            "spiral_armor",
+            "tide_ward",
+            "harpoon_query"
+          ],
+          "drawPile": 6,
+          "discardPile": 6,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 14,
+          "playerHp": 14,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 235,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "pulse_lance",
+            "null_pin",
+            "coral_guard",
+            "cleanse_cache",
+            "pulse_lance"
+          ],
+          "drawPile": 1,
+          "discardPile": 11,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 15,
+          "playerHp": 11,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 208,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "coral_guard",
+            "tide_ward",
+            "null_pin",
+            "undertow_kick",
+            "spiral_armor"
+          ],
+          "drawPile": 12,
+          "discardPile": 0,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 16,
+          "playerHp": 8,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3,
+            "virus": 1
+          },
+          "incomingDamage": 0,
+          "bossHp": 195,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "gate_call",
+          "bossIntent": "소환",
+          "hand": [
+            "cleanse_cache",
+            "tide_ward",
+            "tide_ward",
+            "pulse_lance",
+            "pulse_lance"
+          ],
+          "drawPile": 7,
+          "discardPile": 5,
+          "exhaustPile": 4
+        },
+        {
+          "turn": 17,
+          "playerHp": 8,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 14,
+            "focus": 3
+          },
+          "incomingDamage": 20,
+          "bossHp": 179,
+          "bossMaxHp": 411,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "phase_requiem",
+          "bossIntent": "공격 4 x4",
+          "hand": [
+            "harpoon_query",
+            "pulse_lance",
+            "cleanse_cache",
+            "redaction_blade",
+            "pulse_lance"
+          ],
+          "drawPile": 1,
+          "discardPile": 11,
+          "exhaustPile": 4
+        }
+      ],
       "route": [
         "1:combat",
         "2:combat",
@@ -11912,7 +12123,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 160,
+      "steps": 128,
       "problems": [],
       "durationMs": 2
     },
@@ -11932,8 +12143,8 @@
       "gold": 71,
       "fights": 5,
       "elites": 0,
-      "damageDealt": 549,
-      "damageTaken": 152,
+      "damageDealt": 531,
+      "damageTaken": 150,
       "build": [
         "ward",
         "mark",
@@ -11984,11 +12195,11 @@
       "maxHp": 78,
       "deckSize": 26,
       "relics": 9,
-      "gold": 84,
+      "gold": 74,
       "fights": 13,
       "elites": 0,
-      "damageDealt": 1622,
-      "damageTaken": 136,
+      "damageDealt": 1619,
+      "damageTaken": 135,
       "build": [
         "ward",
         "mark",
@@ -12015,8 +12226,8 @@
           "virus": 2
         },
         "incomingDamage": 0,
-        "bossHp": 32,
-        "bossMaxHp": 428,
+        "bossHp": 25,
+        "bossMaxHp": 421,
         "bossBlock": 0,
         "bossPhase": 2,
         "bossMove": "choir_wall",
@@ -12075,32 +12286,32 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "익사한 알고리즘의 공격으로 쓰러졌습니다.",
+      "reason": "종 잠수부의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 14,
-      "bossesDefeated": 1,
+      "floors": 15,
+      "bossesDefeated": 2,
       "hp": 0,
       "maxHp": 78,
-      "deckSize": 17,
-      "relics": 5,
-      "gold": 30,
-      "fights": 8,
+      "deckSize": 18,
+      "relics": 6,
+      "gold": 86,
+      "fights": 9,
       "elites": 0,
-      "damageDealt": 703,
-      "damageTaken": 147,
+      "damageDealt": 762,
+      "damageTaken": 174,
       "build": [
         "mark",
-        "cycle",
         "ward",
-        "virus"
+        "cycle",
+        "charge"
       ],
       "roleProfile": {
-        "defense": 4,
+        "defense": 5,
         "burstDefense": 1,
-        "finish": 10,
+        "finish": 11,
         "statusControl": 3,
         "cleanse": 1,
-        "flow": 8,
+        "flow": 9,
         "upgraded": 2
       },
       "finalBoss": null,
@@ -12119,9 +12330,10 @@
         "11:combat",
         "12:shop",
         "13:rest",
-        "14:boss"
+        "14:boss",
+        "15:combat"
       ],
-      "steps": 82,
+      "steps": 89,
       "problems": [],
       "durationMs": 2
     },
@@ -12134,62 +12346,62 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 20,
+      "hp": 25,
       "maxHp": 84,
-      "deckSize": 23,
+      "deckSize": 22,
       "relics": 8,
-      "gold": 59,
+      "gold": 70,
       "fights": 10,
       "elites": 0,
-      "damageDealt": 1292,
-      "damageTaken": 198,
+      "damageDealt": 1287,
+      "damageTaken": 190,
       "build": [
-        "mark",
         "ward",
+        "mark",
         "virus",
         "cycle"
       ],
       "roleProfile": {
-        "defense": 8,
-        "burstDefense": 2,
-        "finish": 14,
+        "defense": 9,
+        "burstDefense": 3,
+        "finish": 12,
         "statusControl": 3,
         "cleanse": 1,
-        "flow": 10,
+        "flow": 8,
         "upgraded": 3
       },
       "finalBoss": {
-        "turn": 12,
-        "playerHp": 20,
+        "turn": 13,
+        "playerHp": 25,
         "playerBlock": 3,
         "playerStatuses": {
-          "charge": 6
+          "charge": 14
         },
-        "incomingDamage": 12,
-        "bossHp": 16,
-        "bossMaxHp": 409,
+        "incomingDamage": 0,
+        "bossHp": 49,
+        "bossMaxHp": 403,
         "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "phase_requiem",
-        "bossIntent": "공격 4 x4",
+        "bossMove": "intonation",
+        "bossIntent": "바이러스 3",
         "hand": [
           "hold_breath",
           "tide_ward",
-          "silt_needle",
-          "sunken_algorithm",
-          "floodgate",
-          "tide_ward"
+          "cleanse_cache",
+          "pulse_lance",
+          "pulse_lance",
+          "memory_sift"
         ],
-        "drawPile": 5,
-        "discardPile": 10,
+        "drawPile": 0,
+        "discardPile": 14,
         "exhaustPile": 1,
         "roles": {
           "defense": 8,
           "burstDefense": 2,
-          "finish": 13,
+          "finish": 12,
           "statusControl": 2,
           "cleanse": 1,
-          "flow": 9,
+          "flow": 8,
           "upgraded": 3
         }
       },
@@ -12226,7 +12438,7 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "reason": "녹 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 18,
       "bossesDefeated": 2,
@@ -12237,8 +12449,8 @@
       "gold": 324,
       "fights": 10,
       "elites": 0,
-      "damageDealt": 936,
-      "damageTaken": 165,
+      "damageDealt": 966,
+      "damageTaken": 167,
       "build": [
         "ward",
         "mark",
@@ -12276,7 +12488,7 @@
         "17:combat",
         "18:combat"
       ],
-      "steps": 101,
+      "steps": 102,
       "problems": [],
       "durationMs": 1
     },
@@ -12296,8 +12508,8 @@
       "gold": 95,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1366,
-      "damageTaken": 252,
+      "damageDealt": 1355,
+      "damageTaken": 250,
       "build": [
         "ward",
         "mark",
@@ -12324,8 +12536,8 @@
           "virus": 2
         },
         "incomingDamage": 0,
-        "bossHp": 15,
-        "bossMaxHp": 414,
+        "bossHp": 9,
+        "bossMaxHp": 408,
         "bossBlock": 0,
         "bossPhase": 2,
         "bossMove": "choir_wall",
@@ -12375,9 +12587,9 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 118,
+      "steps": 117,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-08-d5",
@@ -12388,66 +12600,68 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 31,
-      "maxHp": 84,
-      "deckSize": 25,
-      "relics": 11,
-      "gold": 178,
+      "hp": 56,
+      "maxHp": 86,
+      "deckSize": 23,
+      "relics": 12,
+      "gold": 112,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1505,
-      "damageTaken": 175,
+      "damageDealt": 1432,
+      "damageTaken": 167,
       "build": [
         "ward",
-        "mark",
         "charge",
-        "cycle"
+        "mark",
+        "virus"
       ],
       "roleProfile": {
-        "defense": 7,
+        "defense": 8,
         "burstDefense": 2,
         "finish": 16,
-        "statusControl": 5,
-        "cleanse": 2,
-        "flow": 14,
+        "statusControl": 4,
+        "cleanse": 1,
+        "flow": 12,
         "upgraded": 2
       },
       "finalBoss": {
-        "turn": 9,
-        "playerHp": 31,
-        "playerBlock": 3,
+        "turn": 11,
+        "playerHp": 56,
+        "playerBlock": 7,
         "playerStatuses": {
+          "charge": 32,
           "choir": 1,
           "pearlEngine": 5,
-          "deepIndex": 2,
-          "charge": 7
+          "deepIndex": 1,
+          "focus": 1,
+          "plated": 1,
+          "virus": 2
         },
-        "incomingDamage": 0,
-        "bossHp": 101,
-        "bossMaxHp": 451,
+        "incomingDamage": 11,
+        "bossHp": 33,
+        "bossMaxHp": 407,
         "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "intonation",
-        "bossIntent": "바이러스 3",
+        "bossMove": "choir_wall",
+        "bossIntent": "방어 28",
         "hand": [
-          "tide_ward",
-          "lattice_kick",
-          "pulse_lance",
-          "tide_ward",
+          "axiom_break",
+          "coral_guard",
           "memory_sift",
-          "pale_firewall",
-          "tide_ward"
+          "floodgate",
+          "tide_ward",
+          "floodgate"
         ],
-        "drawPile": 0,
-        "discardPile": 8,
-        "exhaustPile": 9,
+        "drawPile": 4,
+        "discardPile": 6,
+        "exhaustPile": 6,
         "roles": {
-          "defense": 6,
+          "defense": 7,
           "burstDefense": 1,
           "finish": 15,
-          "statusControl": 4,
-          "cleanse": 2,
-          "flow": 14,
+          "statusControl": 3,
+          "cleanse": 1,
+          "flow": 12,
           "upgraded": 2
         }
       },
@@ -12495,8 +12709,8 @@
       "gold": 145,
       "fights": 13,
       "elites": 1,
-      "damageDealt": 1586,
-      "damageTaken": 165,
+      "damageDealt": 1562,
+      "damageTaken": 163,
       "build": [
         "mark",
         "ward",
@@ -12521,8 +12735,8 @@
           "focus": 4
         },
         "incomingDamage": 0,
-        "bossHp": 115,
-        "bossMaxHp": 429,
+        "bossHp": 109,
+        "bossMaxHp": 423,
         "bossBlock": 0,
         "bossPhase": 2,
         "bossMove": "gate_call",
@@ -12574,7 +12788,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 3
     },
     {
       "seed": "balance-10-d5",
@@ -12585,57 +12799,57 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 57,
+      "hp": 58,
       "maxHp": 86,
       "deckSize": 23,
       "relics": 11,
-      "gold": 62,
+      "gold": 61,
       "fights": 10,
       "elites": 1,
-      "damageDealt": 1378,
-      "damageTaken": 147,
+      "damageDealt": 1353,
+      "damageTaken": 129,
       "build": [
         "ward",
-        "mark",
         "charge",
+        "mark",
         "virus"
       ],
       "roleProfile": {
-        "defense": 10,
+        "defense": 11,
         "burstDefense": 3,
-        "finish": 13,
-        "statusControl": 4,
-        "cleanse": 3,
+        "finish": 14,
+        "statusControl": 3,
+        "cleanse": 2,
         "flow": 10,
         "upgraded": 2
       },
       "finalBoss": {
-        "turn": 15,
-        "playerHp": 57,
+        "turn": 16,
+        "playerHp": 61,
         "playerBlock": 3,
         "playerStatuses": {
           "deepIndex": 1,
-          "charge": 34,
-          "counter": 24,
+          "charge": 33,
+          "counter": 27,
           "pearlEngine": 5
         },
-        "incomingDamage": 31,
-        "bossHp": 17,
-        "bossMaxHp": 449,
+        "incomingDamage": 0,
+        "bossHp": 12,
+        "bossMaxHp": 442,
         "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "phase_requiem",
-        "bossIntent": "공격 4 x4",
+        "bossMove": "intonation",
+        "bossIntent": "바이러스 3",
         "hand": [
+          "floodgate",
           "archive_dust",
           "pulse_lance",
           "cleanse_cache",
-          "tide_ward",
-          "tide_ward",
-          "tide_ward"
+          "overclocking_dive",
+          "pale_firewall"
         ],
-        "drawPile": 0,
-        "discardPile": 13,
+        "drawPile": 13,
+        "discardPile": 0,
         "exhaustPile": 3,
         "roles": {
           "defense": 10,
@@ -12671,45 +12885,292 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 118,
+      "steps": 119,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-11-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "상태 피해로 쓰러졌습니다.",
+      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 14,
-      "bossesDefeated": 1,
+      "floors": 21,
+      "bossesDefeated": 2,
       "hp": 0,
       "maxHp": 78,
-      "deckSize": 17,
-      "relics": 3,
-      "gold": 38,
-      "fights": 6,
+      "deckSize": 20,
+      "relics": 4,
+      "gold": 54,
+      "fights": 9,
       "elites": 0,
-      "damageDealt": 632,
-      "damageTaken": 166,
+      "damageDealt": 1099,
+      "damageTaken": 247,
       "build": [
+        "ward",
         "charge",
         "mark",
-        "ward",
         "cycle"
       ],
       "roleProfile": {
-        "defense": 4,
-        "burstDefense": 0,
-        "finish": 11,
-        "statusControl": 2,
-        "cleanse": 2,
-        "flow": 9,
-        "upgraded": 2
+        "defense": 6,
+        "burstDefense": 1,
+        "finish": 12,
+        "statusControl": 3,
+        "cleanse": 3,
+        "flow": 11,
+        "upgraded": 5
       },
-      "finalBoss": null,
-      "finalBossTimeline": [],
+      "finalBoss": {
+        "turn": 22,
+        "playerHp": 10,
+        "playerBlock": 0,
+        "playerStatuses": {
+          "charge": 108,
+          "focus": 3,
+          "virus": 1
+        },
+        "incomingDamage": 36,
+        "bossHp": 80,
+        "bossMaxHp": 428,
+        "bossBlock": 28,
+        "bossPhase": 2,
+        "bossMove": "gate_slam",
+        "bossIntent": "공격 21",
+        "hand": [
+          "pale_firewall",
+          "pulse_lance",
+          "signal_jab",
+          "pulse_lance",
+          "floodgate"
+        ],
+        "drawPile": 5,
+        "discardPile": 5,
+        "exhaustPile": 5,
+        "roles": {
+          "defense": 6,
+          "burstDefense": 1,
+          "finish": 12,
+          "statusControl": 3,
+          "cleanse": 3,
+          "flow": 11,
+          "upgraded": 5
+        }
+      },
+      "finalBossTimeline": [
+        {
+          "turn": 15,
+          "playerHp": 47,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 66,
+            "focus": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 213,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "pulse_lance",
+            "tide_ward",
+            "tide_ward",
+            "floodgate",
+            "cleanse_cache"
+          ],
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 16,
+          "playerHp": 44,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 72,
+            "focus": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 196,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "memory_sift",
+            "pale_firewall",
+            "pulse_lance",
+            "tide_ward",
+            "pulse_lance"
+          ],
+          "drawPile": 4,
+          "discardPile": 6,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 17,
+          "playerHp": 44,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 76,
+            "focus": 3
+          },
+          "incomingDamage": 25,
+          "bossHp": 176,
+          "bossMaxHp": 428,
+          "bossBlock": 28,
+          "bossPhase": 2,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "pulse_lance",
+            "undertow_kick",
+            "current_siphon",
+            "null_pin",
+            "tide_ward"
+          ],
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 18,
+          "playerHp": 27,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 80,
+            "focus": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 171,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "gate_call",
+          "bossIntent": "소환",
+          "hand": [
+            "pulse_lance",
+            "floodgate",
+            "pulse_lance",
+            "memory_sift",
+            "pale_firewall"
+          ],
+          "drawPile": 5,
+          "discardPile": 5,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 19,
+          "playerHp": 27,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 90,
+            "focus": 3
+          },
+          "incomingDamage": 31,
+          "bossHp": 153,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "phase_requiem",
+          "bossIntent": "공격 4 x4",
+          "hand": [
+            "signal_jab",
+            "cleanse_cache",
+            "tide_ward",
+            "tide_ward",
+            "pulse_lance"
+          ],
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 20,
+          "playerHp": 15,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 90,
+            "focus": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 138,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "floodgate",
+            "memory_sift",
+            "pulse_lance",
+            "current_siphon",
+            "pale_firewall"
+          ],
+          "drawPile": 5,
+          "discardPile": 5,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 21,
+          "playerHp": 12,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 104,
+            "focus": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 125,
+          "bossMaxHp": 428,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "null_pin",
+            "tide_ward",
+            "pulse_lance",
+            "pulse_lance",
+            "current_siphon"
+          ],
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 5
+        },
+        {
+          "turn": 22,
+          "playerHp": 10,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 108,
+            "focus": 3,
+            "virus": 1
+          },
+          "incomingDamage": 36,
+          "bossHp": 80,
+          "bossMaxHp": 428,
+          "bossBlock": 28,
+          "bossPhase": 2,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "pale_firewall",
+            "pulse_lance",
+            "signal_jab",
+            "pulse_lance",
+            "floodgate"
+          ],
+          "drawPile": 5,
+          "discardPile": 5,
+          "exhaustPile": 5
+        }
+      ],
       "route": [
         "1:combat",
         "2:event",
@@ -12724,11 +13185,18 @@
         "11:shop",
         "12:event",
         "13:rest",
-        "14:boss"
+        "14:boss",
+        "15:combat",
+        "16:combat",
+        "17:event",
+        "18:event",
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 87,
+      "steps": 136,
       "problems": [],
-      "durationMs": 1
+      "durationMs": 3
     },
     {
       "seed": "balance-12-d5",
@@ -12746,8 +13214,8 @@
       "gold": 83,
       "fights": 13,
       "elites": 0,
-      "damageDealt": 1017,
-      "damageTaken": 195,
+      "damageDealt": 985,
+      "damageTaken": 191,
       "build": [
         "mark",
         "ward",
@@ -12785,9 +13253,9 @@
         "17:combat",
         "18:combat"
       ],
-      "steps": 98,
+      "steps": 97,
       "problems": [],
-      "durationMs": 2
+      "durationMs": 1
     },
     {
       "seed": "balance-13-d5",
@@ -12805,8 +13273,8 @@
       "gold": 42,
       "fights": 7,
       "elites": 0,
-      "damageDealt": 699,
-      "damageTaken": 163,
+      "damageDealt": 690,
+      "damageTaken": 172,
       "build": [
         "mark",
         "ward",
@@ -12848,311 +13316,76 @@
       "seed": "balance-14-d5",
       "difficulty": 5,
       "difficultyName": "최심층",
-      "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "won": true,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
       "phase": "summary",
       "floors": 21,
-      "bossesDefeated": 2,
-      "hp": 0,
+      "bossesDefeated": 3,
+      "hp": 30,
       "maxHp": 78,
-      "deckSize": 22,
-      "relics": 7,
-      "gold": 41,
+      "deckSize": 21,
+      "relics": 9,
+      "gold": 81,
       "fights": 9,
       "elites": 0,
-      "damageDealt": 1180,
-      "damageTaken": 181,
+      "damageDealt": 1250,
+      "damageTaken": 141,
       "build": [
         "ward",
-        "mark",
         "charge",
+        "mark",
         "cycle"
       ],
       "roleProfile": {
-        "defense": 8,
+        "defense": 7,
         "burstDefense": 0,
-        "finish": 13,
+        "finish": 14,
         "statusControl": 2,
         "cleanse": 2,
-        "flow": 13,
-        "upgraded": 4
+        "flow": 12,
+        "upgraded": 2
       },
       "finalBoss": {
-        "turn": 12,
-        "playerHp": 4,
-        "playerBlock": 0,
+        "turn": 17,
+        "playerHp": 30,
+        "playerBlock": 4,
         "playerStatuses": {
+          "charge": 43,
+          "focus": 1,
+          "choir": 2,
           "deepIndex": 2,
-          "charge": 31,
-          "choir": 2
+          "virus": 2
         },
-        "incomingDamage": 31,
-        "bossHp": 136,
-        "bossMaxHp": 453,
+        "incomingDamage": 11,
+        "bossHp": 33,
+        "bossMaxHp": 450,
         "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "phase_requiem",
-        "bossIntent": "공격 4 x4",
+        "bossMove": "choir_wall",
+        "bossIntent": "방어 28",
         "hand": [
           "cleanse_cache",
-          "overclocking_dive",
-          "pulse_lance",
-          "current_siphon",
+          "coral_guard",
+          "cleanse_cache",
+          "floodgate",
           "tide_ward",
-          "rill_cut",
-          "floodgate"
+          "memory_sift",
+          "pulse_lance"
         ],
-        "drawPile": 2,
-        "discardPile": 9,
+        "drawPile": 9,
+        "discardPile": 0,
         "exhaustPile": 4,
         "roles": {
-          "defense": 8,
+          "defense": 6,
           "burstDefense": 0,
           "finish": 13,
           "statusControl": 2,
           "cleanse": 2,
-          "flow": 13,
-          "upgraded": 4
+          "flow": 11,
+          "upgraded": 2
         }
       },
-      "finalBossTimeline": [
-        {
-          "turn": 5,
-          "playerHp": 37,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 17,
-            "choir": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 368,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "intonation",
-          "bossIntent": "바이러스 3",
-          "hand": [
-            "coral_guard",
-            "rill_cut",
-            "tide_ward",
-            "floodgate",
-            "cleanse_cache",
-            "tide_ward",
-            "pulse_lance"
-          ],
-          "drawPile": 11,
-          "discardPile": 0,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 6,
-          "playerHp": 34,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 17,
-            "choir": 2,
-            "virus": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 339,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "choir_wall",
-          "bossIntent": "방어 28",
-          "hand": [
-            "null_pin",
-            "tide_ward",
-            "pulse_lance",
-            "coral_guard",
-            "floodgate",
-            "pulse_lance",
-            "undertow_kick"
-          ],
-          "drawPile": 2,
-          "discardPile": 9,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 7,
-          "playerHp": 32,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 20,
-            "choir": 2,
-            "virus": 1
-          },
-          "incomingDamage": 25,
-          "bossHp": 301,
-          "bossMaxHp": 453,
-          "bossBlock": 28,
-          "bossPhase": 1,
-          "bossMove": "gate_slam",
-          "bossIntent": "공격 21",
-          "hand": [
-            "current_siphon",
-            "overclocking_dive",
-            "pulse_lance",
-            "memory_sift",
-            "tide_ward",
-            "rill_cut",
-            "pulse_lance"
-          ],
-          "drawPile": 11,
-          "discardPile": 0,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 8,
-          "playerHp": 18,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 22,
-            "choir": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 283,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "intonation",
-          "bossIntent": "바이러스 3",
-          "hand": [
-            "coral_guard",
-            "floodgate",
-            "null_pin",
-            "pulse_lance",
-            "floodgate",
-            "cleanse_cache",
-            "undertow_kick"
-          ],
-          "drawPile": 2,
-          "discardPile": 9,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 9,
-          "playerHp": 15,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 25,
-            "choir": 2,
-            "virus": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 247,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "choir_wall",
-          "bossIntent": "방어 28",
-          "hand": [
-            "tide_ward",
-            "pulse_lance",
-            "tide_ward",
-            "coral_guard",
-            "null_pin",
-            "floodgate",
-            "rill_cut"
-          ],
-          "drawPile": 11,
-          "discardPile": 0,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 10,
-          "playerHp": 13,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 28,
-            "choir": 2,
-            "virus": 1
-          },
-          "incomingDamage": 25,
-          "bossHp": 207,
-          "bossMaxHp": 453,
-          "bossBlock": 28,
-          "bossPhase": 2,
-          "bossMove": "gate_slam",
-          "bossIntent": "공격 21",
-          "hand": [
-            "tide_ward",
-            "floodgate",
-            "overclocking_dive",
-            "current_siphon",
-            "cleanse_cache",
-            "undertow_kick",
-            "coral_guard"
-          ],
-          "drawPile": 3,
-          "discardPile": 8,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 11,
-          "playerHp": 4,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 30,
-            "choir": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 182,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 2,
-          "bossMove": "gate_call",
-          "bossIntent": "소환",
-          "hand": [
-            "memory_sift",
-            "pulse_lance",
-            "undertow_kick",
-            "floodgate",
-            "pulse_lance",
-            "null_pin",
-            "tide_ward"
-          ],
-          "drawPile": 11,
-          "discardPile": 0,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 12,
-          "playerHp": 4,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "deepIndex": 2,
-            "charge": 31,
-            "choir": 2
-          },
-          "incomingDamage": 31,
-          "bossHp": 136,
-          "bossMaxHp": 453,
-          "bossBlock": 0,
-          "bossPhase": 2,
-          "bossMove": "phase_requiem",
-          "bossIntent": "공격 4 x4",
-          "hand": [
-            "cleanse_cache",
-            "overclocking_dive",
-            "pulse_lance",
-            "current_siphon",
-            "tide_ward",
-            "rill_cut",
-            "floodgate"
-          ],
-          "drawPile": 2,
-          "discardPile": 9,
-          "exhaustPile": 4
-        }
-      ],
+      "finalBossTimeline": [],
       "route": [
         "1:combat",
         "2:event",
@@ -13176,7 +13409,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 107,
+      "steps": 113,
       "problems": [],
       "durationMs": 2
     },
@@ -13185,19 +13418,19 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "제로 스퀴드의 공격으로 쓰러졌습니다.",
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
       "phase": "summary",
-      "floors": 9,
-      "bossesDefeated": 1,
+      "floors": 21,
+      "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 82,
-      "deckSize": 14,
-      "relics": 4,
-      "gold": 100,
-      "fights": 4,
+      "maxHp": 78,
+      "deckSize": 22,
+      "relics": 5,
+      "gold": 0,
+      "fights": 10,
       "elites": 0,
-      "damageDealt": 344,
-      "damageTaken": 112,
+      "damageDealt": 1136,
+      "damageTaken": 222,
       "build": [
         "ward",
         "mark",
@@ -13205,16 +13438,255 @@
         "charge"
       ],
       "roleProfile": {
-        "defense": 5,
-        "burstDefense": 0,
-        "finish": 6,
-        "statusControl": 1,
-        "cleanse": 1,
-        "flow": 6,
-        "upgraded": 1
+        "defense": 9,
+        "burstDefense": 2,
+        "finish": 12,
+        "statusControl": 4,
+        "cleanse": 2,
+        "flow": 9,
+        "upgraded": 3
       },
-      "finalBoss": null,
-      "finalBossTimeline": [],
+      "finalBoss": {
+        "turn": 23,
+        "playerHp": 3,
+        "playerBlock": 3,
+        "playerStatuses": {
+          "charge": 6,
+          "virus": 1
+        },
+        "incomingDamage": 25,
+        "bossHp": 212,
+        "bossMaxHp": 451,
+        "bossBlock": 28,
+        "bossPhase": 2,
+        "bossMove": "gate_slam",
+        "bossIntent": "공격 21",
+        "hand": [
+          "echo_tap",
+          "archive_dust",
+          "memory_sift",
+          "pulse_lance",
+          "pale_firewall"
+        ],
+        "drawPile": 9,
+        "discardPile": 5,
+        "exhaustPile": 3,
+        "roles": {
+          "defense": 9,
+          "burstDefense": 2,
+          "finish": 12,
+          "statusControl": 4,
+          "cleanse": 2,
+          "flow": 9,
+          "upgraded": 3
+        }
+      },
+      "finalBossTimeline": [
+        {
+          "turn": 16,
+          "playerHp": 24,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 4,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 274,
+          "bossMaxHp": 451,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "rust_bloom",
+            "coral_guard",
+            "null_pin",
+            "pulse_lance",
+            "archive_dust"
+          ],
+          "drawPile": 14,
+          "discardPile": 0,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 17,
+          "playerHp": 22,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 4,
+            "virus": 1
+          },
+          "incomingDamage": 18,
+          "bossHp": 258,
+          "bossMaxHp": 451,
+          "bossBlock": 28,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "tide_ward",
+            "pulse_lance",
+            "depth_charge",
+            "echo_tap",
+            "floodgate"
+          ],
+          "drawPile": 9,
+          "discardPile": 5,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 18,
+          "playerHp": 20,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 3
+          },
+          "incomingDamage": 0,
+          "bossHp": 258,
+          "bossMaxHp": 451,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "cleanse_cache",
+            "tide_ward",
+            "undertow_kick",
+            "pulse_lance",
+            "pulse_lance"
+          ],
+          "drawPile": 4,
+          "discardPile": 10,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 19,
+          "playerHp": 17,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 239,
+          "bossMaxHp": 451,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "spiral_armor",
+            "tide_ward",
+            "memory_sift",
+            "coral_guard",
+            "archive_dust"
+          ],
+          "drawPile": 14,
+          "discardPile": 0,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 20,
+          "playerHp": 15,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 4,
+            "virus": 1
+          },
+          "incomingDamage": 18,
+          "bossHp": 233,
+          "bossMaxHp": 451,
+          "bossBlock": 28,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "pulse_lance",
+            "depth_charge",
+            "pulse_lance",
+            "pale_firewall",
+            "pulse_lance"
+          ],
+          "drawPile": 8,
+          "discardPile": 6,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 21,
+          "playerHp": 8,
+          "playerBlock": 0,
+          "playerStatuses": {},
+          "incomingDamage": 0,
+          "bossHp": 233,
+          "bossMaxHp": 451,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "floodgate",
+            "pulse_lance",
+            "tide_ward",
+            "cleanse_cache",
+            "rust_bloom"
+          ],
+          "drawPile": 3,
+          "discardPile": 11,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 22,
+          "playerHp": 5,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 3,
+            "virus": 2
+          },
+          "incomingDamage": 0,
+          "bossHp": 222,
+          "bossMaxHp": 451,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "null_pin",
+            "tide_ward",
+            "undertow_kick",
+            "spiral_armor",
+            "floodgate"
+          ],
+          "drawPile": 14,
+          "discardPile": 0,
+          "exhaustPile": 3
+        },
+        {
+          "turn": 23,
+          "playerHp": 3,
+          "playerBlock": 3,
+          "playerStatuses": {
+            "charge": 6,
+            "virus": 1
+          },
+          "incomingDamage": 25,
+          "bossHp": 212,
+          "bossMaxHp": 451,
+          "bossBlock": 28,
+          "bossPhase": 2,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "echo_tap",
+            "archive_dust",
+            "memory_sift",
+            "pulse_lance",
+            "pale_firewall"
+          ],
+          "drawPile": 9,
+          "discardPile": 5,
+          "exhaustPile": 3
+        }
+      ],
       "route": [
         "1:combat",
         "2:event",
@@ -13224,11 +13696,23 @@
         "6:rest",
         "7:boss",
         "8:combat",
-        "9:combat"
+        "9:combat",
+        "10:shop",
+        "11:combat",
+        "12:shop",
+        "13:rest",
+        "14:boss",
+        "15:combat",
+        "16:event",
+        "17:combat",
+        "18:combat",
+        "19:shop",
+        "20:rest",
+        "21:boss"
       ],
-      "steps": 53,
+      "steps": 146,
       "problems": [],
-      "durationMs": 0
+      "durationMs": 2
     },
     {
       "seed": "balance-16-d5",
@@ -13240,265 +13724,252 @@
       "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
-      "maxHp": 86,
+      "maxHp": 78,
       "deckSize": 23,
-      "relics": 9,
-      "gold": 68,
+      "relics": 8,
+      "gold": 97,
       "fights": 12,
       "elites": 1,
-      "damageDealt": 1438,
-      "damageTaken": 292,
+      "damageDealt": 1312,
+      "damageTaken": 285,
       "build": [
         "mark",
         "ward",
-        "cycle",
-        "charge"
+        "charge",
+        "cycle"
       ],
       "roleProfile": {
-        "defense": 8,
+        "defense": 7,
         "burstDefense": 0,
-        "finish": 14,
-        "statusControl": 3,
-        "cleanse": 3,
-        "flow": 12,
-        "upgraded": 2
+        "finish": 15,
+        "statusControl": 2,
+        "cleanse": 2,
+        "flow": 13,
+        "upgraded": 1
       },
       "finalBoss": {
-        "turn": 14,
-        "playerHp": 2,
+        "turn": 7,
+        "playerHp": 6,
         "playerBlock": 0,
         "playerStatuses": {
-          "charge": 10
+          "deepIndex": 1,
+          "virus": 1
         },
         "incomingDamage": 25,
-        "bossHp": 101,
-        "bossMaxHp": 405,
+        "bossHp": 291,
+        "bossMaxHp": 442,
         "bossBlock": 28,
-        "bossPhase": 2,
+        "bossPhase": 1,
         "bossMove": "gate_slam",
         "bossIntent": "공격 21",
         "hand": [
-          "floodgate",
           "tide_ward",
+          "keyhole_beam",
           "rill_cut",
-          "null_pin",
-          "keyhole_beam"
+          "pulse_lance",
+          "tide_ward",
+          "null_pin"
         ],
-        "drawPile": 9,
-        "discardPile": 6,
+        "drawPile": 14,
+        "discardPile": 0,
         "exhaustPile": 3,
         "roles": {
-          "defense": 8,
+          "defense": 7,
           "burstDefense": 0,
-          "finish": 14,
-          "statusControl": 3,
-          "cleanse": 3,
-          "flow": 12,
-          "upgraded": 2
+          "finish": 15,
+          "statusControl": 2,
+          "cleanse": 2,
+          "flow": 13,
+          "upgraded": 1
         }
       },
       "finalBossTimeline": [
         {
-          "turn": 7,
-          "playerHp": 38,
-          "playerBlock": 0,
+          "turn": 1,
+          "playerHp": 36,
+          "playerBlock": 8,
           "playerStatuses": {
-            "charge": 7
+            "plated": 1,
+            "echo": 1
+          },
+          "incomingDamage": 25,
+          "bossHp": 442,
+          "bossMaxHp": 442,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "oath_of_the_deep",
+            "depth_charge",
+            "pulse_lance",
+            "current_siphon",
+            "keyhole_beam",
+            "floodgate"
+          ],
+          "drawPile": 17,
+          "discardPile": 0,
+          "exhaustPile": 0
+        },
+        {
+          "turn": 2,
+          "playerHp": 23,
+          "playerBlock": 1,
+          "playerStatuses": {
+            "charge": 2
           },
           "incomingDamage": 0,
-          "bossHp": 307,
-          "bossMaxHp": 405,
+          "bossHp": 394,
+          "bossMaxHp": 442,
           "bossBlock": 0,
           "bossPhase": 1,
           "bossMove": "intonation",
           "bossIntent": "바이러스 3",
           "hand": [
-            "null_pin",
-            "cleanse_cache",
-            "harpoon_query",
+            "memory_sift",
+            "tide_ward",
             "pulse_lance",
-            "undertow_kick"
+            "blue_ledger",
+            "null_pin"
           ],
-          "drawPile": 15,
-          "discardPile": 0,
-          "exhaustPile": 3
+          "drawPile": 12,
+          "discardPile": 6,
+          "exhaustPile": 0
         },
         {
-          "turn": 8,
-          "playerHp": 35,
+          "turn": 3,
+          "playerHp": 20,
           "playerBlock": 0,
           "playerStatuses": {
-            "charge": 7,
+            "charge": 3,
             "virus": 2
           },
           "incomingDamage": 0,
-          "bossHp": 271,
-          "bossMaxHp": 405,
+          "bossHp": 373,
+          "bossMaxHp": 442,
           "bossBlock": 0,
           "bossPhase": 1,
           "bossMove": "choir_wall",
           "bossIntent": "방어 28",
           "hand": [
-            "tide_ward",
-            "floodgate",
-            "pulse_lance",
-            "pulse_lance",
-            "rill_cut"
+            "keyhole_beam",
+            "rill_cut",
+            "cleanse_cache",
+            "kelp_circuit",
+            "deep_index"
           ],
-          "drawPile": 10,
+          "drawPile": 4,
+          "discardPile": 13,
+          "exhaustPile": 1
+        },
+        {
+          "turn": 4,
+          "playerHp": 18,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 3,
+            "virus": 1,
+            "deepIndex": 1
+          },
+          "incomingDamage": 25,
+          "bossHp": 355,
+          "bossMaxHp": 442,
+          "bossBlock": 28,
+          "bossPhase": 1,
+          "bossMove": "gate_slam",
+          "bossIntent": "공격 21",
+          "hand": [
+            "drowned_sunrise",
+            "coral_guard",
+            "undertow_kick",
+            "floodgate",
+            "memory_sift",
+            "tide_ward"
+          ],
+          "drawPile": 15,
+          "discardPile": 0,
+          "exhaustPile": 2
+        },
+        {
+          "turn": 5,
+          "playerHp": 11,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "charge": 3,
+            "deepIndex": 1
+          },
+          "incomingDamage": 0,
+          "bossHp": 355,
+          "bossMaxHp": 442,
+          "bossBlock": 0,
+          "bossPhase": 1,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "oath_of_the_deep",
+            "tide_ward",
+            "pulse_lance",
+            "pulse_lance",
+            "null_pin",
+            "pulse_lance"
+          ],
+          "drawPile": 9,
           "discardPile": 5,
           "exhaustPile": 3
         },
         {
-          "turn": 9,
-          "playerHp": 33,
+          "turn": 6,
+          "playerHp": 8,
           "playerBlock": 0,
           "playerStatuses": {
-            "charge": 7,
-            "virus": 1
-          },
-          "incomingDamage": 25,
-          "bossHp": 239,
-          "bossMaxHp": 405,
-          "bossBlock": 28,
-          "bossPhase": 1,
-          "bossMove": "gate_slam",
-          "bossIntent": "공격 21",
-          "hand": [
-            "kelp_circuit",
-            "tide_ward",
-            "coral_guard",
-            "pulse_lance",
-            "memory_sift"
-          ],
-          "drawPile": 4,
-          "discardPile": 11,
-          "exhaustPile": 3
-        },
-        {
-          "turn": 10,
-          "playerHp": 24,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "charge": 8
-          },
-          "incomingDamage": 0,
-          "bossHp": 232,
-          "bossMaxHp": 405,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "intonation",
-          "bossIntent": "바이러스 3",
-          "hand": [
-            "tide_ward",
-            "cleanse_cache",
-            "floodgate",
-            "keyhole_beam",
-            "rill_cut"
-          ],
-          "drawPile": 15,
-          "discardPile": 0,
-          "exhaustPile": 3
-        },
-        {
-          "turn": 11,
-          "playerHp": 24,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "charge": 8
-          },
-          "incomingDamage": 20,
-          "bossHp": 196,
-          "bossMaxHp": 405,
-          "bossBlock": 0,
-          "bossPhase": 2,
-          "bossMove": "phase_requiem",
-          "bossIntent": "공격 4 x4",
-          "hand": [
-            "harpoon_query",
-            "tide_ward",
-            "coral_guard",
-            "null_pin",
-            "tide_ward"
-          ],
-          "drawPile": 9,
-          "discardPile": 6,
-          "exhaustPile": 3
-        },
-        {
-          "turn": 12,
-          "playerHp": 11,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "charge": 8
-          },
-          "incomingDamage": 11,
-          "bossHp": 167,
-          "bossMaxHp": 405,
-          "bossBlock": 0,
-          "bossPhase": 2,
-          "bossMove": "intonation",
-          "bossIntent": "바이러스 3",
-          "hand": [
-            "pulse_lance",
-            "memory_sift",
-            "keyhole_beam",
-            "kelp_circuit",
-            "pulse_lance"
-          ],
-          "drawPile": 4,
-          "discardPile": 11,
-          "exhaustPile": 3
-        },
-        {
-          "turn": 13,
-          "playerHp": 2,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "charge": 10,
+            "charge": 3,
+            "deepIndex": 1,
             "virus": 2
           },
           "incomingDamage": 0,
-          "bossHp": 125,
-          "bossMaxHp": 405,
+          "bossHp": 332,
+          "bossMaxHp": 442,
           "bossBlock": 0,
-          "bossPhase": 2,
+          "bossPhase": 1,
           "bossMove": "choir_wall",
           "bossIntent": "방어 28",
           "hand": [
-            "floodgate",
-            "pulse_lance",
+            "keyhole_beam",
+            "current_siphon",
+            "depth_charge",
+            "kelp_circuit",
             "cleanse_cache",
-            "undertow_kick",
             "pulse_lance"
           ],
-          "drawPile": 15,
-          "discardPile": 0,
+          "drawPile": 3,
+          "discardPile": 11,
           "exhaustPile": 3
         },
         {
-          "turn": 14,
-          "playerHp": 2,
+          "turn": 7,
+          "playerHp": 6,
           "playerBlock": 0,
           "playerStatuses": {
-            "charge": 10
+            "deepIndex": 1,
+            "virus": 1
           },
           "incomingDamage": 25,
-          "bossHp": 101,
-          "bossMaxHp": 405,
+          "bossHp": 291,
+          "bossMaxHp": 442,
           "bossBlock": 28,
-          "bossPhase": 2,
+          "bossPhase": 1,
           "bossMove": "gate_slam",
           "bossIntent": "공격 21",
           "hand": [
-            "floodgate",
             "tide_ward",
+            "keyhole_beam",
             "rill_cut",
-            "null_pin",
-            "keyhole_beam"
+            "pulse_lance",
+            "tide_ward",
+            "null_pin"
           ],
-          "drawPile": 9,
-          "discardPile": 6,
+          "drawPile": 14,
+          "discardPile": 0,
           "exhaustPile": 3
         }
       ],
@@ -13525,7 +13996,7 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 115,
+      "steps": 113,
       "problems": [],
       "durationMs": 2
     },
@@ -13534,290 +14005,290 @@
       "difficulty": 5,
       "difficultyName": "최심층",
       "won": false,
-      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "reason": "거울 해파리의 공격으로 쓰러졌습니다.",
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 2,
       "hp": 0,
       "maxHp": 78,
-      "deckSize": 22,
-      "relics": 7,
-      "gold": 33,
+      "deckSize": 21,
+      "relics": 8,
+      "gold": 21,
       "fights": 12,
       "elites": 0,
-      "damageDealt": 1078,
-      "damageTaken": 133,
+      "damageDealt": 1322,
+      "damageTaken": 228,
       "build": [
         "mark",
         "ward",
         "cycle",
-        "virus"
+        "charge"
       ],
       "roleProfile": {
-        "defense": 6,
+        "defense": 7,
         "burstDefense": 2,
-        "finish": 12,
+        "finish": 13,
         "statusControl": 3,
-        "cleanse": 1,
-        "flow": 11,
-        "upgraded": 9
+        "cleanse": 2,
+        "flow": 12,
+        "upgraded": 4
       },
       "finalBoss": {
-        "turn": 14,
-        "playerHp": 14,
+        "turn": 22,
+        "playerHp": 4,
         "playerBlock": 0,
         "playerStatuses": {
           "choir": 1,
-          "charge": 2,
-          "counter": 5
+          "charge": 12,
+          "counter": 18,
+          "virus": 2
         },
-        "incomingDamage": 31,
-        "bossHp": 197,
-        "bossMaxHp": 420,
+        "incomingDamage": 11,
+        "bossHp": 68,
+        "bossMaxHp": 416,
         "bossBlock": 0,
         "bossPhase": 2,
-        "bossMove": "phase_requiem",
-        "bossIntent": "공격 4 x4",
+        "bossMove": "choir_wall",
+        "bossIntent": "방어 28",
         "hand": [
-          "cleanse_cache",
-          "keyhole_beam",
-          "null_pin",
           "pulse_lance",
-          "rill_cut"
+          "tide_ward",
+          "cleanse_cache",
+          "cleanse_cache",
+          "null_pin"
         ],
-        "drawPile": 12,
-        "discardPile": 0,
-        "exhaustPile": 5,
+        "drawPile": 3,
+        "discardPile": 6,
+        "exhaustPile": 7,
         "roles": {
-          "defense": 6,
+          "defense": 7,
           "burstDefense": 2,
-          "finish": 12,
+          "finish": 13,
           "statusControl": 3,
-          "cleanse": 1,
-          "flow": 11,
-          "upgraded": 9
+          "cleanse": 2,
+          "flow": 12,
+          "upgraded": 4
         }
       },
       "finalBossTimeline": [
         {
-          "turn": 7,
-          "playerHp": 31,
+          "turn": 15,
+          "playerHp": 24,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 1,
-            "counter": 5
+            "charge": 10,
+            "counter": 12
           },
           "incomingDamage": 0,
-          "bossHp": 304,
-          "bossMaxHp": 420,
+          "bossHp": 227,
+          "bossMaxHp": 416,
           "bossBlock": 0,
           "bossPhase": 1,
           "bossMove": "intonation",
           "bossIntent": "바이러스 3",
           "hand": [
-            "tide_ward",
+            "pulse_lance",
             "rill_cut",
-            "tide_ward",
+            "compression_rite",
             "pulse_lance",
-            "signal_jab"
-          ],
-          "drawPile": 7,
-          "discardPile": 6,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 8,
-          "playerHp": 28,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "choir": 1,
-            "charge": 1,
-            "counter": 5,
-            "virus": 2
-          },
-          "incomingDamage": 0,
-          "bossHp": 285,
-          "bossMaxHp": 420,
-          "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "choir_wall",
-          "bossIntent": "방어 28",
-          "hand": [
-            "memory_sift",
-            "keyhole_beam",
-            "pulse_lance",
-            "cleanse_cache",
             "reef_bastion"
           ],
-          "drawPile": 1,
-          "discardPile": 12,
-          "exhaustPile": 4
-        },
-        {
-          "turn": 9,
-          "playerHp": 28,
-          "playerBlock": 0,
-          "playerStatuses": {
-            "choir": 1,
-            "charge": 1,
-            "counter": 5
-          },
-          "incomingDamage": 18,
-          "bossHp": 266,
-          "bossMaxHp": 420,
-          "bossBlock": 28,
-          "bossPhase": 1,
-          "bossMove": "gate_slam",
-          "bossIntent": "공격 21",
-          "hand": [
-            "memory_sift",
-            "tide_ward",
-            "rill_cut",
-            "pulse_lance",
-            "tide_ward"
-          ],
-          "drawPile": 13,
+          "drawPile": 11,
           "discardPile": 0,
-          "exhaustPile": 4
+          "exhaustPile": 5
         },
         {
-          "turn": 10,
-          "playerHp": 26,
+          "turn": 16,
+          "playerHp": 12,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 2,
-            "counter": 5
+            "charge": 10,
+            "counter": 12
           },
           "incomingDamage": 0,
-          "bossHp": 258,
-          "bossMaxHp": 420,
+          "bossHp": 149,
+          "bossMaxHp": 416,
           "bossBlock": 0,
-          "bossPhase": 1,
+          "bossPhase": 2,
           "bossMove": "intonation",
           "bossIntent": "바이러스 3",
           "hand": [
-            "pulse_lance",
-            "pulse_lance",
-            "rill_cut",
-            "null_pin",
-            "tide_ward"
+            "cleanse_cache",
+            "tide_ward",
+            "tide_ward",
+            "cleanse_cache",
+            "patient_knife"
           ],
-          "drawPile": 7,
+          "drawPile": 4,
           "discardPile": 6,
-          "exhaustPile": 4
+          "exhaustPile": 6
         },
         {
-          "turn": 11,
-          "playerHp": 23,
+          "turn": 17,
+          "playerHp": 9,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 2,
-            "counter": 5,
+            "charge": 12,
+            "counter": 12,
             "virus": 2
           },
           "incomingDamage": 0,
-          "bossHp": 237,
-          "bossMaxHp": 420,
+          "bossHp": 142,
+          "bossMaxHp": 416,
           "bossBlock": 0,
-          "bossPhase": 1,
+          "bossPhase": 2,
           "bossMove": "choir_wall",
           "bossIntent": "방어 28",
           "hand": [
-            "hold_breath",
+            "null_pin",
+            "rill_cut",
+            "kelp_circuit",
             "pulse_lance",
-            "compression_rite",
-            "reef_bastion",
-            "keyhole_beam",
-            "cleanse_cache"
+            "pulse_lance"
           ],
-          "drawPile": 1,
-          "discardPile": 11,
-          "exhaustPile": 4
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 6
         },
         {
-          "turn": 12,
-          "playerHp": 23,
+          "turn": 18,
+          "playerHp": 7,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 2,
-            "counter": 5
+            "charge": 12,
+            "counter": 12,
+            "virus": 1
           },
           "incomingDamage": 18,
-          "bossHp": 218,
-          "bossMaxHp": 420,
+          "bossHp": 117,
+          "bossMaxHp": 416,
           "bossBlock": 28,
-          "bossPhase": 1,
+          "bossPhase": 2,
           "bossMove": "gate_slam",
           "bossIntent": "공격 21",
           "hand": [
-            "hold_breath",
-            "tide_ward",
-            "signal_jab",
-            "tide_ward",
-            "tide_ward",
-            "keyhole_beam"
+            "compression_rite",
+            "pulse_lance",
+            "cleanse_cache",
+            "cleanse_cache",
+            "tide_ward"
           ],
-          "drawPile": 12,
-          "discardPile": 0,
-          "exhaustPile": 4
+          "drawPile": 2,
+          "discardPile": 8,
+          "exhaustPile": 6
         },
         {
-          "turn": 13,
-          "playerHp": 14,
+          "turn": 19,
+          "playerHp": 7,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 2,
-            "counter": 5
+            "charge": 12,
+            "counter": 15
           },
           "incomingDamage": 0,
-          "bossHp": 212,
-          "bossMaxHp": 420,
+          "bossHp": 115,
+          "bossMaxHp": 416,
           "bossBlock": 0,
-          "bossPhase": 1,
-          "bossMove": "intonation",
-          "bossIntent": "바이러스 3",
+          "bossPhase": 2,
+          "bossMove": "gate_call",
+          "bossIntent": "소환",
           "hand": [
+            "tide_ward",
             "pulse_lance",
-            "memory_sift",
-            "pulse_lance",
-            "pulse_lance",
-            "compression_rite"
+            "null_pin",
+            "tide_ward",
+            "cleanse_cache"
           ],
-          "drawPile": 7,
-          "discardPile": 6,
-          "exhaustPile": 4
+          "drawPile": 10,
+          "discardPile": 0,
+          "exhaustPile": 6
         },
         {
-          "turn": 14,
-          "playerHp": 14,
+          "turn": 20,
+          "playerHp": 7,
           "playerBlock": 0,
           "playerStatuses": {
             "choir": 1,
-            "charge": 2,
-            "counter": 5
+            "charge": 12,
+            "counter": 15
           },
-          "incomingDamage": 31,
-          "bossHp": 197,
-          "bossMaxHp": 420,
+          "incomingDamage": 20,
+          "bossHp": 102,
+          "bossMaxHp": 416,
           "bossBlock": 0,
           "bossPhase": 2,
           "bossMove": "phase_requiem",
           "bossIntent": "공격 4 x4",
           "hand": [
-            "cleanse_cache",
-            "keyhole_beam",
-            "null_pin",
-            "pulse_lance",
-            "rill_cut"
+            "reef_bastion",
+            "rill_cut",
+            "compression_rite",
+            "kelp_circuit",
+            "floodgate"
           ],
-          "drawPile": 12,
+          "drawPile": 4,
+          "discardPile": 6,
+          "exhaustPile": 6
+        },
+        {
+          "turn": 21,
+          "playerHp": 7,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "choir": 1,
+            "charge": 12,
+            "counter": 18
+          },
+          "incomingDamage": 0,
+          "bossHp": 92,
+          "bossMaxHp": 416,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "intonation",
+          "bossIntent": "바이러스 3",
+          "hand": [
+            "pulse_lance",
+            "reef_bastion",
+            "rill_cut",
+            "pulse_lance",
+            "tide_ward"
+          ],
+          "drawPile": 9,
           "discardPile": 0,
-          "exhaustPile": 5
+          "exhaustPile": 7
+        },
+        {
+          "turn": 22,
+          "playerHp": 4,
+          "playerBlock": 0,
+          "playerStatuses": {
+            "choir": 1,
+            "charge": 12,
+            "counter": 18,
+            "virus": 2
+          },
+          "incomingDamage": 11,
+          "bossHp": 68,
+          "bossMaxHp": 416,
+          "bossBlock": 0,
+          "bossPhase": 2,
+          "bossMove": "choir_wall",
+          "bossIntent": "방어 28",
+          "hand": [
+            "pulse_lance",
+            "tide_ward",
+            "cleanse_cache",
+            "cleanse_cache",
+            "null_pin"
+          ],
+          "drawPile": 3,
+          "discardPile": 6,
+          "exhaustPile": 7
         }
       ],
       "route": [
@@ -13836,16 +14307,16 @@
         "13:rest",
         "14:boss",
         "15:combat",
-        "16:event",
-        "17:combat",
+        "16:combat",
+        "17:rest",
         "18:combat",
         "19:shop",
         "20:rest",
         "21:boss"
       ],
-      "steps": 121,
+      "steps": 138,
       "problems": [],
-      "durationMs": 3
+      "durationMs": 2
     },
     {
       "seed": "balance-18-d5",
@@ -13856,15 +14327,15 @@
       "phase": "summary",
       "floors": 21,
       "bossesDefeated": 3,
-      "hp": 29,
+      "hp": 30,
       "maxHp": 91,
       "deckSize": 24,
       "relics": 8,
       "gold": 202,
       "fights": 13,
       "elites": 1,
-      "damageDealt": 1624,
-      "damageTaken": 204,
+      "damageDealt": 1615,
+      "damageTaken": 203,
       "build": [
         "mark",
         "ward",
@@ -13882,15 +14353,15 @@
       },
       "finalBoss": {
         "turn": 17,
-        "playerHp": 29,
+        "playerHp": 30,
         "playerBlock": 3,
         "playerStatuses": {
           "charge": 4,
           "counter": 15
         },
         "incomingDamage": 0,
-        "bossHp": 14,
-        "bossMaxHp": 416,
+        "bossHp": 8,
+        "bossMaxHp": 410,
         "bossBlock": 0,
         "bossPhase": 2,
         "bossMove": "gate_call",
@@ -13940,17 +14411,17 @@
         "20:rest",
         "21:boss"
       ],
-      "steps": 147,
+      "steps": 148,
       "problems": [],
-      "durationMs": 4
+      "durationMs": 2
     }
   ],
   "totals": {
     "runs": 108,
     "wins": 68,
     "winRate": 0.63,
-    "averageFloors": 19.27,
-    "averageSteps": 114.44,
+    "averageFloors": 19.45,
+    "averageSteps": 115.73,
     "problemRuns": 0
   },
   "byDifficulty": [
@@ -14231,10 +14702,10 @@
       "difficultyName": "최심층",
       "runs": 18,
       "wins": 8,
-      "averageFloors": 18.44,
-      "averageDeckSize": 21.39,
-      "averageRelics": 7.33,
-      "averageDamageTaken": 178.33,
+      "averageFloors": 19.56,
+      "averageDeckSize": 21.67,
+      "averageRelics": 7.56,
+      "averageDamageTaken": 191.17,
       "problemRuns": 0,
       "floorBands": [
         {
@@ -14247,41 +14718,37 @@
         {
           "id": "middle",
           "label": "중반 8-14층",
-          "runs": 5,
+          "runs": 2,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "late",
           "label": "후반 15-20층",
-          "runs": 2,
+          "runs": 3,
           "wins": 0,
           "winRate": 0
         },
         {
           "id": "final",
           "label": "최종 21층",
-          "runs": 11,
+          "runs": 13,
           "wins": 8,
-          "winRate": 0.73
+          "winRate": 0.62
         }
       ],
       "lossReasons": [
         {
-          "label": "중반 강적",
-          "count": 4
-        },
-        {
           "label": "최종 보스",
-          "count": 3
-        },
-        {
-          "label": "상태 누적",
-          "count": 2
+          "count": 5
         },
         {
           "label": "후반 체력 부족",
-          "count": 1
+          "count": 3
+        },
+        {
+          "label": "중반 강적",
+          "count": 2
         }
       ],
       "winRate": 0.4444444444444444
@@ -14290,23 +14757,23 @@
   "lossReasons": [
     {
       "label": "최종 보스",
-      "count": 20
+      "count": 22
     },
     {
       "label": "중반 강적",
-      "count": 9
+      "count": 7
     },
     {
       "label": "초반 성장 실패",
       "count": 5
     },
     {
-      "label": "상태 누적",
-      "count": 3
+      "label": "후반 체력 부족",
+      "count": 5
     },
     {
-      "label": "후반 체력 부족",
-      "count": 3
+      "label": "상태 누적",
+      "count": 1
     }
   ],
   "floorBands": [
@@ -14320,23 +14787,23 @@
     {
       "id": "middle",
       "label": "중반 8-14층",
-      "runs": 10,
+      "runs": 7,
       "wins": 0,
       "winRate": 0
     },
     {
       "id": "late",
       "label": "후반 15-20층",
-      "runs": 4,
+      "runs": 5,
       "wins": 0,
       "winRate": 0
     },
     {
       "id": "final",
       "label": "최종 21층",
-      "runs": 88,
+      "runs": 90,
       "wins": 68,
-      "winRate": 0.77
+      "winRate": 0.76
     }
   ],
   "buildTags": [
@@ -14344,66 +14811,66 @@
       "tag": "mark",
       "runs": 108,
       "wins": 68,
-      "averageFloors": 19.27,
-      "averageDeckSize": 22.63,
-      "averageRelics": 8.23,
+      "averageFloors": 19.45,
+      "averageDeckSize": 22.68,
+      "averageRelics": 8.27,
       "winRate": 0.63
     },
     {
       "tag": "ward",
       "runs": 108,
       "wins": 68,
-      "averageFloors": 19.27,
-      "averageDeckSize": 22.63,
-      "averageRelics": 8.23,
+      "averageFloors": 19.45,
+      "averageDeckSize": 22.68,
+      "averageRelics": 8.27,
       "winRate": 0.63
     },
     {
       "tag": "cycle",
-      "runs": 91,
-      "wins": 54,
-      "averageFloors": 19.14,
-      "averageDeckSize": 22.43,
+      "runs": 90,
+      "wins": 53,
+      "averageFloors": 19.34,
+      "averageDeckSize": 22.48,
       "averageRelics": 8.09,
       "winRate": 0.59
     },
     {
       "tag": "charge",
-      "runs": 84,
-      "wins": 50,
-      "averageFloors": 18.99,
+      "runs": 87,
+      "wins": 51,
+      "averageFloors": 19.21,
       "averageDeckSize": 22.54,
-      "averageRelics": 8.24,
-      "winRate": 0.6
+      "averageRelics": 8.25,
+      "winRate": 0.59
     },
     {
       "tag": "virus",
-      "runs": 41,
+      "runs": 39,
       "wins": 32,
-      "averageFloors": 20.12,
-      "averageDeckSize": 23.27,
-      "averageRelics": 8.54,
-      "winRate": 0.78
+      "averageFloors": 20.26,
+      "averageDeckSize": 23.44,
+      "averageRelics": 8.72,
+      "winRate": 0.82
     }
   ],
   "primaryBuilds": [
     {
       "tag": "ward",
-      "runs": 58,
-      "wins": 40,
-      "averageFloors": 19.71,
-      "averageDeckSize": 23.16,
-      "averageRelics": 8.67,
-      "winRate": 0.69
+      "runs": 60,
+      "wins": 41,
+      "averageFloors": 19.95,
+      "averageDeckSize": 23.13,
+      "averageRelics": 8.62,
+      "winRate": 0.68
     },
     {
       "tag": "mark",
-      "runs": 48,
-      "wins": 27,
-      "averageFloors": 18.81,
-      "averageDeckSize": 22.1,
-      "averageRelics": 7.73,
-      "winRate": 0.56
+      "runs": 47,
+      "wins": 26,
+      "averageFloors": 18.79,
+      "averageDeckSize": 22.09,
+      "averageRelics": 7.74,
+      "winRate": 0.55
     },
     {
       "tag": "cycle",
@@ -14413,32 +14880,23 @@
       "averageDeckSize": 23,
       "averageRelics": 12,
       "winRate": 1
-    },
-    {
-      "tag": "charge",
-      "runs": 1,
-      "wins": 0,
-      "averageFloors": 14,
-      "averageDeckSize": 17,
-      "averageRelics": 3,
-      "winRate": 0
     }
   ],
   "finalBossAnalysis": {
-    "reached": 88,
+    "reached": 90,
     "wins": 68,
-    "losses": 20,
-    "winRate": 0.77,
+    "losses": 22,
+    "winRate": 0.76,
     "lossMoves": [
       {
         "move": "phase_requiem",
         "label": "종말 레퀴엠",
-        "count": 10
+        "count": 9
       },
       {
         "move": "gate_slam",
         "label": "문 낙하",
-        "count": 5
+        "count": 7
       },
       {
         "move": "intonation",
@@ -14448,10 +14906,10 @@
       {
         "move": "choir_wall",
         "label": "합창벽",
-        "count": 1
+        "count": 2
       }
     ],
-    "closeLosses": 10,
+    "closeLosses": 12,
     "closeLossExamples": [
       {
         "seed": "balance-02-d1",
@@ -14576,36 +15034,36 @@
       }
     ],
     "requiemLosses": 20,
-    "summonWindowLosses": 18,
+    "summonWindowLosses": 20,
     "lowHpEntryLosses": 0,
     "lowBurstDefenseLosses": 12,
     "pressureProfile": {
-      "sequenceLosses": 18,
+      "sequenceLosses": 20,
       "lowHpAfterSlamLosses": 7,
       "lowHpAtRequiemLosses": 7,
-      "noBurstDefenseAtRequiemLosses": 14,
-      "averageRequiemHandBurstDefense": 0.35,
-      "averageRequiemIncomingDamage": 22.9
+      "noBurstDefenseAtRequiemLosses": 15,
+      "averageRequiemHandBurstDefense": 0.4,
+      "averageRequiemIncomingDamage": 22.35
     },
     "timelineCoverage": 1,
     "roleAverages": {
       "wins": {
-        "defense": 8.01,
-        "burstDefense": 1.62,
-        "finish": 13.56,
-        "statusControl": 3.09,
-        "cleanse": 1.91,
+        "defense": 7.96,
+        "burstDefense": 1.59,
+        "finish": 13.6,
+        "statusControl": 3.04,
+        "cleanse": 1.88,
         "flow": 11.91,
-        "upgraded": 3.79
+        "upgraded": 3.81
       },
       "losses": {
-        "defense": 7.1,
-        "burstDefense": 1.15,
-        "finish": 13.15,
+        "defense": 7.09,
+        "burstDefense": 1.27,
+        "finish": 13.05,
         "statusControl": 2.95,
-        "cleanse": 1.85,
-        "flow": 11.8,
-        "upgraded": 4.35
+        "cleanse": 1.91,
+        "flow": 11.55,
+        "upgraded": 4.14
       }
     },
     "timelineSamples": [
@@ -15114,12 +15572,12 @@
     {
       "tone": "steady",
       "area": "주요 사망 원인",
-      "text": "최종 보스 사망이 20건입니다. 관련 적 의도, 보상 카드, 휴식/상점 선택지를 우선 점검하세요."
+      "text": "최종 보스 사망이 22건입니다. 관련 적 의도, 보상 카드, 휴식/상점 선택지를 우선 점검하세요."
     },
     {
       "tone": "steady",
       "area": "최종 보스",
-      "text": "최종 보스 도달 88런 중 20패입니다. 패배 직전 행동은 종말 레퀴엠 10건, 문 낙하 5건, 개문 선율 4건입니다. 본체 체력이 낮게 남은 패배는 10건입니다. 문 낙하→호출→레퀴엠을 모두 지난 패배는 18건이고, 레퀴엠 진입 시 연속 방어 카드가 손패에 없던 패배는 14건입니다. 2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
+      "text": "최종 보스 도달 90런 중 22패입니다. 패배 직전 행동은 종말 레퀴엠 9건, 문 낙하 7건, 개문 선율 4건입니다. 본체 체력이 낮게 남은 패배는 12건입니다. 문 낙하→호출→레퀴엠을 모두 지난 패배는 20건이고, 레퀴엠 진입 시 연속 방어 카드가 손패에 없던 패배는 15건입니다. 2단계의 문 낙하→호출→레퀴엠 구간에서 체력이 무너집니다. 단타 방어와 연타 방어를 한 묶음으로 준비하세요."
     }
   ]
 }

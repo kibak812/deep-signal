@@ -65,9 +65,9 @@ export const DIFFICULTIES = [
   {
     id: 5,
     name: "최심층",
-    text: "적 체력 +32%, 적 피해 +20%, 보상 크레딧 -20%, 시작 최대 체력 -14.",
-    enemyHp: 1.32,
-    enemyDamage: 1.2,
+    text: "적 체력 +30%, 적 피해 +18%, 보상 크레딧 -20%, 시작 최대 체력 -14.",
+    enemyHp: 1.3,
+    enemyDamage: 1.18,
     gold: 0.8,
     playerMaxHp: -14
   }
