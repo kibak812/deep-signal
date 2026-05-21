@@ -11272,7 +11272,7 @@ function renderCodex() {
         <header class="compendium-header">
           <div>
             <h1>코덱스</h1>
-            <p>런 도중에도 카드, 유물, 적, 키워드와 상태 효과를 확인할 수 있습니다.</p>
+            <p>막힐 때는 덱 방향, 키워드, 적 패턴만 빠르게 확인하세요.</p>
           </div>
           <div class="title-actions">
             ${state.returnScreen === "game" && state.run ? `<button data-action="return-screen">${returnButtonLabel()}</button>` : state.run ? `<button data-action="screen" data-id="game">게임으로</button>` : ""}
@@ -11281,15 +11281,17 @@ function renderCodex() {
         </header>
 
         <nav class="compendium-tabs" aria-label="코덱스 섹션">
-          <a href="#codex-concepts">주력 전략</a>
+          <a href="#codex-concepts">덱 방향</a>
           <a href="#codex-keywords">키워드</a>
           <a href="#codex-cards">카드</a>
           <a href="#codex-relics">유물</a>
           <a href="#codex-enemies">적과 보스</a>
         </nav>
 
+        ${renderCodexQuickRead()}
+
         <section id="codex-concepts" class="codex-section">
-          <h2>주력 전략</h2>
+          <h2>덱 방향</h2>
           <div class="concept-codex-grid">
             ${DECK_AXIS_DEFINITIONS.map((axis) => renderCodexConceptGuide(axis)).join("")}
           </div>
@@ -11336,23 +11338,61 @@ function renderCodex() {
   `;
 }
 
+function renderCodexQuickRead() {
+  return `
+    <section class="codex-quick-read" aria-label="코덱스 빠른 읽기">
+      <header>
+        <span>빠른 읽기</span>
+        <strong>덱은 셋만 보면 됩니다</strong>
+      </header>
+      <div>
+        <article>
+          <b>1</b>
+          <strong>무엇을 모을까</strong>
+          <small>같은 키워드 카드가 두 장 이상 보이면 방향이 잡힙니다.</small>
+        </article>
+        <article>
+          <b>2</b>
+          <strong>무엇이 비었나</strong>
+          <small>방어, 마무리, 정화·약화 중 빠진 역할을 찾습니다.</small>
+        </article>
+        <article>
+          <b>3</b>
+          <strong>보스가 뭘 요구하나</strong>
+          <small>큰 공격, 소환, 해로운 상태 중 하나는 꼭 대비합니다.</small>
+        </article>
+      </div>
+    </section>
+  `;
+}
+
 function renderCodexConceptGuide(axis) {
   const guide = conceptGuideForAxis(axis.id);
   const cards = GAME_DATA.cards.filter((card) => conceptForCard(card)?.id === axis.id);
   const relics = GAME_DATA.relics.filter((relic) => conceptForRelic(relic.id)?.id === axis.id);
+  const flow = codexAxisFlow(axis.id);
   return `
     <article class="concept-codex ${axis.id}">
       <header>
         <span>${axis.keywords.slice(0, 3).map(keywordLabel).join(" · ")}</span>
-        <strong>${axis.label}</strong>
+        <strong>${axis.shortLabel ?? axis.label}</strong>
       </header>
-      <p>${axis.detail}</p>
-      <dl>
+      <div class="concept-codex-loop" aria-label="${axis.shortLabel ?? axis.label} 운용 흐름">
+        ${flow.map((item, index) => `
+          <span>
+            <b>${item.step}</b>
+            <em>${item.value}</em>
+          </span>
+          ${index < flow.length - 1 ? "<i aria-hidden=\"true\"></i>" : ""}
+        `).join("")}
+      </div>
+      <dl class="concept-codex-metrics">
         <div><dt>관련 카드</dt><dd>${cards.length}</dd></div>
         <div><dt>관련 유물</dt><dd>${relics.length}</dd></div>
       </dl>
       <details class="concept-codex-more">
-        <summary>선택 기준 보기</summary>
+        <summary>기준과 예시 보기</summary>
+        <p>${axis.detail}</p>
         <div class="concept-codex-advice">
           <small><b>고를 때</b><span>${guide?.pick ?? "같은 계열의 카드와 유물이 이어질 때"}</span></small>
           <small><b>주의</b><span>${guide?.care ?? "방어와 마무리 피해가 모두 있는지 확인하세요."}</span></small>
@@ -11364,6 +11404,46 @@ function renderCodexConceptGuide(axis) {
       </details>
     </article>
   `;
+}
+
+function codexAxisFlow(axisId) {
+  const flows = {
+    charge: [
+      { step: "모으기", value: "전하 확보" },
+      { step: "쓰기", value: "큰 한 방" },
+      { step: "보완", value: "방어" }
+    ],
+    mark: [
+      { step: "모으기", value: "표식" },
+      { step: "쓰기", value: "연속 공격" },
+      { step: "보완", value: "카드 뽑기" }
+    ],
+    virus: [
+      { step: "모으기", value: "바이러스" },
+      { step: "쓰기", value: "약화·취약" },
+      { step: "보완", value: "즉시 피해" }
+    ],
+    ward: [
+      { step: "모으기", value: "방어" },
+      { step: "쓰기", value: "반격" },
+      { step: "보완", value: "마무리" }
+    ],
+    cycle: [
+      { step: "모으기", value: "카드 뽑기" },
+      { step: "쓰기", value: "보존·생성" },
+      { step: "보완", value: "피해·방어" }
+    ],
+    risk: [
+      { step: "모으기", value: "추가 에너지" },
+      { step: "쓰기", value: "한 턴 폭발" },
+      { step: "보완", value: "회복" }
+    ]
+  };
+  return flows[axisId] ?? [
+    { step: "모으기", value: "키워드" },
+    { step: "쓰기", value: "핵심 카드" },
+    { step: "보완", value: "빈 역할" }
+  ];
 }
 
 function renderCardCatalogGroup(rarity, cards) {

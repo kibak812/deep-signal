@@ -68,6 +68,7 @@ try {
   await navigate(cdp, baseUrl);
   await clickText(cdp, "코덱스");
   await waitForText(cdp, "카드");
+  await assertCodexConceptUx(cdp);
   await capture(cdp, "browser-qa-codex-refreshed.png");
 
   await stageRecordsFixture(cdp);
@@ -406,6 +407,47 @@ async function capture(cdp, file) {
 async function waitForVisibleTransitionToFinish(cdp) {
   const hasVisibleTransition = await evaluate(cdp, `Boolean(document.querySelector(".phase-transition:not(.phase-combat)"))`);
   if (hasVisibleTransition) await wait(1450);
+}
+
+async function assertCodexConceptUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const quickRead = document.querySelector(".codex-quick-read");
+    const conceptCards = [...document.querySelectorAll(".concept-codex")];
+    const loops = [...document.querySelectorAll(".concept-codex-loop")];
+    const loopSteps = loops.map((loop) => [...loop.querySelectorAll("b")].map((item) => item.innerText.trim()).join(" / "));
+    const firstConcept = conceptCards[0]?.getBoundingClientRect();
+    const quickBox = quickRead?.getBoundingClientRect();
+    const metrics = [...document.querySelectorAll(".concept-codex-metrics")];
+    const text = document.body.innerText;
+    const firstViewportCards = conceptCards.filter((card) => card.getBoundingClientRect().top < window.innerHeight).length;
+    const noOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok: Boolean(
+        quickRead &&
+        conceptCards.length >= 6 &&
+        loops.length >= 6 &&
+        metrics.length >= 6 &&
+        loopSteps.every((step) => step.includes("모으기") && step.includes("쓰기") && step.includes("보완")) &&
+        text.includes("덱은 셋만 보면 됩니다") &&
+        text.includes("덱 방향") &&
+        firstViewportCards >= 3 &&
+        quickBox &&
+        quickBox.top >= 0 &&
+        firstConcept &&
+        firstConcept.top > quickBox.bottom &&
+        noOverflow
+      ),
+      conceptCards: conceptCards.length,
+      loops: loops.length,
+      metrics: metrics.length,
+      loopSteps,
+      firstViewportCards,
+      noOverflow
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Codex concept UX failed: ${JSON.stringify(evidence)}`);
+  }
 }
 
 async function clickText(cdp, text) {
