@@ -5850,12 +5850,13 @@ function renderBossStatusStrip(boss) {
 }
 
 function handLayoutStyle(count) {
-  const cardWidth = 180;
+  const cardWidth = count >= 8 ? 158 : count === 7 ? 164 : count === 6 ? 168 : 180;
+  const cardHeight = count >= 6 ? 276 : 278;
   const gap = 8;
-  const targetWidth = 980;
+  const targetWidth = 988;
   const naturalWidth = count * cardWidth + Math.max(0, count - 1) * gap;
   const overlap = count > 5 ? Math.min(108, Math.max(0, Math.ceil((naturalWidth - targetWidth) / Math.max(1, count - 1)))) : 0;
-  return `--hand-count:${count}; --hand-overlap:${overlap}px;`;
+  return `--hand-count:${count}; --hand-card-width:${cardWidth}px; --hand-card-height:${cardHeight}px; --hand-overlap:${overlap}px;`;
 }
 
 function renderCombatPlayPanel(run, recommendedCardUid) {

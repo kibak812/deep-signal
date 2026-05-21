@@ -173,15 +173,14 @@ try {
   await capture(cdp, "browser-qa-final-boss-selector.png");
   await clearSavedRun(cdp);
 
+  await stageDesktopHandReadabilityFixture(cdp);
   await navigate(cdp, baseUrl);
-  await clickText(cdp, "새 런 시작");
-  await waitForSelector(cdp, ".map-layout");
-
-  await clickSelector(cdp, ".map-node.combat.available, .map-node.available");
+  await clickText(cdp, "이어하기");
   await waitForSelector(cdp, ".combat-board");
   await assertCombatRiskSingleSource(cdp);
   await assertCombatRouteBeacon(cdp);
   await assertCombatPileDockCompact(cdp);
+  await assertDesktopHandReadability(cdp);
   await capture(cdp, "browser-qa-combat-refreshed.png");
   await hoverSelector(cdp, ".hand-zone .game-card[data-action='play-card']:not(:disabled)", { x: 0.5, y: 0.18 });
   await waitForSelector(cdp, ".card-portal-tooltip:not([hidden])");
@@ -684,6 +683,40 @@ async function stageEnergyLockedHandFixture(cdp) {
       { uid: 7704, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 }
     ];
     run.combat.drawPile = [];
+    run.combat.discardPile = [];
+    run.combat.exhaustPile = [];
+    run.updatedAt = Date.now();
+    const payload = JSON.stringify(run);
+    localStorage.setItem("abyssalArchive.save.v1", payload);
+    localStorage.setItem("abyssalArchive.save.backup.v1", payload);
+    return { phase: run.phase, energy: run.combat.energy, hand: run.combat.hand.length };
+  })()`);
+}
+
+async function stageDesktopHandReadabilityFixture(cdp) {
+  await evaluate(cdp, `(async () => {
+    const { newRun, enterNode } = await import("./src/engine/game.js");
+    const run = newRun({ seed: "qa-desktop-hand-readability", difficulty: 0 });
+    const node = run.map.flat().find((item) => item.type === "combat");
+    if (!node) throw new Error("QA desktop hand fixture combat node not found");
+    run.availableNodeIds = [node.id];
+    enterNode(run, node.id);
+    if (!run.combat?.enemies?.length) throw new Error("QA desktop hand fixture combat not started");
+    run.combat.turn = "player";
+    run.combat.maxEnergy = 3;
+    run.combat.energy = 3;
+    run.combat.hand = [
+      { uid: 7651, cardId: "pulse_lance", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7652, cardId: "tide_ward", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7653, cardId: "memory_sift", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7654, cardId: "null_pin", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7655, cardId: "rill_cut", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7656, cardId: "signal_jab", upgraded: false, temporary: false, costMod: 0 }
+    ];
+    run.combat.drawPile = [
+      { uid: 7661, cardId: "coral_guard", upgraded: false, temporary: false, costMod: 0 },
+      { uid: 7662, cardId: "drift_scan", upgraded: false, temporary: false, costMod: 0 }
+    ];
     run.combat.discardPile = [];
     run.combat.exhaustPile = [];
     run.updatedAt = Date.now();
@@ -2338,6 +2371,53 @@ async function assertCombatPileDockCompact(cdp) {
   }
   await cdp.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: 4, y: 4, button: "none" });
   await wait(120);
+}
+
+async function assertDesktopHandReadability(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const hand = document.querySelector(".hand-zone");
+    const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
+    const handBox = hand?.getBoundingClientRect();
+    const boxes = cards.map((card) => {
+      const box = card.getBoundingClientRect();
+      return { left: box.left, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
+    });
+    const pairOverlaps = boxes.slice(0, -1).map((box, index) => Math.max(0, box.right - boxes[index + 1].left));
+    const maxOverlap = Math.max(0, ...pairOverlaps);
+    const minWidth = Math.min(...boxes.map((box) => box.width));
+    const maxWidth = Math.max(...boxes.map((box) => box.width));
+    const averageWidth = boxes.reduce((sum, box) => sum + box.width, 0) / Math.max(1, boxes.length);
+    const desktopViewport = window.matchMedia("(min-width: 1041px)").matches;
+    const noPageOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
+    const handVisible = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight + 1);
+    const sixCardReadability = cards.length < 6 || (minWidth >= 164 && maxOverlap <= 12 && averageWidth < 178);
+    const cardFacesVisible = boxes.every((box) => box.height >= 270 && box.bottom <= window.innerHeight + 1);
+    const cssVars = {
+      width: hand?.style.getPropertyValue("--hand-card-width") ?? "",
+      height: hand?.style.getPropertyValue("--hand-card-height") ?? "",
+      overlap: hand?.style.getPropertyValue("--hand-overlap") ?? ""
+    };
+    return {
+      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability,
+      desktopViewport,
+      noPageOverflow,
+      handVisible,
+      cardFacesVisible,
+      sixCardReadability,
+      cardCount: cards.length,
+      minWidth: Math.round(minWidth),
+      maxWidth: Math.round(maxWidth),
+      averageWidth: Math.round(averageWidth),
+      maxOverlap: Math.round(maxOverlap),
+      cssVars,
+      handBox: handBox ? { left: Math.round(handBox.left), right: Math.round(handBox.right), bottom: Math.round(handBox.bottom), width: Math.round(handBox.width) } : null,
+      boxes: boxes.map((box) => ({ left: Math.round(box.left), right: Math.round(box.right), width: Math.round(box.width), height: Math.round(box.height) }))
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Desktop hand readability failed: ${JSON.stringify(result)}`);
+  }
+  await writeFile(resolve(qaDir, "browser-qa-combat-hand-readability.json"), `${JSON.stringify(result, null, 2)}\n`);
 }
 
 async function assertSummaryActionsVisible(cdp) {

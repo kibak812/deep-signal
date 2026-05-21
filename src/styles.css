@@ -6063,9 +6063,9 @@ dd,
 
 .hand-zone .game-card {
   --hand-card-tilt: 0deg;
-  flex-basis: 180px;
-  width: 180px;
-  height: 278px;
+  flex: 0 0 var(--hand-card-width, 180px);
+  width: var(--hand-card-width, 180px);
+  height: var(--hand-card-height, 278px);
   grid-template-rows: 31px 172px 0 34px 0;
   gap: 5px;
   padding: 9px 10px;

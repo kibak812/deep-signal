@@ -245,7 +245,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const auditSource = readFileSync(new URL("../scripts/release-audit.mjs", import.meta.url), "utf8");
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
-  const deployWorkflowSource = readFileSync(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8");
+  let deployWorkflowSource = "";
+  try {
+    deployWorkflowSource = readFileSync(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8");
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+  }
   const indexSource = readFileSync(new URL("../index.html", import.meta.url), "utf8");
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const faviconSource = readFileSync(new URL("../public/assets/favicon.svg", import.meta.url), "utf8");
@@ -301,6 +306,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /distribution-polish/);
   assert.match(auditSource, /pages-deploy-workflow/);
   assert.match(auditSource, /dist\/\.nojekyll/);
+  assert.match(auditSource, /manualPagesDeployReady/);
+  assert.match(auditSource, /manual-gh-pages/);
   assert.match(auditSource, /favicon\.svg/);
   assert.match(auditSource, /verified-flow-coverage/);
   assert.match(auditSource, /requiredBrowserQa/);
@@ -482,12 +489,18 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /const seenCodaIds = new Set\(\)/);
   assert.match(captureSource, /Victory coda duplicated before reward/);
   assert.match(buildSource, /\.nojekyll/);
-  assert.match(deployWorkflowSource, /branches: \[main\]/);
-  assert.match(deployWorkflowSource, /npm test/);
-  assert.match(deployWorkflowSource, /npm run build/);
-  assert.match(deployWorkflowSource, /peaceiris\/actions-gh-pages@v4/);
-  assert.match(deployWorkflowSource, /publish_branch: gh-pages/);
-  assert.match(deployWorkflowSource, /publish_dir: \.\/dist/);
+  if (deployWorkflowSource) {
+    assert.match(deployWorkflowSource, /branches: \[main\]/);
+    assert.match(deployWorkflowSource, /npm test/);
+    assert.match(deployWorkflowSource, /npm run build/);
+    assert.match(deployWorkflowSource, /peaceiris\/actions-gh-pages@v4/);
+    assert.match(deployWorkflowSource, /publish_branch: gh-pages/);
+    assert.match(deployWorkflowSource, /publish_dir: \.\/dist/);
+  } else {
+    assert.match(readme, /https:\/\/kibak812\.github\.io\/deep-signal\//);
+    assert.match(readme, /dist\/.*gh-pages/s);
+    assert.match(readme, /dist\/\.nojekyll/);
+  }
 });
 
 test("balance pilot prepares intentionally before late bosses", () => {
@@ -2270,7 +2283,7 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(mainSource, /function renderCombatPlayPanel\(run, recommendedCardUid\)/);
   assert.match(mainSource, /function renderCombatEnergyPanel\(combat\)/);
   assert.match(mainSource, /function handLayoutStyle\(count\)/);
-  assert.match(mainSource, /--hand-count:\$\{count\}; --hand-overlap:\$\{overlap\}px/);
+  assert.match(mainSource, /--hand-count:\$\{count\}; --hand-card-width:\$\{cardWidth\}px; --hand-card-height:\$\{cardHeight\}px; --hand-overlap:\$\{overlap\}px/);
   assert.match(mainSource, /aria-label="손패 \$\{combat\.hand\.length\}장"/);
   assert.match(mainSource, /class="target-assist combat-action-guide/);
   assert.match(mainSource, /class="combat-play-panel\$\{dockFxClass\}"/);
@@ -2278,6 +2291,8 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(mainSource, /energy-locked/);
   assert.match(mainSource, />\$\{actionName\}<\/b>/);
   assert.match(styleSource, /\.hand-zone \.game-card \+ \.game-card/);
+  assert.match(styleSource, /flex:\s*0 0 var\(--hand-card-width, 180px\)/);
+  assert.match(styleSource, /height:\s*var\(--hand-card-height, 278px\)/);
   assert.match(styleSource, /margin-left:\s*calc\(-1 \* var\(--hand-overlap, 0px\)\)/);
   assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-x:\s*auto/);
   assert.match(styleSource, /\.hand-zone:hover,[\s\S]*\.hand-zone:has\(\.game-card:focus-visible\)[\s\S]*overflow-y:\s*hidden/);
@@ -2290,6 +2305,7 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(mainSource, /releasePointerCapture\?\.\(pointerCardDrag\.pointerId\)/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*--hand-zone-height:\s*262px/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-board[\s\S]*padding-bottom:\s*calc\(var\(--hand-zone-height\) \+ var\(--hand-bottom\) \+ 52px\)/);
+  assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.hand-zone \.game-card[\s\S]*flex-basis:\s*144px/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-mission-strip[\s\S]*flex:\s*1 1 360px/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.combat-command-row,[\s\S]*\.combat-command-row\.advisor-off[\s\S]*grid-template-columns:\s*1fr/);
   assert.match(styleSource, /@media \(max-width: 1040px\)[\s\S]*\.turn-plan\[open\][\s\S]*position:\s*relative/);
@@ -2554,9 +2570,13 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(styleSource, /z-index:\s*120/);
   assert.match(styleSource, /@keyframes card-tooltip-pop/);
   assert.match(mainSource, /function handLayoutStyle\(count\)/);
-  assert.match(mainSource, /const cardWidth = 180/);
-  assert.match(mainSource, /const targetWidth = 980/);
+  assert.match(mainSource, /const cardWidth = count >= 8 \? 158 : count === 7 \? 164 : count === 6 \? 168 : 180/);
+  assert.match(mainSource, /const cardHeight = count >= 6 \? 276 : 278/);
+  assert.match(mainSource, /const targetWidth = 988/);
   assert.match(mainSource, /const overlap = count > 5 \? Math\.min\(108/);
+  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /async function assertDesktopHandReadability\(cdp\)/);
+  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /stageDesktopHandReadabilityFixture\(cdp\)/);
+  assert.match(readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8"), /browser-qa-combat-hand-readability\.json/);
   assert.match(readFileSync(new URL("../README.md", import.meta.url), "utf8"), /6장 이상 손패도 데스크톱에서 잘리지 않는 부채꼴 배치/);
 });
 

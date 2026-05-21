@@ -1,0 +1,62 @@
+{
+  "ok": true,
+  "desktopViewport": true,
+  "noPageOverflow": true,
+  "handVisible": true,
+  "cardFacesVisible": true,
+  "sixCardReadability": true,
+  "cardCount": 6,
+  "minWidth": 170,
+  "maxWidth": 171,
+  "averageWidth": 171,
+  "maxOverlap": 9,
+  "cssVars": {
+    "width": "168px",
+    "height": "276px",
+    "overlap": "12px"
+  },
+  "handBox": {
+    "left": 148,
+    "right": 1130,
+    "bottom": 706,
+    "width": 982
+  },
+  "boxes": [
+    {
+      "left": 148,
+      "right": 319,
+      "width": 171,
+      "height": 278
+    },
+    {
+      "left": 315,
+      "right": 486,
+      "width": 171,
+      "height": 278
+    },
+    {
+      "left": 477,
+      "right": 647,
+      "width": 170,
+      "height": 277
+    },
+    {
+      "left": 643,
+      "right": 813,
+      "width": 170,
+      "height": 277
+    },
+    {
+      "left": 804,
+      "right": 975,
+      "width": 171,
+      "height": 278
+    },
+    {
+      "left": 971,
+      "right": 1142,
+      "width": 171,
+      "height": 278
+    }
+  ]
+}

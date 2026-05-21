@@ -91,23 +91,23 @@
       "height": 190
     },
     {
-      "left": 91,
+      "left": 111,
       "top": 640,
-      "right": 217,
+      "right": 237,
       "bottom": 830,
       "width": 126,
       "height": 190
     },
     {
-      "left": 166,
+      "left": 206,
       "top": 641,
-      "right": 291,
+      "right": 331,
       "bottom": 829,
       "width": 125,
       "height": 189
     }
   ],
-  "maxCardRight": 595,
+  "maxCardRight": 715,
   "pileBoxes": [
     {
       "left": 11,
