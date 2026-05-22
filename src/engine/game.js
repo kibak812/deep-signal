@@ -2086,6 +2086,14 @@ function loseRun(run, reason) {
   return touch(run);
 }
 
+export function abandonRun(run, reason = "탐사를 중단하고 이번 런을 기록했습니다.") {
+  run.phase = "summary";
+  run.summary = { ...buildSummary(run, false, reason), abandoned: true };
+  clearTransientRunState(run);
+  addLog(run, "런 포기.", "system");
+  return touch(run);
+}
+
 function clearTransientRunState(run) {
   run.combat = null;
   run.reward = null;

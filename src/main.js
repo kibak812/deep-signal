@@ -1,5 +1,6 @@
 import {
   GAME_DATA,
+  abandonRun,
   buyShopCard,
   buyShopHeal,
   buyShopRelic,
@@ -512,6 +513,7 @@ const state = {
   relicOpen: false,
   pendingStart: null,
   pendingDeleteSave: null,
+  pendingAbandonRun: null,
   audio: null,
   music: null,
   combatFx: null,
@@ -566,6 +568,11 @@ app.addEventListener("click", (event) => {
     playTone("danger");
     return;
   }
+  if (state.pendingAbandonRun && !["abandon-run-confirmed", "abandon-run-cancel"].includes(action)) {
+    event.preventDefault();
+    playTone("danger");
+    return;
+  }
 
   if (action === "screen") {
     openScreen(id);
@@ -576,6 +583,7 @@ app.addEventListener("click", (event) => {
   if (action === "return-screen") {
     state.pendingStart = null;
     state.pendingDeleteSave = null;
+    state.pendingAbandonRun = null;
     returnToPreviousScreen();
     playTone("button");
     render();
@@ -629,12 +637,23 @@ app.addEventListener("click", (event) => {
     render();
     return;
   }
+  if (action === "abandon-run-confirmed") {
+    abandonCurrentRunNow();
+    return;
+  }
+  if (action === "abandon-run-cancel") {
+    state.pendingAbandonRun = null;
+    playTone("button");
+    render();
+    return;
+  }
   if (action === "continue-run") {
     const saved = loadRun();
     if (saveRecoveryNotice) state.saveNotice = saveRecoveryNotice;
     if (saved) {
       state.pendingStart = null;
       state.pendingDeleteSave = null;
+      state.pendingAbandonRun = null;
       state.run = saved;
       state.screen = "game";
       state.returnScreen = null;
@@ -665,6 +684,10 @@ app.addEventListener("click", (event) => {
   }
   if (action === "delete-save") {
     requestDeleteSave();
+    return;
+  }
+  if (action === "abandon-run") {
+    requestAbandonRun();
     return;
   }
   if (action === "toggle-deck") {
@@ -803,6 +826,7 @@ app.addEventListener("click", (event) => {
     state.pileOpen = null;
     state.relicOpen = false;
     state.pendingDeleteSave = null;
+    state.pendingAbandonRun = null;
   }
   stageChoicePulse(action, choiceBefore, run);
   if (deferredMutation) {
@@ -2308,15 +2332,43 @@ function requestDeleteSave() {
   render();
 }
 
+function requestAbandonRun() {
+  if (!state.run || state.run.phase === "summary") {
+    playTone("danger");
+    return;
+  }
+  state.pendingAbandonRun = {
+    runId: state.run.id,
+    requestedAt: Date.now()
+  };
+  playTone("danger");
+  render();
+}
+
 function deleteSavedRunNow() {
   deleteSavedRun(browserStorage());
   state.run = null;
   state.returnScreen = null;
   state.pendingStart = null;
   state.pendingDeleteSave = null;
+  state.pendingAbandonRun = null;
   state.saveNotice = null;
   playTone("danger");
   render();
+}
+
+function abandonCurrentRunNow() {
+  const run = state.run;
+  state.pendingAbandonRun = null;
+  if (!run || run.phase === "summary") {
+    render();
+    return;
+  }
+  clearTransientRunUi();
+  state.screen = "game";
+  state.returnScreen = null;
+  abandonRun(run);
+  afterMutation("abandon-run");
 }
 
 function startRunFromTitle(config) {
@@ -2329,6 +2381,7 @@ function startRunFromTitle(config) {
   state.relicOpen = false;
   state.pendingStart = null;
   state.pendingDeleteSave = null;
+  state.pendingAbandonRun = null;
   afterMutation("start");
 }
 
@@ -3325,7 +3378,7 @@ function setAppHtml(html, resetScroll = true) {
   hideStatusPortalTooltip();
   hideIntentPortalTooltip();
   clearCombatCardPreview();
-  app.innerHTML = `${html}${renderStartConfirmOverlay()}${renderDeleteSaveConfirmOverlay()}`;
+  app.innerHTML = `${html}${renderStartConfirmOverlay()}${renderDeleteSaveConfirmOverlay()}${renderAbandonRunConfirmOverlay()}`;
   if (resetScroll) {
     resetPageScroll();
   }
@@ -3394,6 +3447,35 @@ function renderDeleteSaveConfirmOverlay() {
         <div class="start-confirm-actions">
           <button data-action="delete-save-cancel">취소</button>
           <button class="danger" data-action="delete-save-confirmed">삭제 확정</button>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
+function renderAbandonRunConfirmOverlay() {
+  if (!state.pendingAbandonRun || !state.run || state.run.phase === "summary") return "";
+  const run = state.run;
+  const context = savedRunResumeContext(run);
+  const current = currentNodeLabel(run);
+  return `
+    <div class="modal-backdrop">
+      <section class="deck-modal start-confirm abandon-confirm" role="dialog" aria-modal="true" aria-label="런 포기 확인">
+        <header>
+          <div>
+            <h2>이번 런을 포기할까요?</h2>
+            <p>탐사를 종료하고 지금까지의 기록을 요약 화면에 남깁니다. 저장된 이어하기는 지워집니다.</p>
+          </div>
+        </header>
+        <dl>
+          <div><dt>현재 위치</dt><dd>${current} · ${phaseBriefLabel(run.phase)}</dd></div>
+          <div><dt>현재 상태</dt><dd>체력 ${run.player.hp}/${run.player.maxHp} · 크레딧 ${run.player.gold}</dd></div>
+          <div><dt>덱/유물</dt><dd>덱 ${run.player.deck.length}장 · 유물 ${run.player.relics.length}개</dd></div>
+          <div><dt>주력</dt><dd>${context.deckText}</dd></div>
+        </dl>
+        <div class="start-confirm-actions">
+          <button data-action="abandon-run-cancel">계속 탐사</button>
+          <button class="danger" data-action="abandon-run-confirmed">런 포기 확정</button>
         </div>
       </section>
     </div>
@@ -9040,7 +9122,7 @@ function renderSummaryIntro(summary, run) {
   return `
     <section class="summary-intro ${summary.won ? "won" : "lost"}" aria-label="런 종료 장면">
       <div class="summary-intro-copy">
-        <h2>${summary.won ? "심해 코어 회수" : "신호가 끊겼습니다"}</h2>
+        <h2>${summary.won ? "심해 코어 회수" : summary.abandoned ? "탐사를 중단했습니다" : "신호가 끊겼습니다"}</h2>
         <p>${summary.reason}</p>
         ${renderSummaryMeta(summary, run)}
       </div>
@@ -9173,7 +9255,7 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
   const firstStep = summaryNextRunSteps(summary)[0];
   const failureAdvice = summary.won ? null : summaryFailureAdvice(summary);
   const stats = [
-    { label: "결과", value: summary.won ? "완주" : "실패" },
+    { label: "결과", value: summary.won ? "완주" : summary.abandoned ? "포기" : "실패" },
     { label: "지점", value: summary.won ? `${summary.floors ?? 0}층 완주` : stop },
     { label: "주력", value: focus }
   ];
@@ -9183,6 +9265,15 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
       title: `${headlineFocus}로 코어를 회수했습니다`,
       detail: "같은 방향은 충분히 통했습니다. 다음 런에서는 역할이 겹치는 카드만 줄여 핵심 카드를 더 자주 뽑는 데 집중하세요.",
       action: nextDifficulty ? `${nextDifficulty.name} 도전` : replaySeed ? "같은 시드로 더 빠른 완주" : "새 런으로 기록 갱신",
+      stats
+    };
+  }
+  if (summary.abandoned) {
+    return {
+      label: "런 포기",
+      title: `${stop}에서 탐사를 정리했습니다`,
+      detail: "이 기록은 패배처럼 저장됩니다. 같은 시드로 다시 들어가 첫 경로와 보상 선택을 바꾸면 바로 비교할 수 있습니다.",
+      action: replaySeed ? "같은 시드에서 다른 선택 시도" : "새 런에서 다른 주력 시도",
       stats
     };
   }
@@ -9198,6 +9289,9 @@ function summaryVerdict(summary, replaySeed, nextDifficulty = null) {
 function summaryRetryBriefLine(summary) {
   if (summary.won) {
     return `${summaryPrimaryBuildText(summary, "핵심 카드")} 선택은 유지하고, 역할이 겹치는 카드만 줄이세요.`;
+  }
+  if (summary.abandoned) {
+    return "포기한 지점의 체력, 덱 크기, 다음 경로를 보고 첫 선택을 하나만 바꿔 보세요.";
   }
   return summaryFailureAdvice(summary).brief;
 }
@@ -9447,6 +9541,7 @@ function summaryStopPoint(summary) {
     .filter((act) => act.stoppedAt)
     .at(-1)?.stoppedAt;
   if (stopped) return `${stopped.floor}층 ${nodeTypeLabel(stopped.type)}`;
+  if (summary.abandoned && (summary.floors ?? 0) <= 0) return "첫 경로 선택";
   return `${summary.floors ?? 0}층`;
 }
 
@@ -9471,7 +9566,7 @@ function summaryFailureProfile(summary) {
     stoppedAct,
     stoppedAt,
     stoppedType,
-    stopLabel: stoppedAt ? `${floor}층 ${nodeTypeLabel(stoppedType)}` : `${floor}층`,
+    stopLabel: stoppedAt ? `${floor}층 ${nodeTypeLabel(stoppedType)}` : summaryStopPoint(summary),
     actLabel: stoppedAct?.act ? `${stoppedAct.act}막` : "이번 런",
     floor,
     fights,
@@ -11153,6 +11248,7 @@ function deckAdvice({ cards, total, typeEntries, axes, averageCost, curses }) {
 }
 
 function renderSettings() {
+  const canAbandonRun = state.run && state.run.phase !== "summary";
   return `
     <main class="settings-screen">
       <section class="panel settings-panel">
@@ -11186,6 +11282,7 @@ function renderSettings() {
         </div>
         <div class="title-actions">
           <button data-action="return-screen">${returnButtonLabel()}</button>
+          ${canAbandonRun ? `<button class="danger" data-action="abandon-run">런 포기</button>` : ""}
           <button class="danger" data-action="delete-save">저장 삭제</button>
         </div>
       </section>

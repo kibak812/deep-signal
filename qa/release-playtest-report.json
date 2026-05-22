@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T16:00:29.151Z",
+  "generatedAt": "2026-05-22T16:31:29.756Z",
   "ok": true,
   "summary": {
     "scenarios": 2,
@@ -8,6 +8,7 @@
     "defeats": 1,
     "persistenceRecovered": true,
     "settingsPersisted": true,
+    "dangerConfirmations": true,
     "requiredRouteTypes": [
       "combat",
       "event",
@@ -326,6 +327,36 @@
       "switchesPersist": true,
       "defaultsLoadWhenMissing": true,
       "unavailableStorageSafe": true
+    }
+  },
+  "safety": {
+    "id": "danger-confirmations",
+    "label": "위험 행동 확인과 런 포기 요약",
+    "seed": "release-abandon-confirm",
+    "difficulty": 2,
+    "beforeAbandon": {
+      "phase": "combat",
+      "floor": 1,
+      "enemyCount": 1,
+      "handSize": 6
+    },
+    "summary": {
+      "phase": "summary",
+      "won": false,
+      "abandoned": true,
+      "reason": "탐사를 중단하고 이번 런을 기록했습니다.",
+      "floors": 1,
+      "deckSize": 10,
+      "routeFloors": 1
+    },
+    "checks": {
+      "startsFromActiveRun": true,
+      "reachesSummary": true,
+      "recordsAbandonedFlag": true,
+      "reasonReadable": true,
+      "transientStateCleared": true,
+      "routeStillReviewable": true,
+      "replaySeedKept": true
     }
   }
 }

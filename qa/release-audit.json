@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T16:14:49.525Z",
+  "generatedAt": "2026-05-22T16:50:01.168Z",
   "summary": {
     "passed": 31,
     "failed": 0,
@@ -279,9 +279,9 @@
       "ok": true,
       "detail": "효과음과 배경음의 상대 볼륨, 덕킹, 믹스 버스 검증 리포트가 최신이어야 합니다.",
       "evidence": {
-        "checkedAt": "2026-05-22T16:14:40.725Z",
-        "sourceFreshAfter": "2026-05-22T16:06:20.720Z",
-        "reportMtime": "2026-05-22T16:14:40.726Z",
+        "checkedAt": "2026-05-22T16:47:18.713Z",
+        "sourceFreshAfter": "2026-05-22T16:42:18.159Z",
+        "reportMtime": "2026-05-22T16:47:18.714Z",
         "gain": {
           "musicGainScale": 0.35,
           "maxThemeGain": 0.048,
@@ -329,10 +329,10 @@
       "id": "release-playtest-report",
       "label": "출시 플레이테스트 리포트",
       "ok": true,
-      "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드를 재현해야 합니다.",
+      "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
       "evidence": {
-        "sourceFreshAfter": "2026-05-22T15:59:05.643Z",
-        "reportMtime": "2026-05-22T16:00:29.154Z",
+        "sourceFreshAfter": "2026-05-22T16:29:29.146Z",
+        "reportMtime": "2026-05-22T16:31:29.758Z",
         "summary": {
           "scenarios": 2,
           "failed": 0,
@@ -340,6 +340,7 @@
           "defeats": 1,
           "persistenceRecovered": true,
           "settingsPersisted": true,
+          "dangerConfirmations": true,
           "requiredRouteTypes": [
             "combat",
             "event",
@@ -421,6 +422,27 @@
             "switchesPersist": true,
             "defaultsLoadWhenMissing": true,
             "unavailableStorageSafe": true
+          }
+        },
+        "safety": {
+          "id": "danger-confirmations",
+          "summary": {
+            "phase": "summary",
+            "won": false,
+            "abandoned": true,
+            "reason": "탐사를 중단하고 이번 런을 기록했습니다.",
+            "floors": 1,
+            "deckSize": 10,
+            "routeFloors": 1
+          },
+          "checks": {
+            "startsFromActiveRun": true,
+            "reachesSummary": true,
+            "recordsAbandonedFlag": true,
+            "reasonReadable": true,
+            "transientStateCleared": true,
+            "routeStillReviewable": true,
+            "replaySeedKept": true
           }
         }
       }
@@ -1736,11 +1758,13 @@
           "승리/패배",
           "이어하기",
           "저장 삭제 확인",
+          "런 포기 확인",
           "콘솔 오류 없음"
         ],
         "requiredFlowTests": [
           "assisted full-run smoke reaches the final summary without dead phases",
           "shop, rest, final boss victory, and defeat flows are reachable",
+          "abandon run ends safely with a replayable summary",
           "save slots recover the newest backup after an interrupted primary write",
           "run summary surfaces replay-relevant build evidence"
         ]
@@ -1782,16 +1806,27 @@
           "summary-won",
           "records",
           "settings",
+          "abandon-run",
           "mobile",
           "mobile-combat",
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-22T16:06:20.720Z",
+        "sourceFreshAfter": "2026-05-22T16:42:18.159Z",
         "files": [
           {
+            "file": "browser-qa-abandon-confirm.png",
+            "mtime": "2026-05-22T16:47:58.916Z",
+            "fresh": true
+          },
+          {
+            "file": "browser-qa-abandon-summary.png",
+            "mtime": "2026-05-22T16:47:59.653Z",
+            "fresh": true
+          },
+          {
             "file": "browser-qa-about-refreshed.png",
-            "mtime": "2026-05-22T16:12:46.846Z",
+            "mtime": "2026-05-22T16:47:56.580Z",
             "fresh": true
           },
           {
@@ -1801,12 +1836,12 @@
           },
           {
             "file": "browser-qa-act-interlude-one-shot.png",
-            "mtime": "2026-05-22T16:12:53.365Z",
+            "mtime": "2026-05-22T16:48:05.598Z",
             "fresh": true
           },
           {
             "file": "browser-qa-act-interlude-refreshed.png",
-            "mtime": "2026-05-22T16:12:50.966Z",
+            "mtime": "2026-05-22T16:48:03.165Z",
             "fresh": true
           },
           {
@@ -1821,27 +1856,27 @@
           },
           {
             "file": "browser-qa-boss-status-strip.png",
-            "mtime": "2026-05-22T16:13:37.459Z",
+            "mtime": "2026-05-22T16:48:49.379Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-fx.png",
-            "mtime": "2026-05-22T16:13:27.882Z",
+            "mtime": "2026-05-22T16:48:39.779Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-attack-hover.png",
-            "mtime": "2026-05-22T16:13:26.431Z",
+            "mtime": "2026-05-22T16:48:38.368Z",
             "fresh": true
           },
           {
             "file": "browser-qa-card-play-fx.png",
-            "mtime": "2026-05-22T16:13:17.226Z",
+            "mtime": "2026-05-22T16:48:29.243Z",
             "fresh": true
           },
           {
             "file": "browser-qa-choice-pulse-next-step.png",
-            "mtime": "2026-05-22T16:12:57.083Z",
+            "mtime": "2026-05-22T16:48:09.298Z",
             "fresh": true
           },
           {
@@ -1896,7 +1931,7 @@
           },
           {
             "file": "browser-qa-codex-refreshed.png",
-            "mtime": "2026-05-22T16:12:48.327Z",
+            "mtime": "2026-05-22T16:48:00.505Z",
             "fresh": true
           },
           {
@@ -2001,7 +2036,7 @@
           },
           {
             "file": "browser-qa-combat-card-hover.png",
-            "mtime": "2026-05-22T16:13:15.581Z",
+            "mtime": "2026-05-22T16:48:27.736Z",
             "fresh": true
           },
           {
@@ -2011,7 +2046,7 @@
           },
           {
             "file": "browser-qa-combat-energy-locked.png",
-            "mtime": "2026-05-22T16:13:30.540Z",
+            "mtime": "2026-05-22T16:48:42.591Z",
             "fresh": true
           },
           {
@@ -2041,7 +2076,7 @@
           },
           {
             "file": "browser-qa-combat-high-energy-hud.png",
-            "mtime": "2026-05-22T16:13:31.878Z",
+            "mtime": "2026-05-22T16:48:43.852Z",
             "fresh": true
           },
           {
@@ -2061,7 +2096,7 @@
           },
           {
             "file": "browser-qa-combat-intent-tooltip.png",
-            "mtime": "2026-05-22T16:13:41.394Z",
+            "mtime": "2026-05-22T16:48:53.210Z",
             "fresh": true
           },
           {
@@ -2096,7 +2131,7 @@
           },
           {
             "file": "browser-qa-combat-refreshed.png",
-            "mtime": "2026-05-22T16:13:14.045Z",
+            "mtime": "2026-05-22T16:48:26.403Z",
             "fresh": true
           },
           {
@@ -2141,7 +2176,7 @@
           },
           {
             "file": "browser-qa-combat-status-tooltip.png",
-            "mtime": "2026-05-22T16:13:40.650Z",
+            "mtime": "2026-05-22T16:48:52.447Z",
             "fresh": true
           },
           {
@@ -2206,27 +2241,27 @@
           },
           {
             "file": "browser-qa-end-turn-risk-block-preview.png",
-            "mtime": "2026-05-22T16:13:20.062Z",
+            "mtime": "2026-05-22T16:48:32.099Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-kill-preview.png",
-            "mtime": "2026-05-22T16:13:23.366Z",
+            "mtime": "2026-05-22T16:48:35.245Z",
             "fresh": true
           },
           {
             "file": "browser-qa-end-turn-risk-preview.png",
-            "mtime": "2026-05-22T16:13:18.651Z",
+            "mtime": "2026-05-22T16:48:30.635Z",
             "fresh": true
           },
           {
             "file": "browser-qa-enemy-density-readability.png",
-            "mtime": "2026-05-22T16:13:42.920Z",
+            "mtime": "2026-05-22T16:48:54.658Z",
             "fresh": true
           },
           {
             "file": "browser-qa-enemy-grouped-fx.png",
-            "mtime": "2026-05-22T16:13:45.402Z",
+            "mtime": "2026-05-22T16:48:57.100Z",
             "fresh": true
           },
           {
@@ -2271,7 +2306,7 @@
           },
           {
             "file": "browser-qa-event-refreshed.png",
-            "mtime": "2026-05-22T16:12:56.218Z",
+            "mtime": "2026-05-22T16:48:08.445Z",
             "fresh": true
           },
           {
@@ -2281,22 +2316,22 @@
           },
           {
             "file": "browser-qa-final-boss-finisher-reserve.png",
-            "mtime": "2026-05-22T16:13:38.830Z",
+            "mtime": "2026-05-22T16:48:50.742Z",
             "fresh": true
           },
           {
             "file": "browser-qa-final-boss-readiness.png",
-            "mtime": "2026-05-22T16:13:09.899Z",
+            "mtime": "2026-05-22T16:48:22.207Z",
             "fresh": true
           },
           {
             "file": "browser-qa-final-boss-selector.png",
-            "mtime": "2026-05-22T16:13:12.216Z",
+            "mtime": "2026-05-22T16:48:24.524Z",
             "fresh": true
           },
           {
             "file": "browser-qa-guide-refreshed.png",
-            "mtime": "2026-05-22T16:12:49.171Z",
+            "mtime": "2026-05-22T16:48:01.381Z",
             "fresh": true
           },
           {
@@ -2361,7 +2396,7 @@
           },
           {
             "file": "browser-qa-map-refreshed.png",
-            "mtime": "2026-05-22T16:13:08.242Z",
+            "mtime": "2026-05-22T16:48:20.554Z",
             "fresh": true
           },
           {
@@ -2391,7 +2426,7 @@
           },
           {
             "file": "browser-qa-map-route-preview.png",
-            "mtime": "2026-05-22T16:13:09.003Z",
+            "mtime": "2026-05-22T16:48:21.320Z",
             "fresh": true
           },
           {
@@ -2451,7 +2486,7 @@
           },
           {
             "file": "browser-qa-mobile-combat-refreshed.png",
-            "mtime": "2026-05-22T16:13:49.235Z",
+            "mtime": "2026-05-22T16:49:01.044Z",
             "fresh": true
           },
           {
@@ -2491,7 +2526,7 @@
           },
           {
             "file": "browser-qa-mobile-refreshed.png",
-            "mtime": "2026-05-22T16:13:51.711Z",
+            "mtime": "2026-05-22T16:49:03.364Z",
             "fresh": true
           },
           {
@@ -2551,7 +2586,7 @@
           },
           {
             "file": "browser-qa-records-refreshed.png",
-            "mtime": "2026-05-22T16:12:50.047Z",
+            "mtime": "2026-05-22T16:48:02.243Z",
             "fresh": true
           },
           {
@@ -2576,7 +2611,7 @@
           },
           {
             "file": "browser-qa-rest-refreshed.png",
-            "mtime": "2026-05-22T16:13:02.036Z",
+            "mtime": "2026-05-22T16:48:14.344Z",
             "fresh": true
           },
           {
@@ -2631,7 +2666,7 @@
           },
           {
             "file": "browser-qa-reward-card-selected.png",
-            "mtime": "2026-05-22T16:13:05.367Z",
+            "mtime": "2026-05-22T16:48:17.686Z",
             "fresh": true
           },
           {
@@ -2671,17 +2706,17 @@
           },
           {
             "file": "browser-qa-reward-post-victory-refreshed.png",
-            "mtime": "2026-05-22T16:13:36.083Z",
+            "mtime": "2026-05-22T16:48:48.045Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-refreshed.png",
-            "mtime": "2026-05-22T16:13:35.726Z",
+            "mtime": "2026-05-22T16:48:47.702Z",
             "fresh": true
           },
           {
             "file": "browser-qa-reward-relics-refreshed.png",
-            "mtime": "2026-05-22T16:13:04.532Z",
+            "mtime": "2026-05-22T16:48:16.852Z",
             "fresh": true
           },
           {
@@ -2781,7 +2816,7 @@
           },
           {
             "file": "browser-qa-settings-refreshed.png",
-            "mtime": "2026-05-22T16:12:47.572Z",
+            "mtime": "2026-05-22T16:47:57.338Z",
             "fresh": true
           },
           {
@@ -2851,7 +2886,7 @@
           },
           {
             "file": "browser-qa-shop-refreshed.png",
-            "mtime": "2026-05-22T16:12:59.825Z",
+            "mtime": "2026-05-22T16:48:12.028Z",
             "fresh": true
           },
           {
@@ -2891,7 +2926,7 @@
           },
           {
             "file": "browser-qa-summary-lost-refreshed.png",
-            "mtime": "2026-05-22T16:13:06.269Z",
+            "mtime": "2026-05-22T16:48:18.589Z",
             "fresh": true
           },
           {
@@ -2901,7 +2936,7 @@
           },
           {
             "file": "browser-qa-summary-won-refreshed.png",
-            "mtime": "2026-05-22T16:13:07.204Z",
+            "mtime": "2026-05-22T16:48:19.543Z",
             "fresh": true
           },
           {
@@ -2911,7 +2946,7 @@
           },
           {
             "file": "browser-qa-tablet-combat-refreshed.png",
-            "mtime": "2026-05-22T16:13:50.937Z",
+            "mtime": "2026-05-22T16:49:02.591Z",
             "fresh": true
           },
           {
@@ -2981,7 +3016,7 @@
           },
           {
             "file": "browser-qa-title-refreshed.png",
-            "mtime": "2026-05-22T16:12:46.006Z",
+            "mtime": "2026-05-22T16:47:55.742Z",
             "fresh": true
           },
           {
@@ -3056,7 +3091,7 @@
           },
           {
             "file": "browser-qa-turn-player-cue-minimal.png",
-            "mtime": "2026-05-22T16:13:48.221Z",
+            "mtime": "2026-05-22T16:49:00.064Z",
             "fresh": true
           },
           {
@@ -3091,11 +3126,13 @@
           },
           {
             "file": "browser-qa-victory-coda.png",
-            "mtime": "2026-05-22T16:13:34.448Z",
+            "mtime": "2026-05-22T16:48:46.422Z",
             "fresh": true
           }
         ],
         "freshFiles": [
+          "browser-qa-abandon-confirm.png",
+          "browser-qa-abandon-summary.png",
           "browser-qa-about-refreshed.png",
           "browser-qa-act-interlude-one-shot.png",
           "browser-qa-act-interlude-refreshed.png",
@@ -3542,6 +3579,13 @@
             "id": "settings",
             "matched": [
               "browser-qa-settings-refreshed.png"
+            ]
+          },
+          {
+            "id": "abandon-run",
+            "matched": [
+              "browser-qa-abandon-confirm.png",
+              "browser-qa-abandon-summary.png"
             ]
           },
           {

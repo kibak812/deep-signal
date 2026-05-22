@@ -65,6 +65,26 @@ try {
   await assertSettingsAudioUx(cdp);
   await capture(cdp, "browser-qa-settings-refreshed.png");
 
+  await clearSavedRun(cdp);
+  await clearRecords(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "새 런 시작");
+  await waitForSelector(cdp, ".map-layout");
+  await clickText(cdp, "설정");
+  await waitForSelector(cdp, ".settings-screen");
+  await waitForText(cdp, "런 포기");
+  await clickText(cdp, "런 포기");
+  await waitForSelector(cdp, ".abandon-confirm");
+  const abandonConfirmEvidence = await assertAbandonRunConfirmUx(cdp);
+  await capture(cdp, "browser-qa-abandon-confirm.png");
+  await clickText(cdp, "런 포기 확정");
+  await waitForSelector(cdp, ".summary-layout");
+  const abandonSummaryEvidence = await assertAbandonedSummaryUx(cdp);
+  await writeFile(resolve(qaDir, "browser-qa-abandon-run.json"), `${JSON.stringify({ confirm: abandonConfirmEvidence, summary: abandonSummaryEvidence }, null, 2)}\n`);
+  await capture(cdp, "browser-qa-abandon-summary.png");
+  await clearSavedRun(cdp);
+  await clearRecords(cdp);
+
   await navigate(cdp, baseUrl);
   await clickText(cdp, "코덱스");
   await waitForText(cdp, "카드");
@@ -3687,6 +3707,78 @@ async function assertSettingsAudioUx(cdp) {
   if (!result.ok) {
     throw new Error(`Settings audio UX failed: ${JSON.stringify(result)}`);
   }
+}
+
+async function assertAbandonRunConfirmUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const dialog = document.querySelector(".abandon-confirm");
+    const text = document.body.innerText;
+    const buttons = dialog ? [...dialog.querySelectorAll("button")].map((button) => ({
+      action: button.dataset.action ?? "",
+      text: button.innerText.trim(),
+      disabled: button.disabled
+    })) : [];
+    const box = dialog?.getBoundingClientRect();
+    const ok =
+      Boolean(dialog) &&
+      text.includes("이번 런을 포기할까요?") &&
+      text.includes("탐사를 종료하고 지금까지의 기록을 요약 화면에 남깁니다") &&
+      text.includes("현재 위치") &&
+      text.includes("현재 상태") &&
+      buttons.some((button) => button.action === "abandon-run-cancel" && button.text.includes("계속 탐사") && !button.disabled) &&
+      buttons.some((button) => button.action === "abandon-run-confirmed" && button.text.includes("런 포기 확정") && !button.disabled) &&
+      Boolean(box && box.width <= window.innerWidth - 24 && box.top >= 0 && box.bottom <= window.innerHeight) &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok,
+      buttons,
+      hasCurrentPosition: text.includes("현재 위치"),
+      hasCurrentStatus: text.includes("현재 상태"),
+      box: box ? { top: Math.round(box.top), bottom: Math.round(box.bottom), width: Math.round(box.width) } : null,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Abandon run confirmation UX failed: ${JSON.stringify(result)}`);
+  }
+  return result;
+}
+
+async function assertAbandonedSummaryUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const layout = document.querySelector(".summary-layout");
+    const verdict = document.querySelector(".summary-verdict");
+    const text = document.body.innerText;
+    const actions = [...document.querySelectorAll(".summary-actions button")].map((button) => button.innerText.trim());
+    const ok =
+      Boolean(layout) &&
+      Boolean(verdict) &&
+      text.includes("탐사를 중단했습니다") &&
+      text.includes("런 포기") &&
+      text.includes("결과") &&
+      text.includes("포기") &&
+      text.includes("첫 경로 선택에서 탐사를 정리했습니다") &&
+      text.includes("같은 시드에서 다른 선택 시도") &&
+      !text.includes("0층에서 탐사를 정리했습니다") &&
+      !document.querySelector(".abandon-confirm") &&
+      actions.some((action) => action.includes("같은 시드 재도전")) &&
+      actions.some((action) => action.includes("기록 보기")) &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok,
+      actions,
+      hasAbandonedHeading: text.includes("탐사를 중단했습니다"),
+      hasFirstRouteLabel: text.includes("첫 경로 선택에서 탐사를 정리했습니다"),
+      hasZeroFloorHeadline: text.includes("0층에서 탐사를 정리했습니다"),
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Abandoned summary UX failed: ${JSON.stringify(result)}`);
+  }
+  return result;
 }
 
 async function assertShopFocusUx(cdp) {

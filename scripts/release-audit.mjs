@@ -285,6 +285,7 @@ async function main() {
     { id: "summary-won", match: /browser-qa-summary-won/ },
     { id: "records", match: /browser-qa-records/ },
     { id: "settings", match: /browser-qa-settings/ },
+    { id: "abandon-run", match: /browser-qa-abandon/ },
     { id: "mobile", match: /browser-qa-mobile/ },
     { id: "mobile-combat", match: /browser-qa-mobile-combat/ },
     { id: "tablet-combat", match: /browser-qa-tablet-combat/ },
@@ -292,10 +293,11 @@ async function main() {
   ];
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);
   const requiredReleaseInfo = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일"];
-  const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "콘솔 오류 없음"];
+  const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "런 포기 확인", "콘솔 오류 없음"];
   const requiredFlowTests = [
     "assisted full-run smoke reaches the final summary without dead phases",
     "shop, rest, final boss victory, and defeat flows are reachable",
+    "abandon run ends safely with a replayable summary",
     "save slots recover the newest backup after an interrupted primary write",
     "run summary surfaces replay-relevant build evidence"
   ];
@@ -379,8 +381,12 @@ async function main() {
       playtestReport.settings?.id === "settings-persistence" &&
       Object.values(playtestReport.settings?.checks ?? {}).every(Boolean) &&
       playtestReport.settings?.reloaded?.highContrast === true &&
-      playtestReport.settings?.reloaded?.tacticalAdvisor === false,
-    "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드를 재현해야 합니다.",
+      playtestReport.settings?.reloaded?.tacticalAdvisor === false &&
+      playtestReport.safety?.id === "danger-confirmations" &&
+      Object.values(playtestReport.safety?.checks ?? {}).every(Boolean) &&
+      playtestReport.safety?.summary?.abandoned === true &&
+      /탐사를 중단/.test(playtestReport.safety?.summary?.reason ?? ""),
+    "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
     {
       sourceFreshAfter: new Date(playtestSourceMtime).toISOString(),
       reportMtime: playtestReportMtime ? new Date(playtestReportMtime).toISOString() : null,
@@ -406,6 +412,11 @@ async function main() {
         key: playtestReport?.settings?.key ?? null,
         reloaded: playtestReport?.settings?.reloaded ?? null,
         checks: playtestReport?.settings?.checks ?? null
+      },
+      safety: {
+        id: playtestReport?.safety?.id ?? null,
+        summary: playtestReport?.safety?.summary ?? null,
+        checks: playtestReport?.safety?.checks ?? null
       }
     }
   );

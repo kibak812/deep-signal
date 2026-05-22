@@ -1,0 +1,40 @@
+{
+  "confirm": {
+    "ok": true,
+    "buttons": [
+      {
+        "action": "abandon-run-cancel",
+        "text": "계속 탐사",
+        "disabled": false
+      },
+      {
+        "action": "abandon-run-confirmed",
+        "text": "런 포기 확정",
+        "disabled": false
+      }
+    ],
+    "hasCurrentPosition": true,
+    "hasCurrentStatus": true,
+    "box": {
+      "top": 218,
+      "bottom": 502,
+      "width": 680
+    },
+    "scrollWidth": 1280,
+    "viewportWidth": 1280
+  },
+  "summary": {
+    "ok": true,
+    "actions": [
+      "추천\n같은 시드 재도전\n같은 시드에서 다른 선택 시도",
+      "다른 런 시작",
+      "기록 보기",
+      "시작 화면"
+    ],
+    "hasAbandonedHeading": true,
+    "hasFirstRouteLabel": true,
+    "hasZeroFloorHeadline": false,
+    "scrollWidth": 1280,
+    "viewportWidth": 1280
+  }
+}

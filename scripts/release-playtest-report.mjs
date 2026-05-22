@@ -1,7 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { simulateRun } from "./balance-runner.mjs";
-import { enterNode, newRun } from "../src/engine/game.js";
+import { abandonRun, enterNode, newRun } from "../src/engine/game.js";
 import { deleteSavedRun, loadRunFromStorage, saveRunToStorage, SAVE_BACKUP_KEY, SAVE_KEY } from "../src/engine/save-slots.js";
 import { loadSettingsFromStorage, saveSettingsToStorage, SETTINGS_KEY } from "../src/engine/settings.js";
 
@@ -210,6 +210,44 @@ function settingsReport() {
   };
 }
 
+function safetyReport() {
+  const run = newRun({ seed: "release-abandon-confirm", difficulty: 2 });
+  enterNode(run, run.availableNodeIds[0]);
+  const combatSnapshot = {
+    phase: run.phase,
+    floor: run.stats.floors,
+    enemyCount: run.combat?.enemies?.length ?? 0,
+    handSize: run.combat?.hand?.length ?? 0
+  };
+  abandonRun(run);
+  const checks = {
+    startsFromActiveRun: combatSnapshot.phase === "combat" && combatSnapshot.enemyCount >= 1,
+    reachesSummary: run.phase === "summary",
+    recordsAbandonedFlag: run.summary?.abandoned === true && run.summary?.won === false,
+    reasonReadable: /탐사를 중단/.test(run.summary?.reason ?? ""),
+    transientStateCleared: run.combat === null && run.reward === null && run.event === null && run.shop === null && run.selector === null,
+    routeStillReviewable: (run.summary?.route?.totalFloors ?? 0) >= 1,
+    replaySeedKept: run.summary?.seed === "release-abandon-confirm"
+  };
+  return {
+    id: "danger-confirmations",
+    label: "위험 행동 확인과 런 포기 요약",
+    seed: run.seed,
+    difficulty: run.difficulty,
+    beforeAbandon: combatSnapshot,
+    summary: {
+      phase: run.phase,
+      won: run.summary?.won ?? null,
+      abandoned: run.summary?.abandoned ?? null,
+      reason: run.summary?.reason ?? "",
+      floors: run.summary?.floors ?? 0,
+      deckSize: run.summary?.deckSize ?? 0,
+      routeFloors: run.summary?.route?.totalFloors ?? 0
+    },
+    checks
+  };
+}
+
 function reportComparable(report) {
   return JSON.stringify({ ...report, generatedAt: null });
 }
@@ -251,6 +289,7 @@ async function main() {
   const scenarios = SCENARIOS.map(scenarioReport);
   const persistence = persistenceReport();
   const settings = settingsReport();
+  const safety = safetyReport();
   const failed = scenarios.flatMap((scenario) =>
     Object.entries(scenario.checks)
       .filter(([, ok]) => !ok)
@@ -263,6 +302,10 @@ async function main() {
     Object.entries(settings.checks)
       .filter(([, ok]) => !ok)
       .map(([check]) => `${settings.id}:${check}`)
+  ).concat(
+    Object.entries(safety.checks)
+      .filter(([, ok]) => !ok)
+      .map(([check]) => `${safety.id}:${check}`)
   );
   const report = {
     generatedAt: new Date().toISOString(),
@@ -274,11 +317,13 @@ async function main() {
       defeats: scenarios.filter((scenario) => !scenario.won).length,
       persistenceRecovered: persistence.checks.corruptedPrimaryRecoversBackup,
       settingsPersisted: settings.checks.switchesPersist && settings.checks.motionAndTextPersist,
+      dangerConfirmations: safety.checks.recordsAbandonedFlag && safety.checks.transientStateCleared,
       requiredRouteTypes: [...new Set(SCENARIOS.flatMap((scenario) => scenario.requiredRouteTypes))]
     },
     scenarios,
     persistence,
-    settings
+    settings,
+    safety
   };
   const written = await writeReportIfChanged(report, options.reportPath);
   if (!report.ok) {
@@ -286,7 +331,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length} scenarios + persistence + settings`);
+  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length} scenarios + persistence + settings + safety`);
   console.log(`${written ? "Wrote" : "Report unchanged at"} ${options.reportPath}`);
 }
 

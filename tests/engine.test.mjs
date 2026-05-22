@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  abandonRun,
   cardCost,
   cancelDeckSelection,
   bossRecoveryAmount,
@@ -979,6 +980,24 @@ test("shop, rest, final boss victory, and defeat flows are reachable", () => {
   assert.equal(loseRun.summary.won, false);
   assert.equal(loseRun.summary.route.acts[0].stoppedAt.type, "combat");
   assert.equal(loseRun.summary.route.acts[0].stoppedAt.completed, false);
+});
+
+test("abandon run ends safely with a replayable summary", () => {
+  const run = newRun({ seed: "abandon-confirm", difficulty: 0 });
+  enterNode(run, run.availableNodeIds[0]);
+  assert.equal(run.phase, "combat");
+  assert.ok(run.combat?.enemies?.length >= 1);
+  abandonRun(run);
+  assert.equal(run.phase, "summary");
+  assert.equal(run.summary.won, false);
+  assert.equal(run.summary.abandoned, true);
+  assert.match(run.summary.reason, /탐사를 중단/);
+  assert.equal(run.combat, null);
+  assert.equal(run.reward, null);
+  assert.equal(run.event, null);
+  assert.equal(run.shop, null);
+  assert.ok(run.summary.route.totalFloors >= 1);
+  assert.ok(run.log.at(-1).text.includes("런 포기"));
 });
 
 test("act boss rewards include an interlude recovery before the next zone", () => {

@@ -18940,8 +18940,16 @@ dd,
     rgba(13, 7, 8, 0.98);
 }
 
-.delete-confirm h2 {
+.delete-confirm h2,
+.abandon-confirm h2 {
   color: var(--coral);
+}
+
+.abandon-confirm {
+  border-color: rgba(246, 193, 119, 0.48);
+  background:
+    linear-gradient(120deg, rgba(246, 193, 119, 0.13), transparent 58%),
+    rgba(13, 10, 7, 0.98);
 }
 
 .start-confirm-actions {
