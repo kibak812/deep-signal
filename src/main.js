@@ -1043,17 +1043,14 @@ app.addEventListener("pointercancel", () => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || isEditingText(event.target)) return;
+  const confirmationDialog = activeConfirmationDialog();
+  if (confirmationDialog && event.key === "Tab") {
+    trapDialogFocus(event, confirmationDialog);
+    return;
+  }
   if (event.key === "Escape") {
-    if (state.pendingStart) {
+    if (closePendingConfirmation()) {
       event.preventDefault();
-      state.pendingStart = null;
-      playTone("button");
-      render();
-      return;
-    }
-    if (state.pendingDeleteSave) {
-      event.preventDefault();
-      state.pendingDeleteSave = null;
       playTone("button");
       render();
       return;
@@ -3379,9 +3376,62 @@ function setAppHtml(html, resetScroll = true) {
   hideIntentPortalTooltip();
   clearCombatCardPreview();
   app.innerHTML = `${html}${renderStartConfirmOverlay()}${renderDeleteSaveConfirmOverlay()}${renderAbandonRunConfirmOverlay()}`;
+  focusPendingDialogControl();
   if (resetScroll) {
     resetPageScroll();
   }
+}
+
+function activeConfirmationDialog() {
+  if (!state.pendingStart && !state.pendingDeleteSave && !state.pendingAbandonRun) return null;
+  return app.querySelector(".modal-backdrop [role='dialog']");
+}
+
+function closePendingConfirmation() {
+  if (state.pendingStart) {
+    state.pendingStart = null;
+    return true;
+  }
+  if (state.pendingDeleteSave) {
+    state.pendingDeleteSave = null;
+    return true;
+  }
+  if (state.pendingAbandonRun) {
+    state.pendingAbandonRun = null;
+    return true;
+  }
+  return false;
+}
+
+function focusPendingDialogControl() {
+  const dialog = activeConfirmationDialog();
+  const target = dialog?.querySelector("[data-dialog-initial-focus]") ?? dialogFocusableControls(dialog)[0];
+  target?.focus?.({ preventScroll: true });
+}
+
+function trapDialogFocus(event, dialog) {
+  const controls = dialogFocusableControls(dialog);
+  if (!controls.length) {
+    event.preventDefault();
+    return;
+  }
+  const active = document.activeElement;
+  const currentIndex = controls.indexOf(active);
+  const fallbackIndex = event.shiftKey ? controls.length - 1 : 0;
+  const nextIndex =
+    currentIndex < 0
+      ? fallbackIndex
+      : event.shiftKey
+        ? (currentIndex - 1 + controls.length) % controls.length
+        : (currentIndex + 1) % controls.length;
+  event.preventDefault();
+  controls[nextIndex]?.focus({ preventScroll: true });
+}
+
+function dialogFocusableControls(dialog) {
+  if (!dialog) return [];
+  return [...dialog.querySelectorAll("button:not(:disabled), [href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex='-1'])")]
+    .filter((element) => element.offsetParent !== null);
 }
 
 function resetPageScroll() {
@@ -3412,7 +3462,7 @@ function renderStartConfirmOverlay() {
           <div><dt>저장 시각</dt><dd>${formatSavedAt(savedRun?.updatedAt)}</dd></div>
         </dl>
         <div class="start-confirm-actions">
-          <button data-action="start-cancel">취소</button>
+          <button data-dialog-initial-focus data-action="start-cancel">취소</button>
           ${savedRun ? `<button data-action="continue-run">기존 런 이어하기</button>` : ""}
           <button class="danger" data-action="start-confirmed">덮어쓰고 시작</button>
         </div>
@@ -3445,7 +3495,7 @@ function renderDeleteSaveConfirmOverlay() {
           <div><dt>저장 시각</dt><dd>${formatSavedAt(savedRun?.updatedAt)}</dd></div>
         </dl>
         <div class="start-confirm-actions">
-          <button data-action="delete-save-cancel">취소</button>
+          <button data-dialog-initial-focus data-action="delete-save-cancel">취소</button>
           <button class="danger" data-action="delete-save-confirmed">삭제 확정</button>
         </div>
       </section>
@@ -3474,7 +3524,7 @@ function renderAbandonRunConfirmOverlay() {
           <div><dt>주력</dt><dd>${context.deckText}</dd></div>
         </dl>
         <div class="start-confirm-actions">
-          <button data-action="abandon-run-cancel">계속 탐사</button>
+          <button data-dialog-initial-focus data-action="abandon-run-cancel">계속 탐사</button>
           <button class="danger" data-action="abandon-run-confirmed">런 포기 확정</button>
         </div>
       </section>

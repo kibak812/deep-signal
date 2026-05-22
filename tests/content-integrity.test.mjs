@@ -404,6 +404,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /summary-lost/);
   assert.match(auditSource, /summary-won/);
   assert.match(auditSource, /abandon-run/);
+  assert.match(auditSource, /danger-dialog-keyboard-safety/);
   assert.match(auditSource, /records/);
   assert.match(auditSource, /mobile-combat/);
   assert.match(auditSource, /tablet-combat/);
@@ -449,6 +450,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /browser-qa-abandon-run\.json/);
   assert.match(captureSource, /function assertAbandonRunConfirmUx\(cdp\)/);
   assert.match(captureSource, /function assertAbandonedSummaryUx\(cdp\)/);
+  assert.match(captureSource, /activeAction === "abandon-run-cancel"/);
   assert.match(captureSource, /browser-qa-records-refreshed\.png/);
   assert.match(captureSource, /browser-qa-guide-refreshed\.png/);
   assert.match(captureSource, /function assertGuidePlaybookUx\(cdp\)/);
@@ -2462,6 +2464,13 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(mainSource, /function renderStartConfirmOverlay\(\)/);
   assert.match(mainSource, /function renderDeleteSaveConfirmOverlay\(\)/);
   assert.match(mainSource, /function renderAbandonRunConfirmOverlay\(\)/);
+  assert.match(mainSource, /function activeConfirmationDialog\(\)/);
+  assert.match(mainSource, /function closePendingConfirmation\(\)/);
+  assert.match(mainSource, /function focusPendingDialogControl\(\)/);
+  assert.match(mainSource, /function trapDialogFocus\(event, dialog\)/);
+  assert.match(mainSource, /function dialogFocusableControls\(dialog\)/);
+  assert.match(mainSource, /event\.key === "Tab"/);
+  assert.match(mainSource, /event\.key === "Escape"[\s\S]*closePendingConfirmation\(\)/);
   assert.match(mainSource, /state\.pendingStart && !\["start-confirmed", "start-cancel", "continue-run"\]\.includes\(action\)/);
   assert.match(mainSource, /state\.pendingDeleteSave && !\["delete-save-confirmed", "delete-save-cancel"\]\.includes\(action\)/);
   assert.match(mainSource, /state\.pendingAbandonRun && !\["abandon-run-confirmed", "abandon-run-cancel"\]\.includes\(action\)/);
@@ -2499,10 +2508,10 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(mainSource, /function clearTabOnlyStorageNotice\(scope\)/);
   assert.match(mainSource, /저장 불가/);
   assert.match(mainSource, /data-action="delete-save-confirmed"/);
-  assert.match(mainSource, /data-action="delete-save-cancel"/);
+  assert.match(mainSource, /data-dialog-initial-focus data-action="delete-save-cancel"/);
   assert.match(mainSource, /저장된 런을 삭제할까요/);
   assert.match(mainSource, /data-action="abandon-run-confirmed"/);
-  assert.match(mainSource, /data-action="abandon-run-cancel"/);
+  assert.match(mainSource, /data-dialog-initial-focus data-action="abandon-run-cancel"/);
   assert.match(mainSource, /이번 런을 포기할까요/);
   assert.match(mainSource, /탐사를 중단했습니다/);
   assert.match(mainSource, /첫 경로 선택/);
@@ -2510,7 +2519,7 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(saveSource, /removeStorage\(storage, SAVE_BACKUP_KEY\)/);
   assert.match(saveSource, /writeStorage\(storage, SAVE_BACKUP_KEY, payload\)/);
   assert.match(mainSource, /data-action="start-confirmed"/);
-  assert.match(mainSource, /data-action="start-cancel"/);
+  assert.match(mainSource, /data-dialog-initial-focus data-action="start-cancel"/);
   assert.match(mainSource, /if \(state\.pendingStart\)/);
   assert.match(mainSource, /저장된 런을 덮어쓸까요/);
   assert.match(mainSource, /data-action="daily-run"/);

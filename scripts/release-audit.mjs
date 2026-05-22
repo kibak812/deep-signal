@@ -314,6 +314,14 @@ async function main() {
   record("screens", "필수 화면과 안내", ["새 런 시작", "이어하기", "설정", "게임 정보", "기록", "코덱스", "가이드"].every((text) => mainSource.includes(text)), "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.");
   record("settings-accessibility", "접근성/설정 항목", ["volume", "musicVolume", "preview-sound", "preview-music", "motionSpeed", "textScale", "highContrast", "tacticalAdvisor"].every((key) => mainSource.includes(key)), "효과음/배경음 조절과 미리듣기, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.");
   record(
+    "danger-dialog-keyboard-safety",
+    "위험 행동 확인 키보드 안전",
+    ["activeConfirmationDialog", "closePendingConfirmation", "focusPendingDialogControl", "trapDialogFocus", "data-dialog-initial-focus"].every((text) => mainSource.includes(text)) &&
+      mainSource.includes('event.key === "Escape"') &&
+      mainSource.includes("closePendingConfirmation()"),
+    "새 런 덮어쓰기, 저장 삭제, 런 포기 확인은 안전한 버튼에 초기 포커스를 두고 Tab/Esc 키보드 흐름을 막지 않아야 합니다."
+  );
+  record(
     "mobile-touch-targeting",
     "모바일/태블릿 대상 전환 조작",
     ["renderTargetSwitcher", "cycle-enemy", "cycleCombatTarget"].every((text) => mainSource.includes(text)) &&

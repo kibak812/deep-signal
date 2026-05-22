@@ -3718,6 +3718,7 @@ async function assertAbandonRunConfirmUx(cdp) {
       text: button.innerText.trim(),
       disabled: button.disabled
     })) : [];
+    const activeAction = document.activeElement?.dataset?.action ?? "";
     const box = dialog?.getBoundingClientRect();
     const ok =
       Boolean(dialog) &&
@@ -3727,11 +3728,13 @@ async function assertAbandonRunConfirmUx(cdp) {
       text.includes("현재 상태") &&
       buttons.some((button) => button.action === "abandon-run-cancel" && button.text.includes("계속 탐사") && !button.disabled) &&
       buttons.some((button) => button.action === "abandon-run-confirmed" && button.text.includes("런 포기 확정") && !button.disabled) &&
+      activeAction === "abandon-run-cancel" &&
       Boolean(box && box.width <= window.innerWidth - 24 && box.top >= 0 && box.bottom <= window.innerHeight) &&
       document.documentElement.scrollWidth <= window.innerWidth + 2;
     return {
       ok,
       buttons,
+      activeAction,
       hasCurrentPosition: text.includes("현재 위치"),
       hasCurrentStatus: text.includes("현재 상태"),
       box: box ? { top: Math.round(box.top), bottom: Math.round(box.bottom), width: Math.round(box.width) } : null,

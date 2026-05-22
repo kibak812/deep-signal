@@ -13,6 +13,7 @@
         "disabled": false
       }
     ],
+    "activeAction": "abandon-run-cancel",
     "hasCurrentPosition": true,
     "hasCurrentStatus": true,
     "box": {
