@@ -284,6 +284,16 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/release-playtest-report\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
+  assert.match(readme, /## 출시 후보 산출물 요약/);
+  assert.match(readme, /게임 코드와 배포/);
+  assert.match(readme, /구현 콘텐츠와 시스템/);
+  assert.match(readme, /한국어와 플레이테스트/);
+  assert.match(readme, /## 남은 출시 전 체크리스트/);
+  assert.match(readme, /실제 기기/);
+  assert.match(readme, /스피커와 헤드폰/);
+  assert.match(readme, /출시 태그/);
+  assert.match(auditSource, /requiredReadmeSections/);
+  assert.match(auditSource, /requiredReadmeDeliverables/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
   assert.match(packageSource, /"copy:audit": "node scripts\/korean-copy-report\.mjs"/);
   assert.match(packageSource, /"assets:hud": "python3 scripts\/generate-hud-icons\.py"/);

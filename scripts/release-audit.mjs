@@ -981,7 +981,15 @@ async function main() {
       ...browserQa
     }
   );
-  record("docs", "README 산출물 설명", ["실행", "구현 범위", "주요 시스템", "검증한 플로우", "검증 산출물", "출시 전 우선순위"].every((section) => readme.includes(`## ${section}`)), "README는 실행 방법, 콘텐츠 목록, 시스템 설명, 검증 플로우, 검증 산출물, 남은 우선순위를 포함해야 합니다.");
+  const requiredReadmeSections = ["실행", "구현 범위", "주요 시스템", "검증한 플로우", "검증 산출물", "출시 후보 산출물 요약", "남은 출시 전 체크리스트", "출시 전 우선순위"];
+  const requiredReadmeDeliverables = ["게임 코드와 배포", "실행과 빌드", "구현 콘텐츠와 시스템", "에셋 구조", "한국어와 플레이테스트", "실제 기기", "스피커와 헤드폰", "출시 태그"];
+  record(
+    "docs",
+    "README 산출물 설명",
+    requiredReadmeSections.every((section) => readme.includes(`## ${section}`)) && requiredReadmeDeliverables.every((text) => readme.includes(text)),
+    "README는 실행 방법, 콘텐츠 목록, 시스템 설명, 검증 플로우, 검증 산출물, 산출물 요약, 남은 출시 전 체크리스트를 포함해야 합니다.",
+    { requiredReadmeSections, requiredReadmeDeliverables }
+  );
 
   const failed = checks.filter((check) => !check.ok);
   const passed = checks.length - failed.length;

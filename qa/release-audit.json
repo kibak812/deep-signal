@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T23:09:30.605Z",
+  "generatedAt": "2026-05-22T23:15:05.475Z",
   "ok": true,
   "passed": 49,
   "failed": 0,
@@ -812,10 +812,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T23:08:24.501Z",
-        "sourceFreshAfter": "2026-05-22T23:07:53.763Z",
-        "sourceFingerprint": "sha256:d0ec2b0df99c043f85efd138280d93906f962ff38130184b4fe09ddbe6331772",
-        "reportMtime": "2026-05-22T23:08:24.504Z",
+        "generatedAt": "2026-05-22T23:14:39.564Z",
+        "sourceFreshAfter": "2026-05-22T23:13:44.189Z",
+        "sourceFingerprint": "sha256:eafb2bc4152b793ecfcdfedd73f93e9d69029a9c075f82cfbe1e728c7fb6dbc9",
+        "reportMtime": "2026-05-22T23:14:39.566Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -2552,8 +2552,29 @@
       "id": "docs",
       "label": "README 산출물 설명",
       "ok": true,
-      "detail": "README는 실행 방법, 콘텐츠 목록, 시스템 설명, 검증 플로우, 검증 산출물, 남은 우선순위를 포함해야 합니다.",
-      "evidence": {}
+      "detail": "README는 실행 방법, 콘텐츠 목록, 시스템 설명, 검증 플로우, 검증 산출물, 산출물 요약, 남은 출시 전 체크리스트를 포함해야 합니다.",
+      "evidence": {
+        "requiredReadmeSections": [
+          "실행",
+          "구현 범위",
+          "주요 시스템",
+          "검증한 플로우",
+          "검증 산출물",
+          "출시 후보 산출물 요약",
+          "남은 출시 전 체크리스트",
+          "출시 전 우선순위"
+        ],
+        "requiredReadmeDeliverables": [
+          "게임 코드와 배포",
+          "실행과 빌드",
+          "구현 콘텐츠와 시스템",
+          "에셋 구조",
+          "한국어와 플레이테스트",
+          "실제 기기",
+          "스피커와 헤드폰",
+          "출시 태그"
+        ]
+      }
     }
   ]
 }
