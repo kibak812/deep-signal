@@ -147,6 +147,8 @@ async function main() {
   const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
   const audioMixReportPath = resolve(root, "qa/audio-mix-report.json");
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
+  const mobileCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-mobile-combat-refreshed.json"), "utf8").catch(() => "null"));
+  const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
   const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
@@ -238,6 +240,28 @@ async function main() {
   record("route-choice", "첫 엘리트 강제 방지", routeHasOptionalEliteFork(run), "각 막의 첫 엘리트 직전에는 비엘리트 대안 경로가 남아야 합니다.");
   record("screens", "필수 화면과 안내", ["새 런 시작", "이어하기", "설정", "게임 정보", "기록", "코덱스", "가이드"].every((text) => mainSource.includes(text)), "시작, 이어하기, 설정, 정보, 기록, 코덱스, 가이드 화면이 노출되어야 합니다.");
   record("settings-accessibility", "접근성/설정 항목", ["volume", "musicVolume", "preview-sound", "preview-music", "motionSpeed", "textScale", "highContrast", "tacticalAdvisor"].every((key) => mainSource.includes(key)), "효과음/배경음 조절과 미리듣기, 애니메이션, 텍스트 크기, 고대비, 플레이 힌트 설정이 있어야 합니다.");
+  record(
+    "mobile-touch-targeting",
+    "모바일/태블릿 대상 전환 조작",
+    ["renderTargetSwitcher", "cycle-enemy", "cycleCombatTarget"].every((text) => mainSource.includes(text)) &&
+      [".target-switcher", ".target-switch-button", "touch-action: manipulation"].every((text) => styleSource.includes(text)) &&
+      readme.includes("터치 대상 전환") &&
+      mobileCombatQa?.targetSwitchReady &&
+      tabletCombatQa?.targetSwitchReady,
+    "작은 화면 전투에는 손가락으로 이전/다음 적을 바꾸는 버튼과 최신 브라우저 QA 증거가 있어야 합니다.",
+    {
+      mobile: {
+        targetSwitchReady: mobileCombatQa?.targetSwitchReady ?? false,
+        targetSwitchSelection: mobileCombatQa?.targetSwitchSelection ?? null,
+        targetSwitchText: mobileCombatQa?.targetSwitchText ?? ""
+      },
+      tablet: {
+        targetSwitchReady: tabletCombatQa?.targetSwitchReady ?? false,
+        targetSwitchSelection: tabletCombatQa?.targetSwitchSelection ?? null,
+        targetSwitchText: tabletCombatQa?.targetSwitchText ?? ""
+      }
+    }
+  );
   record("music-variation", "음악 루프 변주와 믹싱", ["playMusicMotif", "playMusicVariation", "playMusicBridge", "playMusicTransition", "variationEvery", "bridgeEvery", "createDynamicsCompressor", "boss_lastgate_phase2", "duckMusicForCue", "musicDuckRatioForCue"].every((text) => mainSource.includes(text)), "배경음은 보스 모티프, 긴 간격의 변주/브리지 프레이즈, 테마 전환 프레이즈, 덕킹, 기본 믹싱 버스를 가져야 합니다.");
   record(
     "audio-mix-report",

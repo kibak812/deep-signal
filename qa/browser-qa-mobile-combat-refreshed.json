@@ -16,6 +16,13 @@
   "noCriticalOverlap": true,
   "touchRailReady": true,
   "combatReadable": true,
+  "targetSwitchReady": true,
+  "targetSwitchSelection": {
+    "selectedBefore": "11",
+    "selectedAfterNext": "9011",
+    "selectedAfterBack": "11"
+  },
+  "targetSwitchText": "‹ 대상 익사한 페이지 1/2 · 바이러스 1 ›",
   "handStyle": {
     "overflowX": "auto",
     "touchAction": "pan-x",
@@ -57,11 +64,11 @@
     },
     "playPanel": {
       "left": 8,
-      "top": 534,
+      "top": 490,
       "right": 302,
       "bottom": 534,
       "width": 294,
-      "height": 0
+      "height": 44
     },
     "targetAssist": {
       "left": 0,
@@ -70,6 +77,14 @@
       "bottom": 0,
       "width": 0,
       "height": 0
+    },
+    "targetSwitcher": {
+      "left": 8,
+      "top": 490,
+      "right": 302,
+      "bottom": 534,
+      "width": 294,
+      "height": 44
     },
     "enemyLine": {
       "left": 8,
@@ -80,6 +95,24 @@
       "height": 90
     }
   },
+  "targetSwitchButtonBoxes": [
+    {
+      "left": 13,
+      "top": 495,
+      "right": 49,
+      "bottom": 529,
+      "width": 36,
+      "height": 34
+    },
+    {
+      "left": 261,
+      "top": 495,
+      "right": 297,
+      "bottom": 529,
+      "width": 36,
+      "height": 34
+    }
+  ],
   "cardCount": 7,
   "cardBoxes": [
     {

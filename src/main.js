@@ -742,7 +742,7 @@ app.addEventListener("click", (event) => {
     event.preventDefault();
     return;
   }
-  if (combatTurnInputLocked() && ["select-enemy", "play-card", "end-turn"].includes(action)) {
+  if (combatTurnInputLocked() && ["select-enemy", "cycle-enemy", "play-card", "end-turn"].includes(action)) {
     event.preventDefault();
     playTone("danger");
     return;
@@ -764,6 +764,10 @@ app.addEventListener("click", (event) => {
   if (action === "select-enemy") {
     clearCombatFx();
     selectEnemy(run, Number(id));
+  }
+  if (action === "cycle-enemy") {
+    clearCombatFx();
+    cycleCombatTarget(run, Number(id) || 1);
   }
   if (action === "play-card") playCardWithFx(run, Number(id));
   if (action === "end-turn") {
@@ -1958,7 +1962,7 @@ function actionAllowedForPhase(action, run = state.run) {
   if (action === "dismiss-victory-coda") return Boolean(activeCombatVictoryCoda(run));
   const phaseActions = {
     map: new Set(["enter-node"]),
-    combat: new Set(["select-enemy", "play-card", "end-turn", "open-pile", "close-pile"]),
+    combat: new Set(["select-enemy", "cycle-enemy", "play-card", "end-turn", "open-pile", "close-pile"]),
     reward: new Set(["reward-card", "reward-relic", "skip-reward"]),
     event: new Set(["event-option"]),
     shop: new Set(["shop-card", "shop-relic", "shop-heal", "shop-remove", "shop-upgrade", "leave-shop"]),
@@ -5992,6 +5996,7 @@ function renderCombatPlayPanel(run, recommendedCardUid) {
     <section class="combat-play-panel${dockFxClass}"${dockFxLabel} aria-label="카드 사용 영역">
       <div class="combat-guidance-stack">
         ${renderCombatActionRecap(run)}
+        ${renderTargetSwitcher(run)}
         ${renderTargetAssist(run, recommendedCardUid)}
         ${renderFinalBossFinisherReserve(run)}
         ${renderRequiemReadiness(run)}
@@ -6713,6 +6718,27 @@ function renderTargetAssist(run, recommendedCardUid = null) {
   `;
 }
 
+function renderTargetSwitcher(run) {
+  if (run.phase !== "combat" || !run.combat) return "";
+  const aliveEnemies = run.combat.enemies.filter((enemy) => enemy.hp > 0);
+  if (aliveEnemies.length <= 1) return "";
+  const selectedIndex = Math.max(0, aliveEnemies.findIndex((enemy) => enemy.uid === run.combat.selectedEnemyUid));
+  const selected = aliveEnemies[selectedIndex] ?? aliveEnemies[0];
+  const targetPosition = `${selectedIndex + 1}/${aliveEnemies.length}`;
+  const targetDetail = enemyIntentReadout(selected.nextMove, "행동 확인 전");
+  return `
+    <section class="target-switcher combat-action-guide" aria-label="대상 전환. 현재 대상 ${selected.name}, ${targetPosition}. ${targetDetail}">
+      <button type="button" class="target-switch-button" data-action="cycle-enemy" data-id="-1" aria-label="이전 대상 선택" title="이전 대상">‹</button>
+      <div class="target-switch-current">
+        <span>대상</span>
+        <strong>${selected.name}</strong>
+        <small>${targetPosition} · ${targetDetail}</small>
+      </div>
+      <button type="button" class="target-switch-button" data-action="cycle-enemy" data-id="1" aria-label="다음 대상 선택" title="다음 대상">›</button>
+    </section>
+  `;
+}
+
 function renderPlayHint(run, recommendedCardUid) {
   const insight = combatRecommendedCardInsight(run, recommendedCardUid);
   if (!insight) return "";
@@ -6913,10 +6939,12 @@ function enemyIntentReadout(move = null, fallback = "행동 없음") {
 }
 
 function enemyMoveDamageTotal(move = {}) {
-  return Math.max(0, Number(move.damage ?? 0) * Math.max(1, Number(move.hits ?? 1)));
+  const safeMove = move ?? {};
+  return Math.max(0, Number(safeMove.damage ?? 0) * Math.max(1, Number(safeMove.hits ?? 1)));
 }
 
 function enemyMoveSetupParts(move = {}) {
+  move ??= {};
   const parts = [];
   if (move.block > 0) parts.push(`방어 +${move.block}`);
   if (move.heal > 0) parts.push(`회복 +${move.heal}`);
@@ -14378,6 +14406,7 @@ function soundCueFor(action, run) {
   if (!run) return action === "delete-save" ? "danger" : action === "start" ? "start" : "button";
   if (run.phase === "summary") return run.summary?.won ? "win" : "lose";
   if (action === "play-card" && activeCombatVictoryCoda(run)) return "finish";
+  if (action === "select-enemy" || action === "cycle-enemy") return "button";
   if (action === "play-card") return combatFxSoundCue();
   if (action === "end-turn" && state.combatFx?.kind === "enemy-action") return combatFxSoundCue();
   if (action === "reward-card") return "reward";

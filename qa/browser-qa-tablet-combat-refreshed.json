@@ -19,6 +19,13 @@
   "combatReadable": true,
   "combatantsFramed": true,
   "arenaUsesVerticalSpace": true,
+  "targetSwitchReady": true,
+  "targetSwitchSelection": {
+    "selectedBefore": "11",
+    "selectedAfterNext": "9011",
+    "selectedAfterBack": "11"
+  },
+  "targetSwitchText": "‹ 대상 익사한 페이지 1/2 · 바이러스 1 ›",
   "arenaToHandGap": 286,
   "handStyle": {
     "overflowX": "auto",
@@ -61,11 +68,11 @@
     },
     "playPanel": {
       "left": 190,
-      "top": 910,
+      "top": 866,
       "right": 630,
       "bottom": 910,
       "width": 440,
-      "height": 0
+      "height": 44
     },
     "endTurn": {
       "left": 716,
@@ -101,12 +108,20 @@
     },
     "enemyPlates": [
       {
-        "left": 467,
-        "top": 585,
-        "right": 690,
-        "bottom": 630,
-        "width": 223,
-        "height": 45
+        "left": 372,
+        "top": 577,
+        "right": 589,
+        "bottom": 621,
+        "width": 217,
+        "height": 44
+      },
+      {
+        "left": 565,
+        "top": 571,
+        "right": 782,
+        "bottom": 615,
+        "width": 217,
+        "height": 44
       }
     ],
     "targetAssist": {
@@ -116,8 +131,34 @@
       "bottom": 0,
       "width": 0,
       "height": 0
+    },
+    "targetSwitcher": {
+      "left": 250,
+      "top": 866,
+      "right": 570,
+      "bottom": 910,
+      "width": 320,
+      "height": 44
     }
   },
+  "targetSwitchButtonBoxes": [
+    {
+      "left": 255,
+      "top": 871,
+      "right": 289,
+      "bottom": 905,
+      "width": 34,
+      "height": 34
+    },
+    {
+      "left": 531,
+      "top": 871,
+      "right": 565,
+      "bottom": 905,
+      "width": 34,
+      "height": 34
+    }
+  ],
   "cardCount": 7,
   "cardBoxes": [
     {

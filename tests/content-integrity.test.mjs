@@ -419,6 +419,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /Tablet combat UX failed/);
   assert.match(captureSource, /canScrollHand/);
   assert.match(captureSource, /touchRailReady/);
+  assert.match(captureSource, /targetSwitchReady/);
+  assert.match(captureSource, /targetSwitchSelection/);
   assert.match(captureSource, /function stageRewardFixture\(cdp\)/);
   assert.match(captureSource, /function stageSummaryFixture\(cdp, outcome\)/);
   assert.match(captureSource, /function stageRecordsFixture\(cdp\)/);
@@ -2538,12 +2540,17 @@ test("mobile combat layout keeps core controls readable", () => {
   const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   assert.match(mainSource, /function renderTargetAssist\(run, recommendedCardUid = null\)/);
+  assert.match(mainSource, /function renderTargetSwitcher\(run\)/);
   assert.match(mainSource, /function renderCombatPlayPanel\(run, recommendedCardUid\)/);
   assert.match(mainSource, /function renderCombatEnergyPanel\(combat\)/);
   assert.match(mainSource, /function handLayoutStyle\(count\)/);
   assert.match(mainSource, /--hand-count:\$\{count\}; --hand-card-width:\$\{cardWidth\}px; --hand-card-height:\$\{cardHeight\}px; --hand-overlap:\$\{overlap\}px/);
   assert.match(mainSource, /aria-label="손패 \$\{combat\.hand\.length\}장"/);
   assert.match(mainSource, /class="target-assist combat-action-guide/);
+  assert.match(mainSource, /class="target-switcher combat-action-guide"/);
+  assert.match(mainSource, /data-action="cycle-enemy"/);
+  assert.match(mainSource, /cycleCombatTarget\(run, Number\(id\) \|\| 1\)/);
+  assert.match(mainSource, /"select-enemy", "cycle-enemy", "play-card", "end-turn"/);
   assert.match(mainSource, /class="combat-play-panel\$\{dockFxClass\}"/);
   assert.match(mainSource, /지금 낼 수 있는 카드 \$\{playableCount\}장/);
   assert.match(mainSource, /energy-locked/);
@@ -2594,6 +2601,8 @@ test("mobile combat layout keeps core controls readable", () => {
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.phase-combat > \.top-bar[\s\S]*grid-template-columns:\s*38px minmax\(54px, 1fr\) 48px 42px/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.phase-combat > \.top-bar \.hud-stat,[\s\S]*\.phase-combat > \.top-bar \.save-status,[\s\S]*\.phase-combat > \.top-bar \.icon-button\[data-id="codex"\],[\s\S]*\.phase-combat > \.top-bar \.icon-button\[data-id="guide"\][\s\S]*display:\s*none/);
   assert.match(styleSource, /\.target-assist/);
+  assert.match(styleSource, /\.target-switcher/);
+  assert.match(styleSource, /\.target-switch-button[\s\S]*touch-action:\s*manipulation/);
   assert.match(styleSource, /\.assist-target-lock/);
   assert.match(styleSource, /\.assist-action-lock/);
   assert.match(styleSource, /\.target-assist\.previewing[\s\S]*width:\s*1px/);

@@ -299,20 +299,20 @@ try {
   const groupedEnemyFx = await captureGroupedEnemyFx(cdp);
   const turnAndVictoryEvidence = await writeTurnAndVictoryEvidence(groupedEnemyFx, victoryCodaEvidence);
 
+  await setViewport(cdp, 390, 844, true);
+  await navigate(cdp, baseUrl);
   await stageMobileCombatFixture(cdp);
   await navigate(cdp, baseUrl);
-  await setViewport(cdp, 390, 844, true);
-  await clickText(cdp, "이어하기");
-  await waitForSelector(cdp, ".combat-board");
+  await continueSavedRun(cdp, "mobile combat continue");
   await assertMobileCombatTouchUx(cdp);
   await capture(cdp, "browser-qa-mobile-combat-refreshed.png");
   await clearSavedRun(cdp);
 
+  await setViewport(cdp, 820, 1180, true);
+  await navigate(cdp, baseUrl);
   await stageMobileCombatFixture(cdp);
   await navigate(cdp, baseUrl);
-  await setViewport(cdp, 820, 1180, true);
-  await clickText(cdp, "이어하기");
-  await waitForSelector(cdp, ".combat-board");
+  await continueSavedRun(cdp, "tablet combat continue");
   await assertTabletCombatUx(cdp);
   await capture(cdp, "browser-qa-tablet-combat-refreshed.png");
   await clearSavedRun(cdp);
@@ -566,6 +566,60 @@ async function clickText(cdp, text) {
   if (!rect) throw new Error(`Button not found: ${text}`);
   await dispatchClick(cdp, rect.x, rect.y);
   await wait(350);
+}
+
+async function activateAction(cdp, action) {
+  const ok = await evaluate(cdp, `(action => {
+    const target = [...document.querySelectorAll("[data-action]")].find((item) => item.dataset.action === action && !item.disabled);
+    if (!target) return false;
+    target.click();
+    return true;
+  })(${JSON.stringify(action)})`);
+  if (!ok) throw new Error(`Action not found: ${action}`);
+  await wait(350);
+}
+
+async function continueSavedRun(cdp, label) {
+  await installBrowserErrorRecorder(cdp);
+  const started = Date.now();
+  while (Date.now() - started < 12000) {
+    const state = await evaluate(cdp, `(() => {
+      if (document.querySelector(".combat-board")) return { combatBoard: true, clicked: false };
+      const target = [...document.querySelectorAll("[data-action='continue-run']")].find((item) => !item.disabled);
+      if (!target) return { combatBoard: false, clicked: false, reason: "missing" };
+      target.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+      return { combatBoard: false, clicked: true, text: target.innerText, errors: window.__qaErrors ?? [] };
+    })()`);
+    if (state.combatBoard || (await evaluate(cdp, `Boolean(document.querySelector(".combat-board"))`))) return;
+    await wait(state.clicked ? 420 : 160);
+  }
+  await waitForSelector(cdp, ".combat-board", label);
+}
+
+async function installBrowserErrorRecorder(cdp) {
+  await evaluate(cdp, `(() => {
+    if (window.__qaErrorRecorderInstalled) return true;
+    window.__qaErrors = [];
+    window.__qaErrorRecorderInstalled = true;
+    window.addEventListener("error", (event) => {
+      window.__qaErrors.push({
+        type: "error",
+        message: event.message,
+        source: event.filename,
+        line: event.lineno,
+        column: event.colno,
+        stack: event.error?.stack ?? ""
+      });
+    });
+    window.addEventListener("unhandledrejection", (event) => {
+      window.__qaErrors.push({
+        type: "unhandledrejection",
+        message: String(event.reason?.message ?? event.reason ?? ""),
+        stack: event.reason?.stack ?? ""
+      });
+    });
+    return true;
+  })()`);
 }
 
 async function clickSelector(cdp, selector) {
@@ -1124,6 +1178,22 @@ async function stageMobileCombatFixture(cdp) {
     run.availableNodeIds = [node.id];
     enterNode(run, node.id);
     if (!run.combat?.enemies?.length) throw new Error("QA mobile combat fixture combat not started");
+    if (run.combat.enemies.length < 2) {
+      const base = run.combat.enemies[0];
+      run.combat.enemies.push({
+        ...base,
+        uid: base.uid + 9000,
+        name: base.name + " 잔상",
+        hp: base.maxHp,
+        block: 0,
+        statuses: {},
+        nextMove: base.nextMove ?? { id: "qa_watch", label: "경계", intent: "방어 4", type: "defend", block: 4 },
+        summoned: true
+      });
+    }
+    run.combat.enemies = run.combat.enemies.slice(0, 2);
+    run.combat.selectedEnemyUid = run.combat.enemies[0].uid;
+    run.nextUid = Math.max(run.nextUid, ...run.combat.enemies.map((enemy) => enemy.uid + 1));
     run.combat.turn = "player";
     run.combat.maxEnergy = 3;
     run.combat.energy = 3;
@@ -2256,6 +2326,8 @@ async function assertMobileCombatTouchUx(cdp) {
     const energy = document.querySelector(".combat-energy-panel");
     const playPanel = document.querySelector(".combat-play-panel");
     const targetAssist = document.querySelector(".target-assist");
+    const targetSwitcher = document.querySelector(".target-switcher");
+    const targetSwitchButtons = [...document.querySelectorAll(".target-switch-button[data-action='cycle-enemy']")];
     const enemyLine = document.querySelector(".enemy-line");
     const enemies = [...document.querySelectorAll(".enemy-card:not(.dead)")];
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
@@ -2265,16 +2337,24 @@ async function assertMobileCombatTouchUx(cdp) {
     const energyBox = rect(energy);
     const playBox = rect(playPanel);
     const targetBox = rect(targetAssist);
+    const targetSwitchBox = rect(targetSwitcher);
+    const targetSwitchButtonBoxes = targetSwitchButtons.map(rect);
     const enemyLineBox = rect(enemyLine);
     const cardBoxes = cards.map(rect);
     const pileBoxes = piles.map(rect);
+    const targetSwitchPointerEvents = targetSwitcher ? getComputedStyle(targetSwitcher).pointerEvents : "";
     const firstScrollLeft = hand?.scrollLeft ?? 0;
     const canScrollHand = Boolean(hand && hand.scrollWidth > hand.clientWidth + 24);
     if (hand) hand.scrollLeft = hand.scrollWidth;
     const didScrollHand = Boolean(hand && hand.scrollLeft > firstScrollLeft + 8);
     if (hand) hand.scrollLeft = 0;
     const handStyle = hand ? getComputedStyle(hand) : null;
-    const cardStyle = cards[0] ? getComputedStyle(cards[0]) : null;
+    const handStyleSnapshot = {
+      overflowX: handStyle?.overflowX ?? "",
+      touchAction: handStyle?.touchAction ?? "",
+      overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
+    };
+    const cardTouchAction = cards[0] ? getComputedStyle(cards[0]).touchAction : "";
     const maxCardRight = Math.max(0, ...cardBoxes.map((box) => box?.right ?? 0));
     const mobileViewport = window.matchMedia("(max-width: 680px)").matches;
     const noPageOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
@@ -2300,13 +2380,31 @@ async function assertMobileCombatTouchUx(cdp) {
       !overlaps(playBox, handBox, 6) &&
       (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
     const touchRailReady =
-      handStyle?.overflowX === "auto" &&
-      handStyle?.overscrollBehaviorX === "contain" &&
-      (handStyle?.touchAction ?? "").includes("pan-x") &&
-      (cardStyle?.touchAction ?? "").includes("pan-x");
+      handStyleSnapshot.overflowX === "auto" &&
+      handStyleSnapshot.overscrollBehaviorX === "contain" &&
+      handStyleSnapshot.touchAction.includes("pan-x") &&
+      cardTouchAction.includes("pan-x");
     const combatReadable = Boolean(board && enemyLineBox && enemyLineBox.top >= 0 && enemies.length >= 1);
+    const selectedBefore = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    document.querySelector(".target-switch-button[data-id='1']")?.click();
+    const selectedAfterNext = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    document.querySelector(".target-switch-button[data-id='-1']")?.click();
+    const selectedAfterBack = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    const targetSwitchReady = Boolean(
+      targetSwitcher &&
+      targetSwitchButtons.length === 2 &&
+      targetSwitchPointerEvents === "auto" &&
+      targetSwitchButtonBoxes.every((box) => box && box.width >= 34 && box.height >= 34) &&
+      targetSwitchBox &&
+      targetSwitchBox.left >= 0 &&
+      targetSwitchBox.right <= window.innerWidth &&
+      selectedBefore &&
+      selectedAfterNext &&
+      selectedAfterNext !== selectedBefore &&
+      selectedAfterBack === selectedBefore
+    );
     return {
-      ok: mobileViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable,
+      ok: mobileViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable && targetSwitchReady,
       mobileViewport,
       noPageOverflow,
       scrollWidth: document.documentElement.scrollWidth,
@@ -2320,13 +2418,13 @@ async function assertMobileCombatTouchUx(cdp) {
       noCriticalOverlap,
       touchRailReady,
       combatReadable,
-      handStyle: {
-        overflowX: handStyle?.overflowX ?? "",
-        touchAction: handStyle?.touchAction ?? "",
-        overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
-      },
-      cardTouchAction: cardStyle?.touchAction ?? "",
-      boxes: { hand: handBox, endTurn: endBox, resource: resourceBox, energy: energyBox, playPanel: playBox, targetAssist: targetBox, enemyLine: enemyLineBox },
+      targetSwitchReady,
+      targetSwitchSelection: { selectedBefore, selectedAfterNext, selectedAfterBack },
+      targetSwitchText: targetSwitcher?.innerText.replace(/\\s+/g, " ").trim() ?? "",
+      handStyle: handStyleSnapshot,
+      cardTouchAction,
+      boxes: { hand: handBox, endTurn: endBox, resource: resourceBox, energy: energyBox, playPanel: playBox, targetAssist: targetBox, targetSwitcher: targetSwitchBox, enemyLine: enemyLineBox },
+      targetSwitchButtonBoxes,
       cardCount: cards.length,
       cardBoxes: cardBoxes.slice(0, 3),
       maxCardRight,
@@ -2368,6 +2466,8 @@ async function assertTabletCombatUx(cdp) {
     const arena = document.querySelector(".arena");
     const enemyLine = document.querySelector(".enemy-line");
     const targetAssist = document.querySelector(".target-assist");
+    const targetSwitcher = document.querySelector(".target-switcher");
+    const targetSwitchButtons = [...document.querySelectorAll(".target-switch-button[data-action='cycle-enemy']")];
     const playerPlate = document.querySelector(".player-plate");
     const enemyPlates = [...document.querySelectorAll(".enemy-card:not(.dead) .combatant-plate")];
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
@@ -2380,10 +2480,13 @@ async function assertTabletCombatUx(cdp) {
     const arenaBox = rect(arena);
     const enemyLineBox = rect(enemyLine);
     const targetBox = rect(targetAssist);
+    const targetSwitchBox = rect(targetSwitcher);
+    const targetSwitchButtonBoxes = targetSwitchButtons.map(rect);
     const playerPlateBox = rect(playerPlate);
     const enemyPlateBoxes = enemyPlates.map(rect);
     const pileBoxes = piles.map(rect);
     const cardBoxes = cards.map(rect);
+    const targetSwitchPointerEvents = targetSwitcher ? getComputedStyle(targetSwitcher).pointerEvents : "";
     const tabletViewport = window.matchMedia("(min-width: 681px) and (max-width: 1040px)").matches;
     const noPageOverflow = document.documentElement.scrollWidth <= window.innerWidth + 2;
     const firstScrollLeft = hand?.scrollLeft ?? 0;
@@ -2392,7 +2495,12 @@ async function assertTabletCombatUx(cdp) {
     const didScrollHand = Boolean(hand && hand.scrollLeft > firstScrollLeft + 8);
     if (hand) hand.scrollLeft = 0;
     const handStyle = hand ? getComputedStyle(hand) : null;
-    const cardStyle = cards[0] ? getComputedStyle(cards[0]) : null;
+    const handStyleSnapshot = {
+      overflowX: handStyle?.overflowX ?? "",
+      touchAction: handStyle?.touchAction ?? "",
+      overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
+    };
+    const cardTouchAction = cards[0] ? getComputedStyle(cards[0]).touchAction : "";
     const handInViewport = Boolean(handBox && handBox.left >= 0 && handBox.right <= window.innerWidth && handBox.bottom <= window.innerHeight && handBox.height >= 230);
     const cardsReadable = cardBoxes.length >= 7 && cardBoxes.every((box) => box && box.width >= 124 && box.width <= 170 && box.height >= 190 && box.bottom <= window.innerHeight + 2);
     const commandCompact = !commandBox || commandBox.width <= 1 || (commandBox.top >= 0 && commandBox.right <= window.innerWidth);
@@ -2421,10 +2529,10 @@ async function assertTabletCombatUx(cdp) {
       !overlaps(playBox, handBox, 6) &&
       (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
     const touchRailReady =
-      handStyle?.overflowX === "auto" &&
-      handStyle?.overscrollBehaviorX === "contain" &&
-      (handStyle?.touchAction ?? "").includes("pan-x") &&
-      (cardStyle?.touchAction ?? "").includes("pan-x");
+      handStyleSnapshot.overflowX === "auto" &&
+      handStyleSnapshot.overscrollBehaviorX === "contain" &&
+      handStyleSnapshot.touchAction.includes("pan-x") &&
+      cardTouchAction.includes("pan-x");
     const combatReadable = Boolean(board && enemyLineBox && enemyLineBox.top >= 0 && enemyLineBox.bottom <= window.innerHeight && document.querySelector(".enemy-card:not(.dead)"));
     const combatantsFramed = Boolean(
       arenaBox &&
@@ -2435,8 +2543,26 @@ async function assertTabletCombatUx(cdp) {
       enemyPlateBoxes.every((box) => box && box.left >= 8 && box.right <= window.innerWidth - 8)
     );
     const arenaUsesVerticalSpace = Boolean(handBox && enemyLineBox && handBox.top - enemyLineBox.bottom <= 300);
+    const selectedBefore = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    document.querySelector(".target-switch-button[data-id='1']")?.click();
+    const selectedAfterNext = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    document.querySelector(".target-switch-button[data-id='-1']")?.click();
+    const selectedAfterBack = document.querySelector(".enemy-card.selected")?.dataset.id ?? "";
+    const targetSwitchReady = Boolean(
+      targetSwitcher &&
+      targetSwitchButtons.length === 2 &&
+      targetSwitchPointerEvents === "auto" &&
+      targetSwitchButtonBoxes.every((box) => box && box.width >= 34 && box.height >= 34) &&
+      targetSwitchBox &&
+      targetSwitchBox.left >= 0 &&
+      targetSwitchBox.right <= window.innerWidth &&
+      selectedBefore &&
+      selectedAfterNext &&
+      selectedAfterNext !== selectedBefore &&
+      selectedAfterBack === selectedBefore
+    );
     return {
-      ok: tabletViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable && combatantsFramed && arenaUsesVerticalSpace,
+      ok: tabletViewport && noPageOverflow && handInViewport && canScrollHand && didScrollHand && cardsReadable && controlsVisible && noCriticalOverlap && touchRailReady && combatReadable && combatantsFramed && arenaUsesVerticalSpace && targetSwitchReady,
       tabletViewport,
       noPageOverflow,
       scrollWidth: document.documentElement.scrollWidth,
@@ -2453,14 +2579,14 @@ async function assertTabletCombatUx(cdp) {
       combatReadable,
       combatantsFramed,
       arenaUsesVerticalSpace,
+      targetSwitchReady,
+      targetSwitchSelection: { selectedBefore, selectedAfterNext, selectedAfterBack },
+      targetSwitchText: targetSwitcher?.innerText.replace(/\\s+/g, " ").trim() ?? "",
       arenaToHandGap: handBox && enemyLineBox ? handBox.top - enemyLineBox.bottom : null,
-      handStyle: {
-        overflowX: handStyle?.overflowX ?? "",
-        touchAction: handStyle?.touchAction ?? "",
-        overscrollBehaviorX: handStyle?.overscrollBehaviorX ?? ""
-      },
-      cardTouchAction: cardStyle?.touchAction ?? "",
-      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, arena: arenaBox, enemyLine: enemyLineBox, playerPlate: playerPlateBox, enemyPlates: enemyPlateBoxes, targetAssist: targetBox },
+      handStyle: handStyleSnapshot,
+      cardTouchAction,
+      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, arena: arenaBox, enemyLine: enemyLineBox, playerPlate: playerPlateBox, enemyPlates: enemyPlateBoxes, targetAssist: targetBox, targetSwitcher: targetSwitchBox },
+      targetSwitchButtonBoxes,
       cardCount: cards.length,
       cardBoxes: cardBoxes.slice(0, 3),
       pileBoxes
@@ -4335,8 +4461,31 @@ async function assertRewardSelectionProgress(cdp) {
   }
 }
 
-async function waitForSelector(cdp, selector) {
-  await waitFor(cdp, `Boolean(document.querySelector(${JSON.stringify(selector)}))`, 12000);
+async function waitForSelector(cdp, selector, label = selector) {
+  try {
+    await waitFor(cdp, `Boolean(document.querySelector(${JSON.stringify(selector)}))`, 12000);
+  } catch (error) {
+    const diagnostic = await evaluate(cdp, `(() => ({
+      label: ${JSON.stringify(label)},
+      url: location.href,
+      title: document.title,
+      bodyClass: document.body?.className ?? "",
+      savedPrimary: Boolean(localStorage.getItem("abyssalArchive.save.v1")),
+      savedBackup: Boolean(localStorage.getItem("abyssalArchive.save.backup.v1")),
+      continueButtons: [...document.querySelectorAll("[data-action='continue-run']")].map((button) => ({
+        text: button.innerText,
+        disabled: button.disabled,
+        rect: (() => {
+          const box = button.getBoundingClientRect();
+          return { left: Math.round(box.left), top: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) };
+        })()
+      })),
+      gameScreen: document.querySelector(".game-screen")?.className ?? "",
+      errors: window.__qaErrors ?? [],
+      text: document.body?.innerText?.slice(0, 800) ?? ""
+    }))()`).catch((diagnosticError) => ({ diagnosticError: String(diagnosticError) }));
+    throw new Error(`${error.message}; diagnostic=${JSON.stringify(diagnostic)}`);
+  }
 }
 
 async function waitForText(cdp, text) {
