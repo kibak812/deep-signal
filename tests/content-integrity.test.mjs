@@ -221,7 +221,10 @@ test("visible copy stays Korean-first and avoids awkward placeholder phrasing", 
     /딥 아카이브/,
     /의도 대기/,
     /다음 행동 대기/,
-    /버림 더미 재섞기 대기/
+    /버림 더미 재섞기 대기/,
+    /심해 네트워크/,
+    /신호 심해 탐사자/,
+    /마지막 신호를 끊으세요/
   ];
   for (const [name, source] of visibleSources) {
     for (const pattern of bannedCopy) {
@@ -233,7 +236,7 @@ test("visible copy stays Korean-first and avoids awkward placeholder phrasing", 
   assert.match(visibleSources.get("package"), /deep-signal/);
   assert.match(visibleSources.get("main"), /주력 고르기/);
   assert.match(visibleSources.get("main"), /뽑고, 쓰고, 남기지 않기/);
-  assert.match(visibleSources.get("main"), /심해 네트워크/);
+  assert.match(visibleSources.get("main"), /데이터 심해/);
   assert.match(visibleSources.get("main"), /해로운 상태/);
   assert.match(visibleSources.get("main"), /경로 선택/);
   assert.match(visibleSources.get("main"), /보상 선택/);

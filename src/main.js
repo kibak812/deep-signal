@@ -3416,9 +3416,11 @@ function renderTitle() {
     <main class="title-screen">
       <section class="title-hero">
         <div class="title-copy">
-          <div class="brand-mark">DS</div>
+          <div class="brand-mark" aria-hidden="true">
+            <img src="./public/assets/deep-signal-mark.svg" alt="">
+          </div>
           <h1>딥 시그널</h1>
-          <p>심해 네트워크를 내려가며 카드를 고르고, 위험한 경로를 택하고, 마지막 신호를 끊으세요.</p>
+          <p>데이터 심해를 내려가며 카드를 고르고, 위험한 길을 지나, 최심부의 왜곡을 끊어내세요.</p>
         </div>
         <section class="title-start-panel" aria-label="런 시작">
           <div class="title-start-copy">
@@ -3676,7 +3678,9 @@ function renderCharacterPanel() {
   return `
     <section class="character-panel" aria-label="선택한 캐릭터">
       <div class="character-core">
-        <div class="diver-emblem" aria-hidden="true">ED</div>
+        <div class="diver-emblem" aria-hidden="true">
+          <img src="./public/assets/echo-diver-emblem.svg" alt="">
+        </div>
         <header>
           <span>플레이어</span>
           <h2>${character.name}</h2>

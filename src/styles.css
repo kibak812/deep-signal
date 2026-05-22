@@ -199,14 +199,25 @@ button:disabled {
 }
 
 .brand-mark {
-  width: 58px;
-  height: 58px;
+  width: 66px;
+  height: 66px;
   display: grid;
   place-items: center;
-  border: 1px solid var(--line-strong);
-  color: var(--cyan);
-  font-weight: 700;
-  background: rgba(14, 22, 38, 0.86);
+  overflow: hidden;
+  border: 1px solid rgba(125, 211, 252, 0.56);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(125, 211, 252, 0.26), transparent 62%),
+    rgba(4, 12, 22, 0.9);
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.34),
+    0 0 30px rgba(45, 148, 255, 0.22);
+}
+
+.brand-mark img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 h1,
@@ -689,12 +700,13 @@ h3 {
 
 .diver-emblem {
   position: relative;
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
   display: grid;
   place-items: center;
   overflow: hidden;
   border: 1px solid rgba(125, 211, 252, 0.45);
+  border-radius: 8px;
   background:
     linear-gradient(135deg, rgba(125, 211, 252, 0.18), transparent 54%),
     radial-gradient(circle at 52% 28%, rgba(246, 193, 119, 0.22), transparent 32%),
@@ -702,24 +714,15 @@ h3 {
   color: var(--cyan);
   font-size: 0.78rem;
   font-weight: 900;
+  box-shadow:
+    inset 0 0 18px rgba(125, 211, 252, 0.18),
+    0 10px 22px rgba(0, 0, 0, 0.26);
 }
 
-.diver-emblem::before,
-.diver-emblem::after {
-  position: absolute;
-  border: 1px solid rgba(236, 248, 243, 0.2);
-  content: "";
-}
-
-.diver-emblem::before {
-  inset: 10px;
-}
-
-.diver-emblem::after {
-  width: 86px;
-  height: 1px;
-  background: rgba(125, 211, 252, 0.36);
-  transform: rotate(-28deg);
+.diver-emblem img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .character-panel header {
