@@ -17,6 +17,22 @@ function record(id, label, ok, detail, evidence = {}) {
   checks.push({ id, label, ok: Boolean(ok), detail, evidence });
 }
 
+function auditComparable(report) {
+  return JSON.stringify({ ...report, generatedAt: null });
+}
+
+async function writeAuditReportIfChanged(report) {
+  const serialized = `${JSON.stringify(report, null, 2)}\n`;
+  try {
+    const existing = JSON.parse(await readFile(reportPath, "utf8"));
+    if (auditComparable(existing) === auditComparable(report)) return { written: false };
+  } catch {
+    // Missing or unreadable reports should be replaced with the latest audit result.
+  }
+  await writeFile(reportPath, serialized);
+  return { written: true };
+}
+
 async function exists(path) {
   try {
     await access(path);
@@ -509,7 +525,7 @@ async function main() {
     checks
   };
   await mkdir(qaDir, { recursive: true });
-  await writeFile(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+  const reportWrite = await writeAuditReportIfChanged(report);
 
   if (failed.length) {
     console.error(`Release audit failed: ${failed.length}/${checks.length}`);
@@ -519,7 +535,7 @@ async function main() {
   }
 
   console.log(`Release audit passed: ${checks.length}/${checks.length}`);
-  console.log(`Wrote ${reportPath}`);
+  console.log(`${reportWrite.written ? "Wrote" : "Report unchanged at"} ${reportPath}`);
 }
 
 await main();

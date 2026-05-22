@@ -289,6 +289,11 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /visiblePlayerImpactRingCount/);
   assert.match(auditSource, /singleResolvedAttackCue/);
   assert.match(readme, /상대 턴 공격 FX 단일화/);
+  assert.match(readme, /generatedAt.*git 변경사항/s);
+  assert.match(auditSource, /function writeAuditReportIfChanged\(report\)/);
+  assert.match(auditSource, /Report unchanged at/);
+  assert.doesNotMatch(styleSource, /content:\s*"DS"/);
+  assert.match(styleSource, /deep-signal-mark\.svg/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);

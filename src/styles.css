@@ -10533,11 +10533,11 @@ dd,
 
 .phase-combat > .top-bar .brand-button::before,
 .phase-combat-victory > .top-bar .brand-button::before {
-  color: var(--amber);
-  content: "DS";
-  font-size: 0.82rem;
-  font-weight: 1000;
-  letter-spacing: 0;
+  content: "";
+  width: 28px;
+  height: 28px;
+  background: url("../public/assets/deep-signal-mark.svg") center / contain no-repeat;
+  filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.34));
 }
 
 .phase-combat > .top-bar .hud-stat,
