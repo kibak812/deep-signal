@@ -5,13 +5,32 @@ import { buildBrowserQaManifest } from "./report-fingerprints.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const qaDir = resolve(root, "qa");
-const baseUrl = process.env.QA_URL ?? "http://127.0.0.1:4210/dist/";
+const staticPort = Number(process.env.QA_STATIC_PORT ?? 4210);
+const baseUrl = process.env.QA_URL ?? `http://127.0.0.1:${staticPort}/dist/`;
 const chromePath = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const port = Number(process.env.QA_CHROME_PORT ?? 9339);
 const profileDir = resolve("/private/tmp", `deep-signal-qa-chrome-${port}`);
 
 await mkdir(qaDir, { recursive: true });
 await rm(profileDir, { recursive: true, force: true });
+
+const staticServer = process.env.QA_URL
+  ? null
+  : spawn("python3", ["-m", "http.server", String(staticPort), "--bind", "127.0.0.1"], {
+      cwd: root,
+      stdio: ["ignore", "ignore", "pipe"]
+    });
+const staticServerStderr = [];
+let staticServerExit = null;
+
+staticServer?.stderr.on("data", (chunk) => {
+  staticServerStderr.push(String(chunk));
+  if (staticServerStderr.length > 8) staticServerStderr.shift();
+});
+
+staticServer?.on("exit", (code, signal) => {
+  staticServerExit = { code, signal };
+});
 
 const chrome = spawn(chromePath, [
   "--headless=new",
@@ -38,6 +57,7 @@ chrome.on("exit", (code, signal) => {
 
 const cleanup = async () => {
   if (!chrome.killed) chrome.kill("SIGTERM");
+  if (staticServer && !staticServer.killed) staticServer.kill("SIGTERM");
   await rm(profileDir, { recursive: true, force: true }).catch(() => {});
 };
 
@@ -46,6 +66,7 @@ process.on("SIGINT", () => {
 });
 
 try {
+  await waitForStaticServer();
   await waitForChrome();
   const cdp = await connectToPage();
   await cdp.send("Page.enable");
@@ -382,6 +403,28 @@ try {
 	  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, enemyDensity, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
 } finally {
   await cleanup();
+}
+
+async function waitForStaticServer() {
+  if (process.env.QA_URL) return;
+  const started = Date.now();
+  while (Date.now() - started < 15000) {
+    try {
+      const response = await fetch(baseUrl);
+      if (response.ok) return;
+    } catch {
+      // Static server is still starting.
+    }
+    await wait(120);
+  }
+  const stderr = staticServerStderr.join("").trim();
+  throw new Error([
+    "Static QA server did not become ready.",
+    `Endpoint: ${baseUrl}`,
+    staticServerExit ? `Server exit: code=${staticServerExit.code ?? "null"} signal=${staticServerExit.signal ?? "null"}` : "Server exit: still running or not reported",
+    "Hint: 기본 QA 실행은 프로젝트 루트를 4210 포트로 서빙한 뒤 dist/를 엽니다. QA_STATIC_PORT 또는 QA_URL을 조정할 수 있습니다.",
+    stderr ? `Server stderr tail:\n${stderr}` : "Server stderr tail: <empty>"
+  ].join("\n"));
 }
 
 async function waitForChrome() {
@@ -1340,6 +1383,7 @@ async function captureEnemyDensityReadability(cdp) {
     const plates = [...document.querySelectorAll(".enemy-card .combatant-plate")];
     const intents = [...document.querySelectorAll(".enemy-card .intent")];
     const threats = [...document.querySelectorAll(".enemy-card .enemy-threat.compact")];
+    const persistentIntentLanes = [...document.querySelectorAll(".enemy-intent-lane")];
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const stripRect = strip?.getBoundingClientRect();
     const lineRect = line?.getBoundingClientRect();
@@ -1441,6 +1485,8 @@ async function captureEnemyDensityReadability(cdp) {
       intentPlateOverlaps,
       intentSpriteOverlaps,
       threatSpriteOverlaps,
+      visibleThreatPanelCount: threats.length,
+      persistentIntentLaneCount: persistentIntentLanes.length,
       intentPanelsReadable,
       intentReadouts,
       intentOutcomes,
@@ -1468,6 +1514,8 @@ async function captureEnemyDensityReadability(cdp) {
     evidence.intentPlateOverlaps.length ||
     evidence.intentSpriteOverlaps.length ||
     evidence.threatSpriteOverlaps.length ||
+    evidence.visibleThreatPanelCount !== 0 ||
+    evidence.persistentIntentLaneCount !== 0 ||
     !evidence.intentPanelsReadable ||
     !evidence.silhouetteReady ||
     !evidence.fxFocusReady
@@ -2451,7 +2499,7 @@ async function assertCardHoverLayout(cdp) {
         return overlap ? panel.className : null;
       })
       .filter(Boolean);
-    const combatantOverlaps = [...document.querySelectorAll(".player-sprite, .player-plate, .enemy-sprite, .enemy-intent-lane, .enemy-card .combatant-plate")]
+    const combatantOverlaps = [...document.querySelectorAll(".player-sprite, .player-plate, .enemy-sprite, .enemy-card .combatant-plate")]
       .map((combatant) => {
         const combatantBox = combatant.getBoundingClientRect();
         const overlap = box.right > combatantBox.left && box.left < combatantBox.right && box.bottom > combatantBox.top && box.top < combatantBox.bottom;
@@ -3787,13 +3835,13 @@ async function assertAboutReleaseInfo(cdp) {
     const facts = [...document.querySelectorAll(".about-facts dd")].map((item) => Number(item.textContent.trim()));
     const panelBox = panel?.getBoundingClientRect();
     const artBackground = art ? getComputedStyle(art).backgroundImage : "";
-    const requiredText = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일", "UNLICENSED", "npm run dev"];
+    const requiredText = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일", "UNLICENSED", "npm run dev", "npm run preview"];
     const ok =
       Boolean(panel) &&
       Boolean(art) &&
       artBackground.includes("asset-sheet") &&
       flowItems === 5 &&
-      releaseBlocks === 2 &&
+      releaseBlocks === 3 &&
       licenseItems >= 3 &&
       facts.length === 4 &&
       facts.every((value) => value > 0) &&

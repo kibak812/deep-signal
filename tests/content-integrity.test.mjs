@@ -295,6 +295,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /requiredReadmeSections/);
   assert.match(auditSource, /requiredReadmeDeliverables/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(packageSource, /"preview": "python3 -m http\.server 4173 --directory dist"/);
   assert.match(packageSource, /"copy:audit": "node scripts\/korean-copy-report\.mjs"/);
   assert.match(packageSource, /"assets:hud": "python3 scripts\/generate-hud-icons\.py"/);
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
@@ -324,6 +325,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(titleIdentitySource, /def draw_deep_signal_mark\(\):/);
   assert.match(titleIdentitySource, /def draw_echo_diver_emblem\(\):/);
   assert.match(readme, /npm run copy:audit/);
+  assert.match(readme, /npm run preview/);
   assert.match(readme, /npm run playtest/);
   assert.match(readme, /표층 전체 완주와 최심층 최종 보스 패배/);
   assert.match(readme, /새로고침 뒤 이어하기와 백업 복구/);
@@ -351,6 +353,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /korean-copy-report/);
   assert.match(auditSource, /koreanCopyReport/);
   assert.match(auditSource, /copy:audit/);
+  assert.match(auditSource, /preview/);
   assert.match(auditSource, /sourceFingerprint/);
   assert.match(auditSource, /buildBrowserQaManifest/);
   assert.match(koreanCopySource, /bannedCopy/);
@@ -1746,18 +1749,15 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-board \.depth-rail small[\s\S]*text-overflow:\s*ellipsis/);
   assert.match(mainSource, /if \(\(forecast\?\.incomingDamage \?\? 0\) > 0\) base\.push\("enemy-aiming"\)/);
   assert.match(mainSource, /if \(\(forecast\?\.hpLoss \?\? 0\) > 0\) base\.push\("enemy-aiming-danger"\)/);
-  assert.match(mainSource, /function renderEnemyIntentLane\(move = \{\}\)/);
-  assert.match(mainSource, /class="enemy-intent-lane" data-threat="\$\{label\}"/);
   assert.match(styleSource, /\.combat-board\.enemy-aiming \.player-stand:not\(\.preview-self\)::after/);
-  assert.match(styleSource, /\.enemy-intent-lane/);
+  assert.doesNotMatch(mainSource, /renderEnemyIntentLane\(move\)/);
+  assert.doesNotMatch(mainSource, /class="enemy-intent-lane"/);
   assert.match(styleSource, /\.intent-portal-tooltip/);
   assert.match(styleSource, /\.intent-tooltip-icon/);
   assert.match(styleSource, /\.intent-portal-tooltip i\.attack/);
   assert.match(styleSource, /\.high-contrast \.intent-portal-tooltip/);
-  assert.match(styleSource, /\.enemy-card\.selected \.enemy-intent-lane/);
-  assert.match(styleSource, /@keyframes enemy-intent-lane-pulse/);
   assert.match(styleSource, /@keyframes incoming-player-mark/);
-  assert.match(styleSource, /\.high-contrast \.enemy-intent-lane/);
+  assert.doesNotMatch(styleSource, /\.enemy-intent-lane/);
   assert.match(styleSource, /\.combat-action-recap/);
   assert.match(styleSource, /\.combat-action-recap\.sr-only/);
   assert.match(styleSource, /@keyframes fx-simple-impact/);
@@ -1794,7 +1794,6 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-aim-line[\s\S]*display:\s*none/);
   assert.match(styleSource, /--hand-hover-safe-top:\s*16px/);
   assert.match(styleSource, /\.hand-zone[\s\S]*min-height:\s*calc\(var\(--hand-zone-height\) \+ var\(--hand-hover-safe-top\)\)/);
-  assert.match(styleSource, /\.combat-board\.fx-active \.enemy-intent-lane[\s\S]*opacity:\s*0/);
   assert.match(styleSource, /\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-hit-sparks,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-hit-sparks i[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring::before,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring::after[\s\S]*display:\s*none/);
   assert.doesNotMatch(styleSource, /\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card\.intent-attack-player \.enemy-sprite \.sprite-ground-burst/);
@@ -1850,8 +1849,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.enemy-threat[\s\S]*bottom:\s*-104px/);
   assert.match(styleSource, /\.enemy-threat\.danger/);
   assert.match(mainSource, /function enemyThreatShouldSurface\(threat, selected = false\)/);
-  assert.match(mainSource, /if \(!selected \|\| threat\.tone !== "attack"\) return false/);
-  assert.match(mainSource, /chip\.tone !== "attack" && chip\.tone !== "calm"/);
+  assert.match(mainSource, /void threat;[\s\S]*void selected;[\s\S]*return false;/);
   assert.match(mainSource, /function enemyThreatIconVisual\(chip = \{\}\)/);
   assert.match(mainSource, /class="enemy-threat \$\{threat\.tone\} \$\{visible \? "compact" : "sr-only"\}"/);
   assert.match(styleSource, /\.enemy-threat[\s\S]*width:\s*min\(226px, calc\(100% - 16px\)\)/);
@@ -2701,6 +2699,7 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(mainSource, /라이선스/);
   assert.match(mainSource, /이용 안내/);
   assert.match(mainSource, /npm run dev/);
+  assert.match(mainSource, /npm run build · npm run preview/);
   assert.match(mainSource, /npm test · npm run copy:audit · npm run build · npm run audit/);
   assert.match(styleSource, /\.run-setup/);
   assert.match(styleSource, /\.title-start-panel/);
@@ -3063,8 +3062,8 @@ test("combat hand cards expose play outcome previews", () => {
   assert.match(mainSource, /isHandCard \? 292 : 306/);
   assert.match(mainSource, /function bestCombatHandTooltipPosition\(\{ left, top, width, height, sourceRect, margin \}\)/);
   assert.match(mainSource, /function combatTooltipAvoidRects\(\)/);
-  assert.match(mainSource, /\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-intent-lane, \.enemy-card \.combatant-plate/);
-  assert.match(mainSource, /element\.matches\("\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-intent-lane, \.enemy-card \.combatant-plate"\)/);
+  assert.match(mainSource, /\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-card \.combatant-plate/);
+  assert.match(mainSource, /element\.matches\("\.player-sprite, \.player-plate, \.enemy-sprite, \.enemy-card \.combatant-plate"\)/);
   assert.match(mainSource, /strict:\s*combatant/);
   assert.match(mainSource, /if \(item\.strict && overlap > 0\) score \+= 1000000/);
   assert.match(mainSource, /function rectOverlapArea\(a, b\)/);

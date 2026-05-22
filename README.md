@@ -4,11 +4,22 @@
 
 ## 실행
 
+개발 중에는 소스 루트를 바로 서빙합니다.
+
 ```bash
 npm run dev
 ```
 
 브라우저에서 `http://127.0.0.1:4173` 또는 `http://localhost:4173`을 엽니다.
+
+GitHub Pages에 올라가는 정적 산출물을 로컬에서 그대로 확인하려면 먼저 빌드한 뒤 `dist/`를 미리보기로 띄웁니다.
+
+```bash
+npm run build
+npm run preview
+```
+
+같은 주소에서 빌드 결과를 확인할 수 있습니다.
 
 ## 검증
 
@@ -25,7 +36,7 @@ npm run audit
 
 ## 배포
 
-GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다. 소스 기준 브랜치는 `main`이며, 공개 빌드는 GitHub Actions 워크플로 `.github/workflows/deploy-pages.yml`이 `npm test`, `npm run copy:audit`, `npm run build`, `npm run audit`를 통과한 뒤 `dist/`를 Pages artifact로 게시하는 방식으로 운영합니다. 빌드 스크립트는 Pages에서 정적 에셋을 그대로 서빙하도록 `dist/.nojekyll`을 함께 생성하고, macOS 메타데이터, 에셋 재생성용 `public/assets/generated-sources/` 원본 묶음, 런타임에서 쓰지 않는 컨셉 레퍼런스와 교체된 타이틀 SVG는 배포 산출물에서 제외합니다.
+GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다. 소스 기준 브랜치는 `main`이며, 공개 빌드는 GitHub Actions 워크플로 `.github/workflows/deploy-pages.yml`이 `npm test`, `npm run copy:audit`, `npm run build`, `npm run audit`를 통과한 뒤 `dist/`를 Pages artifact로 게시하는 방식으로 운영합니다. 로컬에서는 `npm run preview`로 같은 `dist/` 레이아웃을 띄워 배포 전 정적 산출물을 확인합니다. 빌드 스크립트는 Pages에서 정적 에셋을 그대로 서빙하도록 `dist/.nojekyll`을 함께 생성하고, macOS 메타데이터, 에셋 재생성용 `public/assets/generated-sources/` 원본 묶음, 런타임에서 쓰지 않는 컨셉 레퍼런스와 교체된 타이틀 SVG는 배포 산출물에서 제외합니다.
 
 ## 구현 범위
 
@@ -107,7 +118,7 @@ GitHub Pages 배포 주소는 `https://kibak812.github.io/deep-signal/`입니다
 ## 출시 후보 산출물 요약
 
 - 게임 코드와 배포: `main` 브랜치가 운영 기준이며 GitHub Actions가 검증을 통과한 `dist/`를 Pages artifact로 게시합니다. 현재 `dist`는 런타임 자산만 포함하고 정적 참조 파일 42개가 모두 존재함을 `dist-static-reference-integrity` 감사가 확인합니다.
-- 실행과 빌드: 로컬 실행은 `npm run dev`, 정적 빌드는 `npm run build`, 출시 후보 검증은 `npm test`, `npm run copy:audit`, `npm run playtest`, `npm run balance`, `npm run balance:long`, `npm run audit` 순서로 재현할 수 있습니다.
+- 실행과 빌드: 로컬 실행은 `npm run dev`, 정적 빌드는 `npm run build`, 배포 산출물 미리보기는 `npm run preview`, 출시 후보 검증은 `npm test`, `npm run copy:audit`, `npm run playtest`, `npm run balance`, `npm run balance:long`, `npm run audit` 순서로 재현할 수 있습니다.
 - 구현 콘텐츠와 시스템: 카드 71장, 보상 카드 63장, 유물 31종, 일반 적 15종, 엘리트 5종, 보스 3종, 이벤트 20종, 6단계 난이도, 저장/백업 복구, 오늘의 계약, 기록, 코덱스, 가이드, 상점/휴식/이벤트/보스 흐름이 현재 출시 후보 범위입니다.
 - 에셋 구조: 실제 런타임은 `public/assets/`의 PNG 아틀라스와 `combatants/` 스프라이트를 사용합니다. `generated-sources/`, 컨셉 레퍼런스, 교체된 타이틀 SVG는 소스 보존용이며 Pages 배포물에는 포함하지 않습니다.
 - 한국어와 플레이테스트: `qa/korean-copy-report.json`은 어색한 문구와 필수 용어를 검수하고, `qa/release-playtest-report.json`은 표층 완주, 최심층 최종 보스 패배, 저장 복구, 설정 저장, 런 포기 확인을 고정 시드로 증명합니다.

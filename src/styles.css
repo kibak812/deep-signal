@@ -4810,84 +4810,6 @@ dd,
   border-style: dashed;
 }
 
-.enemy-intent-lane {
-  position: absolute;
-  top: clamp(184px, 23vh, 236px);
-  right: calc(50% + 18px);
-  z-index: 1;
-  --intent-lane-angle: -5deg;
-  width: clamp(150px, 24vw, 460px);
-  height: 2px;
-  background:
-    linear-gradient(270deg, rgba(251, 113, 133, 0.7), rgba(251, 113, 133, 0.24) 58%, transparent);
-  opacity: 0.38;
-  pointer-events: none;
-  transform: rotate(var(--intent-lane-angle)) scaleX(0.92);
-  transform-origin: right center;
-  filter: drop-shadow(0 0 10px rgba(251, 113, 133, 0.22));
-  animation: enemy-intent-lane-pulse calc(1500ms / var(--motion-scale)) ease-in-out infinite alternate;
-}
-
-.enemy-intent-lane::before {
-  position: absolute;
-  right: -5px;
-  top: 50%;
-  width: 10px;
-  height: 10px;
-  border: 1px solid rgba(255, 213, 205, 0.72);
-  border-radius: 50%;
-  background: rgba(251, 113, 133, 0.42);
-  content: "";
-  transform: translateY(-50%);
-  box-shadow: 0 0 16px rgba(251, 113, 133, 0.3);
-}
-
-.enemy-intent-lane::after {
-  position: absolute;
-  left: 20%;
-  top: -13px;
-  border: 1px solid rgba(251, 113, 133, 0.32);
-  background: rgba(36, 12, 14, 0.82);
-  color: #ffd5cd;
-  content: attr(data-threat);
-  padding: 2px 5px;
-  font-family: "JetBrains Mono", ui-monospace, monospace;
-  font-size: 0.58rem;
-  font-weight: 1000;
-  line-height: 1;
-  opacity: 0;
-  transform: rotate(5deg);
-}
-
-.enemy-card.selected .enemy-intent-lane,
-.enemy-card.intent-heavy .enemy-intent-lane {
-  height: 3px;
-  opacity: 0.72;
-}
-
-.enemy-card.selected .enemy-intent-lane::after,
-.enemy-card.intent-heavy .enemy-intent-lane::after {
-  opacity: 1;
-}
-
-.enemy-card:has(.enemy-sprite.tier-boss) .enemy-intent-lane {
-  top: clamp(210px, 27vh, 286px);
-  right: calc(50% + 34px);
-  --intent-lane-angle: -3deg;
-  width: clamp(260px, 34vw, 660px);
-  transform: rotate(var(--intent-lane-angle)) scaleX(0.94);
-}
-
-.combat-board.fx-active .enemy-intent-lane {
-  opacity: 0;
-  animation: none;
-}
-
-.combat-board.fx-active .enemy-intent-lane::before,
-.combat-board.fx-active .enemy-intent-lane::after {
-  opacity: 0;
-}
-
 .combat-board.fx-enemy-board .player-stand.fx-target .entity-hit-sparks,
 .combat-board.fx-enemy-board .player-stand.fx-target .entity-hit-sparks i {
   display: none;
@@ -11935,17 +11857,6 @@ dd,
   100% {
     opacity: 0.86;
     transform: translateX(-50%) perspective(230px) rotateX(64deg) scale(1.04);
-  }
-}
-
-@keyframes enemy-intent-lane-pulse {
-  0% {
-    opacity: 0.28;
-    transform: rotate(var(--intent-lane-angle)) scaleX(0.84);
-  }
-  100% {
-    opacity: 0.72;
-    transform: rotate(var(--intent-lane-angle)) scaleX(1);
   }
 }
 
@@ -23483,9 +23394,6 @@ input[type="range"] {
 .high-contrast .combat-pile-dock .pile-label,
 .high-contrast .combat-aim-line span,
 .high-contrast .combat-aim-line span::after,
-.high-contrast .enemy-intent-lane,
-.high-contrast .enemy-intent-lane::before,
-.high-contrast .enemy-intent-lane::after,
 .high-contrast .combat-board.enemy-aiming .player-stand::after,
 .high-contrast .enemy-target-marker::before,
 .high-contrast .enemy-card.preview-target::after,
@@ -25518,7 +25426,6 @@ input[type="range"] {
     font-size: 0.74rem;
   }
 
-  .enemy-intent-lane,
   .combat-board.enemy-aiming .player-stand::after {
     display: none;
   }

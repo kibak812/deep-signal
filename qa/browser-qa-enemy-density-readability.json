@@ -29,6 +29,8 @@
   "intentPlateOverlaps": [],
   "intentSpriteOverlaps": [],
   "threatSpriteOverlaps": [],
+  "visibleThreatPanelCount": 0,
+  "persistentIntentLaneCount": 0,
   "intentPanelsReadable": true,
   "intentReadouts": [
     "연타 집게질 피해 4 x2 · 총 8",
@@ -110,16 +112,7 @@
       "height": 46
     }
   ],
-  "threatBoxes": [
-    {
-      "left": 866,
-      "top": 381,
-      "right": 1018,
-      "bottom": 458,
-      "width": 151,
-      "height": 77
-    }
-  ],
+  "threatBoxes": [],
   "silhouetteReady": true,
   "silhouetteLayers": [
     {

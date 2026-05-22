@@ -3325,11 +3325,11 @@ function bestCombatHandTooltipFallback(width, height, sourceRect, avoidRects, ma
 }
 
 function combatTooltipAvoidRects() {
-  return [...document.querySelectorAll(".player-sprite, .player-plate, .enemy-sprite, .enemy-intent-lane, .enemy-card .combatant-plate, .combat-card-preview-rail:not([hidden]), .target-assist, .combat-play-panel, .combat-action-recap, .combat-hud, .end-turn")]
+  return [...document.querySelectorAll(".player-sprite, .player-plate, .enemy-sprite, .enemy-card .combatant-plate, .combat-card-preview-rail:not([hidden]), .target-assist, .combat-play-panel, .combat-action-recap, .combat-hud, .end-turn")]
     .map((element) => {
       const rect = element.getBoundingClientRect();
       if (!rect.width || !rect.height) return null;
-      const combatant = element.matches(".player-sprite, .player-plate, .enemy-sprite, .enemy-intent-lane, .enemy-card .combatant-plate");
+      const combatant = element.matches(".player-sprite, .player-plate, .enemy-sprite, .enemy-card .combatant-plate");
       const guidance = element.matches(".combat-card-preview-rail:not([hidden]), .target-assist, .combat-play-panel, .combat-action-recap");
       return { rect, weight: combatant ? 9 : guidance ? 6 : 3, strict: combatant || guidance };
     })
@@ -7059,10 +7059,9 @@ function renderEnemyThreatStrip(enemy, selected = false) {
 }
 
 function enemyThreatShouldSurface(threat, selected = false) {
-  if (!threat?.chips?.length) return false;
-  if (threat.tone === "danger" || threat.tone === "warning" || threat.tone === "summon") return true;
-  if (!selected || threat.tone !== "attack") return false;
-  return threat.chips.some((chip) => chip.tone !== "attack" && chip.tone !== "calm");
+  void threat;
+  void selected;
+  return false;
 }
 
 function enemyThreatIconVisual(chip = {}) {
@@ -7223,7 +7222,6 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       ${renderEntityImpactRing("enemy", enemy.uid)}
       ${selected ? `<span class="enemy-target-marker" aria-hidden="true"></span>` : ""}
       ${renderEntityHitSparks("enemy", enemy.uid)}
-      ${renderEnemyIntentLane(move)}
       <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}" data-intent-outcome="${intentOutcome}">
         <i class="${enemyIntentIconClass(move)}" aria-hidden="true"></i>
         <span>
@@ -7257,13 +7255,6 @@ function enemyCombatantAriaLabel(enemy, move) {
   const block = enemy.block > 0 ? `방어 ${enemy.block}` : "방어 없음";
   const intent = move ? `다음 행동 ${enemyMoveLabel(move)}. ${move.intent ?? ""}` : "다음 행동 없음.";
   return `${enemy.name}. 체력 ${enemy.hp}/${enemy.maxHp}. ${block}. ${intent} ${statusSummarySentence(enemy.statuses)}`;
-}
-
-function renderEnemyIntentLane(move = {}) {
-  const damage = enemyMoveDamageTotal(move);
-  if (damage <= 0) return "";
-  const label = move.hits > 1 ? `${move.damage}x${move.hits}` : String(damage);
-  return `<span class="enemy-intent-lane" data-threat="${label}" aria-hidden="true"></span>`;
 }
 
 function renderBossPhaseChip(enemy, template) {
@@ -11473,6 +11464,10 @@ function renderAbout() {
           <div>
             <strong>로컬 실행</strong>
             <code>npm run dev</code>
+          </div>
+          <div>
+            <strong>빌드 미리보기</strong>
+            <code>npm run build · npm run preview</code>
           </div>
           <div>
             <strong>검증</strong>

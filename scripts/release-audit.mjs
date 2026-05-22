@@ -465,7 +465,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "copy:audit", "playtest", "balance", "balance:long", "assets:cards", "assets:card-ui", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:shop", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "preview", "test", "build", "audio:mix", "copy:audit", "playtest", "balance", "balance:long", "assets:cards", "assets:card-ui", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:shop", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 정적 산출물 미리보기, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("no-debug-qa-artifacts", "디버그 검증 산출물 없음", debugQaFiles.length === 0, "출시 후보 검증 폴더에는 debug 이름의 임시 스크린샷이나 리포트가 남지 않아야 합니다.", { debugQaFiles });
   record("qa-artifact-hygiene", "QA 산출물 허용 목록", unexpectedQaFiles.length === 0, "qa 폴더에는 자동 리포트, browser-qa 증거, 에셋 검수 시트만 남아야 합니다.", { unexpectedQaFiles });
@@ -787,7 +787,8 @@ async function main() {
   record(
     "enemy-turn-fx-single-line",
     "상대 턴 공격 FX 단일화",
-    styleSource.includes(".combat-board.fx-active .enemy-intent-lane") &&
+    !mainSource.includes("renderEnemyIntentLane(move)") &&
+      !mainSource.includes('class="enemy-intent-lane"') &&
       !/\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card[\s\S]*animation:\s*enemy-turn-step/.test(styleSource) &&
       !/\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card\.intent-attack-player \.enemy-sprite \.sprite-ground-burst/.test(styleSource) &&
       groupedEnemyFxQa?.duplicateFxCount === 1 &&
@@ -860,8 +861,8 @@ async function main() {
   record(
     "pages-deploy-workflow",
     "GitHub Pages 배포 준비",
-    hasPagesWorkflow && readme.includes("https://kibak812.github.io/deep-signal/") && readme.includes("Pages artifact") && readme.includes("npm run copy:audit") && readme.includes("npm run audit") && buildSource.includes(".nojekyll"),
-    "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
+    hasPagesWorkflow && readme.includes("https://kibak812.github.io/deep-signal/") && readme.includes("Pages artifact") && readme.includes("npm run preview") && readme.includes("npm run copy:audit") && readme.includes("npm run audit") && buildSource.includes(".nojekyll"),
+    "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시하고, 같은 산출물을 로컬에서 미리볼 수 있어야 합니다.",
     { workflow: ".github/workflows/deploy-pages.yml", mode: "github-actions-pages", publishDir: "dist" }
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");

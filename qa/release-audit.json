@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T23:15:05.475Z",
+  "generatedAt": "2026-05-22T23:41:55.030Z",
   "ok": true,
   "passed": 49,
   "failed": 0,
@@ -14,10 +14,11 @@
       "id": "scripts",
       "label": "로컬 실행/빌드/테스트 명령",
       "ok": true,
-      "detail": "package.json에 기본 실행, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.",
+      "detail": "package.json에 기본 실행, 정적 산출물 미리보기, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.",
       "evidence": {
         "start": "python3 -m http.server 4173",
         "dev": "python3 -m http.server 4173",
+        "preview": "python3 -m http.server 4173 --directory dist",
         "test": "node --test",
         "build": "node scripts/build.mjs",
         "assets:arena": "python3 scripts/generate-arena-backdrops.py && python3 scripts/generate-arena-props.py && python3 scripts/generate-event-backdrops.py",
@@ -324,10 +325,10 @@
       "ok": true,
       "detail": "효과음과 배경음의 상대 볼륨, 덕킹, 믹스 버스 검증 리포트가 최신이어야 합니다.",
       "evidence": {
-        "checkedAt": "2026-05-22T22:07:49.209Z",
-        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
-        "sourceFingerprint": "sha256:d452c817f3e933938508eacb4e174e966b20319dd9cb91ff2a65aadc006a3546",
-        "reportMtime": "2026-05-22T22:07:49.211Z",
+        "checkedAt": "2026-05-22T23:39:57.361Z",
+        "sourceFreshAfter": "2026-05-22T23:37:43.150Z",
+        "sourceFingerprint": "sha256:381fbdfc88afac1df7f8f10936eb786117bde07ddc96278734f1debec9203990",
+        "reportMtime": "2026-05-22T23:39:57.363Z",
         "gain": {
           "musicGainScale": 0.35,
           "maxThemeGain": 0.048,
@@ -812,10 +813,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T23:14:39.564Z",
-        "sourceFreshAfter": "2026-05-22T23:13:44.189Z",
-        "sourceFingerprint": "sha256:eafb2bc4152b793ecfcdfedd73f93e9d69029a9c075f82cfbe1e728c7fb6dbc9",
-        "reportMtime": "2026-05-22T23:14:39.566Z",
+        "generatedAt": "2026-05-22T23:39:57.184Z",
+        "sourceFreshAfter": "2026-05-22T23:40:15.058Z",
+        "sourceFingerprint": "sha256:d91003ee5fe6042ea22a471a05c3798207887040e40c62caeeaa45bdcb185a4c",
+        "reportMtime": "2026-05-22T23:39:57.187Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -845,7 +846,7 @@
       "id": "pages-deploy-workflow",
       "label": "GitHub Pages 배포 준비",
       "ok": true,
-      "detail": "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
+      "detail": "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시하고, 같은 산출물을 로컬에서 미리볼 수 있어야 합니다.",
       "evidence": {
         "workflow": ".github/workflows/deploy-pages.yml",
         "mode": "github-actions-pages",
@@ -2267,8 +2268,8 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
-        "sourceFingerprint": "sha256:fd3fc3e51cde7a5aa1e4e243770172bb05571cc76be96955fa8a27a9b274edc0",
+        "sourceFreshAfter": "2026-05-22T23:38:27.735Z",
+        "sourceFingerprint": "sha256:7cd5683cd7db1ac72de4851bfc7cc166ab28e7f7505618a684e17f6a9c83a345",
         "manifestSourceFresh": true,
         "manifestFileCount": 46,
         "fileCount": 46,
