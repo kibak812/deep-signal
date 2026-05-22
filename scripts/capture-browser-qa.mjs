@@ -1689,6 +1689,7 @@ async function assertHighEnergyHud(cdp) {
   const evidence = await evaluate(cdp, `(() => {
     const stack = document.querySelector(".combat-resource-stack");
     const panel = document.querySelector(".combat-energy-panel");
+    const energyMark = document.querySelector(".combat-energy-mark.resource-icon");
     const pips = document.querySelector(".energy-pips");
     const bars = [...document.querySelectorAll(".energy-pips i")];
     const stackBox = stack?.getBoundingClientRect();
@@ -1697,7 +1698,12 @@ async function assertHighEnergyHud(cdp) {
     const barBoxes = bars.map((bar) => bar.getBoundingClientRect());
     const style = pips ? getComputedStyle(pips) : null;
     const panelStyle = panel ? getComputedStyle(panel) : null;
+    const energyMarkStyle = energyMark ? getComputedStyle(energyMark) : null;
     const text = panel?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const usesResourceSprite =
+      Boolean(energyMarkStyle?.backgroundImage?.includes("resource-icons.png")) &&
+      energyMarkStyle?.backgroundSize === "500% 100%" &&
+      !(energyMark?.textContent ?? "").trim();
     const oneRow = barBoxes.every((box) => Math.abs(box.top - barBoxes[0].top) <= 1);
     const barsInsidePanel = Boolean(panelBox && pipsBox && pipsBox.left >= panelBox.left && pipsBox.right <= panelBox.right && pipsBox.bottom <= panelBox.bottom);
     const panelCenteredInStack = Boolean(stackBox && panelBox && Math.abs((panelBox.left + panelBox.width / 2) - (stackBox.left + stackBox.width / 2)) <= 1);
@@ -1706,6 +1712,7 @@ async function assertHighEnergyHud(cdp) {
       Boolean(panel) &&
       Boolean(pips) &&
       /5\\s*\\/\\s*5/.test(text) &&
+      usesResourceSprite &&
       pips?.style.getPropertyValue("--energy-pip-count") === "5" &&
       panelStyle?.justifySelf === "center" &&
       style?.gridTemplateColumns.split(" ").length === 5 &&
@@ -1716,6 +1723,8 @@ async function assertHighEnergyHud(cdp) {
     return {
       ok,
       text,
+      usesResourceSprite,
+      energyMarkClass: energyMark?.className ?? "",
       pipCountVar: pips?.style.getPropertyValue("--energy-pip-count") ?? "",
       gridTemplateColumns: style?.gridTemplateColumns ?? "",
       panelJustifySelf: panelStyle?.justifySelf ?? "",
@@ -3220,6 +3229,16 @@ async function assertCombatPileDockCompact(cdp) {
   const resting = await evaluate(cdp, `(() => {
     const dock = document.querySelector(".combat-pile-dock");
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
+    const icons = piles.map((pile) => pile.querySelector(".pile-icon.resource-icon"));
+    const iconEvidence = icons.map((icon) => {
+      const style = icon ? getComputedStyle(icon) : null;
+      return {
+        className: icon?.className ?? "",
+        backgroundImage: style?.backgroundImage ?? "",
+        backgroundSize: style?.backgroundSize ?? "",
+        text: icon?.textContent?.trim() ?? ""
+      };
+    });
     const labels = piles.map((pile) => {
       const label = pile.querySelector(".pile-label");
       const style = label ? getComputedStyle(label) : null;
@@ -3240,10 +3259,12 @@ async function assertCombatPileDockCompact(cdp) {
     const ok =
       Boolean(dock) &&
       piles.length === 4 &&
+      icons.length === 4 &&
+      iconEvidence.every((icon) => icon.backgroundImage.includes("resource-icons.png") && icon.backgroundSize.includes("500% 100%") && icon.text === "") &&
       labels.every((label) => label.opacity >= 0.85 && label.position === "relative" && label.pointerEvents === "none" && /^(뽑기|손패|버림|소멸)$/.test(label.text) && /더미 \\d+장 보기/.test(label.aria) && /\\d+장/.test(label.title)) &&
       boxes.every((box) => box.width <= 64 && box.height <= 64) &&
       !overflow;
-    return { ok, labels, boxes, scrollWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth };
+    return { ok, labels, iconEvidence, boxes, scrollWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth };
   })()`);
   if (!resting.ok) {
     throw new Error(`Combat pile dock compact state failed: ${JSON.stringify(resting)}`);

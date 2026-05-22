@@ -6863,13 +6863,31 @@ dd,
   backdrop-filter: blur(12px);
 }
 
-.combat-energy-panel span {
+.resource-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  background-image: url("../public/assets/resource-icons.png");
+  background-repeat: no-repeat;
+  background-size: 500% 100%;
+  background-position: var(--resource-icon-position, 0% 50%);
+  filter: drop-shadow(0 0 6px var(--resource-icon-glow, rgba(125, 211, 252, 0.24)));
+  vertical-align: middle;
+}
+
+.resource-icon-energy { --resource-icon-position: 0% 50%; --resource-icon-glow: rgba(125, 211, 252, 0.26); }
+.resource-icon-draw { --resource-icon-position: 25% 50%; --resource-icon-glow: rgba(125, 211, 252, 0.22); }
+.resource-icon-hand { --resource-icon-position: 50% 50%; --resource-icon-glow: rgba(246, 193, 119, 0.24); }
+.resource-icon-discard { --resource-icon-position: 75% 50%; --resource-icon-glow: rgba(142, 242, 220, 0.22); }
+.resource-icon-exhaust { --resource-icon-position: 100% 50%; --resource-icon-glow: rgba(251, 113, 133, 0.24); }
+
+.combat-energy-panel .combat-energy-mark {
   grid-column: 1;
   align-self: start;
+  justify-self: center;
+  width: 22px;
+  height: 22px;
   color: var(--cyan);
-  font-size: 0.62rem;
-  font-weight: 900;
-  letter-spacing: 0.04em;
+  opacity: 0.96;
 }
 
 .combat-energy-panel strong {
@@ -6953,7 +6971,7 @@ dd,
     rgba(13, 10, 18, 0.92);
 }
 
-.combat-energy-panel.empty span,
+.combat-energy-panel.empty .combat-energy-mark,
 .combat-energy-panel.empty em {
   color: #ffb8c5;
 }
@@ -7057,6 +7075,16 @@ dd,
     inset 0 0 12px color-mix(in srgb, currentColor 12%, transparent);
 }
 
+.combat-pile-dock .pile-icon.resource-icon {
+  background-image:
+    linear-gradient(145deg, rgba(236, 248, 243, 0.11), transparent 46%),
+    linear-gradient(180deg, rgba(5, 14, 23, 0.92), rgba(8, 20, 30, 0.78)),
+    url("../public/assets/resource-icons.png");
+  background-repeat: no-repeat;
+  background-size: auto, auto, 500% 100%;
+  background-position: center, center, var(--resource-icon-position, 0% 50%);
+}
+
 .combat-pile-dock .pile-icon::before,
 .combat-pile-dock .pile-icon::after {
   position: absolute;
@@ -7067,11 +7095,11 @@ dd,
 }
 
 .combat-pile-dock .pile-icon::after {
-  inset: 10px 7px;
+  inset: 4px 3px;
   border-width: 0;
-  background: color-mix(in srgb, currentColor 42%, transparent);
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-  opacity: 0.36;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.28), transparent 44%);
+  clip-path: inset(0 round 3px);
+  opacity: 0.22;
 }
 
 .combat-pile-dock .pile strong {
@@ -23245,6 +23273,19 @@ input[type="range"] {
   background-size: 2000% 100%;
 }
 
+.high-contrast .resource-icon {
+  background-image: url("../public/assets/resource-icons.png");
+  background-size: 500% 100%;
+}
+
+.high-contrast .combat-pile-dock .pile-icon.resource-icon {
+  background-image:
+    linear-gradient(180deg, #000, #000),
+    linear-gradient(180deg, #000, #000),
+    url("../public/assets/resource-icons.png");
+  background-size: auto, auto, 500% 100%;
+}
+
 .high-contrast button,
 .high-contrast .hud-stat,
 .high-contrast .save-status,
@@ -25408,9 +25449,10 @@ input[type="range"] {
     padding: 6px 8px;
   }
 
-  .combat-energy-panel span {
+  .combat-energy-panel .combat-energy-mark {
     align-self: center;
-    font-size: 0.62rem;
+    width: 20px;
+    height: 20px;
   }
 
   .combat-energy-panel strong {

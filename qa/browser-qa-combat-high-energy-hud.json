@@ -1,6 +1,8 @@
 {
   "ok": true,
-  "text": "⚡ 5 /5",
+  "text": "5 /5",
+  "usesResourceSprite": true,
+  "energyMarkClass": "combat-energy-mark resource-icon resource-icon-energy",
   "pipCountVar": "5",
   "gridTemplateColumns": "10px 10px 10px 10px 10px",
   "panelJustifySelf": "center",

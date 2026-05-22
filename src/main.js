@@ -6441,7 +6441,7 @@ function renderCombatEnergyPanel(combat) {
   const pips = Array.from({ length: visiblePipCount }, (_, index) => `<i class="${index < combat.energy ? "filled" : ""}" aria-hidden="true"></i>`).join("");
   return `
     <section class="combat-energy-panel ${energyState}" aria-label="에너지 ${combat.energy}/${combat.maxEnergy}. 지금 낼 수 있는 카드 ${playableCount}장">
-      <span aria-hidden="true">⚡</span>
+      <span class="combat-energy-mark ${resourceIconClass("energy")}" aria-hidden="true"></span>
       <strong><b>${combat.energy}</b><small>/${combat.maxEnergy}</small></strong>
       <div class="energy-pips" style="--energy-pip-count:${visiblePipCount}">${pips}</div>
       <em>${playableCount ? `지금 낼 수 있는 카드 ${playableCount}장` : "전하 부족"}</em>
@@ -6696,20 +6696,16 @@ function combatPileButton(combat, id) {
   const emptyClass = cards.length ? "has-cards" : "is-empty";
   return `
     <button class="pile pile-${id} ${emptyClass}" data-action="open-pile" data-id="${id}" ${selected} aria-label="${pileDef.label} 더미 ${cards.length}장 보기" title="${pileDef.label} ${cards.length}장">
-      <span class="pile-icon" aria-hidden="true">${combatPileIcon(id)}</span>
+      <span class="pile-icon ${resourceIconClass(id)}" aria-hidden="true"></span>
       <span class="pile-label">${pileDef.label}</span>
       <strong><b>${cards.length}</b><small>장</small></strong>
     </button>
   `;
 }
 
-function combatPileIcon(id) {
-  return {
-    draw: "↻",
-    hand: "▣",
-    discard: "↓",
-    exhaust: "×"
-  }[id] ?? "•";
+function resourceIconClass(id) {
+  const safeId = ["energy", "draw", "hand", "discard", "exhaust"].includes(id) ? id : "energy";
+  return `resource-icon resource-icon-${safeId}`;
 }
 
 function renderCombatForecast(run) {

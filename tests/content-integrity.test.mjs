@@ -253,6 +253,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
   const relicIconSource = readFileSync(new URL("../scripts/generate-relic-icons.py", import.meta.url), "utf8");
+  const resourceIconSource = readFileSync(new URL("../scripts/generate-resource-icons.py", import.meta.url), "utf8");
   const statusIconSource = readFileSync(new URL("../scripts/generate-status-icons.py", import.meta.url), "utf8");
   const titleIdentitySource = readFileSync(new URL("../scripts/generate-title-identity.py", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
@@ -280,12 +281,16 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
   assert.match(packageSource, /"assets:relics": "python3 scripts\/generate-relic-icons\.py"/);
+  assert.match(packageSource, /"assets:resources": "python3 scripts\/generate-resource-icons\.py"/);
   assert.match(packageSource, /"assets:statuses": "python3 scripts\/generate-status-icons\.py"/);
   assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
   assert.match(mapNodeIconSource, /TYPES = \["combat", "elite", "event", "shop", "rest", "boss"\]/);
   assert.match(relicIconSource, /ICONS = \[/);
   assert.match(relicIconSource, /"hourglass"/);
   assert.match(relicIconSource, /"weight"/);
+  assert.match(resourceIconSource, /ICONS = \["energy", "draw", "hand", "discard", "exhaust"\]/);
+  assert.match(resourceIconSource, /def draw_energy/);
+  assert.match(resourceIconSource, /def draw_exhaust/);
   assert.match(statusIconSource, /STATUSES = \[/);
   assert.match(statusIconSource, /"vulnerable"/);
   assert.match(statusIconSource, /"haste"/);
@@ -345,6 +350,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /title-raster-identity-assets/);
   assert.match(auditSource, /map-raster-node-icons/);
   assert.match(auditSource, /relic-raster-icons/);
+  assert.match(auditSource, /resource-raster-icons/);
   assert.match(auditSource, /status-raster-icons/);
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
   assert.match(styleSource, /deep-signal-mark\.png/);
@@ -1223,6 +1229,10 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /<span class="arena-depth-fog"><\/span>/);
   assert.match(mainSource, /aria-live="assertive"/);
   assert.match(mainSource, /class="combat-energy-panel \$\{energyState\}" aria-label="에너지/);
+  assert.match(mainSource, /class="combat-energy-mark \$\{resourceIconClass\("energy"\)\}"/);
+  assert.match(mainSource, /class="pile-icon \$\{resourceIconClass\(id\)\}"/);
+  assert.match(mainSource, /function resourceIconClass\(id\)/);
+  assert.doesNotMatch(mainSource, /function combatPileIcon\(id\)/);
   assert.match(mainSource, /const visiblePipCount = Math\.min\(8, pipCount\)/);
   assert.match(mainSource, /style="--energy-pip-count:\$\{visiblePipCount\}"/);
   assert.match(mainSource, /function combatTurnLockReason\(run = state\.run\)/);
@@ -1556,6 +1566,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-pile-dock/);
   assert.match(styleSource, /\.combat-pile-dock \.pile-row/);
   assert.match(styleSource, /\.combat-pile-dock \.pile-icon::before/);
+  assert.match(styleSource, /resource-icons\.png/);
+  assert.match(styleSource, /background-size:\s*500% 100%/);
+  assert.match(styleSource, /\.resource-icon-energy[\s\S]*--resource-icon-position:\s*0% 50%/);
+  assert.match(styleSource, /\.resource-icon-exhaust[\s\S]*--resource-icon-position:\s*100% 50%/);
+  assert.match(styleSource, /\.combat-pile-dock \.pile-icon\.resource-icon/);
   assert.match(styleSource, /\.combat-pile-dock \.pile strong small/);
   assert.match(styleSource, /\.combat-pile-dock \.pile-label[\s\S]*position:\s*relative/);
   assert.match(styleSource, /\.combat-pile-dock \.pile-label[\s\S]*opacity:\s*0\.96/);
@@ -1571,6 +1586,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(captureSource, /panelCenteredInStack/);
   assert.match(captureSource, /assertHighEnergyHud\(cdp\)/);
   assert.match(captureSource, /browser-qa-combat-high-energy-hud\.json/);
+  assert.match(captureSource, /usesResourceSprite/);
+  assert.match(captureSource, /resource-icons\.png/);
   assert.match(captureSource, /usesStatusSprite/);
   assert.match(captureSource, /status-icons\.png/);
   assert.match(styleSource, /\.forecast-chip/);
