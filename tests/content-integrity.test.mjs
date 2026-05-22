@@ -280,6 +280,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /enemyDensityQa/);
   assert.match(auditSource, /silhouetteReady/);
   assert.match(auditSource, /fxFocusReady/);
+  assert.match(auditSource, /enemy-turn-fx-single-line/);
+  assert.match(auditSource, /groupedEnemyFxQa/);
+  assert.match(auditSource, /visibleIntentLaneCount/);
+  assert.match(auditSource, /visiblePlayerImpactRingCount/);
+  assert.match(auditSource, /singleResolvedAttackCue/);
+  assert.match(readme, /상대 턴 공격 FX 단일화/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
@@ -414,6 +420,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /fxFocusSample/);
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
   assert.match(captureSource, /duplicateFxCount/);
+  assert.match(captureSource, /attackTrailCount/);
+  assert.match(captureSource, /visibleIntentLaneCount/);
+  assert.match(captureSource, /visiblePlayerImpactRingCount/);
+  assert.match(captureSource, /singleResolvedAttackCue/);
   assert.match(captureSource, /fixtureHasMultiHit/);
   assert.match(captureSource, /hitCount/);
   assert.match(captureSource, /expectedHitBadge/);
@@ -1503,7 +1513,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /@keyframes enemy-turn-step/);
   assert.match(styleSource, /@keyframes player-turn-brace/);
   assert.match(styleSource, /@keyframes player-turn-ready-rise/);
-  assert.match(styleSource, /\.combat-board\.turn-cue-enemy \.enemy-card/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card/);
   assert.match(styleSource, /\.combat-board\.turn-cue-player \.player-sprite/);
   assert.match(styleSource, /\.combat-board \.depth-rail small[\s\S]*display:\s*block/);
   assert.match(styleSource, /\.combat-board \.depth-rail small[\s\S]*text-overflow:\s*ellipsis/);
@@ -1554,6 +1564,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /@keyframes combat-aim-flow/);
   assert.match(styleSource, /\.high-contrast \.combat-aim-line/);
   assert.match(styleSource, /@media \(max-width: 680px\)[\s\S]*\.combat-aim-line[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-board\.fx-active \.enemy-intent-lane[\s\S]*opacity:\s*0/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-hit-sparks,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-hit-sparks i[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring::before,[\s\S]*\.combat-board\.fx-enemy-board \.player-stand\.fx-target \.entity-impact-ring::after[\s\S]*display:\s*none/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card\.intent-attack-player \.enemy-sprite \.sprite-ground-burst/);
   assert.match(styleSource, /\.game-card\.previewing-card/);
   assert.match(styleSource, /\.enemy-card\.preview-target/);
   assert.match(styleSource, /\.enemy-card\.preview-target\.preview-damage::before/);
@@ -1717,6 +1732,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /@keyframes fx-impact-cross/);
   assert.match(styleSource, /\.combat-board\.fx-active:not\(\.fx-enemy-board\)\.fx-mode-enemy \.player-sprite/);
   assert.match(styleSource, /\.combat-board\.fx-enemy-board \.enemy-card\.fx-source:not\(\.fx-defeated\) \.enemy-sprite/);
+  assert.match(styleSource, /\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.player-stand/);
   assert.match(styleSource, /\.player-stand\.fx-target \.player-sprite/);
   assert.match(styleSource, /\.fx-chip-row i\.warn/);
   assert.match(styleSource, /\.player-stand\.fx-target \.status-row span/);

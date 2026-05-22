@@ -1371,6 +1371,11 @@ async function captureGroupedEnemyFx(cdp) {
     });
     const visibleSparkCount = [...document.querySelectorAll(".entity-hit-sparks i")]
       .filter((spark) => getComputedStyle(spark).display !== "none").length;
+    const visiblePlayerImpactRingCount = [...document.querySelectorAll(".player-stand.fx-target .entity-impact-ring")]
+      .filter((ring) => {
+        const style = getComputedStyle(ring);
+        return style.display !== "none" && style.visibility !== "hidden";
+      }).length;
     const fixtureData = ${JSON.stringify(fixture)};
     const fixtureHasMultiHit = fixtureData.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
     const expectedHitBadge = fixtureData.expectedHitCount > 1 ? \`×\${fixtureData.expectedHitCount}\` : "";
@@ -1393,8 +1398,9 @@ async function captureGroupedEnemyFx(cdp) {
       duplicatedBeamHidden: beamStyle?.display === "none",
       attackTrailCount: fxTrails.length,
       visibleIntentLaneCount: visibleIntentLanes.length,
-      singleResolvedAttackCue: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length === 1 && fxTrails.length === 1 && visibleIntentLanes.length === 0,
+      singleResolvedAttackCue: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length === 1 && fxTrails.length === 1 && visibleIntentLanes.length === 0 && visibleSparkCount === 0 && visiblePlayerImpactRingCount === 0,
       visibleSparkCount,
+      visiblePlayerImpactRingCount,
       lockedBoard: document.querySelector(".combat-board")?.classList.contains("turn-locked") ?? false,
       endTurnText,
       endTurnAria: endTurn?.getAttribute("aria-label") ?? "",
@@ -1410,7 +1416,8 @@ async function captureGroupedEnemyFx(cdp) {
     !evidence.actorCount ||
     !evidence.duplicatedBeamHidden ||
     !evidence.singleResolvedAttackCue ||
-    evidence.visibleSparkCount > 1 ||
+    evidence.visibleSparkCount !== 0 ||
+    evidence.visiblePlayerImpactRingCount !== 0 ||
     !evidence.lockedBoard ||
     !/상대 턴/.test(evidence.endTurnText) ||
     !/상대 턴 진행 중/.test(evidence.endTurnAria) ||

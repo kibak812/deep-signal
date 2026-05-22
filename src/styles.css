@@ -4848,6 +4848,17 @@ dd,
   opacity: 0;
 }
 
+.combat-board.fx-enemy-board .player-stand.fx-target .entity-hit-sparks,
+.combat-board.fx-enemy-board .player-stand.fx-target .entity-hit-sparks i {
+  display: none;
+}
+
+.combat-board.fx-enemy-board .player-stand.fx-target .entity-impact-ring,
+.combat-board.fx-enemy-board .player-stand.fx-target .entity-impact-ring::before,
+.combat-board.fx-enemy-board .player-stand.fx-target .entity-impact-ring::after {
+  display: none;
+}
+
 .boss-mechanic {
   display: none;
   gap: 4px;

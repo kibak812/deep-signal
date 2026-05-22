@@ -189,6 +189,7 @@ async function main() {
   const mobileCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-mobile-combat-refreshed.json"), "utf8").catch(() => "null"));
   const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
   const enemyDensityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-density-readability.json"), "utf8").catch(() => "null"));
+  const groupedEnemyFxQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-grouped-fx.json"), "utf8").catch(() => "null"));
   const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
@@ -361,6 +362,27 @@ async function main() {
       fxFocusReady: enemyDensityQa?.fxFocusReady ?? false,
       fxFocusSample: enemyDensityQa?.fxFocusSample ?? null,
       layers: enemyDensityQa?.silhouetteLayers ?? []
+    }
+  );
+  record(
+    "enemy-turn-fx-single-line",
+    "상대 턴 공격 FX 단일화",
+    styleSource.includes(".combat-board.fx-active .enemy-intent-lane") &&
+      styleSource.includes(".combat-board.turn-cue-enemy:not(.fx-active) .enemy-card") &&
+      groupedEnemyFxQa?.duplicateFxCount === 1 &&
+      groupedEnemyFxQa?.attackTrailCount === 1 &&
+      groupedEnemyFxQa?.visibleIntentLaneCount === 0 &&
+      groupedEnemyFxQa?.singleResolvedAttackCue &&
+      groupedEnemyFxQa?.visibleSparkCount === 0 &&
+      groupedEnemyFxQa?.visiblePlayerImpactRingCount === 0,
+    "상대 턴 실제 공격 중에는 예고선, 피격 보조선, 턴 전환 모션이 실제 공격 궤적을 복제해 보이지 않아야 합니다.",
+    {
+      duplicateFxCount: groupedEnemyFxQa?.duplicateFxCount ?? null,
+      attackTrailCount: groupedEnemyFxQa?.attackTrailCount ?? null,
+      visibleIntentLaneCount: groupedEnemyFxQa?.visibleIntentLaneCount ?? null,
+      visibleSparkCount: groupedEnemyFxQa?.visibleSparkCount ?? null,
+      visiblePlayerImpactRingCount: groupedEnemyFxQa?.visiblePlayerImpactRingCount ?? null,
+      singleResolvedAttackCue: groupedEnemyFxQa?.singleResolvedAttackCue ?? false
     }
   );
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
