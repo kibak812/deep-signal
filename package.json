@@ -12,6 +12,7 @@
     "assets:arena": "python3 scripts/generate-arena-backdrops.py && python3 scripts/generate-arena-props.py && python3 scripts/generate-event-backdrops.py",
     "assets:backdrops": "python3 scripts/generate-arena-backdrops.py",
     "assets:events": "python3 scripts/generate-event-backdrops.py",
+    "assets:title": "python3 scripts/generate-title-identity.py",
     "assets:cards": "python3 scripts/rebuild-card-illustrations.py",
     "assets:enemies": "python3 scripts/generate-enemy-portraits.py",
     "assets:combatants": "python3 scripts/rebuild-combatants.py",

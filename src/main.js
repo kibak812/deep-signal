@@ -3558,7 +3558,7 @@ function renderTitle() {
       <section class="title-hero">
         <div class="title-copy">
           <div class="brand-mark" aria-hidden="true">
-            <img src="./public/assets/deep-signal-mark.svg" alt="">
+            <img src="./public/assets/deep-signal-mark.png" alt="">
           </div>
           <h1>딥 시그널</h1>
           <p>침수된 데이터 심해로 내려가 카드를 고르고, 위험한 경로를 돌파해 최심부의 왜곡을 잠재우세요.</p>
@@ -3820,7 +3820,7 @@ function renderCharacterPanel() {
     <section class="character-panel" aria-label="선택한 캐릭터">
       <div class="character-core">
         <div class="diver-emblem" aria-hidden="true">
-          <img src="./public/assets/echo-diver-emblem.svg" alt="">
+          <img src="./public/assets/echo-diver-emblem.png" alt="">
         </div>
         <header>
           <span>플레이어</span>

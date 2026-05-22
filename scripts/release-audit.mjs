@@ -42,6 +42,17 @@ async function exists(path) {
   }
 }
 
+async function pngSize(path) {
+  try {
+    const buffer = await readFile(path);
+    const signature = buffer.subarray(0, 8).toString("hex");
+    if (signature !== "89504e470d0a1a0a") return null;
+    return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20), bytes: buffer.length };
+  } catch {
+    return null;
+  }
+}
+
 async function newestMtime(paths) {
   const times = await Promise.all(
     paths.map(async (path) => {
@@ -65,7 +76,10 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
     resolve(root, "src/data/enemies.js"),
     resolve(root, "src/data/events.js"),
     resolve(root, "src/data/relics.js"),
-    resolve(root, "public/assets/favicon.svg")
+    resolve(root, "scripts/generate-title-identity.py"),
+    resolve(root, "public/assets/favicon.svg"),
+    resolve(root, "public/assets/deep-signal-mark.png"),
+    resolve(root, "public/assets/echo-diver-emblem.png")
   ];
   const sourceMtime = await newestMtime(sourcePaths);
   const files = qaFiles.filter((file) => /^browser-qa-.+\.png$/.test(file)).sort();
@@ -195,6 +209,9 @@ async function main() {
   const buildSource = await readFile(resolve(root, "scripts/build.mjs"), "utf8");
   const cardArtScriptSource = await readFile(resolve(root, "scripts/rebuild-card-illustrations.py"), "utf8");
   const combatantScriptSource = await readFile(resolve(root, "scripts/rebuild-combatants.py"), "utf8");
+  const titleIdentityScriptSource = await readFile(resolve(root, "scripts/generate-title-identity.py"), "utf8").catch(() => "");
+  const titleMarkPng = await pngSize(resolve(root, "public/assets/deep-signal-mark.png"));
+  const diverEmblemPng = await pngSize(resolve(root, "public/assets/echo-diver-emblem.png"));
   const deployWorkflowSource = await readFile(resolve(root, ".github/workflows/deploy-pages.yml"), "utf8").catch(() => "");
   const testSource = `${await readFile(resolve(root, "tests/engine.test.mjs"), "utf8")}\n${await readFile(resolve(root, "tests/content-integrity.test.mjs"), "utf8")}`;
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
@@ -500,6 +517,21 @@ async function main() {
       preFxEnemyActionClean: groupedEnemyFxQa?.preFx?.preFxEnemyActionClean ?? false,
       singleResolvedAttackCue: groupedEnemyFxQa?.singleResolvedAttackCue ?? false
     }
+  );
+  record(
+    "title-raster-identity-assets",
+    "타이틀 핵심 마크 래스터 자산",
+    titleMarkPng?.width >= 256 &&
+      titleMarkPng?.height >= 256 &&
+      diverEmblemPng?.width >= 256 &&
+      diverEmblemPng?.height >= 256 &&
+      mainSource.includes("./public/assets/deep-signal-mark.png") &&
+      mainSource.includes("./public/assets/echo-diver-emblem.png") &&
+      styleSource.includes("deep-signal-mark.png") &&
+      titleIdentityScriptSource.includes("draw_deep_signal_mark") &&
+      titleIdentityScriptSource.includes("draw_echo_diver_emblem"),
+    "시작 화면의 브랜드 마크와 캐릭터 엠블럼은 약어 텍스트나 SVG 플레이스홀더가 아니라 재생성 가능한 PNG 게임 자산이어야 합니다.",
+    { titleMarkPng, diverEmblemPng }
   );
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
   record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });

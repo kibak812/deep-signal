@@ -251,6 +251,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
+  const titleIdentitySource = readFileSync(new URL("../scripts/generate-title-identity.py", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
   let deployWorkflowSource = "";
@@ -274,6 +275,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
+  assert.match(titleIdentitySource, /def draw_deep_signal_mark\(\):/);
+  assert.match(titleIdentitySource, /def draw_echo_diver_emblem\(\):/);
   assert.match(readme, /npm run playtest/);
   assert.match(readme, /표층 전체 완주와 최심층 최종 보스 패배/);
   assert.match(readme, /새로고침 뒤 이어하기와 백업 복구/);
@@ -324,8 +328,11 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /generatedAt.*git 변경사항/s);
   assert.match(auditSource, /function writeAuditReportIfChanged\(report\)/);
   assert.match(auditSource, /Report unchanged at/);
+  assert.match(auditSource, /title-raster-identity-assets/);
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
-  assert.match(styleSource, /deep-signal-mark\.svg/);
+  assert.match(styleSource, /deep-signal-mark\.png/);
+  assert.match(mainSource, /deep-signal-mark\.png/);
+  assert.match(mainSource, /echo-diver-emblem\.png/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
