@@ -6938,6 +6938,16 @@ function enemyIntentReadout(move = null, fallback = "행동 없음") {
   return move?.intent ?? move?.label ?? fallback;
 }
 
+function enemyIntentOutcomeLine(move = {}) {
+  move ??= {};
+  const parts = [];
+  const damage = enemyMoveDamageTotal(move);
+  if (damage > 0) parts.push(move.hits > 1 ? `피해 ${move.damage} x${move.hits} · 총 ${damage}` : `피해 ${damage}`);
+  for (const status of move.applyToPlayer ?? []) parts.push(`${keywordLabel(status.status)} ${status.amount}`);
+  for (const item of enemyMoveSetupParts(move)) parts.push(item);
+  return parts.join(" · ") || enemyIntentReadout(move);
+}
+
 function enemyMoveDamageTotal(move = {}) {
   const safeMove = move ?? {};
   return Math.max(0, Number(safeMove.damage ?? 0) * Math.max(1, Number(safeMove.hits ?? 1)));
@@ -7008,6 +7018,7 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
   const intentLabel = enemyMoveLabel(move);
   const intentVisualLabel = enemyIntentCompactLabel(move);
   const intentText = enemyIntentReadout(move);
+  const intentOutcome = enemyIntentOutcomeLine(move);
   const intentAria = `${enemy.name} 다음 행동: ${intentLabel}${move?.intent ? ` ${move.intent}` : ""}`;
   return `
     <button class="enemy-card intent-${move?.type ?? "none"} ${attackDamage > 0 ? "intent-attack-player" : ""} ${attackDamage >= 18 ? "intent-heavy" : ""} ${selected ? "selected" : ""} ${fxSource ? "fx-source" : ""} ${fxTarget ? "fx-target" : ""} ${fxHit ? "fx-hit" : ""} ${fxDefeated ? "fx-defeated" : ""} ${enemy.summoned ? "summoned" : ""} ${enemy.hp <= 0 ? "dead" : ""}" data-action="select-enemy" data-id="${enemy.uid}" style="${enemyStageStyle(index, totalEnemies, template)}" aria-label="${enemyAria}">
@@ -7015,11 +7026,12 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       ${selected ? `<span class="enemy-target-marker" aria-hidden="true"></span>` : ""}
       ${renderEntityHitSparks("enemy", enemy.uid)}
       ${renderEnemyIntentLane(move)}
-      <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}">
+      <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}" data-intent-outcome="${intentOutcome}">
         <i aria-hidden="true">${enemyIntentIconLabel(move)}</i>
         <span>
           <em>${intentVisualLabel}</em>
-          <strong>${enemyIntentCompactValue(move)}</strong>
+          <strong>${intentLabel}</strong>
+          <small>${intentOutcome}</small>
         </span>
       </div>
       ${renderEnemyThreatStrip(enemy, selected)}

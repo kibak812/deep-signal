@@ -1240,16 +1240,22 @@ async function captureEnemyDensityReadability(cdp) {
     const sprites = [...document.querySelectorAll(".enemy-card .enemy-sprite")];
     const plates = [...document.querySelectorAll(".enemy-card .combatant-plate")];
     const intents = [...document.querySelectorAll(".enemy-card .intent")];
+    const threats = [...document.querySelectorAll(".enemy-card .enemy-threat.compact")];
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const stripRect = strip?.getBoundingClientRect();
     const lineRect = line?.getBoundingClientRect();
+    const spriteRects = sprites.map((item) => item.getBoundingClientRect());
     const plateRects = plates.map((item) => item.getBoundingClientRect());
     const intentRects = intents.map((item) => item.getBoundingClientRect());
+    const threatRects = threats.map((item) => item.getBoundingClientRect());
+    const intentReadouts = intents.map((item) => item.innerText.replace(/\\s+/g, " ").trim());
+    const intentOutcomes = intents.map((item) => item.dataset.intentOutcome ?? "");
     const overlapArea = (left, right) => {
       const width = Math.max(0, Math.min(left.right, right.right) - Math.max(left.left, right.left));
       const height = Math.max(0, Math.min(left.bottom, right.bottom) - Math.max(left.top, right.top));
       return width * height;
     };
+    const rectSummary = (rect) => ({ left: Math.round(rect.left), top: Math.round(rect.top), right: Math.round(rect.right), bottom: Math.round(rect.bottom), width: Math.round(rect.width), height: Math.round(rect.height) });
     const plateOverlaps = [];
     for (let i = 0; i < plateRects.length; i += 1) {
       for (let j = i + 1; j < plateRects.length; j += 1) {
@@ -1262,6 +1268,19 @@ async function captureEnemyDensityReadability(cdp) {
         if (i !== j && overlapArea(intentRects[i], plateRects[j]) > 4) intentPlateOverlaps.push([i, j]);
       }
     }
+    const intentSpriteOverlaps = [];
+    for (let i = 0; i < intentRects.length; i += 1) {
+      for (let j = 0; j < spriteRects.length; j += 1) {
+        if (overlapArea(intentRects[i], spriteRects[j]) > 4) intentSpriteOverlaps.push([i, j]);
+      }
+    }
+    const threatSpriteOverlaps = [];
+    for (let i = 0; i < threatRects.length; i += 1) {
+      for (let j = 0; j < spriteRects.length; j += 1) {
+        if (overlapArea(threatRects[i], spriteRects[j]) > 4) threatSpriteOverlaps.push([i, j]);
+      }
+    }
+    const intentPanelsReadable = intents.length === cards.length && intentReadouts.every((item) => /\\S+/.test(item)) && intentOutcomes.every((item) => /피해|방어|회복|약화|취약|바이러스|힘|소환/.test(item));
     const overflowingLine = line ? line.scrollWidth > line.clientWidth + 2 : true;
     const stripWithinViewport = Boolean(stripRect && stripRect.left >= 0 && stripRect.right <= window.innerWidth && stripRect.top >= 0);
     const cardsWithinStage = cards.every((card) => {
@@ -1321,6 +1340,14 @@ async function captureEnemyDensityReadability(cdp) {
       overflowingLine,
       plateOverlaps,
       intentPlateOverlaps,
+      intentSpriteOverlaps,
+      threatSpriteOverlaps,
+      intentPanelsReadable,
+      intentReadouts,
+      intentOutcomes,
+      spriteBoxes: spriteRects.map(rectSummary),
+      intentBoxes: intentRects.map(rectSummary),
+      threatBoxes: threatRects.map(rectSummary),
       silhouetteReady,
       silhouetteLayers,
       fxFocusReady,
@@ -1340,6 +1367,9 @@ async function captureEnemyDensityReadability(cdp) {
     evidence.overflowingLine ||
     evidence.plateOverlaps.length ||
     evidence.intentPlateOverlaps.length ||
+    evidence.intentSpriteOverlaps.length ||
+    evidence.threatSpriteOverlaps.length ||
+    !evidence.intentPanelsReadable ||
     !evidence.silhouetteReady ||
     !evidence.fxFocusReady
   ) {
@@ -1357,6 +1387,25 @@ async function captureGroupedEnemyFx(cdp) {
   await clickText(cdp, "이어하기");
   await waitForSelector(cdp, ".combat-board");
   await clickSelector(cdp, "[data-action='end-turn']");
+  await waitForSelector(cdp, ".combat-turn-cue.enemy");
+  const preFxEvidence = await evaluate(cdp, `(() => {
+    const board = document.querySelector(".combat-board");
+    const enemyCards = [...document.querySelectorAll(".enemy-card")];
+    const enemyBursts = [...document.querySelectorAll(".enemy-card .sprite-ground-burst")];
+    const player = document.querySelector(".player-stand");
+    const animationNames = [
+      ...enemyCards.map((card) => getComputedStyle(card).animationName),
+      ...enemyBursts.map((burst) => getComputedStyle(burst).animationName),
+      player ? getComputedStyle(player).animationName : ""
+    ].filter(Boolean);
+    return {
+      cueVisible: Boolean(document.querySelector(".combat-turn-cue.enemy")),
+      fxVisible: Boolean(document.querySelector(".combat-action-fx.fx-enemy-action")),
+      boardClass: board?.className ?? "",
+      animationNames,
+      preFxEnemyActionClean: animationNames.every((name) => !/enemy-turn-step|player-turn-brace|sprite-ground-burst/.test(name))
+    };
+  })()`);
   await waitForSelector(cdp, ".combat-action-fx.fx-enemy-action");
   const evidence = await evaluate(cdp, `(() => {
     const fx = document.querySelector(".combat-action-fx.fx-enemy-action");
@@ -1384,6 +1433,7 @@ async function captureGroupedEnemyFx(cdp) {
     const endTurn = document.querySelector(".end-turn");
     const endTurnText = endTurn?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     return {
+      preFx: ${JSON.stringify(preFxEvidence)},
       fixture: fixtureData,
       grouped: fx?.classList.contains("fx-grouped") ?? false,
       actorCount: actor?.getAttribute("data-actor-count") ?? "",
@@ -1413,6 +1463,8 @@ async function captureGroupedEnemyFx(cdp) {
   })()`);
   if (
     !evidence.grouped ||
+    !evidence.preFx?.preFxEnemyActionClean ||
+    evidence.preFx?.fxVisible ||
     !evidence.actorCount ||
     !evidence.duplicatedBeamHidden ||
     !evidence.singleResolvedAttackCue ||
@@ -1615,24 +1667,30 @@ async function assertEnergyLockedHandHover(cdp) {
 
 async function assertHighEnergyHud(cdp) {
   const evidence = await evaluate(cdp, `(() => {
+    const stack = document.querySelector(".combat-resource-stack");
     const panel = document.querySelector(".combat-energy-panel");
     const pips = document.querySelector(".energy-pips");
     const bars = [...document.querySelectorAll(".energy-pips i")];
+    const stackBox = stack?.getBoundingClientRect();
     const panelBox = panel?.getBoundingClientRect();
     const pipsBox = pips?.getBoundingClientRect();
     const barBoxes = bars.map((bar) => bar.getBoundingClientRect());
     const style = pips ? getComputedStyle(pips) : null;
+    const panelStyle = panel ? getComputedStyle(panel) : null;
     const text = panel?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const oneRow = barBoxes.every((box) => Math.abs(box.top - barBoxes[0].top) <= 1);
     const barsInsidePanel = Boolean(panelBox && pipsBox && pipsBox.left >= panelBox.left && pipsBox.right <= panelBox.right && pipsBox.bottom <= panelBox.bottom);
+    const panelCenteredInStack = Boolean(stackBox && panelBox && Math.abs((panelBox.left + panelBox.width / 2) - (stackBox.left + stackBox.width / 2)) <= 1);
     const barsReadable = barBoxes.length === 5 && barBoxes.every((box) => box.width >= 8 && box.height >= 5);
     const ok =
       Boolean(panel) &&
       Boolean(pips) &&
       /5\\s*\\/\\s*5/.test(text) &&
       pips?.style.getPropertyValue("--energy-pip-count") === "5" &&
+      panelStyle?.justifySelf === "center" &&
       style?.gridTemplateColumns.split(" ").length === 5 &&
       oneRow &&
+      panelCenteredInStack &&
       barsInsidePanel &&
       barsReadable;
     return {
@@ -1640,9 +1698,12 @@ async function assertHighEnergyHud(cdp) {
       text,
       pipCountVar: pips?.style.getPropertyValue("--energy-pip-count") ?? "",
       gridTemplateColumns: style?.gridTemplateColumns ?? "",
+      panelJustifySelf: panelStyle?.justifySelf ?? "",
       oneRow,
+      panelCenteredInStack,
       barsInsidePanel,
       barsReadable,
+      stackBox: stackBox ? { left: Math.round(stackBox.left), right: Math.round(stackBox.right), width: Math.round(stackBox.width) } : null,
       panelBox: panelBox ? { left: Math.round(panelBox.left), right: Math.round(panelBox.right), bottom: Math.round(panelBox.bottom), width: Math.round(panelBox.width), height: Math.round(panelBox.height) } : null,
       pipsBox: pipsBox ? { left: Math.round(pipsBox.left), right: Math.round(pipsBox.right), bottom: Math.round(pipsBox.bottom), width: Math.round(pipsBox.width), height: Math.round(pipsBox.height) } : null,
       bars: barBoxes.map((box) => ({ left: Math.round(box.left), top: Math.round(box.top), width: Math.round(box.width), height: Math.round(box.height) }))
@@ -1694,7 +1755,14 @@ async function assertStatusTooltipUx(cdp) {
 }
 
 async function assertIntentTooltipUx(cdp) {
-  await hoverSelector(cdp, ".enemy-card .intent");
+  const activated = await evaluate(cdp, `(() => {
+    const enemy = document.querySelector(".enemy-card");
+    if (!enemy) return false;
+    enemy.focus?.({ preventScroll: true });
+    enemy.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true, relatedTarget: document.body }));
+    return true;
+  })()`);
+  if (!activated) throw new Error("Intent tooltip activation failed: missing enemy card");
   await waitForSelector(cdp, ".intent-portal-tooltip:not([hidden])");
   const result = await evaluate(cdp, `(() => {
     const intent = document.querySelector(".enemy-card .intent");
@@ -2183,9 +2251,13 @@ async function assertCardHoverLayout(cdp) {
     const recommendedBox = recommendedCard?.getBoundingClientRect();
     const badgeBox = recommendedBadge?.getBoundingClientRect();
     const titleBox = recommendedTitle?.getBoundingClientRect();
+    const handZone = document.querySelector(".hand-zone");
+    const handZoneBox = handZone?.getBoundingClientRect();
     const previewBoardActive = Boolean(document.querySelector(".combat-board.preview-active"));
     const previewingCard = document.querySelector(".hand-zone .game-card.previewing-card");
     const previewingCardBox = previewingCard?.getBoundingClientRect();
+    const hoverCardTopClearance = handZoneBox && previewingCardBox ? previewingCardBox.top - handZoneBox.top : null;
+    const hoverCardClipSafe = typeof hoverCardTopClearance === "number" && hoverCardTopClearance >= 8;
     const dimmedCards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']:not(.previewing-card)")].filter((card) => Number(getComputedStyle(card).opacity) < 0.7).length;
     const keywordText = tooltip.querySelector(".tooltip-keywords span");
     const rulesText = tooltip.querySelector(".tooltip-rules");
@@ -2225,7 +2297,8 @@ async function assertCardHoverLayout(cdp) {
       previewingCardBox &&
       previewingCardBox.top >= 0 &&
       previewingCardBox.bottom <= window.innerHeight - 4 &&
-      previewingCardBox.height <= 286
+      previewingCardBox.height <= 286 &&
+      hoverCardClipSafe
     );
     const badgeInsideCard = !recommendedCard || Boolean(badgeBox && recommendedBox && badgeBox.left >= recommendedBox.left && badgeBox.right <= recommendedBox.right && badgeBox.top >= recommendedBox.top && badgeBox.bottom <= recommendedBox.bottom);
     const badgeClearTitle = !recommendedCard || Boolean(badgeBox && titleBox && (badgeBox.bottom <= titleBox.top || badgeBox.top >= titleBox.bottom || badgeBox.right <= titleBox.left || badgeBox.left >= titleBox.right));
@@ -2261,6 +2334,8 @@ async function assertCardHoverLayout(cdp) {
       withinViewport,
       tooltipReadable,
       hoverCardStable,
+      hoverCardClipSafe,
+      hoverCardTopClearance,
       badgeInsideCard,
       badgeClearTitle,
       tooltipPreviewHidden,
@@ -2286,6 +2361,9 @@ async function assertCardHoverLayout(cdp) {
       box: { left: box.left, top: box.top, right: box.right, bottom: box.bottom, width: box.width, height: box.height },
       previewingCardBox: previewingCardBox
         ? { left: previewingCardBox.left, top: previewingCardBox.top, right: previewingCardBox.right, bottom: previewingCardBox.bottom, width: previewingCardBox.width, height: previewingCardBox.height }
+        : null,
+      handZoneBox: handZoneBox
+        ? { left: handZoneBox.left, top: handZoneBox.top, right: handZoneBox.right, bottom: handZoneBox.bottom, width: handZoneBox.width, height: handZoneBox.height }
         : null
     };
   })()`);
@@ -2400,6 +2478,7 @@ async function assertMobileCombatTouchUx(cdp) {
     const enemies = [...document.querySelectorAll(".enemy-card:not(.dead)")];
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
     const handBox = rect(hand);
+    const visibleHandBox = rect(cards[0]) ?? handBox;
     const endBox = rect(endTurn);
     const resourceBox = rect(resource);
     const energyBox = rect(energy);
@@ -2445,8 +2524,8 @@ async function assertMobileCombatTouchUx(cdp) {
       !overlaps(handBox, endBox, 2) &&
       !overlaps(resourceBox, endBox, 2) &&
       !overlaps(playBox, endBox, 2) &&
-      !overlaps(playBox, handBox, 6) &&
-      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
+      !overlaps(playBox, visibleHandBox, 6) &&
+      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, visibleHandBox, 6));
     const touchRailReady =
       handStyleSnapshot.overflowX === "auto" &&
       handStyleSnapshot.overscrollBehaviorX === "contain" &&
@@ -2540,6 +2619,7 @@ async function assertTabletCombatUx(cdp) {
     const enemyPlates = [...document.querySelectorAll(".enemy-card:not(.dead) .combatant-plate")];
     const piles = [...document.querySelectorAll(".combat-pile-dock .pile")];
     const handBox = rect(hand);
+    const visibleHandBox = rect(cards[0]) ?? handBox;
     const commandBox = rect(command);
     const resourceBox = rect(resource);
     const energyBox = rect(energy);
@@ -2594,8 +2674,8 @@ async function assertTabletCombatUx(cdp) {
       !overlaps(handBox, endBox, 2) &&
       !overlaps(resourceBox, endBox, 2) &&
       !overlaps(playBox, endBox, 2) &&
-      !overlaps(playBox, handBox, 6) &&
-      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, handBox, 6));
+      !overlaps(playBox, visibleHandBox, 6) &&
+      (!targetBox || targetBox.width <= 1 || !overlaps(targetBox, visibleHandBox, 6));
     const touchRailReady =
       handStyleSnapshot.overflowX === "auto" &&
       handStyleSnapshot.overscrollBehaviorX === "contain" &&
@@ -2653,7 +2733,7 @@ async function assertTabletCombatUx(cdp) {
       arenaToHandGap: handBox && enemyLineBox ? handBox.top - enemyLineBox.bottom : null,
       handStyle: handStyleSnapshot,
       cardTouchAction,
-      boxes: { hand: handBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, arena: arenaBox, enemyLine: enemyLineBox, playerPlate: playerPlateBox, enemyPlates: enemyPlateBoxes, targetAssist: targetBox, targetSwitcher: targetSwitchBox },
+      boxes: { hand: handBox, visibleHand: visibleHandBox, command: commandBox, resource: resourceBox, energy: energyBox, playPanel: playBox, endTurn: endBox, arena: arenaBox, enemyLine: enemyLineBox, playerPlate: playerPlateBox, enemyPlates: enemyPlateBoxes, targetAssist: targetBox, targetSwitcher: targetSwitchBox },
       targetSwitchButtonBoxes,
       cardCount: cards.length,
       cardBoxes: cardBoxes.slice(0, 3),
@@ -2848,6 +2928,9 @@ async function assertCombatRouteBeacon(cdp) {
     const beacon = document.querySelector(".combat-route-beacon");
     const pips = [...(beacon?.querySelectorAll(".route-pips i") ?? [])];
     const target = beacon?.querySelector("small em")?.innerText.trim() ?? "";
+    const targetBox = beacon?.querySelector("small em")?.getBoundingClientRect();
+    const distanceBox = beacon?.querySelector("small b")?.getBoundingClientRect();
+    const goalRowStyle = beacon ? getComputedStyle(beacon.querySelector("small")) : null;
     const text = beacon?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const label = beacon?.getAttribute("aria-label") ?? "";
     const box = beacon?.getBoundingClientRect();
@@ -2862,7 +2945,8 @@ async function assertCombatRouteBeacon(cdp) {
     const hasPlainProgress = /진행/.test(text) && /\\d막/.test(text) && /\\d층/.test(text) && /(보스까지 \\d층|보스전)/.test(text);
     const hasBossTarget = target.length >= 3 && !/카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파/.test(target) && label.includes("목표 " + target);
     const hasRewardContext = /전투 후 (카드 선택|유물 획득|특수 보상|정비 기회|휴식|구역 돌파)/.test(label);
-    const ok = Boolean(beacon) && visible && pips.length === 7 && hasPlainProgress && hasBossTarget && hasRewardContext && label.includes("현재 위치") && noCombatantOverlap && noHandOverlap;
+    const goalInline = Boolean(goalRowStyle?.display === "flex" && targetBox && distanceBox && Math.abs(targetBox.top - distanceBox.top) <= 1 && targetBox.left >= distanceBox.right);
+    const ok = Boolean(beacon) && visible && pips.length === 7 && hasPlainProgress && hasBossTarget && hasRewardContext && label.includes("현재 위치") && noCombatantOverlap && noHandOverlap && goalInline;
     return {
       ok,
       text,
@@ -2873,8 +2957,12 @@ async function assertCombatRouteBeacon(cdp) {
       hasPlainProgress,
       hasBossTarget,
       hasRewardContext,
+      goalInline,
+      goalRowDisplay: goalRowStyle?.display ?? "",
       noCombatantOverlap,
       noHandOverlap,
+      distanceBox: distanceBox ? { left: Math.round(distanceBox.left), top: Math.round(distanceBox.top), right: Math.round(distanceBox.right), bottom: Math.round(distanceBox.bottom) } : null,
+      targetBox: targetBox ? { left: Math.round(targetBox.left), top: Math.round(targetBox.top), right: Math.round(targetBox.right), bottom: Math.round(targetBox.bottom) } : null,
       box: box ? { left: Math.round(box.left), top: Math.round(box.top), right: Math.round(box.right), bottom: Math.round(box.bottom), width: Math.round(box.width), height: Math.round(box.height) } : null,
       combatantBoxes: combatantBoxes.map((combatantBox) => ({ left: Math.round(combatantBox.left), top: Math.round(combatantBox.top), right: Math.round(combatantBox.right), bottom: Math.round(combatantBox.bottom) })).slice(0, 6)
     };
@@ -3823,6 +3911,7 @@ async function assertBossStatusStrip(cdp) {
     const patternBox = pattern?.getBoundingClientRect();
     const readinessBox = readiness?.getBoundingClientRect();
     const handBox = document.querySelector(".hand-zone")?.getBoundingClientRect();
+    const visibleHandBox = document.querySelector(".hand-zone .game-card")?.getBoundingClientRect() ?? handBox;
     const playerPlateBox = document.querySelector(".boss-fight .player-plate")?.getBoundingClientRect();
     const playerSpriteBox = document.querySelector(".boss-fight .player-sprite")?.getBoundingClientRect();
     const style = strip ? getComputedStyle(strip) : null;
@@ -3836,10 +3925,11 @@ async function assertBossStatusStrip(cdp) {
     const overlaps = (a, b) => Boolean(a && b && !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top));
     const playerVitalsClearHand = Boolean(
       handBox &&
+      visibleHandBox &&
       playerPlateBox &&
       playerSpriteBox &&
-      playerPlateBox.bottom <= handBox.top - 10 &&
-      playerSpriteBox.bottom <= handBox.top - 6
+      playerPlateBox.bottom <= visibleHandBox.top - 10 &&
+      playerSpriteBox.bottom <= visibleHandBox.top - 6
     );
     const ok =
       Boolean(strip) &&
@@ -3907,6 +3997,7 @@ async function assertBossStatusStrip(cdp) {
       patternBox: patternBox ? { x: Math.round(patternBox.x), y: Math.round(patternBox.y), width: Math.round(patternBox.width), height: Math.round(patternBox.height) } : null,
       playerVitalsClearHand,
       handTop: handBox ? Math.round(handBox.top) : null,
+      visibleHandTop: visibleHandBox ? Math.round(visibleHandBox.top) : null,
       playerPlateBox: playerPlateBox ? { top: Math.round(playerPlateBox.top), bottom: Math.round(playerPlateBox.bottom), width: Math.round(playerPlateBox.width), height: Math.round(playerPlateBox.height) } : null,
       playerSpriteBox: playerSpriteBox ? { top: Math.round(playerSpriteBox.top), bottom: Math.round(playerSpriteBox.bottom), width: Math.round(playerSpriteBox.width), height: Math.round(playerSpriteBox.height) } : null,
       pointerEvents: style?.pointerEvents ?? "",
@@ -4576,7 +4667,7 @@ async function evaluate(cdp, expression) {
     returnByValue: true
   });
   if (result.exceptionDetails) {
-    throw new Error(result.exceptionDetails.text ?? "Runtime evaluation failed.");
+    throw new Error(result.exceptionDetails.exception?.description ?? result.exceptionDetails.text ?? "Runtime evaluation failed.");
   }
   return result.result?.value;
 }

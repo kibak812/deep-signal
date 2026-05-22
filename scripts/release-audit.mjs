@@ -368,11 +368,13 @@ async function main() {
     "enemy-turn-fx-single-line",
     "상대 턴 공격 FX 단일화",
     styleSource.includes(".combat-board.fx-active .enemy-intent-lane") &&
-      styleSource.includes(".combat-board.turn-cue-enemy:not(.fx-active) .enemy-card") &&
+      !/\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card[\s\S]*animation:\s*enemy-turn-step/.test(styleSource) &&
+      !/\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card\.intent-attack-player \.enemy-sprite \.sprite-ground-burst/.test(styleSource) &&
       groupedEnemyFxQa?.duplicateFxCount === 1 &&
       groupedEnemyFxQa?.attackTrailCount === 1 &&
       groupedEnemyFxQa?.visibleIntentLaneCount === 0 &&
       groupedEnemyFxQa?.singleResolvedAttackCue &&
+      groupedEnemyFxQa?.preFx?.preFxEnemyActionClean &&
       groupedEnemyFxQa?.visibleSparkCount === 0 &&
       groupedEnemyFxQa?.visiblePlayerImpactRingCount === 0,
     "상대 턴 실제 공격 중에는 예고선, 피격 보조선, 턴 전환 모션이 실제 공격 궤적을 복제해 보이지 않아야 합니다.",
@@ -382,6 +384,7 @@ async function main() {
       visibleIntentLaneCount: groupedEnemyFxQa?.visibleIntentLaneCount ?? null,
       visibleSparkCount: groupedEnemyFxQa?.visibleSparkCount ?? null,
       visiblePlayerImpactRingCount: groupedEnemyFxQa?.visiblePlayerImpactRingCount ?? null,
+      preFxEnemyActionClean: groupedEnemyFxQa?.preFx?.preFxEnemyActionClean ?? false,
       singleResolvedAttackCue: groupedEnemyFxQa?.singleResolvedAttackCue ?? false
     }
   );
