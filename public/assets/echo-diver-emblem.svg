@@ -1,32 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
   <title id="title">Echo Diver emblem</title>
-  <desc id="desc">A compact diver helmet crest with a deep-sea signal lens.</desc>
+  <desc id="desc">A compact deep-sea diver helmet crest with a bright signal lens.</desc>
   <defs>
-    <linearGradient id="rim" x1="16" y1="12" x2="112" y2="118" gradientUnits="userSpaceOnUse">
+    <linearGradient id="rim" x1="17" y1="12" x2="112" y2="116" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#ecf8f3"/>
       <stop offset="0.42" stop-color="#45d3ff"/>
       <stop offset="1" stop-color="#10224a"/>
     </linearGradient>
-    <radialGradient id="lens" cx="49%" cy="42%" r="48%">
-      <stop offset="0" stop-color="#f8f3d0"/>
-      <stop offset="0.28" stop-color="#7df9ff"/>
-      <stop offset="0.67" stop-color="#186bff"/>
-      <stop offset="1" stop-color="#04101c"/>
+    <radialGradient id="visor" cx="50%" cy="43%" r="50%">
+      <stop offset="0" stop-color="#fff8d7"/>
+      <stop offset="0.26" stop-color="#80fbff"/>
+      <stop offset="0.68" stop-color="#176fff"/>
+      <stop offset="1" stop-color="#03101c"/>
     </radialGradient>
-    <linearGradient id="gold" x1="31" y1="30" x2="98" y2="98" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#ffe2a2"/>
-      <stop offset="1" stop-color="#b7702f"/>
+    <linearGradient id="brass" x1="29" y1="23" x2="99" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe5a5"/>
+      <stop offset="0.58" stop-color="#f6c177"/>
+      <stop offset="1" stop-color="#8a4c2c"/>
     </linearGradient>
   </defs>
-  <rect x="9" y="9" width="110" height="110" rx="10" fill="#07111f"/>
-  <rect x="15" y="15" width="98" height="98" rx="8" fill="#0a1728" stroke="#7dd3fc" stroke-opacity="0.42"/>
-  <path d="M32 79V57c0-20 13-34 32-34s32 14 32 34v22c0 15-12 27-32 27S32 94 32 79z" fill="#0e2434" stroke="url(#rim)" stroke-width="5"/>
-  <path d="M39 59c3-18 13-28 25-28s22 10 25 28" fill="none" stroke="#f6c177" stroke-width="4" stroke-linecap="round" opacity="0.78"/>
-  <circle cx="64" cy="64" r="24" fill="url(#lens)" stroke="#ecf8f3" stroke-opacity="0.78" stroke-width="3"/>
-  <circle cx="64" cy="64" r="11" fill="#07111f" stroke="url(#gold)" stroke-width="3"/>
-  <path d="M64 40v48M40 64h48" stroke="#ecf8f3" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
-  <path d="M30 86c12 9 23 14 34 14s22-5 34-14" fill="none" stroke="#45d3ff" stroke-width="4" stroke-linecap="round" opacity="0.55"/>
-  <path d="M22 37l18 8M106 37l-18 8M24 98l16-8M104 98l-16-8" stroke="#f6c177" stroke-width="4" stroke-linecap="round" opacity="0.74"/>
-  <circle cx="38" cy="37" r="4" fill="#7dd3fc"/>
-  <circle cx="90" cy="37" r="4" fill="#7dd3fc"/>
+  <rect x="8" y="8" width="112" height="112" rx="12" fill="#06101d"/>
+  <rect x="14" y="14" width="100" height="100" rx="9" fill="#0a1728" stroke="#7dd3fc" stroke-opacity="0.46"/>
+  <path d="M31 79V57c0-20 13-35 33-35s33 15 33 35v22c0 17-13 28-33 28S31 96 31 79z" fill="#0d2434" stroke="url(#rim)" stroke-width="5.5" stroke-linejoin="round"/>
+  <path d="M39 57c4-17 13-26 25-26s21 9 25 26" fill="none" stroke="url(#brass)" stroke-width="5" stroke-linecap="round" opacity="0.86"/>
+  <circle cx="64" cy="64" r="25" fill="url(#visor)" stroke="#ecf8f3" stroke-opacity="0.82" stroke-width="3.5"/>
+  <circle cx="64" cy="64" r="12" fill="#07111f" stroke="url(#brass)" stroke-width="3.5"/>
+  <path d="M64 40v48M40 64h48" stroke="#ecf8f3" stroke-width="2.2" stroke-linecap="round" opacity="0.68"/>
+  <path d="M29 87c12 9 24 14 35 14s23-5 35-14" fill="none" stroke="#45d3ff" stroke-width="4.5" stroke-linecap="round" opacity="0.58"/>
+  <path d="M24 38l16 8M104 38l-16 8M25 99l15-9M103 99l-15-9" stroke="#f6c177" stroke-width="4" stroke-linecap="round" opacity="0.78"/>
+  <circle cx="38" cy="38" r="4.5" fill="#7dd3fc"/>
+  <circle cx="90" cy="38" r="4.5" fill="#7dd3fc"/>
 </svg>

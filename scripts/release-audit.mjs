@@ -217,6 +217,7 @@ async function main() {
     resolve(root, "src/data/events.js"),
     resolve(root, "src/data/relics.js"),
     resolve(root, "src/engine/save-slots.js"),
+    resolve(root, "src/engine/settings.js"),
     resolve(root, "scripts/balance-runner.mjs"),
     resolve(root, "scripts/release-playtest-report.mjs")
   ]);
@@ -374,8 +375,12 @@ async function main() {
       playtestReport.persistence?.id === "save-reload-recovery" &&
       Object.values(playtestReport.persistence?.checks ?? {}).every(Boolean) &&
       /백업/.test(playtestReport.persistence?.recovered?.noticeTitle ?? "") &&
-      /이어하기/.test(playtestReport.persistence?.recovered?.noticeDetail ?? ""),
-    "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구를 재현해야 합니다.",
+      /이어하기/.test(playtestReport.persistence?.recovered?.noticeDetail ?? "") &&
+      playtestReport.settings?.id === "settings-persistence" &&
+      Object.values(playtestReport.settings?.checks ?? {}).every(Boolean) &&
+      playtestReport.settings?.reloaded?.highContrast === true &&
+      playtestReport.settings?.reloaded?.tacticalAdvisor === false,
+    "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드를 재현해야 합니다.",
     {
       sourceFreshAfter: new Date(playtestSourceMtime).toISOString(),
       reportMtime: playtestReportMtime ? new Date(playtestReportMtime).toISOString() : null,
@@ -395,6 +400,12 @@ async function main() {
         savedPhase: playtestReport?.persistence?.savedPhase ?? null,
         recovered: playtestReport?.persistence?.recovered ?? null,
         checks: playtestReport?.persistence?.checks ?? null
+      },
+      settings: {
+        id: playtestReport?.settings?.id ?? null,
+        key: playtestReport?.settings?.key ?? null,
+        reloaded: playtestReport?.settings?.reloaded ?? null,
+        checks: playtestReport?.settings?.checks ?? null
       }
     }
   );

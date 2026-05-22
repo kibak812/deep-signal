@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T15:52:45.799Z",
+  "generatedAt": "2026-05-22T16:00:29.151Z",
   "ok": true,
   "summary": {
     "scenarios": 2,
@@ -7,6 +7,7 @@
     "wins": 1,
     "defeats": 1,
     "persistenceRecovered": true,
+    "settingsPersisted": true,
     "requiredRouteTypes": [
       "combat",
       "event",
@@ -279,6 +280,52 @@
       "recoveryNoticeReadable": true,
       "recoveryMirrorsPrimary": true,
       "deleteClearsSavedRun": true
+    }
+  },
+  "settings": {
+    "id": "settings-persistence",
+    "label": "설정 저장과 재로드",
+    "key": "abyssalArchive.settings.v1",
+    "chosen": {
+      "volume": 0.15,
+      "musicVolume": 0.4,
+      "motionSpeed": 1.3,
+      "textScale": 1.15,
+      "highContrast": true,
+      "tacticalAdvisor": false
+    },
+    "reloaded": {
+      "volume": 0.15,
+      "musicVolume": 0.4,
+      "motionSpeed": 1.3,
+      "textScale": 1.15,
+      "highContrast": true,
+      "tacticalAdvisor": false
+    },
+    "missingDefaults": {
+      "volume": 0.35,
+      "musicVolume": 0.28,
+      "motionSpeed": 1,
+      "textScale": 1,
+      "highContrast": false,
+      "tacticalAdvisor": true
+    },
+    "unavailableDefaults": {
+      "volume": 0.35,
+      "musicVolume": 0.28,
+      "motionSpeed": 1,
+      "textScale": 1,
+      "highContrast": false,
+      "tacticalAdvisor": true
+    },
+    "checks": {
+      "saveSucceeded": true,
+      "rawStored": true,
+      "volumePersists": true,
+      "motionAndTextPersist": true,
+      "switchesPersist": true,
+      "defaultsLoadWhenMissing": true,
+      "unavailableStorageSafe": true
     }
   }
 }

@@ -1,34 +1,42 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
   <title id="title">Deep Signal mark</title>
-  <desc id="desc">A glowing deep-sea signal core with sonar rings and a descending beacon.</desc>
+  <desc id="desc">A luminous abyss beacon with sonar arcs and a suspended signal core.</desc>
   <defs>
     <linearGradient id="frame" x1="14" y1="10" x2="114" y2="118" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#8ee8ff"/>
-      <stop offset="0.52" stop-color="#2e74ff"/>
+      <stop offset="0" stop-color="#c8f8ff"/>
+      <stop offset="0.38" stop-color="#4bd7ff"/>
+      <stop offset="0.78" stop-color="#2457ff"/>
       <stop offset="1" stop-color="#071426"/>
     </linearGradient>
-    <radialGradient id="glow" cx="49%" cy="41%" r="48%">
-      <stop offset="0" stop-color="#ecf8f3"/>
-      <stop offset="0.2" stop-color="#9bf6ff"/>
-      <stop offset="0.58" stop-color="#1c77ff" stop-opacity="0.74"/>
+    <radialGradient id="abyssGlow" cx="50%" cy="43%" r="54%">
+      <stop offset="0" stop-color="#f8fff8"/>
+      <stop offset="0.18" stop-color="#9bf6ff"/>
+      <stop offset="0.52" stop-color="#1677ff" stop-opacity="0.82"/>
       <stop offset="1" stop-color="#03111d" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="beam" x1="64" y1="12" x2="64" y2="112" gradientUnits="userSpaceOnUse">
+    <linearGradient id="coreGold" x1="43" y1="34" x2="84" y2="87" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe5a5"/>
+      <stop offset="0.55" stop-color="#f6c177"/>
+      <stop offset="1" stop-color="#7f4328"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="64" y1="15" x2="64" y2="113" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#f6c177"/>
-      <stop offset="0.5" stop-color="#7dd3fc"/>
-      <stop offset="1" stop-color="#2b64ff" stop-opacity="0.12"/>
+      <stop offset="0.4" stop-color="#7dd3fc"/>
+      <stop offset="1" stop-color="#2b64ff" stop-opacity="0.08"/>
     </linearGradient>
   </defs>
-  <rect x="9" y="9" width="110" height="110" rx="10" fill="#06101f"/>
-  <rect x="12" y="12" width="104" height="104" rx="8" fill="url(#frame)" opacity="0.34"/>
-  <rect x="18" y="18" width="92" height="92" rx="6" fill="#071527" stroke="#77ddff" stroke-opacity="0.38"/>
-  <circle cx="64" cy="58" r="45" fill="url(#glow)"/>
-  <path d="M64 15v98" stroke="url(#beam)" stroke-width="3" stroke-linecap="round"/>
-  <path d="M33 56c7-17 19-25 31-25s24 8 31 25" fill="none" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round" opacity="0.78"/>
-  <path d="M42 62c5-10 13-15 22-15s17 5 22 15" fill="none" stroke="#ecf8f3" stroke-width="3" stroke-linecap="round" opacity="0.72"/>
-  <path d="M29 79c16 8 31 12 35 12s19-4 35-12" fill="none" stroke="#2e9bff" stroke-width="5" stroke-linecap="round" opacity="0.5"/>
-  <path d="M64 34l16 27-16 27-16-27z" fill="#06101f" stroke="#f6c177" stroke-width="3"/>
-  <circle cx="64" cy="61" r="9" fill="#b8fbff" stroke="#f6c177" stroke-width="2"/>
-  <circle cx="64" cy="61" r="4" fill="#06101f"/>
-  <path d="M47 101h34" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round"/>
+  <rect x="8" y="8" width="112" height="112" rx="12" fill="#04101d"/>
+  <rect x="12" y="12" width="104" height="104" rx="10" fill="url(#frame)" opacity="0.36"/>
+  <rect x="18" y="18" width="92" height="92" rx="8" fill="#071527" stroke="#8ee8ff" stroke-opacity="0.45"/>
+  <circle cx="64" cy="59" r="47" fill="url(#abyssGlow)"/>
+  <path d="M64 14v100" stroke="url(#beam)" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M31 53c8-18 20-27 33-27s25 9 33 27" fill="none" stroke="#7dd3fc" stroke-width="4.5" stroke-linecap="round" opacity="0.78"/>
+  <path d="M40 61c6-11 14-17 24-17s18 6 24 17" fill="none" stroke="#ecf8f3" stroke-width="3.2" stroke-linecap="round" opacity="0.74"/>
+  <path d="M28 78c14 9 28 13 36 13s22-4 36-13" fill="none" stroke="#35b6ff" stroke-width="5" stroke-linecap="round" opacity="0.55"/>
+  <path d="M64 31l19 30-19 30-19-30z" fill="#06101f" stroke="url(#coreGold)" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="64" cy="61" r="12" fill="#c8f8ff" stroke="#f6c177" stroke-width="2.5"/>
+  <circle cx="64" cy="61" r="5" fill="#07111f"/>
+  <path d="M45 102h38" stroke="#7dd3fc" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="31" cy="90" r="3" fill="#f6c177" opacity="0.86"/>
+  <circle cx="97" cy="90" r="3" fill="#f6c177" opacity="0.86"/>
 </svg>

@@ -233,10 +233,11 @@ test("visible copy stays Korean-first and avoids awkward placeholder phrasing", 
   }
   assert.match(visibleSources.get("main"), /딥 시그널/);
   assert.match(visibleSources.get("character"), /에코 다이버/);
+  assert.match(visibleSources.get("character"), /심해 신호를 쫓는 탐사자/);
   assert.match(visibleSources.get("package"), /deep-signal/);
   assert.match(visibleSources.get("main"), /주력 고르기/);
   assert.match(visibleSources.get("main"), /뽑고, 쓰고, 남기지 않기/);
-  assert.match(visibleSources.get("main"), /데이터 심해/);
+  assert.match(visibleSources.get("main"), /침수된 데이터 심해/);
   assert.match(visibleSources.get("main"), /해로운 상태/);
   assert.match(visibleSources.get("main"), /경로 선택/);
   assert.match(visibleSources.get("main"), /보상 선택/);
@@ -251,6 +252,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
+  const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
   let deployWorkflowSource = "";
   try {
     deployWorkflowSource = readFileSync(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8");
@@ -258,6 +260,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
     if (error.code !== "ENOENT") throw error;
   }
   const indexSource = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const faviconSource = readFileSync(new URL("../public/assets/favicon.svg", import.meta.url), "utf8");
   assert.match(indexSource, /rel="icon"[^>]+favicon\.svg/);
@@ -274,17 +277,24 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /npm run playtest/);
   assert.match(readme, /표층 전체 완주와 최심층 최종 보스 패배/);
   assert.match(readme, /새로고침 뒤 이어하기와 백업 복구/);
+  assert.match(readme, /설정 저장과 재로드/);
   assert.match(playtestSource, /surface-full-clear/);
   assert.match(playtestSource, /deep-final-boss-loss/);
   assert.match(playtestSource, /save-reload-recovery/);
+  assert.match(playtestSource, /settings-persistence/);
   assert.match(playtestSource, /reloadRestoresCombatRun/);
   assert.match(playtestSource, /corruptedPrimaryRecoversBackup/);
   assert.match(playtestSource, /deleteClearsSavedRun/);
+  assert.match(playtestSource, /settingsPersisted/);
   assert.match(playtestSource, /requiredRouteCoverage/);
   assert.match(playtestSource, /Report unchanged at/);
+  assert.match(settingsSource, /export const SETTINGS_KEY = "abyssalArchive\.settings\.v1"/);
+  assert.match(settingsSource, /export function loadSettingsFromStorage\(storage\)/);
+  assert.match(settingsSource, /export function saveSettingsToStorage\(storage, settings\)/);
+  assert.match(mainSource, /import \{ loadSettingsFromStorage, saveSettingsToStorage \} from "\.\/engine\/settings\.js"/);
   assert.match(auditSource, /release-playtest-report/);
   assert.match(auditSource, /playtestReport/);
-  assert.match(auditSource, /표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구/);
+  assert.match(auditSource, /표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드/);
   assert.match(auditSource, /balance:long/);
   assert.match(auditSource, /balance-long-report/);
   assert.match(auditSource, /rewardGuidance/);
@@ -1003,6 +1013,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   const engineSource = readFileSync(new URL("../src/engine/game.js", import.meta.url), "utf8");
+  const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
   assert.match(mainSource, /role="status" aria-live="polite" aria-atomic="true"/);
   assert.match(mainSource, /function renderCombatEventFeed\(run\)/);
   assert.match(mainSource, /run\.log\.at\(-1\)/);
@@ -1337,7 +1348,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /aria-label="\$\{assistLabel\}"/);
   assert.match(mainSource, /state\.settings\.tacticalAdvisor !== false \? combatRecommendedCardInsight\(run, recommendedCardUid\) : null/);
   assert.match(mainSource, /class="tactical-advisor \$\{advice\.tone\}"/);
-  assert.match(mainSource, /tacticalAdvisor:\s*true/);
+  assert.match(settingsSource, /tacticalAdvisor:\s*true/);
   assert.match(mainSource, /renderSettingSwitch\("tacticalAdvisor"/);
   assert.match(mainSource, /data-setting="\$\{key\}"/);
   assert.match(mainSource, /이번 턴 적 행동 예고/);
@@ -1845,6 +1856,7 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
 
 test("procedural music loop and audio settings are wired", () => {
   const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
+  const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
   assert.match(mainSource, /const MUSIC_THEMES =/);
   assert.match(mainSource, /const BOSS_MUSIC_THEME_BY_ID =/);
   assert.match(mainSource, /the_cataloger:\s*\{\s*normal:\s*"boss_cataloger",\s*phase2:\s*"boss_cataloger_phase2"/);
@@ -1909,7 +1921,7 @@ test("procedural music loop and audio settings are wired", () => {
   assert.match(mainSource, /boss_lastgate_phase2:[\s\S]*bridge:/);
   assert.match(mainSource, /boss_lastgate_phase2:[\s\S]*transition:/);
   assert.match(mainSource, /function playMusicVoice\(frequency, start, duration, type, amount/);
-  assert.match(mainSource, /musicVolume:\s*0\.28/);
+  assert.match(settingsSource, /musicVolume:\s*0\.28/);
   assert.match(mainSource, /const baseGain = musicVolume\(\) \* MUSIC_GAIN_SCALE \* theme\.gain/);
   assert.match(mainSource, /document\.body\.dataset\.musicTheme/);
   assert.match(mainSource, /state\.music\.timer = window\.setInterval\(scheduleMusic/);

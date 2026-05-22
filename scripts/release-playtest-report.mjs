@@ -3,6 +3,7 @@ import { dirname } from "node:path";
 import { simulateRun } from "./balance-runner.mjs";
 import { enterNode, newRun } from "../src/engine/game.js";
 import { deleteSavedRun, loadRunFromStorage, saveRunToStorage, SAVE_BACKUP_KEY, SAVE_KEY } from "../src/engine/save-slots.js";
+import { loadSettingsFromStorage, saveSettingsToStorage, SETTINGS_KEY } from "../src/engine/settings.js";
 
 const DEFAULT_REPORT_PATH = "qa/release-playtest-report.json";
 const SCENARIOS = [
@@ -172,6 +173,43 @@ function persistenceReport() {
   };
 }
 
+function settingsReport() {
+  const storage = memoryStorage();
+  const chosen = {
+    volume: 0.15,
+    musicVolume: 0.4,
+    motionSpeed: 1.3,
+    textScale: 1.15,
+    highContrast: true,
+    tacticalAdvisor: false
+  };
+  const saved = saveSettingsToStorage(storage, chosen);
+  const reloaded = loadSettingsFromStorage(storage);
+  const raw = JSON.parse(storage.getItem(SETTINGS_KEY));
+  const missingDefaults = loadSettingsFromStorage(memoryStorage());
+  const unavailableDefaults = loadSettingsFromStorage(null);
+  const failedSave = saveSettingsToStorage(null, chosen);
+  const checks = {
+    saveSucceeded: saved === true,
+    rawStored: raw.highContrast === true && raw.tacticalAdvisor === false,
+    volumePersists: reloaded.volume === chosen.volume && reloaded.musicVolume === chosen.musicVolume,
+    motionAndTextPersist: reloaded.motionSpeed === chosen.motionSpeed && reloaded.textScale === chosen.textScale,
+    switchesPersist: reloaded.highContrast === true && reloaded.tacticalAdvisor === false,
+    defaultsLoadWhenMissing: missingDefaults.volume === 0.35 && missingDefaults.musicVolume === 0.28 && missingDefaults.highContrast === false && missingDefaults.tacticalAdvisor === true,
+    unavailableStorageSafe: unavailableDefaults.textScale === 1 && failedSave === false
+  };
+  return {
+    id: "settings-persistence",
+    label: "설정 저장과 재로드",
+    key: SETTINGS_KEY,
+    chosen,
+    reloaded,
+    missingDefaults,
+    unavailableDefaults,
+    checks
+  };
+}
+
 function reportComparable(report) {
   return JSON.stringify({ ...report, generatedAt: null });
 }
@@ -212,6 +250,7 @@ async function main() {
   const options = parseCliArgs();
   const scenarios = SCENARIOS.map(scenarioReport);
   const persistence = persistenceReport();
+  const settings = settingsReport();
   const failed = scenarios.flatMap((scenario) =>
     Object.entries(scenario.checks)
       .filter(([, ok]) => !ok)
@@ -220,6 +259,10 @@ async function main() {
     Object.entries(persistence.checks)
       .filter(([, ok]) => !ok)
       .map(([check]) => `${persistence.id}:${check}`)
+  ).concat(
+    Object.entries(settings.checks)
+      .filter(([, ok]) => !ok)
+      .map(([check]) => `${settings.id}:${check}`)
   );
   const report = {
     generatedAt: new Date().toISOString(),
@@ -230,10 +273,12 @@ async function main() {
       wins: scenarios.filter((scenario) => scenario.won).length,
       defeats: scenarios.filter((scenario) => !scenario.won).length,
       persistenceRecovered: persistence.checks.corruptedPrimaryRecoversBackup,
+      settingsPersisted: settings.checks.switchesPersist && settings.checks.motionAndTextPersist,
       requiredRouteTypes: [...new Set(SCENARIOS.flatMap((scenario) => scenario.requiredRouteTypes))]
     },
     scenarios,
-    persistence
+    persistence,
+    settings
   };
   const written = await writeReportIfChanged(report, options.reportPath);
   if (!report.ok) {
@@ -241,7 +286,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length} scenarios + persistence`);
+  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length} scenarios + persistence + settings`);
   console.log(`${written ? "Wrote" : "Report unchanged at"} ${options.reportPath}`);
 }
 

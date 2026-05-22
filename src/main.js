@@ -33,11 +33,11 @@ import {
 } from "./engine/game.js";
 import { defaultRecords, normalizeRecords, recordRunSummary } from "./engine/records.js";
 import { deleteSavedRun, loadRunFromStorage, saveRunToStorage } from "./engine/save-slots.js";
+import { loadSettingsFromStorage, saveSettingsToStorage } from "./engine/settings.js";
 import { EVENT_BY_ID } from "./data/events.js";
 import { KEYWORDS, STATUS_LABELS } from "./data/keywords.js";
 import { RELIC_BY_ID } from "./data/relics.js";
 
-const SETTINGS_KEY = "abyssalArchive.settings.v1";
 const RECORDS_KEY = "abyssalArchive.records.v1";
 const RELIC_SYNERGY_HINTS = [
   { id: "brass_compass", keywords: ["charge"], text: "황동 방향계가 첫 전하를 보태 줍니다." },
@@ -3420,7 +3420,7 @@ function renderTitle() {
             <img src="./public/assets/deep-signal-mark.svg" alt="">
           </div>
           <h1>딥 시그널</h1>
-          <p>데이터 심해를 내려가며 카드를 고르고, 위험한 길을 지나, 최심부의 왜곡을 끊어내세요.</p>
+          <p>침수된 데이터 심해로 내려가 카드를 고르고, 위험한 경로를 돌파해 최심부의 왜곡을 잠재우세요.</p>
         </div>
         <section class="title-start-panel" aria-label="런 시작">
           <div class="title-start-copy">
@@ -13957,13 +13957,11 @@ function saveRun(run) {
 }
 
 function loadSettings() {
-  const defaults = { volume: 0.35, musicVolume: 0.28, motionSpeed: 1, textScale: 1, highContrast: false, tacticalAdvisor: true };
-  const stored = readBrowserJson(SETTINGS_KEY, null);
-  return stored ? { ...defaults, ...stored } : defaults;
+  return loadSettingsFromStorage(browserStorage());
 }
 
 function saveSettings() {
-  if (!writeBrowserJson(SETTINGS_KEY, state.settings)) {
+  if (!saveSettingsToStorage(browserStorage(), state.settings)) {
     state.saveNotice = tabOnlyStorageNotice("설정");
     return false;
   }
