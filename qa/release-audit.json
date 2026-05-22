@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-22T22:47:07.599Z",
+  "generatedAt": "2026-05-22T22:52:33.170Z",
   "ok": true,
-  "passed": 46,
+  "passed": 47,
   "failed": 0,
-  "total": 46,
+  "total": 47,
   "summary": {
-    "passed": 46,
+    "passed": 47,
     "failed": 0,
-    "total": 46
+    "total": 47
   },
   "checks": [
     {
@@ -858,6 +858,16 @@
       "ok": true,
       "detail": "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.",
       "evidence": {}
+    },
+    {
+      "id": "dist-artifact-hygiene",
+      "label": "정적 배포 산출물 메타데이터 없음",
+      "ok": true,
+      "detail": "dist에는 .DS_Store나 __MACOSX 같은 로컬 OS 메타데이터가 섞이지 않아야 합니다.",
+      "evidence": {
+        "forbiddenDistFiles": [],
+        "distFileCount": 100
+      }
     },
     {
       "id": "balance-report",

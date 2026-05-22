@@ -370,6 +370,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /minimumPrimaryMatchRate/);
   assert.match(auditSource, /qa-artifact-hygiene/);
   assert.match(auditSource, /unexpectedQaArtifacts/);
+  assert.match(auditSource, /dist-artifact-hygiene/);
+  assert.match(auditSource, /listRelativeFiles/);
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
   assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);
@@ -741,6 +743,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(audioMixSource, /music-ducking/);
   assert.match(audioMixSource, /sfx-headroom/);
   assert.match(buildSource, /\.nojekyll/);
+  assert.match(buildSource, /releaseFileFilter/);
+  assert.match(buildSource, /\.DS_Store/);
   if (deployWorkflowSource) {
 	  assert.match(deployWorkflowSource, /branches: \[main\]/);
 	  assert.match(deployWorkflowSource, /npm test/);

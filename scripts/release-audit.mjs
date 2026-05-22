@@ -1,5 +1,5 @@
 import { access, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import {
   AUDIO_MIX_SOURCE_FILES,
   BALANCE_SOURCE_FILES,
@@ -73,6 +73,25 @@ async function newestMtime(paths) {
     })
   );
   return Math.max(0, ...times);
+}
+
+async function listRelativeFiles(dir, base = dir) {
+  let entries = [];
+  try {
+    entries = await readdir(dir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  const files = [];
+  for (const entry of entries) {
+    const path = resolve(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await listRelativeFiles(path, base)));
+    } else {
+      files.push(relative(base, path).replaceAll("\\", "/"));
+    }
+  }
+  return files.sort();
 }
 
 async function browserQaFreshness(qaFiles, requiredBrowserQa) {
@@ -377,6 +396,8 @@ async function main() {
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);
   const debugQaFiles = qaFiles.filter((file) => /(^|[-_])debug([-_.]|$)/i.test(file));
   const unexpectedQaFiles = unexpectedQaArtifacts(qaFiles);
+  const distFiles = await listRelativeFiles(resolve(root, "dist"));
+  const forbiddenDistFiles = distFiles.filter((file) => file.split("/").includes(".DS_Store") || file.startsWith("__MACOSX/"));
   const requiredReleaseInfo = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일"];
   const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "런 포기 확인", "콘솔 오류 없음"];
   const requiredFlowTests = [
@@ -787,6 +808,7 @@ async function main() {
     { workflow: ".github/workflows/deploy-pages.yml", mode: "github-actions-pages", publishDir: "dist" }
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
+  record("dist-artifact-hygiene", "정적 배포 산출물 메타데이터 없음", forbiddenDistFiles.length === 0, "dist에는 .DS_Store나 __MACOSX 같은 로컬 OS 메타데이터가 섞이지 않아야 합니다.", { forbiddenDistFiles, distFileCount: distFiles.length });
   const rewardGuidance = balance.finalBossAnalysis?.rewardGuidance;
   const reserveSignals = balance.finalBossAnalysis?.reserveSignals;
   const longRewardGuidance = longBalance.finalBossAnalysis?.rewardGuidance;
