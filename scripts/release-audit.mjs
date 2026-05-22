@@ -188,6 +188,7 @@ async function main() {
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
   const mobileCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-mobile-combat-refreshed.json"), "utf8").catch(() => "null"));
   const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
+  const enemyDensityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-density-readability.json"), "utf8").catch(() => "null"));
   const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
@@ -342,6 +343,26 @@ async function main() {
     { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
   );
   record("no-card-enemy-svg-placeholders", "카드/적 SVG 플레이스홀더 없음", !/\\.card-art-svg|\\.enemy-sprite svg|<svg class=\"card-art|<svg class=\"enemy/.test(styleSource + mainSource), "카드와 적 아트는 임시 SVG 플레이스홀더가 아니어야 합니다.");
+  record(
+    "enemy-silhouette-depth",
+    "적 실루엣/전투 FX 초점",
+    mainSource.includes('class="enemy-silhouette-glow"') &&
+      mainSource.includes('class="enemy-sprite-rim"') &&
+      styleSource.includes(".enemy-silhouette-glow") &&
+      styleSource.includes(".enemy-sprite-rim") &&
+      styleSource.includes(".combat-board.fx-active .enemy-card:not(.fx-source):not(.fx-hit):not(.fx-target):not(.fx-defeated) .enemy-sprite-art") &&
+      enemyDensityQa?.silhouetteReady &&
+      enemyDensityQa?.fxFocusReady &&
+      enemyDensityQa?.silhouetteLayers?.length >= 4 &&
+      enemyDensityQa.silhouetteLayers.every((item) => item.hasGlow && item.hasRim && item.glowVisible && item.rimVisible && item.artHasDepthFilter),
+    "4체 조우에서는 적별 실루엣 레이어가 확인되어야 하고, 전투 FX 중 비참여 적은 실제 브라우저 QA에서 감쇠되어야 합니다.",
+    {
+      silhouetteReady: enemyDensityQa?.silhouetteReady ?? false,
+      fxFocusReady: enemyDensityQa?.fxFocusReady ?? false,
+      fxFocusSample: enemyDensityQa?.fxFocusSample ?? null,
+      layers: enemyDensityQa?.silhouetteLayers ?? []
+    }
+  );
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
   record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });
   const hasPagesWorkflow =

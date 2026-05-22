@@ -276,6 +276,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /signalRunRate <= 0\.95/);
   assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);
   assert.match(readme, /추천\/경고 피로도 게이트/);
+  assert.match(auditSource, /enemy-silhouette-depth/);
+  assert.match(auditSource, /enemyDensityQa/);
+  assert.match(auditSource, /silhouetteReady/);
+  assert.match(auditSource, /fxFocusReady/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
@@ -404,6 +408,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function captureEnemyDensityReadability\(cdp\)/);
   assert.match(captureSource, /function stageEnemyDensityFixture\(cdp\)/);
   assert.match(captureSource, /Enemy density readability failed/);
+  assert.match(captureSource, /silhouetteReady/);
+  assert.match(captureSource, /silhouetteLayers/);
+  assert.match(captureSource, /fxFocusReady/);
+  assert.match(captureSource, /fxFocusSample/);
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
   assert.match(captureSource, /duplicateFxCount/);
   assert.match(captureSource, /fixtureHasMultiHit/);
@@ -2978,7 +2986,9 @@ test("cards and enemies have distinctive production art hooks", () => {
   assert.match(mainSource, /const CARD_ART_EXACT_ATLAS/);
   for (const card of CARDS) assert.match(mainSource, new RegExp(`${card.art}:`), `${card.id} art key should be mapped deliberately`);
   assert.match(mainSource, /function renderEnemySprite\(enemy, template\)/);
+  assert.match(mainSource, /class="enemy-silhouette-glow"/);
   assert.match(mainSource, /class="enemy-sprite-art"/);
+  assert.match(mainSource, /class="enemy-sprite-rim"/);
   assert.match(mainSource, /class="enemy-intent-sigil"/);
   assert.match(mainSource, /const ENEMY_SPRITE_POSES/);
   assert.match(mainSource, /function enemyIntentSigilCell\(move\)/);
@@ -3107,10 +3117,14 @@ test("cards and enemies have distinctive production art hooks", () => {
   assert.match(styleSource, /\.card-art\[data-art-id="pulse_lance"\]::before,[\s\S]*\.card-art\[data-art-id="tide_ward"\]::before[\s\S]*opacity:\s*0/);
   assert.match(styleSource, /\.card-art\[data-art-id="pulse_lance"\] \.card-art-sigil,[\s\S]*\.card-art\[data-art-id="tide_ward"\] \.card-art-sigil[\s\S]*display:\s*none/);
   assert.match(styleSource, /\.enemy-intent-sigil/);
+  assert.match(styleSource, /\.enemy-silhouette-glow/);
+  assert.match(styleSource, /\.enemy-sprite-rim/);
   assert.match(styleSource, /\.enemy-sprite-art/);
   assert.match(styleSource, /\.enemy-sprite-art[\s\S]*inset:\s*0/);
   assert.match(styleSource, /background-image:\s*var\(--enemy-sprite-image/);
   assert.match(styleSource, /background-size:\s*contain/);
+  assert.match(styleSource, /\.combat-board\.fx-active \.enemy-card:not\(\.fx-source\):not\(\.fx-hit\):not\(\.fx-target\):not\(\.fx-defeated\) \.enemy-sprite-art/);
+  assert.match(styleSource, /\.high-contrast \.enemy-silhouette-glow/);
   assert.match(styleSource, /translate\(var\(--sprite-shift-x, 0\), var\(--sprite-shift-y, 0\)\) scaleX/);
   assert.match(styleSource, /\.character-sprite[\s\S]*--sprite-box-h:/);
   assert.match(styleSource, /\.character-sprite[\s\S]*aspect-ratio:\s*2 \/ 3/);

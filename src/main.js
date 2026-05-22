@@ -7144,7 +7144,9 @@ function renderEnemySprite(enemy, template) {
     <div class="character-sprite enemy-sprite sprite-${spriteTemplate.sprite} motif-${motif} tier-${spriteTemplate.tier} ${phaseClass}" data-sprite="${spriteTemplate.sprite}" data-atlas-cell="${atlasCell}" data-portrait-cell="${portraitCell}" data-intent-cell="${intentCell}" style="${enemySpriteStyle(spriteTemplate, seed, atlasCell, intentCell, portraitCell, enemy)}" aria-hidden="true">
       <span class="sprite-motion-echo"></span>
       <span class="sprite-ground-burst"></span>
+      <span class="enemy-silhouette-glow"></span>
       <span class="enemy-sprite-art"></span>
+      <span class="enemy-sprite-rim"></span>
       <span class="enemy-intent-sigil"></span>
     </div>
   `;

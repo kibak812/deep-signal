@@ -4747,8 +4747,16 @@ dd,
   box-shadow: 0 0 22px rgba(125, 211, 252, 0.2);
 }
 
+.enemy-card.selected .enemy-silhouette-glow {
+  opacity: 0.58;
+}
+
 .enemy-card.selected .enemy-sprite-art {
-  filter: saturate(1.18) contrast(1.1) drop-shadow(0 16px 30px rgba(125, 211, 252, 0.2));
+  filter: saturate(1.23) contrast(1.16) brightness(1.08) drop-shadow(0 18px 30px rgba(0, 0, 0, 0.46)) drop-shadow(0 0 22px rgba(125, 211, 252, 0.24));
+}
+
+.enemy-card.selected .enemy-sprite-rim {
+  opacity: 0.74;
 }
 
 .enemy-card.drop-ready {
@@ -4828,6 +4836,16 @@ dd,
   --intent-lane-angle: -3deg;
   width: clamp(260px, 34vw, 660px);
   transform: rotate(var(--intent-lane-angle)) scaleX(0.94);
+}
+
+.combat-board.fx-active .enemy-intent-lane {
+  opacity: 0;
+  animation: none;
+}
+
+.combat-board.fx-active .enemy-intent-lane::before,
+.combat-board.fx-active .enemy-intent-lane::after {
+  opacity: 0;
 }
 
 .boss-mechanic {
@@ -5158,6 +5176,7 @@ dd,
 
 .enemy-sprite .sprite-motion-echo {
   --sprite-echo-image: var(--enemy-sprite-image, url("../public/assets/combat-sprites.png"));
+  z-index: 1;
 }
 
 .sprite-ground-burst {
@@ -5177,6 +5196,7 @@ dd,
 }
 
 .enemy-sprite .sprite-ground-burst {
+  z-index: 1;
   color: hsl(var(--sprite-accent) 88% 62% / 0.28);
 }
 
@@ -5212,6 +5232,8 @@ dd,
 }
 
 .enemy-sprite {
+  --sprite-glow-strength: 0.34;
+  --sprite-rim-strength: 0.44;
   display: grid;
   place-items: center;
   background:
@@ -5221,25 +5243,58 @@ dd,
   isolation: isolate;
 }
 
+.enemy-silhouette-glow,
+.enemy-sprite-rim {
+  position: absolute;
+  pointer-events: none;
+  transform: translate(var(--sprite-shift-x, 0), var(--sprite-shift-y, 0)) scaleX(var(--sprite-flip)) scale(var(--sprite-scale)) rotate(var(--sprite-rotate));
+  transform-origin: center 58%;
+}
+
+.enemy-silhouette-glow {
+  inset: 3% -10% -4%;
+  z-index: 0;
+  border-radius: 44% 44% 52% 52% / 34% 34% 60% 60%;
+  background:
+    radial-gradient(ellipse at 50% 58%, hsl(var(--sprite-hue) 82% 58% / 0.34), transparent 48%),
+    radial-gradient(ellipse at 50% 86%, hsl(var(--sprite-accent) 84% 54% / 0.28), transparent 62%),
+    linear-gradient(180deg, transparent 0 28%, rgba(2, 8, 10, 0.5) 100%);
+  filter: blur(10px) saturate(1.18);
+  mix-blend-mode: screen;
+  opacity: var(--sprite-glow-strength);
+}
+
 .enemy-sprite-art {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  z-index: 2;
   background-image: var(--enemy-sprite-image, url("../public/assets/combat-sprites.png"));
   background-position: center bottom;
   background-repeat: no-repeat;
   background-size: contain;
-  filter: saturate(1.14) contrast(1.08) drop-shadow(0 14px 24px rgba(0, 0, 0, 0.38));
+  filter: saturate(1.18) contrast(1.14) brightness(1.04) drop-shadow(0 16px 24px rgba(0, 0, 0, 0.44)) drop-shadow(0 0 16px hsl(var(--sprite-hue) 86% 58% / 0.16));
   mask-image: none;
   transform: translate(var(--sprite-shift-x, 0), var(--sprite-shift-y, 0)) scaleX(var(--sprite-flip)) scale(var(--sprite-scale)) rotate(var(--sprite-rotate));
   transform-origin: center 58%;
+}
+
+.enemy-sprite-rim {
+  inset: 2% 5% 0;
+  z-index: 3;
+  border-radius: 44% 44% 50% 50% / 34% 34% 58% 58%;
+  background:
+    linear-gradient(102deg, transparent 0 18%, hsl(var(--sprite-accent) 90% 66% / 0.24) 26%, transparent 40% 62%, hsl(var(--sprite-hue) 92% 68% / 0.26) 76%, transparent 90%),
+    radial-gradient(ellipse at 50% 86%, transparent 46%, hsl(var(--sprite-hue) 84% 62% / 0.2) 61%, transparent 72%);
+  filter: blur(0.4px);
+  mix-blend-mode: screen;
+  opacity: var(--sprite-rim-strength);
 }
 
 .enemy-sprite::before,
 .enemy-sprite::after {
   position: absolute;
   inset: 8px;
-  z-index: 1;
+  z-index: 3;
   content: "";
   pointer-events: none;
 }
@@ -5264,6 +5319,8 @@ dd,
 
 .enemy-sprite.tier-elite {
   --sprite-box-h: clamp(292px, 39vh, 486px);
+  --sprite-glow-strength: 0.44;
+  --sprite-rim-strength: 0.56;
   border-color: rgba(246, 193, 119, 0.64);
   background:
     radial-gradient(ellipse at 50% 88%, hsl(var(--sprite-accent) 90% 58% / 0.2), transparent 62%),
@@ -5271,11 +5328,13 @@ dd,
 }
 
 .enemy-sprite.tier-elite .enemy-sprite-art {
-  filter: saturate(1.2) contrast(1.1) drop-shadow(0 16px 28px rgba(246, 193, 119, 0.16));
+  filter: saturate(1.22) contrast(1.14) brightness(1.06) drop-shadow(0 18px 28px rgba(0, 0, 0, 0.46)) drop-shadow(0 0 18px rgba(246, 193, 119, 0.2));
 }
 
 .enemy-sprite.tier-boss {
   --sprite-box-h: clamp(306px, 42vh, 530px);
+  --sprite-glow-strength: 0.52;
+  --sprite-rim-strength: 0.66;
   margin-bottom: clamp(38px, 4.2vh, 58px);
   border-color: transparent;
   background:
@@ -5288,7 +5347,7 @@ dd,
 }
 
 .enemy-sprite.tier-boss .enemy-sprite-art {
-  filter: saturate(1.22) contrast(1.12) drop-shadow(0 18px 30px rgba(251, 113, 133, 0.18));
+  filter: saturate(1.26) contrast(1.16) brightness(1.07) drop-shadow(0 20px 32px rgba(0, 0, 0, 0.48)) drop-shadow(0 0 24px rgba(251, 113, 133, 0.24));
 }
 
 .enemy-sprite.sprite-cataloger .enemy-sprite-art {
@@ -5331,7 +5390,7 @@ dd,
   position: absolute;
   right: 6px;
   top: 6px;
-  z-index: 2;
+  z-index: 4;
   width: 28px;
   height: 28px;
   border: 1px solid hsl(var(--sprite-accent) 86% 68% / 0.56);
@@ -6273,6 +6332,25 @@ dd,
 
 .enemy-card.fx-hit:not(.fx-defeated) .enemy-sprite {
   animation: enemy-hit-sprite calc(1720ms / var(--motion-scale)) cubic-bezier(0.12, 0.92, 0.18, 1) both;
+}
+
+.combat-board.fx-active .enemy-card:not(.fx-source):not(.fx-hit):not(.fx-target):not(.fx-defeated) .enemy-silhouette-glow,
+.combat-board.fx-active .enemy-card:not(.fx-source):not(.fx-hit):not(.fx-target):not(.fx-defeated) .enemy-sprite-rim {
+  opacity: 0.16;
+}
+
+.combat-board.fx-active .enemy-card:not(.fx-source):not(.fx-hit):not(.fx-target):not(.fx-defeated) .enemy-sprite-art {
+  opacity: 0.7;
+  filter: saturate(0.76) contrast(1.02) brightness(0.72) drop-shadow(0 12px 20px rgba(0, 0, 0, 0.44));
+}
+
+.enemy-card.fx-hit:not(.fx-defeated) .enemy-silhouette-glow {
+  filter: blur(8px) saturate(1.32) brightness(1.16);
+  opacity: 0.66;
+}
+
+.enemy-card.fx-hit:not(.fx-defeated) .enemy-sprite-rim {
+  opacity: 0.82;
 }
 
 .enemy-card.fx-hit:not(.fx-defeated) .enemy-sprite-art::before,
@@ -19655,11 +19733,11 @@ dd,
   animation: combat-turn-ready-glow calc(900ms / var(--motion-scale)) ease-out both;
 }
 
-.combat-board.turn-cue-enemy .enemy-card {
+.combat-board.turn-cue-enemy:not(.fx-active) .enemy-card {
   animation: enemy-turn-step calc(1180ms / var(--motion-scale)) cubic-bezier(0.12, 0.9, 0.2, 1) both;
 }
 
-.combat-board.turn-cue-enemy .player-stand {
+.combat-board.turn-cue-enemy:not(.fx-active) .player-stand {
   animation: player-turn-brace calc(980ms / var(--motion-scale)) cubic-bezier(0.14, 0.86, 0.22, 1) both;
 }
 
@@ -19701,7 +19779,7 @@ dd,
 .combat-board.fx-active:not(.fx-enemy-board).fx-mode-enemy .player-sprite .sprite-ground-burst,
 .combat-board.fx-active:not(.fx-enemy-board).fx-mode-all-enemies .player-sprite .sprite-ground-burst,
 .combat-board.fx-enemy-board .enemy-card.fx-source:not(.fx-defeated) .enemy-sprite .sprite-ground-burst,
-.combat-board.turn-cue-enemy .enemy-card.intent-attack-player .enemy-sprite .sprite-ground-burst {
+.combat-board.turn-cue-enemy:not(.fx-active) .enemy-card.intent-attack-player .enemy-sprite .sprite-ground-burst {
   animation: sprite-ground-burst calc(1040ms / var(--motion-scale)) ease-out both;
 }
 
@@ -23167,6 +23245,15 @@ input[type="range"] {
 .high-contrast .character-sprite,
 .high-contrast .relic-icon {
   filter: contrast(1.35) saturate(0.75);
+}
+
+.high-contrast .enemy-silhouette-glow,
+.high-contrast .enemy-sprite-rim {
+  display: none;
+}
+
+.high-contrast .enemy-sprite-art {
+  filter: contrast(1.4) saturate(0.7) brightness(1.05);
 }
 
 .high-contrast .card-upgrade-mark {

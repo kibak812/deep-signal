@@ -1237,6 +1237,7 @@ async function captureEnemyDensityReadability(cdp) {
     const line = document.querySelector(".enemy-line");
     const strip = document.querySelector(".enemy-crowd-strip");
     const cards = [...document.querySelectorAll(".enemy-card")];
+    const sprites = [...document.querySelectorAll(".enemy-card .enemy-sprite")];
     const plates = [...document.querySelectorAll(".enemy-card .combatant-plate")];
     const intents = [...document.querySelectorAll(".enemy-card .intent")];
     const text = strip?.innerText.replace(/\\s+/g, " ").trim() ?? "";
@@ -1267,6 +1268,50 @@ async function captureEnemyDensityReadability(cdp) {
       const rect = card.getBoundingClientRect();
       return rect.left >= -2 && rect.right <= window.innerWidth + 2 && (!lineRect || rect.bottom <= lineRect.bottom + 24);
     });
+    const silhouetteLayers = sprites.map((sprite, index) => {
+      const glow = sprite.querySelector(".enemy-silhouette-glow");
+      const rim = sprite.querySelector(".enemy-sprite-rim");
+      const art = sprite.querySelector(".enemy-sprite-art");
+      const glowStyle = glow ? getComputedStyle(glow) : null;
+      const rimStyle = rim ? getComputedStyle(rim) : null;
+      const artStyle = art ? getComputedStyle(art) : null;
+      const artFilter = artStyle?.filter ?? "";
+      return {
+        index,
+        sprite: sprite.dataset.sprite ?? "",
+        tier: [...sprite.classList].find((token) => token.startsWith("tier-")) ?? "",
+        hasGlow: Boolean(glow),
+        hasRim: Boolean(rim),
+        glowVisible: Boolean(glowStyle && glowStyle.display !== "none" && Number.parseFloat(glowStyle.opacity) > 0.2 && /blur/.test(glowStyle.filter)),
+        rimVisible: Boolean(rimStyle && rimStyle.display !== "none" && Number.parseFloat(rimStyle.opacity) > 0.2),
+        glowBlend: glowStyle?.mixBlendMode ?? "",
+        rimBlend: rimStyle?.mixBlendMode ?? "",
+        artFilter,
+        artHasDepthFilter: /brightness/.test(artFilter) && (artFilter.match(/drop-shadow/g) ?? []).length >= 2
+      };
+    });
+    let fxFocusReady = false;
+    let fxFocusSample = null;
+    const board = document.querySelector(".combat-board");
+    const sourceCard = cards[0];
+    const dimCard = cards[1];
+    const dimArt = dimCard?.querySelector(".enemy-sprite-art");
+    const dimGlow = dimCard?.querySelector(".enemy-silhouette-glow");
+    if (board && sourceCard && dimCard && dimArt && dimGlow) {
+      board.classList.add("fx-active");
+      sourceCard.classList.add("fx-source");
+      const dimArtStyle = getComputedStyle(dimArt);
+      const dimGlowStyle = getComputedStyle(dimGlow);
+      fxFocusSample = {
+        artOpacity: Number.parseFloat(dimArtStyle.opacity),
+        artFilter: dimArtStyle.filter,
+        glowOpacity: Number.parseFloat(dimGlowStyle.opacity)
+      };
+      fxFocusReady = fxFocusSample.artOpacity <= 0.75 && /brightness/.test(fxFocusSample.artFilter) && fxFocusSample.glowOpacity <= 0.2;
+      sourceCard.classList.remove("fx-source");
+      board.classList.remove("fx-active");
+    }
+    const silhouetteReady = silhouetteLayers.length === cards.length && silhouetteLayers.every((item) => item.hasGlow && item.hasRim && item.glowVisible && item.rimVisible && item.artHasDepthFilter);
     return {
       fixture: ${JSON.stringify(fixture)},
       cardCount: cards.length,
@@ -1276,6 +1321,10 @@ async function captureEnemyDensityReadability(cdp) {
       overflowingLine,
       plateOverlaps,
       intentPlateOverlaps,
+      silhouetteReady,
+      silhouetteLayers,
+      fxFocusReady,
+      fxFocusSample,
       lineWidth: line?.clientWidth ?? 0,
       lineScrollWidth: line?.scrollWidth ?? 0,
       stripBox: stripRect ? { left: Math.round(stripRect.left), top: Math.round(stripRect.top), right: Math.round(stripRect.right), width: Math.round(stripRect.width) } : null
@@ -1290,7 +1339,9 @@ async function captureEnemyDensityReadability(cdp) {
     !evidence.cardsWithinStage ||
     evidence.overflowingLine ||
     evidence.plateOverlaps.length ||
-    evidence.intentPlateOverlaps.length
+    evidence.intentPlateOverlaps.length ||
+    !evidence.silhouetteReady ||
+    !evidence.fxFocusReady
   ) {
     throw new Error(`Enemy density readability failed: ${JSON.stringify(evidence)}`);
   }
@@ -1312,6 +1363,12 @@ async function captureGroupedEnemyFx(cdp) {
     const actor = fx?.querySelector(".fx-actor-echo");
     const chipText = [...(fx?.querySelectorAll(".fx-chip-row i") ?? [])].map((chip) => chip.innerText.replace(/\\s+/g, " ").trim()).join(" ");
     const beamStyle = fx ? getComputedStyle(fx, "::before") : null;
+    const fxTrails = [...(fx?.querySelectorAll(".fx-trail") ?? [])];
+    const visibleIntentLanes = [...document.querySelectorAll(".enemy-intent-lane")].filter((lane) => {
+      const style = getComputedStyle(lane);
+      const box = lane.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && Number.parseFloat(style.opacity) > 0.05 && box.width > 2 && box.height > 0;
+    });
     const visibleSparkCount = [...document.querySelectorAll(".entity-hit-sparks i")]
       .filter((spark) => getComputedStyle(spark).display !== "none").length;
     const fixtureData = ${JSON.stringify(fixture)};
@@ -1334,6 +1391,9 @@ async function captureGroupedEnemyFx(cdp) {
       fixtureHasMultiHit,
       duplicateFxCount: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length,
       duplicatedBeamHidden: beamStyle?.display === "none",
+      attackTrailCount: fxTrails.length,
+      visibleIntentLaneCount: visibleIntentLanes.length,
+      singleResolvedAttackCue: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length === 1 && fxTrails.length === 1 && visibleIntentLanes.length === 0,
       visibleSparkCount,
       lockedBoard: document.querySelector(".combat-board")?.classList.contains("turn-locked") ?? false,
       endTurnText,
@@ -1349,6 +1409,7 @@ async function captureGroupedEnemyFx(cdp) {
     !evidence.grouped ||
     !evidence.actorCount ||
     !evidence.duplicatedBeamHidden ||
+    !evidence.singleResolvedAttackCue ||
     evidence.visibleSparkCount > 1 ||
     !evidence.lockedBoard ||
     !/상대 턴/.test(evidence.endTurnText) ||
