@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T22:58:18.900Z",
+  "generatedAt": "2026-05-22T23:03:16.787Z",
   "ok": true,
   "passed": 48,
   "failed": 0,
@@ -812,10 +812,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T22:58:08.801Z",
-        "sourceFreshAfter": "2026-05-22T22:57:26.998Z",
-        "sourceFingerprint": "sha256:25eced07455c744944ca66cd2677b7e2d98a622cd912b7ab378ca1c0f2c22d26",
-        "reportMtime": "2026-05-22T22:58:08.804Z",
+        "generatedAt": "2026-05-22T23:03:07.675Z",
+        "sourceFreshAfter": "2026-05-22T23:02:39.165Z",
+        "sourceFingerprint": "sha256:d370c5286a936fc742d1bda2c2fee7deeb835f4280e2183a512cd5279bc598d3",
+        "reportMtime": "2026-05-22T23:03:07.678Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -866,17 +866,17 @@
       "detail": "dist에는 .DS_Store나 __MACOSX 같은 로컬 OS 메타데이터가 섞이지 않아야 합니다.",
       "evidence": {
         "forbiddenDistFiles": [],
-        "distFileCount": 74
+        "distFileCount": 70
       }
     },
     {
       "id": "dist-runtime-asset-scope",
       "label": "정적 배포 산출물 런타임 자산 범위",
       "ok": true,
-      "detail": "Pages artifact에는 런타임에서 쓰지 않는 generated-sources 원본 PNG 묶음을 게시하지 않아야 합니다.",
+      "detail": "Pages artifact에는 런타임에서 쓰지 않는 generated-sources 원본 PNG 묶음, 컨셉 레퍼런스, 교체된 타이틀 SVG를 게시하지 않아야 합니다.",
       "evidence": {
-        "internalSourceDistFiles": [],
-        "distFileCount": 74
+        "nonRuntimeDistFiles": [],
+        "distFileCount": 70
       }
     },
     {

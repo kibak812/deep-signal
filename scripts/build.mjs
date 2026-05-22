@@ -3,6 +3,12 @@ import { basename, relative, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
 const dist = resolve(root, "dist");
+const excludedReleaseAssets = new Set([
+  "public/assets/concept-combat.png",
+  "public/assets/concept-screens.png",
+  "public/assets/deep-signal-mark.svg",
+  "public/assets/echo-diver-emblem.svg"
+]);
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(dist, { recursive: true });
@@ -10,6 +16,7 @@ await cp(resolve(root, "index.html"), resolve(dist, "index.html"));
 const releaseFileFilter = (path) => {
   const projectPath = relative(root, path).replaceAll("\\", "/");
   if (basename(path) === ".DS_Store") return false;
+  if (excludedReleaseAssets.has(projectPath)) return false;
   return projectPath !== "public/assets/generated-sources" && !projectPath.startsWith("public/assets/generated-sources/");
 };
 await cp(resolve(root, "src"), resolve(dist, "src"), { recursive: true, filter: releaseFileFilter });

@@ -747,6 +747,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(buildSource, /releaseFileFilter/);
   assert.match(buildSource, /\.DS_Store/);
   assert.match(buildSource, /generated-sources/);
+  assert.match(buildSource, /concept-combat\.png/);
+  assert.match(buildSource, /deep-signal-mark\.svg/);
   if (deployWorkflowSource) {
 	  assert.match(deployWorkflowSource, /branches: \[main\]/);
 	  assert.match(deployWorkflowSource, /npm test/);

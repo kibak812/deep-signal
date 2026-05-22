@@ -398,7 +398,11 @@ async function main() {
   const unexpectedQaFiles = unexpectedQaArtifacts(qaFiles);
   const distFiles = await listRelativeFiles(resolve(root, "dist"));
   const forbiddenDistFiles = distFiles.filter((file) => file.split("/").includes(".DS_Store") || file.startsWith("__MACOSX/"));
-  const internalSourceDistFiles = distFiles.filter((file) => file.startsWith("public/assets/generated-sources/"));
+  const nonRuntimeDistFiles = distFiles.filter(
+    (file) =>
+      file.startsWith("public/assets/generated-sources/") ||
+      ["public/assets/concept-combat.png", "public/assets/concept-screens.png", "public/assets/deep-signal-mark.svg", "public/assets/echo-diver-emblem.svg"].includes(file)
+  );
   const requiredReleaseInfo = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일"];
   const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "런 포기 확인", "콘솔 오류 없음"];
   const requiredFlowTests = [
@@ -810,7 +814,7 @@ async function main() {
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");
   record("dist-artifact-hygiene", "정적 배포 산출물 메타데이터 없음", forbiddenDistFiles.length === 0, "dist에는 .DS_Store나 __MACOSX 같은 로컬 OS 메타데이터가 섞이지 않아야 합니다.", { forbiddenDistFiles, distFileCount: distFiles.length });
-  record("dist-runtime-asset-scope", "정적 배포 산출물 런타임 자산 범위", internalSourceDistFiles.length === 0, "Pages artifact에는 런타임에서 쓰지 않는 generated-sources 원본 PNG 묶음을 게시하지 않아야 합니다.", { internalSourceDistFiles, distFileCount: distFiles.length });
+  record("dist-runtime-asset-scope", "정적 배포 산출물 런타임 자산 범위", nonRuntimeDistFiles.length === 0, "Pages artifact에는 런타임에서 쓰지 않는 generated-sources 원본 PNG 묶음, 컨셉 레퍼런스, 교체된 타이틀 SVG를 게시하지 않아야 합니다.", { nonRuntimeDistFiles, distFileCount: distFiles.length });
   const rewardGuidance = balance.finalBossAnalysis?.rewardGuidance;
   const reserveSignals = balance.finalBossAnalysis?.reserveSignals;
   const longRewardGuidance = longBalance.finalBossAnalysis?.rewardGuidance;
