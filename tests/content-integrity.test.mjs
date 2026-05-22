@@ -368,6 +368,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /build-diversity-playtest/);
   assert.match(auditSource, /playableArchetypeCoverage/);
   assert.match(auditSource, /minimumPrimaryMatchRate/);
+  assert.match(auditSource, /qa-artifact-hygiene/);
+  assert.match(auditSource, /unexpectedQaArtifacts/);
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
   assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);

@@ -121,6 +121,23 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
   };
 }
 
+function unexpectedQaArtifacts(qaFiles) {
+  const allowedExact = new Set([
+    "audio-mix-report.json",
+    "balance-long-report.json",
+    "balance-report.json",
+    "card-illustrations-sheet.png",
+    "combatants-safe-regenerated-sheet.png",
+    "korean-copy-report.json",
+    "release-audit.json",
+    "release-playtest-report.json"
+  ]);
+  return qaFiles
+    .filter((file) => !allowedExact.has(file))
+    .filter((file) => !/^browser-qa-.+\.(json|png)$/.test(file))
+    .sort();
+}
+
 function pngDimensions(buffer) {
   if (buffer.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") return null;
   return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
@@ -359,6 +376,7 @@ async function main() {
   ];
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);
   const debugQaFiles = qaFiles.filter((file) => /(^|[-_])debug([-_.]|$)/i.test(file));
+  const unexpectedQaFiles = unexpectedQaArtifacts(qaFiles);
   const requiredReleaseInfo = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일"];
   const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "런 포기 확인", "콘솔 오류 없음"];
   const requiredFlowTests = [
@@ -372,6 +390,7 @@ async function main() {
   record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "copy:audit", "playtest", "balance", "balance:long", "assets:cards", "assets:card-ui", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:shop", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("no-debug-qa-artifacts", "디버그 검증 산출물 없음", debugQaFiles.length === 0, "출시 후보 검증 폴더에는 debug 이름의 임시 스크린샷이나 리포트가 남지 않아야 합니다.", { debugQaFiles });
+  record("qa-artifact-hygiene", "QA 산출물 허용 목록", unexpectedQaFiles.length === 0, "qa 폴더에는 자동 리포트, browser-qa 증거, 에셋 검수 시트만 남아야 합니다.", { unexpectedQaFiles });
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
   record("build-axes", "4개 이상의 덱 방향 축", axes.filter((axis) => axis.rewardCards >= 4).length >= 4, "보상 카드 기준으로 최소 4개 이상의 빌드 축이 실제 카드 풀에 있어야 합니다.", axes);

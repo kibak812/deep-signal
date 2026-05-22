@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-22T22:32:45.021Z",
+  "generatedAt": "2026-05-22T22:47:07.599Z",
   "ok": true,
-  "passed": 45,
+  "passed": 46,
   "failed": 0,
-  "total": 45,
+  "total": 46,
   "summary": {
-    "passed": 45,
+    "passed": 46,
     "failed": 0,
-    "total": 45
+    "total": 46
   },
   "checks": [
     {
@@ -66,6 +66,15 @@
       "detail": "출시 후보 검증 폴더에는 debug 이름의 임시 스크린샷이나 리포트가 남지 않아야 합니다.",
       "evidence": {
         "debugQaFiles": []
+      }
+    },
+    {
+      "id": "qa-artifact-hygiene",
+      "label": "QA 산출물 허용 목록",
+      "ok": true,
+      "detail": "qa 폴더에는 자동 리포트, browser-qa 증거, 에셋 검수 시트만 남아야 합니다.",
+      "evidence": {
+        "unexpectedQaFiles": []
       }
     },
     {
@@ -803,10 +812,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T22:32:36.704Z",
-        "sourceFreshAfter": "2026-05-22T22:32:27.556Z",
-        "sourceFingerprint": "sha256:1ca0b405897d4ca65bb4ede836db5440d56bb6fc4c81d46ad7cf5b006da90fa4",
-        "reportMtime": "2026-05-22T22:32:36.707Z",
+        "generatedAt": "2026-05-22T22:41:09.084Z",
+        "sourceFreshAfter": "2026-05-22T22:40:57.843Z",
+        "sourceFingerprint": "sha256:2027efc54d426f701d092e403e0e30128cc1d5e4b6c1fac9c5b5937e45d33258",
+        "reportMtime": "2026-05-22T22:41:09.087Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
