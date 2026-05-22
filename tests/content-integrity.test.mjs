@@ -405,6 +405,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /summary-won/);
   assert.match(auditSource, /abandon-run/);
   assert.match(auditSource, /danger-dialog-keyboard-safety/);
+  assert.match(auditSource, /selector-dialog-keyboard-safety/);
   assert.match(auditSource, /records/);
   assert.match(auditSource, /mobile-combat/);
   assert.match(auditSource, /tablet-combat/);
@@ -439,6 +440,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function stageFinalBossSelectorFixture\(cdp\)/);
   assert.match(captureSource, /function assertFinalBossSelectorUx\(cdp\)/);
   assert.match(captureSource, /Final boss selector failed/);
+  assert.match(captureSource, /activeAction === "deck-cancel"/);
   assert.match(captureSource, /browser-qa-reward-relics-refreshed\.png/);
   assert.match(captureSource, /browser-qa-summary-lost-refreshed\.png/);
   assert.match(captureSource, /문 낙하를 맞을 체력이 남지 않았습니다/);
@@ -2465,6 +2467,8 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(mainSource, /function renderDeleteSaveConfirmOverlay\(\)/);
   assert.match(mainSource, /function renderAbandonRunConfirmOverlay\(\)/);
   assert.match(mainSource, /function activeConfirmationDialog\(\)/);
+  assert.match(mainSource, /function activeDeckSelectorDialog\(\)/);
+  assert.match(mainSource, /function activeManagedDialog\(\)/);
   assert.match(mainSource, /function closePendingConfirmation\(\)/);
   assert.match(mainSource, /function focusPendingDialogControl\(\)/);
   assert.match(mainSource, /function trapDialogFocus\(event, dialog\)/);
@@ -3774,6 +3778,8 @@ test("upgrade service UI avoids dead-end deck choices", () => {
   assert.match(mainSource, /강화 가능/);
   assert.match(mainSource, /recommendationLabel:\s*"추천"/);
   assert.match(mainSource, /class="deck-modal selector-modal/);
+  assert.match(mainSource, /role="dialog" aria-modal="true" aria-label="\$\{title\}"/);
+  assert.match(mainSource, /data-dialog-initial-focus data-action="deck-cancel"/);
   assert.match(mainSource, /class="deck-choice-metrics"/);
   assert.match(mainSource, /metrics:\s*\[/);
   assert.match(mainSource, /선택 확정/);

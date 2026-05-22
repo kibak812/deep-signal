@@ -1043,9 +1043,9 @@ app.addEventListener("pointercancel", () => {
 
 document.addEventListener("keydown", (event) => {
   if (event.defaultPrevented || isEditingText(event.target)) return;
-  const confirmationDialog = activeConfirmationDialog();
-  if (confirmationDialog && event.key === "Tab") {
-    trapDialogFocus(event, confirmationDialog);
+  const managedDialog = activeManagedDialog();
+  if (managedDialog && event.key === "Tab") {
+    trapDialogFocus(event, managedDialog);
     return;
   }
   if (event.key === "Escape") {
@@ -3387,6 +3387,15 @@ function activeConfirmationDialog() {
   return app.querySelector(".modal-backdrop [role='dialog']");
 }
 
+function activeDeckSelectorDialog() {
+  if (!state.run?.selector) return null;
+  return app.querySelector(".modal-backdrop .selector-modal[role='dialog']");
+}
+
+function activeManagedDialog() {
+  return activeConfirmationDialog() ?? activeDeckSelectorDialog();
+}
+
 function closePendingConfirmation() {
   if (state.pendingStart) {
     state.pendingStart = null;
@@ -3404,7 +3413,7 @@ function closePendingConfirmation() {
 }
 
 function focusPendingDialogControl() {
-  const dialog = activeConfirmationDialog();
+  const dialog = activeManagedDialog();
   const target = dialog?.querySelector("[data-dialog-initial-focus]") ?? dialogFocusableControls(dialog)[0];
   target?.focus?.({ preventScroll: true });
 }
@@ -10521,10 +10530,10 @@ function renderDeckSelector(run) {
     : choices;
   return `
     <div class="modal-backdrop">
-      <section class="deck-modal selector-modal ${isUpgrade ? "upgrade" : "remove"}">
+      <section class="deck-modal selector-modal ${isUpgrade ? "upgrade" : "remove"}" role="dialog" aria-modal="true" aria-label="${title}">
         <header>
           <h2>${title}</h2>
-          <button data-action="deck-cancel">취소</button>
+          <button data-dialog-initial-focus data-action="deck-cancel">취소</button>
         </header>
         ${renderDeckSelectorBrief(run)}
         ${renderDeckSelectorFocus(run, recommendation)}

@@ -4208,9 +4208,13 @@ async function assertFinalBossSelectorUx(cdp) {
     const metricChipsFit = metricRows.every((row) => [...row.querySelectorAll("i")].every((chip) => chip.scrollWidth <= chip.clientWidth + 2));
     const modalBox = modal?.getBoundingClientRect();
     const modalFits = modalBox ? modalBox.width <= window.innerWidth && modalBox.height <= window.innerHeight : false;
+    const activeAction = document.activeElement?.dataset?.action ?? "";
     const ok =
       Boolean(modal) &&
       modal?.classList.contains("selector-modal") &&
+      modal?.getAttribute("role") === "dialog" &&
+      modal?.getAttribute("aria-modal") === "true" &&
+      activeAction === "deck-cancel" &&
       Boolean(brief) &&
       bossText.includes("보스 대비") &&
       bossText.includes("연속 방어") &&
@@ -4222,7 +4226,7 @@ async function assertFinalBossSelectorUx(cdp) {
       /비용|덱/.test(metricText) &&
       metricChipsFit &&
       modalFits;
-    return { ok, modalText, bossText, focusText, recommendedText, metricText, metricRows: metricRows.length, metricChipsFit, modalFits };
+    return { ok, modalText, bossText, focusText, recommendedText, metricText, metricRows: metricRows.length, metricChipsFit, modalFits, activeAction, role: modal?.getAttribute("role") ?? "", ariaModal: modal?.getAttribute("aria-modal") ?? "" };
   })()`);
   if (!result.ok) {
     throw new Error(`Final boss selector failed: ${JSON.stringify(result)}`);

@@ -316,10 +316,16 @@ async function main() {
   record(
     "danger-dialog-keyboard-safety",
     "위험 행동 확인 키보드 안전",
-    ["activeConfirmationDialog", "closePendingConfirmation", "focusPendingDialogControl", "trapDialogFocus", "data-dialog-initial-focus"].every((text) => mainSource.includes(text)) &&
+    ["activeConfirmationDialog", "activeManagedDialog", "closePendingConfirmation", "focusPendingDialogControl", "trapDialogFocus", "data-dialog-initial-focus"].every((text) => mainSource.includes(text)) &&
       mainSource.includes('event.key === "Escape"') &&
       mainSource.includes("closePendingConfirmation()"),
     "새 런 덮어쓰기, 저장 삭제, 런 포기 확인은 안전한 버튼에 초기 포커스를 두고 Tab/Esc 키보드 흐름을 막지 않아야 합니다."
+  );
+  record(
+    "selector-dialog-keyboard-safety",
+    "강화/제거 선택 키보드 안전",
+    ["activeDeckSelectorDialog", "selector-modal", 'role="dialog"', 'aria-modal="true"', 'data-dialog-initial-focus data-action="deck-cancel"'].every((text) => mainSource.includes(text)),
+    "강화/제거 카드 선택 모달은 모달 역할, 안전한 취소 초기 포커스, Tab 순환 관리 대상이어야 합니다."
   );
   record(
     "mobile-touch-targeting",
