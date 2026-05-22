@@ -6,8 +6,8 @@
   "railText": "로그 흡착자 피해 6",
   "railAssistiveText": "펄스 랜스. 사용 가능. 대상 로그 흡착자. 피해 6. 사용 후 남은 전하 2.",
   "railEnergyText": "2",
-  "railEnergyIcon": "⚡",
-  "railVisualSummary": "로그 흡착자 피해 6 ⚡2",
+  "railEnergySprite": true,
+  "railVisualSummary": "로그 흡착자 피해 6 전하 아이콘 2",
   "lineOpacity": "0.74",
   "lineBeforeHeight": "2px",
   "targetClass": "enemy-card intent-debuff selected preview-target preview-damage",
@@ -39,11 +39,11 @@
     },
     "rail": {
       "left": 477,
-      "top": 328,
+      "top": 325,
       "right": 803,
       "bottom": 362,
       "width": 326,
-      "height": 34
+      "height": 37
     },
     "tooltip": {
       "left": 351,

@@ -32,7 +32,7 @@
   "actorTitle": "로그 진드기 외 1명 · 연속 행동 · 총 타격 ×4",
   "moveName": "연속 행동",
   "actorName": "로그 진드기 외 1명",
-  "chipText": "✦-13 ×4",
+  "chipText": "-13 4",
   "fixtureHasMultiHit": true,
   "duplicateFxCount": 1,
   "duplicatedBeamHidden": true,

@@ -2617,14 +2617,14 @@ function showIntentPortalTooltip(intentElement) {
   intentTooltipSource = intentElement;
   intentTooltipLayer.className = `intent-portal-tooltip tone-${threat.tone} intent-${move.type ?? "none"}`;
   intentTooltipLayer.innerHTML = `
-    <span class="intent-tooltip-icon" aria-hidden="true">${enemyIntentIconLabel(move)}</span>
+    <span class="intent-tooltip-icon ${enemyIntentIconClass(move)}" aria-hidden="true"></span>
     <strong>${enemyMoveLabel(move)}</strong>
     <small>${threat.detail}</small>
     <div>
       ${threat.chips
         .map((chip) => {
           const visual = enemyThreatIconVisual(chip);
-          return `<i class="${chip.tone}"><b aria-hidden="true">${visual.icon}</b><em>${visual.value}</em><span>${chip.label}</span></i>`;
+          return `<i class="${chip.tone}"><b class="${cardUiIconClass(visual.key)}" aria-hidden="true"></b><em>${visual.value}</em><span>${chip.label}</span></i>`;
         })
         .join("")}
     </div>
@@ -3073,11 +3073,11 @@ function renderCombatCardPreviewRail(card, preview, selected, targetCount, mode 
       ${visualChips
         .map((chip) => {
           const visual = cardOutcomeVisual(chip);
-          return `<i class="${chip.tone}" title="${chip.label}"><em>${cardCompactOutcomeText(chip, visual)}</em></i>`;
+          return `<i class="${chip.tone}" title="${chip.label}"><b class="${cardOutcomeIconClass(visual)}" aria-hidden="true"></b><em>${cardCompactOutcomeText(chip, visual)}</em></i>`;
         })
         .join("")}
     </div>
-    <b class="preview-energy-after" title="사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}" aria-hidden="true"><span class="preview-energy-icon"></span><em>${Math.max(0, preview.energyAfter)}</em></b>
+    <b class="preview-energy-after" title="사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}" aria-hidden="true"><span class="preview-energy-icon ${cardUiIconClass("energy")}"></span><em>${Math.max(0, preview.energyAfter)}</em></b>
     <span class="sr-only">${card.name}. ${actionLabel}. 대상 ${targetName}. ${detail}. 사용 후 남은 전하 ${Math.max(0, preview.energyAfter)}.</span>
   `;
 }
@@ -3119,7 +3119,7 @@ function combatPreviewTargetIcon(targetCount = 1) {
 
 function renderBlockReadout(block = 0) {
   const amount = Math.max(0, Number(block ?? 0));
-  return `<div class="block-readout ${amount > 0 ? "active" : "empty"}" aria-label="방어 ${amount}"><span aria-hidden="true">⬡</span><strong>${amount}</strong></div>`;
+  return `<div class="block-readout ${amount > 0 ? "active" : "empty"}" aria-label="방어 ${amount}"><span class="${cardUiIconClass("block")}" aria-hidden="true"></span><strong>${amount}</strong></div>`;
 }
 
 function combatPreviewTone(preview, selected) {
@@ -5619,7 +5619,7 @@ function renderCombatTurnCue(run) {
       ${cue.detail ? `<small>${cue.detail}</small>` : ""}
       ${cue.chips?.length ? `<div aria-hidden="true">${cue.chips.map((chip) => {
         const visual = turnCueChipVisual(chip);
-        return `<i class="${chip.tone}" title="${chip.label}"><b>${visual.icon}</b><em>${visual.value}</em></i>`;
+        return `<i class="${chip.tone}" title="${chip.label}"><b class="${cardUiIconClass(visual.key)}"></b><em>${visual.value}</em></i>`;
       }).join("")}</div>` : ""}
     </section>
   `;
@@ -5628,13 +5628,13 @@ function renderCombatTurnCue(run) {
 function turnCueChipVisual(chip) {
   const label = chip?.label ?? "";
   const number = label.match(/[+-]?\d+/)?.[0] ?? "";
-  if (/체력 -|피해|공격/.test(label)) return { icon: "✦", value: number ? signedVisualValue(label, number) : "!" };
-  if (/방어/.test(label)) return { icon: "⬡", value: number ? signedVisualValue(label, number) : "+" };
-  if (/에너지/.test(label)) return { icon: "⚡", value: number || "0" };
-  if (/카드|손패/.test(label)) return { icon: "▤", value: number || "0" };
-  if (/소환/.test(label)) return { icon: "◇", value: number ? `×${Math.abs(Number(number))}` : "+" };
-  if (/약화|취약|바이러스|표식|상태/.test(label)) return { icon: "◎", value: number ? signedVisualValue(label, number) : "!" };
-  return { icon: "•", value: number || "!" };
+  if (/체력 -|피해|공격/.test(label)) return { key: "damage", icon: "✦", value: number ? signedVisualValue(label, number) : "!" };
+  if (/방어/.test(label)) return { key: "block", icon: "⬡", value: number ? signedVisualValue(label, number) : "+" };
+  if (/에너지/.test(label)) return { key: "energy", icon: "⚡", value: number || "0" };
+  if (/카드|손패/.test(label)) return { key: "card", icon: "▤", value: number || "0" };
+  if (/소환/.test(label)) return { key: "generic", icon: "◇", value: number ? `×${Math.abs(Number(number))}` : "+" };
+  if (/약화|취약|바이러스|표식|상태/.test(label)) return { key: "status", icon: "◎", value: number ? signedVisualValue(label, number) : "!" };
+  return { key: "generic", icon: "•", value: number || "!" };
 }
 
 function renderCombatFxSource(fx) {
@@ -5645,7 +5645,7 @@ function renderCombatFxSource(fx) {
     return `
       <div class="fx-card-echo ${fx.cardType ?? card.type} rarity-${rarity}">
         <span class="fx-card-cost">${cost >= 90 ? "-" : cost}</span>
-        <span class="fx-card-type" aria-hidden="true">${cardTypeIcon(fx.cardType ?? card.type)}</span>
+        <span class="fx-card-type ${cardTypeIconClass(fx.cardType ?? card.type)}" aria-hidden="true"></span>
         ${renderCardArt(card)}
         <strong>${fx.cardName}</strong>
       </div>
@@ -5671,13 +5671,12 @@ function renderCombatFxChipRow(fx) {
   if (!chips.length) return "";
   return `
     <span class="fx-chip-row">
-      ${chips.map((chip) => `<i class="${chip.tone}" title="${chip.label}"><b aria-hidden="true">${combatFxChipIcon(chip)}</b><em>${combatFxVisibleChipText(chip)}</em></i>`).join("")}
+      ${chips.map((chip) => {
+        const visual = cardOutcomeVisual(chip);
+        return `<i class="${chip.tone}" title="${chip.label}"><b class="${cardOutcomeIconClass(visual)}" aria-hidden="true"></b><em>${combatFxVisibleChipText(chip)}</em></i>`;
+      }).join("")}
     </span>
   `;
-}
-
-function combatFxChipIcon(chip = {}) {
-  return cardOutcomeVisual(chip).icon;
 }
 
 function combatFxVisibleChipText(chip = {}) {
@@ -5733,7 +5732,10 @@ function renderEntityResultStack(mode, uid = null, options = {}) {
   if (!chips.length) return "";
   return `
     <div class="entity-result-stack ${mode}" aria-hidden="true">
-      ${chips.map((chip) => `<i class="${chip.tone}${chip.emphasis ? " emphasis" : ""}" title="${chip.label}"><b>${combatFxChipIcon(chip)}</b><em>${combatFxVisibleChipText(chip)}</em></i>`).join("")}
+      ${chips.map((chip) => {
+        const visual = cardOutcomeVisual(chip);
+        return `<i class="${chip.tone}${chip.emphasis ? " emphasis" : ""}" title="${chip.label}"><b class="${cardOutcomeIconClass(visual)}"></b><em>${combatFxVisibleChipText(chip)}</em></i>`;
+      }).join("")}
     </div>
   `;
 }
@@ -6048,7 +6050,6 @@ function renderBossStatusStrip(boss) {
   const move = enemy.nextMove;
   const intentLabel = enemyMoveLabel(move);
   const intentValue = enemyIntentCompactValue(move);
-  const intentIcon = enemyIntentIconLabel(move);
   const phaseLabel = phaseTwo ? template.phaseName : "1단계";
   const objective = bossObjectiveText(template);
   const objectiveAria = bossObjectiveText(template, "aria");
@@ -6065,7 +6066,7 @@ function renderBossStatusStrip(boss) {
       <div class="boss-status-meter" aria-hidden="true"><i></i><b></b></div>
       <div class="boss-status-readout">
         <b class="boss-objective" title="${objectiveAria}">${objective}</b>
-        <small title="${enemyIntentReadout(move)}"><b aria-hidden="true">${intentIcon}</b><span>${intentLabel}</span><i>${intentValue}</i></small>
+        <small title="${enemyIntentReadout(move)}"><b class="${enemyIntentIconClass(move)}" aria-hidden="true"></b><span>${intentLabel}</span><i>${intentValue}</i></small>
       </div>
       ${renderBossPatternCue(patternCue)}
     </section>
@@ -6708,6 +6709,52 @@ function resourceIconClass(id) {
   return `resource-icon resource-icon-${safeId}`;
 }
 
+function cardUiIconClass(key) {
+  const safeKey = [
+    "attack",
+    "skill",
+    "power",
+    "status",
+    "curse",
+    "damage",
+    "block",
+    "draw",
+    "energy",
+    "heal",
+    "card",
+    "relic",
+    "warn",
+    "generic"
+  ].includes(key)
+    ? key
+    : "generic";
+  return `card-ui-icon card-ui-icon-${safeKey}`;
+}
+
+function cardTypeIconClass(type) {
+  return cardUiIconClass({
+    attack: "attack",
+    skill: "skill",
+    power: "power",
+    status: "status",
+    curse: "curse"
+  }[type] ?? "generic");
+}
+
+function cardOutcomeIconClass(visual = {}) {
+  return cardUiIconClass(visual.key ?? "generic");
+}
+
+function enemyIntentIconClass(move = {}) {
+  return cardUiIconClass({
+    attack: "damage",
+    defend: "block",
+    debuff: "status",
+    buff: "power",
+    summon: "generic"
+  }[move?.type] ?? "generic");
+}
+
 function renderCombatForecast(run) {
   const forecast = enemyIntentForecast(run);
   const primary = combatForecastPrimary(run, forecast);
@@ -6718,7 +6765,7 @@ function renderCombatForecast(run) {
   return `
     <div class="combat-forecast priority threat-${primary.tone}" aria-label="이번 턴 적 행동 예고. ${primary.ariaLabel ?? primary.label}: ${primary.value}. ${primary.detail}. ${chipAria}">
       <article class="forecast-primary ${primary.tone}" title="${primary.ariaLabel ?? primary.label}: ${primary.detail}">
-        <span aria-hidden="true">${primary.icon}</span>
+        <span class="${cardUiIconClass(primary.iconKey)}" aria-hidden="true"></span>
         <strong>${primary.value}</strong>
         <small>${primary.detail}</small>
       </article>
@@ -6727,7 +6774,7 @@ function renderCombatForecast(run) {
           .map(
             (chip) => `
               <span class="forecast-chip ${chip.tone}" title="${chip.fullLabel}: ${chip.detail}" aria-label="${chip.fullLabel}: ${chip.value}. ${chip.detail}">
-                <b aria-hidden="true">${chip.icon}</b>
+                <b class="${cardUiIconClass(chip.iconKey)}" aria-hidden="true"></b>
                 <strong>${chip.value}</strong>
               </span>
             `
@@ -6743,7 +6790,7 @@ function combatForecastPrimary(run, forecast) {
   if (forecast.hpLoss > 0) {
     return {
       tone: "danger",
-      icon: "✦",
+      iconKey: "damage",
       label: "피해",
       value: `-${forecast.hpLoss}`,
       ariaLabel: "막아야 할 피해",
@@ -6753,7 +6800,7 @@ function combatForecastPrimary(run, forecast) {
   if (forecast.incomingDamage > 0) {
     return {
       tone: "guarded",
-      icon: "⬡",
+      iconKey: "block",
       label: "피해",
       value: "0",
       ariaLabel: "방어로 막는 피해",
@@ -6763,7 +6810,7 @@ function combatForecastPrimary(run, forecast) {
   if (forecast.incomingStatuses.length) {
     return {
       tone: "warning",
-      icon: "◎",
+      iconKey: "status",
       label: "상태",
       value: `+${statusEntryTotal(forecast.incomingStatuses)}`,
       ariaLabel: "받을 상태 이상",
@@ -6773,7 +6820,7 @@ function combatForecastPrimary(run, forecast) {
   if (setupText !== "준비 없음") {
     return {
       tone: "setup",
-      icon: combatForecastSetupIcon(forecast),
+      iconKey: combatForecastSetupIconKey(forecast),
       label: "준비",
       value: combatForecastSetupValue(forecast),
       ariaLabel: "적 준비 행동",
@@ -6782,7 +6829,7 @@ function combatForecastPrimary(run, forecast) {
   }
   return {
     tone: "calm",
-    icon: "✓",
+    iconKey: "generic",
     label: "안전",
     value: "0",
     ariaLabel: "적 공격 없음",
@@ -6798,6 +6845,14 @@ function combatForecastSetupIcon(forecast) {
   if (forecast.summons > 0) return "◇";
   if (forecast.enemyBlock > 0) return "⬡";
   return "+";
+}
+
+function combatForecastSetupIconKey(forecast) {
+  if (forecast.summons > 0) return "generic";
+  if (forecast.enemyBlock > 0) return "block";
+  if (forecast.enemyHealing > 0) return "heal";
+  if (forecast.enemyBuffs.length) return "power";
+  return "generic";
 }
 
 function combatForecastSetupValue(forecast) {
@@ -6823,9 +6878,9 @@ function combatForecastSecondaryChips(run, forecast) {
   const statusValue = forecast.incomingStatuses.length ? `+${statusEntryTotal(forecast.incomingStatuses)}` : "0";
   const setupValue = setupText === "준비 없음" ? "0" : combatForecastSetupValue(forecast);
   return [
-    { tone: damageTone, icon: "✦", label: "피해", fullLabel: "받을 피해", value: damageValue, detail: damageForecastText(run, forecast) },
-    { tone: forecast.incomingStatuses.length ? "warning" : "calm", icon: "◎", label: "상태", fullLabel: "상태 이상", value: statusValue, detail: statusListText(forecast.incomingStatuses, "해로운 상태 없음") },
-    { tone: setupText === "준비 없음" ? "calm" : "setup", icon: combatForecastSetupIcon(forecast), label: "준비", fullLabel: "적 준비", value: setupValue, detail: setupText }
+    { tone: damageTone, iconKey: "damage", label: "피해", fullLabel: "받을 피해", value: damageValue, detail: damageForecastText(run, forecast) },
+    { tone: forecast.incomingStatuses.length ? "warning" : "calm", iconKey: "status", label: "상태", fullLabel: "상태 이상", value: statusValue, detail: statusListText(forecast.incomingStatuses, "해로운 상태 없음") },
+    { tone: setupText === "준비 없음" ? "calm" : "setup", iconKey: combatForecastSetupIconKey(forecast), label: "준비", fullLabel: "적 준비", value: setupValue, detail: setupText }
   ];
 }
 
@@ -6992,7 +7047,7 @@ function renderEnemyThreatStrip(enemy, selected = false) {
         ${threat.chips
           .map((chip) => {
             const visual = enemyThreatIconVisual(chip);
-            return `<i class="${chip.tone}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${visual.value}</em><span class="sr-only">${chip.label}</span></i>`;
+            return `<i class="${chip.tone}" title="${chip.label}"><b class="${cardUiIconClass(visual.key)}" aria-hidden="true"></b><em>${visual.value}</em><span class="sr-only">${chip.label}</span></i>`;
           })
           .join("")}
       </div>
@@ -7010,12 +7065,12 @@ function enemyThreatShouldSurface(threat, selected = false) {
 function enemyThreatIconVisual(chip = {}) {
   const label = String(chip.label ?? "");
   const number = label.match(/[+-]?\d+/)?.[0] ?? "";
-  if (/피해|공격/.test(label)) return { icon: "✦", value: number || "!" };
-  if (/방어/.test(label)) return { icon: "⬡", value: number ? signedVisualValue(label, number) : "+" };
-  if (/회복/.test(label)) return { icon: "+", value: number ? signedVisualValue(label, number) : "+" };
-  if (/소환/.test(label)) return { icon: "◇", value: number ? `×${Math.abs(Number(number))}` : "+" };
-  if (/약화|취약|바이러스|표식|상태|취약성|허약/.test(label)) return { icon: "◎", value: number || "!" };
-  return { icon: "•", value: number || "!" };
+  if (/피해|공격/.test(label)) return { key: "damage", icon: "✦", value: number || "!" };
+  if (/방어/.test(label)) return { key: "block", icon: "⬡", value: number ? signedVisualValue(label, number) : "+" };
+  if (/회복/.test(label)) return { key: "heal", icon: "+", value: number ? signedVisualValue(label, number) : "+" };
+  if (/소환/.test(label)) return { key: "generic", icon: "◇", value: number ? `×${Math.abs(Number(number))}` : "+" };
+  if (/약화|취약|바이러스|표식|상태|취약성|허약/.test(label)) return { key: "status", icon: "◎", value: number || "!" };
+  return { key: "generic", icon: "•", value: number || "!" };
 }
 
 function enemyThreatProfile(enemy, selected = false) {
@@ -7167,7 +7222,7 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       ${renderEntityHitSparks("enemy", enemy.uid)}
       ${renderEnemyIntentLane(move)}
       <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}" data-intent-outcome="${intentOutcome}">
-        <i aria-hidden="true">${enemyIntentIconLabel(move)}</i>
+        <i class="${enemyIntentIconClass(move)}" aria-hidden="true"></i>
         <span>
           <em>${intentVisualLabel}</em>
           <strong>${intentLabel}</strong>
@@ -7177,7 +7232,7 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       ${renderEnemyThreatStrip(enemy, selected)}
       ${renderEnemySprite(enemy, template)}
       ${renderEntityResultStack("enemy", enemy.uid, { suppressPrimaryDamage: Boolean(fxHitAmount || fxBlockLossAmount || fxDefeated) })}
-      ${fxHitAmount ? `<div class="entity-damage-pop" aria-hidden="true"><b>✦</b><em>-${fxHitAmount}</em></div>` : fxBlockLossAmount ? `<div class="entity-damage-pop blocked" aria-hidden="true"><b>⬡</b><em>-${fxBlockLossAmount}</em></div>` : ""}
+      ${fxHitAmount ? `<div class="entity-damage-pop" aria-hidden="true"><b class="${cardUiIconClass("damage")}"></b><em>-${fxHitAmount}</em></div>` : fxBlockLossAmount ? `<div class="entity-damage-pop blocked" aria-hidden="true"><b class="${cardUiIconClass("block")}"></b><em>-${fxBlockLossAmount}</em></div>` : ""}
       <div class="combatant-plate enemy-plate">
         <h3><span class="enemy-name-text">${enemy.name}</span>${renderBossPhaseChip(enemy, template)}${enemy.summoned ? `<small>소환체</small>` : ""}</h3>
         ${healthBar(enemy.hp, enemy.maxHp)}
@@ -7229,16 +7284,6 @@ function enemyStageStyle(index = 0, totalEnemies = 1, template = null) {
   const scale = isBoss ? 1 : clamp(1 - depth * (isElite ? 0.035 : 0.055), 0.86, 1);
   const z = isBoss ? 50 : Math.round(44 - depth * 6 + index);
   return `--enemy-index:${index}; --enemy-count:${total}; --enemy-stage-y:${lift}px; --enemy-stage-scale:${scale.toFixed(3)}; --enemy-stage-z:${z}; --enemy-entry-delay:${index * 70}ms;`;
-}
-
-function enemyIntentIconLabel(move = {}) {
-  return {
-    attack: "✦",
-    defend: "⬡",
-    debuff: "!",
-    buff: "+",
-    summon: "◇"
-  }[move?.type] ?? "•";
 }
 
 function enemyIntentCompactLabel(move = {}) {
@@ -12397,12 +12442,12 @@ function renderCard(cardInstance, options = {}) {
       ${recommendationLabel ? `<em class="card-recommendation">${recommendationLabel}</em>` : ""}
       ${cardInstance.upgraded ? `<span class="card-upgrade-mark" aria-hidden="true">+</span>` : ""}
       <div class="card-identity-strip" aria-hidden="true">
-        <span class="card-identity-type" title="${typeText}"><b>${cardTypeIcon(card.type)}</b></span>
+        <span class="card-identity-type" title="${typeText}"><b class="${cardTypeIconClass(card.type)}"></b></span>
         <span class="card-identity-rarity" title="${rarityText}">${cardRarityGlyph(card.rarity)}</span>
       </div>
       ${renderCardArt(card)}
       <div class="card-meta">
-        <span class="card-type-mark" title="${typeText}"><b aria-hidden="true">${cardTypeIcon(card.type)}</b><em>${typeText}${cardInstance.upgraded ? "+" : ""}</em></span>
+        <span class="card-type-mark" title="${typeText}"><b class="${cardTypeIconClass(card.type)}" aria-hidden="true"></b><em>${typeText}${cardInstance.upgraded ? "+" : ""}</em></span>
         <span>${rarityText}</span>
       </div>
       <h3 class="card-name">${card.name}</h3>
@@ -12451,16 +12496,6 @@ function cardPreviewAriaSummary(preview) {
   return `이번 사용: ${chips.map((chip) => chip.label).join(", ")}`;
 }
 
-function cardTypeIcon(type) {
-  return {
-    attack: "✦",
-    skill: "⬡",
-    power: "◆",
-    status: "◎",
-    curse: "!"
-  }[type] ?? "•";
-}
-
 function cardRarityGlyph(rarity) {
   return {
     starter: "•",
@@ -12487,7 +12522,7 @@ function renderCardOutcome(preview) {
       ${chips
         .map((chip, index) => {
           const visual = cardOutcomeVisual(chip);
-          return `<span class="${chip.tone}${index === 0 ? " primary" : ""}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardCompactOutcomeText(chip, visual)}</em><small class="sr-only">${chip.label}</small></span>`;
+          return `<span class="${chip.tone}${index === 0 ? " primary" : ""}" title="${chip.label}"><b class="${cardOutcomeIconClass(visual)}" aria-hidden="true"></b><em>${cardCompactOutcomeText(chip, visual)}</em><small class="sr-only">${chip.label}</small></span>`;
         })
         .join("")}
     </div>
@@ -12506,18 +12541,19 @@ function cardOutcomeVisual(chip) {
   const label = chip?.label ?? "";
   const tone = chip?.tone ?? "steady";
   const number = label.match(/[+-]?\d+/)?.[0] ?? "";
-  if (/처치/.test(label)) return { icon: "✕", value: number || "끝" };
-  if (/연타|×/.test(label)) return { icon: "×", value: number ? String(Math.abs(Number(number))) : "×" };
-  if (/피해|체력 -|방어 -/.test(label)) return { icon: "✦", value: number ? `-${Math.abs(Number(number))}` : "×" };
-  if (/방어/.test(label)) return { icon: "⬡", value: number ? `+${Math.abs(Number(number))}` : "+" };
-  if (/뽑기/.test(label)) return { icon: "▤", value: number ? `+${Math.abs(Number(number))}` : "+" };
-  if (/에너지|전하/.test(label)) return { icon: "⚡", value: signedVisualValue(label, number) || "+" };
-  if (/회복|정화/.test(label)) return { icon: "+", value: number ? `+${Math.abs(Number(number))}` : "+" };
-  if (/생성|강화|비용|버림|소멸/.test(label)) return { icon: "◇", value: number ? signedVisualValue(label, number) || number : "•" };
-  if (/약화|취약|바이러스|표식|집중|상태/.test(label) || tone === "status") return { icon: "◎", value: number ? signedVisualValue(label, number) || number : "!" };
-  if (tone === "warn") return { icon: "!", value: number ? `-${Math.abs(Number(number))}` : "!" };
-  if (tone === "relic") return { icon: "◆", value: number || "•" };
-  return { icon: "•", value: number || "•" };
+  if (/처치/.test(label)) return { key: "damage", icon: "✕", value: number || "끝" };
+  if (/연타|×/.test(label)) return { key: "damage", icon: "×", value: number ? String(Math.abs(Number(number))) : "×" };
+  if (/피해|체력 -|방어 -/.test(label)) return { key: "damage", icon: "✦", value: number ? `-${Math.abs(Number(number))}` : "×" };
+  if (/방어/.test(label)) return { key: "block", icon: "⬡", value: number ? `+${Math.abs(Number(number))}` : "+" };
+  if (/뽑기/.test(label)) return { key: "draw", icon: "▤", value: number ? `+${Math.abs(Number(number))}` : "+" };
+  if (/에너지|전하/.test(label)) return { key: "energy", icon: "⚡", value: signedVisualValue(label, number) || "+" };
+  if (/회복|정화/.test(label)) return { key: "heal", icon: "+", value: number ? `+${Math.abs(Number(number))}` : "+" };
+  if (/생성|버림|소멸/.test(label)) return { key: "card", icon: "◇", value: number ? signedVisualValue(label, number) || number : "•" };
+  if (/강화|비용/.test(label)) return { key: "power", icon: "◇", value: number ? signedVisualValue(label, number) || number : "•" };
+  if (/약화|취약|바이러스|표식|집중|상태/.test(label) || tone === "status") return { key: "status", icon: "◎", value: number ? signedVisualValue(label, number) || number : "!" };
+  if (tone === "warn") return { key: "warn", icon: "!", value: number ? `-${Math.abs(Number(number))}` : "!" };
+  if (tone === "relic") return { key: "relic", icon: "◆", value: number || "•" };
+  return { key: "generic", icon: "•", value: number || "•" };
 }
 
 function signedVisualValue(label, number) {
@@ -12537,12 +12573,12 @@ function renderCardTooltipPreview(preview) {
   return `
     <div class="tooltip-preview">
       <strong>이번 사용</strong>
-      <small class="tooltip-preview-summary">${target.replace(/^대상: /, "대상 ")} · 사용 후 ⚡${Math.max(0, preview.energyAfter)}</small>
+      <small class="tooltip-preview-summary">${target.replace(/^대상: /, "대상 ")} · 사용 후 전하 ${Math.max(0, preview.energyAfter)}</small>
       <div>
         ${visibleChips
           .map((chip) => {
             const visual = cardOutcomeVisual(chip);
-            return `<span class="${chip.tone}" title="${chip.label}"><b aria-hidden="true">${visual.icon}</b><em>${cardTooltipChipText(chip, visual)}</em></span>`;
+            return `<span class="${chip.tone}" title="${chip.label}"><b class="${cardOutcomeIconClass(visual)}" aria-hidden="true"></b><em>${cardTooltipChipText(chip, visual)}</em></span>`;
           })
           .join("")}
         ${hiddenChipCount ? `<span class="control">+${hiddenChipCount}</span>` : ""}

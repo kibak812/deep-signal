@@ -11,8 +11,9 @@
   "identityTags": [
     {
       "visible": true,
-      "type": "✦",
+      "type": "",
       "typeTitle": "공격",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "시작 카드",
       "insideCard": true,
@@ -22,8 +23,9 @@
     },
     {
       "visible": true,
-      "type": "⬡",
+      "type": "",
       "typeTitle": "기술",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "시작 카드",
       "insideCard": true,
@@ -33,8 +35,9 @@
     },
     {
       "visible": true,
-      "type": "⬡",
+      "type": "",
       "typeTitle": "기술",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "시작 카드",
       "insideCard": true,
@@ -44,8 +47,9 @@
     },
     {
       "visible": true,
-      "type": "✦",
+      "type": "",
       "typeTitle": "공격",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "시작 카드",
       "insideCard": true,
@@ -55,8 +59,9 @@
     },
     {
       "visible": true,
-      "type": "✦",
+      "type": "",
       "typeTitle": "공격",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "일반",
       "insideCard": true,
@@ -66,8 +71,9 @@
     },
     {
       "visible": true,
-      "type": "✦",
+      "type": "",
       "typeTitle": "공격",
+      "typeIconSprite": true,
       "rarity": "•",
       "rarityTitle": "일반",
       "insideCard": true,

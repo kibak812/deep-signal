@@ -11,6 +11,7 @@
     "build": "node scripts/build.mjs",
     "assets:arena": "python3 scripts/generate-arena-backdrops.py && python3 scripts/generate-arena-props.py && python3 scripts/generate-event-backdrops.py",
     "assets:backdrops": "python3 scripts/generate-arena-backdrops.py",
+    "assets:card-ui": "python3 scripts/generate-card-ui-icons.py",
     "assets:events": "python3 scripts/generate-event-backdrops.py",
     "assets:hud": "python3 scripts/generate-hud-icons.py",
     "assets:map": "python3 scripts/generate-map-node-icons.py",

@@ -1546,7 +1546,7 @@ async function captureGroupedEnemyFx(cdp) {
     evidence.lockedHandLabels !== evidence.handCardCount ||
     evidence.unlockedHandLabels !== 0 ||
     (evidence.expectedHitBadge && evidence.hitCount !== evidence.expectedHitBadge) ||
-    (evidence.fixtureHasMultiHit && (!evidence.hitCount || !evidence.chipText.includes("×")))
+    (evidence.fixtureHasMultiHit && !evidence.hitCount)
   ) {
     throw new Error(`Grouped enemy FX missing: ${JSON.stringify(evidence)}`);
   }
@@ -1680,10 +1680,14 @@ async function assertEnergyLockedHandHover(cdp) {
     const railText = compactText(rail);
     const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
     const railEnergyText = readableText(rail?.querySelector(".preview-energy-after em"));
-    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
-      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
-      : "";
-    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
+    const railEnergyIconNode = rail?.querySelector(".preview-energy-icon");
+    const railEnergyIconStyle = railEnergyIconNode ? getComputedStyle(railEnergyIconNode) : null;
+    const railEnergySprite = Boolean(
+      railEnergyIconNode?.classList.contains("card-ui-icon-energy") &&
+        railEnergyIconStyle?.backgroundImage.includes("card-ui-icons.png") &&
+        railEnergyIconStyle?.backgroundSize === "1400% 100%"
+    );
+    const railVisualSummary = (railText + " " + (railEnergySprite ? "전하 아이콘" : "") + " " + railEnergyText).replace(/\\s+/g, " ").trim();
     const cardRaised =
       Boolean(cardBox) &&
       cardBox.top >= 0 &&
@@ -2507,10 +2511,14 @@ async function assertCardOutcomeReadability(cdp) {
     const railText = visibleText(rail);
     const railAssistiveText = cleanText(rail?.querySelector(".sr-only"));
     const railEnergyText = cleanText(rail?.querySelector(".preview-energy-after em"));
-    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
-      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
-      : "";
-    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
+    const railEnergyIconNode = rail?.querySelector(".preview-energy-icon");
+    const railEnergyIconStyle = railEnergyIconNode ? getComputedStyle(railEnergyIconNode) : null;
+    const railEnergySprite = Boolean(
+      railEnergyIconNode?.classList.contains("card-ui-icon-energy") &&
+        railEnergyIconStyle?.backgroundImage.includes("card-ui-icons.png") &&
+        railEnergyIconStyle?.backgroundSize === "1400% 100%"
+    );
+    const railVisualSummary = (railText + " " + (railEnergySprite ? "전하 아이콘" : "") + " " + railEnergyText).replace(/\\s+/g, " ").trim();
     const semanticPattern = /(피해|방어|뽑기|전하|정화|회복|처치|표식|바이러스|취약|약화|집중|생성|버림|소멸|강화|비용|효과)/;
     const bareNumberPattern = /^[+−-]?\\d+$/;
     const railCompact =
@@ -2527,7 +2535,7 @@ async function assertCardOutcomeReadability(cdp) {
     const hasReadableRail =
       Boolean(rail) &&
       /^\\d+$/.test(railEnergyText) &&
-      (railEnergyIcon === "⚡" || /전하/.test(railAssistiveText)) &&
+      (railEnergySprite || /전하/.test(railAssistiveText)) &&
       railEffectTexts.length >= 1 &&
       railEffectTexts.every((text) => semanticPattern.test(text) && !bareNumberPattern.test(text)) &&
       railEffectsFit.every((item) => item.fit) &&
@@ -2540,7 +2548,7 @@ async function assertCardOutcomeReadability(cdp) {
       railText,
       railAssistiveText,
       railEnergyText,
-      railEnergyIcon,
+      railEnergySprite,
       railVisualSummary,
       railCompact,
       railEffectTexts,
@@ -3240,10 +3248,14 @@ async function assertAttackCardHoverTarget(cdp) {
     const railText = compactText(rail);
     const railAssistiveText = readableText(rail?.querySelector(".sr-only"));
     const railEnergyText = readableText(rail?.querySelector(".preview-energy-after em"));
-    const railEnergyIcon = rail?.querySelector(".preview-energy-icon")
-      ? getComputedStyle(rail.querySelector(".preview-energy-icon"), "::before").content.replace(/["']/g, "")
-      : "";
-    const railVisualSummary = (railText + " " + railEnergyIcon + railEnergyText).replace(/\\s+/g, " ").trim();
+    const railEnergyIconNode = rail?.querySelector(".preview-energy-icon");
+    const railEnergyIconStyle = railEnergyIconNode ? getComputedStyle(railEnergyIconNode) : null;
+    const railEnergySprite = Boolean(
+      railEnergyIconNode?.classList.contains("card-ui-icon-energy") &&
+        railEnergyIconStyle?.backgroundImage.includes("card-ui-icons.png") &&
+        railEnergyIconStyle?.backgroundSize === "1400% 100%"
+    );
+    const railVisualSummary = (railText + " " + (railEnergySprite ? "전하 아이콘" : "") + " " + railEnergyText).replace(/\\s+/g, " ").trim();
     const targetStyle = target ? getComputedStyle(target) : null;
     const healthResult = health?.getAttribute("data-preview-result") ?? "";
     const previewHpLoss = targetStyle?.getPropertyValue("--preview-hp-loss").trim() ?? "";
@@ -3264,7 +3276,7 @@ async function assertAttackCardHoverTarget(cdp) {
       /처치|-\\d+/.test(healthResult) &&
       /피해/.test(railText) &&
       /^\\d+$/.test(railEnergyText) &&
-      (railEnergyIcon === "⚡" || /전하/.test(railAssistiveText)) &&
+      (railEnergySprite || /전하/.test(railAssistiveText)) &&
       /펄스 랜스.*사용 가능.*대상/.test(railAssistiveText);
     return {
       ok,
@@ -3274,7 +3286,7 @@ async function assertAttackCardHoverTarget(cdp) {
       railText,
       railAssistiveText,
       railEnergyText,
-      railEnergyIcon,
+      railEnergySprite,
       railVisualSummary,
       lineOpacity: lineStyle?.opacity ?? "",
       lineBeforeHeight: lineBefore?.height ?? "",
@@ -3395,6 +3407,7 @@ async function assertDesktopHandReadability(cdp) {
       const cardBox = card.getBoundingClientRect();
       const strip = card.querySelector(".card-identity-strip");
       const type = strip?.querySelector(".card-identity-type");
+      const typeIcon = type?.querySelector(".card-ui-icon");
       const rarity = strip?.querySelector(".card-identity-rarity");
       const cost = card.querySelector(".card-cost");
       const hotkey = card.querySelector(".card-hotkey");
@@ -3402,10 +3415,19 @@ async function assertDesktopHandReadability(cdp) {
       const stripBox = strip?.getBoundingClientRect();
       const artBox = art?.getBoundingClientRect();
       const style = strip ? getComputedStyle(strip) : null;
+      const typeIconStyle = typeIcon ? getComputedStyle(typeIcon) : null;
+      const typeIconBox = typeIcon?.getBoundingClientRect();
       return {
         visible: Boolean(stripBox && /flex/.test(style?.display ?? "") && stripBox.width >= 40 && stripBox.height >= 18),
         type: type?.innerText.trim() ?? "",
         typeTitle: type?.getAttribute("title") ?? "",
+        typeIconSprite: Boolean(
+          typeIconBox &&
+            typeIconBox.width >= 12 &&
+            typeIconBox.height >= 12 &&
+            typeIconStyle?.backgroundImage.includes("card-ui-icons.png") &&
+            typeIconStyle?.backgroundSize === "1400% 100%"
+        ),
         rarity: rarity?.innerText.trim() ?? "",
         rarityTitle: rarity?.getAttribute("title") ?? "",
         insideCard: Boolean(stripBox && stripBox.left >= cardBox.left && stripBox.right <= cardBox.right && stripBox.top >= cardBox.top && stripBox.bottom <= cardBox.bottom),
@@ -3418,7 +3440,7 @@ async function assertDesktopHandReadability(cdp) {
       item.visible &&
       item.insideCard &&
       item.insideArt &&
-      item.type &&
+      item.typeIconSprite &&
       item.typeTitle &&
       item.rarity &&
       item.rarityTitle &&

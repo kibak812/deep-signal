@@ -6715,6 +6715,23 @@ dd,
   box-shadow: inset 0 0 12px color-mix(in srgb, currentColor 11%, transparent);
 }
 
+.hand-zone .card-outcome span .card-ui-icon,
+.game-card .card-outcome span .card-ui-icon,
+.tooltip-preview span .card-ui-icon,
+.combat-card-preview-rail .preview-effect-icons i .card-ui-icon,
+.entity-result-stack i .card-ui-icon,
+.fx-chip-row i .card-ui-icon,
+.enemy-threat i .card-ui-icon,
+.intent-portal-tooltip i .card-ui-icon {
+  background-color: transparent;
+  background-image: url("../public/assets/card-ui-icons.png");
+  background-repeat: no-repeat;
+  background-size: 1400% 100%;
+  background-position: var(--card-ui-icon-position, 100% 50%);
+  color: transparent;
+  text-indent: -9999px;
+}
+
 .hand-zone .card-outcome span em {
   overflow: hidden;
   font-family: inherit;
@@ -6911,6 +6928,90 @@ dd,
 .resource-icon-hand { --resource-icon-position: 50% 50%; --resource-icon-glow: rgba(246, 193, 119, 0.24); }
 .resource-icon-discard { --resource-icon-position: 75% 50%; --resource-icon-glow: rgba(142, 242, 220, 0.22); }
 .resource-icon-exhaust { --resource-icon-position: 100% 50%; --resource-icon-glow: rgba(251, 113, 133, 0.24); }
+
+.card-ui-icon,
+.card-identity-strip .card-ui-icon,
+.hand-zone .card-type-mark .card-ui-icon,
+.card-outcome .card-ui-icon,
+.tooltip-preview .card-ui-icon,
+.combat-card-preview-rail .card-ui-icon,
+.preview-energy-after .card-ui-icon,
+.combatant-plate .block-readout .card-ui-icon,
+.forecast-primary .card-ui-icon,
+.forecast-chip .card-ui-icon,
+.enemy-threat .card-ui-icon,
+.intent .card-ui-icon,
+.intent-portal-tooltip .card-ui-icon,
+.boss-status-readout .card-ui-icon,
+.entity-result-stack .card-ui-icon,
+.entity-damage-pop .card-ui-icon,
+.fx-chip-row .card-ui-icon,
+.fx-card-type.card-ui-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  background-color: transparent;
+  background-image: url("../public/assets/card-ui-icons.png");
+  background-repeat: no-repeat;
+  background-size: 1400% 100%;
+  background-position: var(--card-ui-icon-position, 100% 50%);
+  color: transparent;
+  filter: drop-shadow(0 0 5px var(--card-ui-icon-glow, rgba(125, 211, 252, 0.2)));
+  overflow: hidden;
+  text-indent: -9999px;
+  vertical-align: middle;
+}
+
+.card-ui-icon-attack { --card-ui-icon-position: 0% 50%; --card-ui-icon-glow: rgba(251, 113, 133, 0.24); }
+.card-ui-icon-skill { --card-ui-icon-position: 7.6923% 50%; --card-ui-icon-glow: rgba(125, 211, 252, 0.24); }
+.card-ui-icon-power { --card-ui-icon-position: 15.3846% 50%; --card-ui-icon-glow: rgba(246, 193, 119, 0.24); }
+.card-ui-icon-status { --card-ui-icon-position: 23.0769% 50%; --card-ui-icon-glow: rgba(142, 242, 220, 0.23); }
+.card-ui-icon-curse { --card-ui-icon-position: 30.7692% 50%; --card-ui-icon-glow: rgba(196, 161, 255, 0.24); }
+.card-ui-icon-damage { --card-ui-icon-position: 38.4615% 50%; --card-ui-icon-glow: rgba(251, 113, 133, 0.26); }
+.card-ui-icon-block { --card-ui-icon-position: 46.1538% 50%; --card-ui-icon-glow: rgba(125, 211, 252, 0.24); }
+.card-ui-icon-draw { --card-ui-icon-position: 53.8462% 50%; --card-ui-icon-glow: rgba(142, 242, 220, 0.23); }
+.card-ui-icon-energy { --card-ui-icon-position: 61.5385% 50%; --card-ui-icon-glow: rgba(246, 193, 119, 0.26); }
+.card-ui-icon-heal { --card-ui-icon-position: 69.2308% 50%; --card-ui-icon-glow: rgba(101, 240, 182, 0.23); }
+.card-ui-icon-card { --card-ui-icon-position: 76.9231% 50%; --card-ui-icon-glow: rgba(159, 216, 255, 0.22); }
+.card-ui-icon-relic { --card-ui-icon-position: 84.6154% 50%; --card-ui-icon-glow: rgba(196, 161, 255, 0.24); }
+.card-ui-icon-warn { --card-ui-icon-position: 92.3077% 50%; --card-ui-icon-glow: rgba(255, 157, 177, 0.24); }
+.card-ui-icon-generic { --card-ui-icon-position: 100% 50%; --card-ui-icon-glow: rgba(216, 251, 255, 0.18); }
+
+.card-identity-strip .card-ui-icon,
+.hand-zone .card-type-mark .card-ui-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.card-outcome .card-ui-icon,
+.tooltip-preview .card-ui-icon,
+.enemy-threat .card-ui-icon,
+.intent-portal-tooltip i .card-ui-icon,
+.entity-result-stack .card-ui-icon,
+.fx-chip-row .card-ui-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.combat-card-preview-rail .preview-effect-icons .card-ui-icon,
+.preview-energy-after .card-ui-icon,
+.forecast-chip .card-ui-icon,
+.combatant-plate .block-readout .card-ui-icon,
+.boss-status-readout .card-ui-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.forecast-primary .card-ui-icon,
+.intent .card-ui-icon,
+.intent-portal-tooltip > .card-ui-icon {
+  width: 22px;
+  height: 22px;
+}
+
+.entity-damage-pop .card-ui-icon {
+  width: 0.84em;
+  height: 0.84em;
+}
 
 .combat-energy-panel .combat-energy-mark {
   grid-column: 1;
@@ -7853,6 +7954,11 @@ dd,
   word-break: keep-all;
 }
 
+.combat-card-preview-rail .preview-effect-icons i b {
+  width: 17px;
+  height: 17px;
+}
+
 .combat-card-preview-rail .preview-effect-icons i em {
   display: block;
   overflow: hidden;
@@ -7911,13 +8017,7 @@ dd,
 }
 
 .preview-energy-after .preview-energy-icon {
-  color: rgba(125, 211, 252, 0.86);
-  font-size: 0.7rem;
-  font-weight: 1000;
-}
-
-.preview-energy-after .preview-energy-icon::before {
-  content: "⚡";
+  color: transparent;
 }
 
 .combat-aim-line[hidden] {
@@ -23304,6 +23404,11 @@ input[type="range"] {
 .high-contrast .resource-icon {
   background-image: url("../public/assets/resource-icons.png");
   background-size: 500% 100%;
+}
+
+.high-contrast .card-ui-icon {
+  background-image: url("../public/assets/card-ui-icons.png");
+  background-size: 1400% 100%;
 }
 
 .high-contrast .hud-icon {

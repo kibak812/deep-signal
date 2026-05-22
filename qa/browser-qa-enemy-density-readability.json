@@ -31,10 +31,10 @@
   "threatSpriteOverlaps": [],
   "intentPanelsReadable": true,
   "intentReadouts": [
-    "✦ 연타 집게질 피해 4 x2 · 총 8",
-    "✦ 공격 활강 절단 피해 10",
-    "! 상태 감염 성가 바이러스 2",
-    "✦ 공격 반사 침 피해 9"
+    "연타 집게질 피해 4 x2 · 총 8",
+    "공격 활강 절단 피해 10",
+    "상태 감염 성가 바이러스 2",
+    "공격 반사 침 피해 9"
   ],
   "intentOutcomes": [
     "피해 4 x2 · 총 8",
@@ -61,9 +61,9 @@
     },
     {
       "left": 865,
-      "top": 76,
+      "top": 73,
       "right": 1019,
-      "bottom": 307,
+      "bottom": 305,
       "width": 154,
       "height": 231
     },

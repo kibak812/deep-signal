@@ -2,7 +2,7 @@
   "ok": true,
   "boardClass": "combat-board feedback-damage arena-act-1 arena-combat fx-active fx-tone-damage fx-mode-enemy arena-variant-0 arena-depth-entry arena-motif-abyss",
   "fxClass": "combat-action-fx fx-damage fx-enemy fx-card fx-source-player",
-  "damageText": "✦ -6",
+  "damageText": "-6",
   "trailTapered": true,
   "impactCrossVisible": true,
   "trailStyle": {
@@ -46,18 +46,18 @@
     "trail": {
       "left": 278,
       "top": 144,
-      "right": 1068,
+      "right": 1067,
       "bottom": 226,
       "width": 790,
       "height": 82
     },
     "spark": {
       "left": 443,
-      "top": 158,
+      "top": 157,
       "right": 453,
       "bottom": 167,
       "width": 9,
-      "height": 10
+      "height": 9
     },
     "impact": {
       "left": 1034,
@@ -92,11 +92,11 @@
       "height": 112
     },
     "damagePop": {
-      "left": 1118,
+      "left": 1117,
       "top": 170,
       "right": 1171,
       "bottom": 204,
-      "width": 53,
+      "width": 54,
       "height": 34
     },
     "resultStack": null,
