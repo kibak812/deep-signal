@@ -252,6 +252,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
+  const relicIconSource = readFileSync(new URL("../scripts/generate-relic-icons.py", import.meta.url), "utf8");
   const titleIdentitySource = readFileSync(new URL("../scripts/generate-title-identity.py", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
@@ -277,8 +278,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
+  assert.match(packageSource, /"assets:relics": "python3 scripts\/generate-relic-icons\.py"/);
   assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
   assert.match(mapNodeIconSource, /TYPES = \["combat", "elite", "event", "shop", "rest", "boss"\]/);
+  assert.match(relicIconSource, /ICONS = \[/);
+  assert.match(relicIconSource, /"hourglass"/);
+  assert.match(relicIconSource, /"weight"/);
   assert.match(titleIdentitySource, /def draw_deep_signal_mark\(\):/);
   assert.match(titleIdentitySource, /def draw_echo_diver_emblem\(\):/);
   assert.match(readme, /npm run playtest/);
@@ -333,6 +338,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /Report unchanged at/);
   assert.match(auditSource, /title-raster-identity-assets/);
   assert.match(auditSource, /map-raster-node-icons/);
+  assert.match(auditSource, /relic-raster-icons/);
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
   assert.match(styleSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /deep-signal-mark\.png/);
@@ -3350,8 +3356,9 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(mainSource, /function renderRewardRelicChoices\(run\)/);
   assert.match(mainSource, /function rewardRelicChoiceAriaLabel\(relicId, insight, recommended = false, selected = false\)/);
   assert.match(mainSource, /function rewardRelicFitLabel\(insight\)/);
-  assert.match(mainSource, /function relicIconGlyph\(icon\)/);
-  assert.match(mainSource, /data-glyph="\$\{relicIconGlyph\(relic\.icon\)\}"/);
+  assert.match(mainSource, /class="relic-icon icon-\$\{relic\.icon\}"/);
+  assert.doesNotMatch(mainSource, /relicIconGlyph/);
+  assert.doesNotMatch(mainSource, /data-glyph/);
   assert.match(mainSource, /choicePulse:\s*null/);
   assert.match(mainSource, /choicePulseTimer:\s*null/);
   assert.match(mainSource, /const CHOICE_PULSE_ACTIONS = new Set/);
@@ -3569,8 +3576,11 @@ test("card rewards explain current deck and relic synergy", () => {
   assert.match(styleSource, /\.reward-relic-choice\.selected/);
   assert.match(styleSource, /\.reward-relic-choice\.recommended/);
   assert.match(styleSource, /\.reward-relic-icon-frame/);
-  assert.match(styleSource, /\.relic-icon::before[\s\S]*content:\s*attr\(data-glyph\)/);
-  assert.match(styleSource, /\.icon-anchor,[\s\S]*\.icon-weight,[\s\S]*\.icon-gear/);
+  assert.match(styleSource, /relic-icons\.png/);
+  assert.match(styleSource, /background-size:\s*2900% 100%/);
+  assert.match(styleSource, /\.icon-anchor[\s\S]*--relic-icon-position:\s*0% 50%/);
+  assert.match(styleSource, /\.icon-weight[\s\S]*--relic-icon-position:\s*100% 50%/);
+  assert.doesNotMatch(styleSource, /content:\s*attr\(data-glyph\)/);
   assert.match(styleSource, /\.reward-relic-effect[\s\S]*display:\s*none[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.reward-relic-choice:hover \.reward-relic-effect,[\s\S]*\.reward-relic-choice:focus-visible \.reward-relic-effect,[\s\S]*\.reward-relic-choice\.selected \.reward-relic-effect[\s\S]*display:\s*-webkit-box/);
   assert.match(styleSource, /\.reward-relic-fit b[\s\S]*text-overflow:\s*ellipsis/);

@@ -1556,102 +1556,55 @@ dd,
   position: relative;
   width: 22px;
   height: 22px;
-  display: grid;
-  place-items: center;
+  display: block;
   overflow: hidden;
-  border: 1px solid var(--line-strong);
+  border: 1px solid rgba(236, 248, 243, 0.18);
   border-radius: 7px;
-  background:
-    radial-gradient(circle at 44% 34%, color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 72%, white 8%), transparent 18%),
-    radial-gradient(circle at 50% 78%, rgba(3, 13, 15, 0.9), transparent 54%),
-    conic-gradient(from var(--relic-icon-angle, 35deg), color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 78%, #ffffff 6%), rgba(7, 18, 28, 0.9), color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 38%, #000 28%));
-  color: var(--relic-icon-ink, #f8e7b7);
-  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.08), 0 0 10px color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 18%, transparent);
-  font-size: 0.82rem;
-  font-weight: 1000;
-  line-height: 1;
-}
-
-.relic-icon::before {
-  content: attr(data-glyph);
-  position: relative;
-  z-index: 1;
-  transform: translateY(-0.5px);
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 0 8px color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 62%, transparent);
+  background-image: url("../public/assets/relic-icons.png");
+  background-repeat: no-repeat;
+  background-size: 2900% 100%;
+  background-position: var(--relic-icon-position, 0% 50%);
+  box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.08), 0 0 10px var(--relic-icon-glow, rgba(125, 211, 252, 0.18));
 }
 
 .relic-icon::after {
   content: "";
   position: absolute;
   inset: 3px;
-  border: 1px solid color-mix(in srgb, var(--relic-icon-color, var(--cyan)) 58%, rgba(255, 255, 255, 0.08));
-  opacity: 0.58;
-  transform: rotate(var(--relic-icon-rotate, 0deg));
+  border: 1px solid rgba(236, 248, 243, 0.16);
+  border-radius: 5px;
+  opacity: 0.42;
 }
 
-.icon-anchor,
-.icon-weight,
-.icon-gear {
-  --relic-icon-color: #9df0ba;
-  --relic-icon-angle: 95deg;
-  --relic-icon-rotate: 45deg;
-}
-
-.icon-battery,
-.icon-meter,
-.icon-oil {
-  --relic-icon-color: #7dd3fc;
-  --relic-icon-angle: 20deg;
-}
-
-.icon-coral,
-.icon-shell,
-.icon-gill,
-.icon-pearl {
-  --relic-icon-color: #8ef2dc;
-  --relic-icon-angle: 150deg;
-}
-
-.icon-coin,
-.icon-crown,
-.icon-medal,
-.icon-bell {
-  --relic-icon-color: #f6c177;
-  --relic-icon-angle: 260deg;
-  --relic-icon-ink: #fff7d6;
-}
-
-.icon-key,
-.icon-pass,
-.icon-map,
-.icon-tablet,
-.icon-ledger {
-  --relic-icon-color: #b59cff;
-  --relic-icon-angle: 310deg;
-}
-
-.icon-lens,
-.icon-prism,
-.icon-compass {
-  --relic-icon-color: #8ddcff;
-  --relic-icon-angle: 45deg;
-  --relic-icon-rotate: 45deg;
-}
-
-.icon-ink,
-.icon-spool,
-.icon-echo,
-.icon-hourglass {
-  --relic-icon-color: #d7c8ff;
-  --relic-icon-angle: 190deg;
-}
-
-.icon-needle,
-.icon-tag,
-.icon-vial {
-  --relic-icon-color: #ffc2b7;
-  --relic-icon-angle: 225deg;
-}
+.icon-anchor { --relic-icon-position: 0% 50%; --relic-icon-glow: rgba(157, 240, 186, 0.18); }
+.icon-battery { --relic-icon-position: 3.5714% 50%; --relic-icon-glow: rgba(125, 211, 252, 0.2); }
+.icon-bell { --relic-icon-position: 7.1429% 50%; --relic-icon-glow: rgba(246, 193, 119, 0.2); }
+.icon-coin { --relic-icon-position: 10.7143% 50%; --relic-icon-glow: rgba(246, 193, 119, 0.2); }
+.icon-compass { --relic-icon-position: 14.2857% 50%; --relic-icon-glow: rgba(141, 220, 255, 0.2); }
+.icon-coral { --relic-icon-position: 17.8571% 50%; --relic-icon-glow: rgba(142, 242, 220, 0.2); }
+.icon-crown { --relic-icon-position: 21.4286% 50%; --relic-icon-glow: rgba(246, 193, 119, 0.2); }
+.icon-echo { --relic-icon-position: 25% 50%; --relic-icon-glow: rgba(215, 200, 255, 0.2); }
+.icon-gear { --relic-icon-position: 28.5714% 50%; --relic-icon-glow: rgba(157, 240, 186, 0.18); }
+.icon-gill { --relic-icon-position: 32.1429% 50%; --relic-icon-glow: rgba(142, 242, 220, 0.2); }
+.icon-hourglass { --relic-icon-position: 35.7143% 50%; --relic-icon-glow: rgba(215, 200, 255, 0.2); }
+.icon-ink { --relic-icon-position: 39.2857% 50%; --relic-icon-glow: rgba(215, 200, 255, 0.2); }
+.icon-key { --relic-icon-position: 42.8571% 50%; --relic-icon-glow: rgba(181, 156, 255, 0.2); }
+.icon-ledger { --relic-icon-position: 46.4286% 50%; --relic-icon-glow: rgba(181, 156, 255, 0.2); }
+.icon-lens { --relic-icon-position: 50% 50%; --relic-icon-glow: rgba(141, 220, 255, 0.2); }
+.icon-map { --relic-icon-position: 53.5714% 50%; --relic-icon-glow: rgba(181, 156, 255, 0.2); }
+.icon-medal { --relic-icon-position: 57.1429% 50%; --relic-icon-glow: rgba(246, 193, 119, 0.2); }
+.icon-meter { --relic-icon-position: 60.7143% 50%; --relic-icon-glow: rgba(125, 211, 252, 0.2); }
+.icon-needle { --relic-icon-position: 64.2857% 50%; --relic-icon-glow: rgba(255, 194, 183, 0.2); }
+.icon-oil { --relic-icon-position: 67.8571% 50%; --relic-icon-glow: rgba(125, 211, 252, 0.2); }
+.icon-pass { --relic-icon-position: 71.4286% 50%; --relic-icon-glow: rgba(181, 156, 255, 0.2); }
+.icon-pearl { --relic-icon-position: 75% 50%; --relic-icon-glow: rgba(142, 242, 220, 0.2); }
+.icon-prism { --relic-icon-position: 78.5714% 50%; --relic-icon-glow: rgba(141, 220, 255, 0.2); }
+.icon-shell { --relic-icon-position: 82.1429% 50%; --relic-icon-glow: rgba(142, 242, 220, 0.2); }
+.icon-spool { --relic-icon-position: 85.7143% 50%; --relic-icon-glow: rgba(215, 200, 255, 0.2); }
+.icon-tablet { --relic-icon-position: 89.2857% 50%; --relic-icon-glow: rgba(181, 156, 255, 0.2); }
+.icon-tag { --relic-icon-position: 92.8571% 50%; --relic-icon-glow: rgba(255, 194, 183, 0.2); }
+.icon-vial { --relic-icon-position: 96.4286% 50%; --relic-icon-glow: rgba(255, 194, 183, 0.2); }
+.icon-weight { --relic-icon-position: 100% 50%; --relic-icon-glow: rgba(157, 240, 186, 0.18); }
 
 .relic.large .relic-icon {
   width: 36px;

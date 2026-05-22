@@ -77,9 +77,11 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
     resolve(root, "src/data/events.js"),
     resolve(root, "src/data/relics.js"),
     resolve(root, "scripts/generate-map-node-icons.py"),
+    resolve(root, "scripts/generate-relic-icons.py"),
     resolve(root, "scripts/generate-title-identity.py"),
     resolve(root, "public/assets/favicon.svg"),
     resolve(root, "public/assets/map-node-icons.png"),
+    resolve(root, "public/assets/relic-icons.png"),
     resolve(root, "public/assets/deep-signal-mark.png"),
     resolve(root, "public/assets/echo-diver-emblem.png")
   ];
@@ -212,6 +214,7 @@ async function main() {
   const cardArtScriptSource = await readFile(resolve(root, "scripts/rebuild-card-illustrations.py"), "utf8");
   const combatantScriptSource = await readFile(resolve(root, "scripts/rebuild-combatants.py"), "utf8");
   const mapNodeIconScriptSource = await readFile(resolve(root, "scripts/generate-map-node-icons.py"), "utf8").catch(() => "");
+  const relicIconScriptSource = await readFile(resolve(root, "scripts/generate-relic-icons.py"), "utf8").catch(() => "");
   const titleIdentityScriptSource = await readFile(resolve(root, "scripts/generate-title-identity.py"), "utf8").catch(() => "");
   const titleMarkPng = await pngSize(resolve(root, "public/assets/deep-signal-mark.png"));
   const diverEmblemPng = await pngSize(resolve(root, "public/assets/echo-diver-emblem.png"));
@@ -252,6 +255,8 @@ async function main() {
   const eventBackdropSize = pngDimensions(eventBackdrops);
   const mapNodeIcons = await readFile(resolve(root, "public/assets/map-node-icons.png"));
   const mapNodeIconSize = pngDimensions(mapNodeIcons);
+  const relicIcons = await readFile(resolve(root, "public/assets/relic-icons.png"));
+  const relicIconSize = pngDimensions(relicIcons);
   const enemyPortraits = await readFile(resolve(root, "public/assets/enemy-portraits.png"));
   const combatSprites = await readFile(resolve(root, "public/assets/combat-sprites.png"));
   const playerCombatant = await readFile(resolve(root, "public/assets/combatants/player-echo-diver.png"));
@@ -324,7 +329,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events", "assets:map", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events", "assets:map", "assets:relics", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
@@ -460,15 +465,17 @@ async function main() {
   record(
     "art-assets",
     "PNG 스프라이트/배경 아틀라스",
-    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, mapNodeIcons, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
+    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, mapNodeIcons, relicIcons, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
       cardAtlasSize?.width === 2880 &&
       cardAtlasSize?.height === 2304 &&
       eventBackdropSize?.width === 2304 &&
       eventBackdropSize?.height === 864 &&
       mapNodeIconSize?.width === 768 &&
       mapNodeIconSize?.height === 128 &&
+      relicIconSize?.width === 3712 &&
+      relicIconSize?.height === 128 &&
       combatantDimensions.every((size) => size?.width === 1024 && size?.height === 1536) &&
-      ["sprite-atlas.png", "card-illustrations.png", "arena-backdrops.png", "arena-props.png", "event-backdrops.png", "map-node-icons.png", "enemy-portraits.png", "combat-sprites.png", "combatants/player-echo-diver.png"].every((asset) => styleSource.includes(asset)) &&
+      ["sprite-atlas.png", "card-illustrations.png", "arena-backdrops.png", "arena-props.png", "event-backdrops.png", "map-node-icons.png", "relic-icons.png", "enemy-portraits.png", "combat-sprites.png", "combatants/player-echo-diver.png"].every((asset) => styleSource.includes(asset)) &&
       styleSource.includes("card-illustrations.png?v=20260521-cardart4") &&
       ["combatants/boss-cataloger.png", "combatants/boss-algorithm.png", "combatants/boss-lastgate.png", "combatants/boss-cataloger-phase2.png", "combatants/boss-algorithm-phase2.png", "combatants/boss-lastgate-phase2.png", "combatants/elite-bailiff.png", "combatants/elite-engine.png", "combatants/elite-knight.png", "combatants/elite-cantor.png", "combatants/elite-colossus.png", "combatants/enemy-${template.sprite}.png", "--enemy-sprite-image"].every((asset) => mainSource.includes(asset)) &&
       ["sprite-motion-echo", "sprite-ground-burst", "sprite-action-echo-player", "sprite-action-echo-enemy", "sprite-hit-echo", "sprite-ground-collapse", "--sprite-shift-x"].every((token) => styleSource.includes(token) || mainSource.includes(token)) &&
@@ -478,7 +485,22 @@ async function main() {
       mainSource.includes("data-atlas-cell") &&
       mainSource.includes("data-portrait-cell"),
     "카드/적/전투 배경 아트는 PNG 아틀라스와 아틀라스 셀, 카드별 전경 모티프, 적별 포즈 보정, 보스 2단계 전용 PNG, 스프라이트 동작 피드백을 사용해야 합니다.",
-    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, mapNodeIconBytes: mapNodeIcons.length, mapNodeIconSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
+    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, mapNodeIconBytes: mapNodeIcons.length, mapNodeIconSize, relicIconBytes: relicIcons.length, relicIconSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
+  );
+  record(
+    "relic-raster-icons",
+    "유물 래스터 아이콘",
+    relicIconSize?.width === 3712 &&
+      relicIconSize?.height === 128 &&
+      mainSource.includes('class="relic-icon icon-${relic.icon}"') &&
+      !mainSource.includes("data-glyph") &&
+      !mainSource.includes("relicIconGlyph") &&
+      styleSource.includes("relic-icons.png") &&
+      styleSource.includes("background-size: 2900% 100%") &&
+      relicIconScriptSource.includes('"hourglass"') &&
+      relicIconScriptSource.includes('"weight"'),
+    "유물 표식은 문자 glyph가 아니라 29셀 PNG 스프라이트에서 가져와야 합니다.",
+    { relicIconSize, relicIconBytes: relicIcons.length }
   );
   record(
     "map-raster-node-icons",

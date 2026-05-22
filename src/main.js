@@ -13215,7 +13215,7 @@ function renderRelic(relicId, large = false, active = false, run = null) {
   const aria = `${relic.name}. ${activeText}${rarity} 유물. ${relic.timing}. ${relic.text}${insight ? ` ${insight}` : ""}`;
   return `
     <span class="relic relic-${relic.rarity} ${large ? "large" : ""} ${active ? "active" : ""}" title="${relic.name}: ${relic.text}" aria-label="${aria}">
-      <span class="relic-icon icon-${relic.icon}" data-glyph="${relicIconGlyph(relic.icon)}"></span>
+      <span class="relic-icon icon-${relic.icon}"></span>
       ${large ? `
         <span class="relic-copy">
           <span class="relic-name">${relic.name}</span>
@@ -13227,40 +13227,6 @@ function renderRelic(relicId, large = false, active = false, run = null) {
       ${relicTooltip(relic, rarity, insight, active)}
     </span>
   `;
-}
-
-function relicIconGlyph(icon) {
-  return {
-    anchor: "⚓",
-    battery: "▣",
-    bell: "◍",
-    coin: "¢",
-    compass: "⌖",
-    coral: "♆",
-    crown: "♛",
-    echo: "◌",
-    gear: "⚙",
-    gill: "≈",
-    hourglass: "⧖",
-    ink: "◆",
-    key: "⚿",
-    ledger: "▤",
-    lens: "◉",
-    map: "⌗",
-    medal: "★",
-    meter: "Ⅲ",
-    needle: "⌁",
-    oil: "◍",
-    pass: "▥",
-    pearl: "●",
-    prism: "△",
-    shell: "◒",
-    spool: "∞",
-    tablet: "▭",
-    tag: "⌁",
-    vial: "◈",
-    weight: "⬡"
-  }[icon] ?? "◆";
 }
 
 function relicTooltip(relic, rarity, insight, active = false) {
