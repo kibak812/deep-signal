@@ -3,7 +3,7 @@ import { STARTER_DECK } from "./cards.js";
 export const CHARACTER = {
   id: "echo_archivist",
   name: "에코 다이버",
-  title: "심해 신호를 쫓는 탐사자",
+  title: "심해 신호 추적자",
   maxHp: 92,
   gold: 99,
   energy: 3,

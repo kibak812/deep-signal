@@ -3557,10 +3557,10 @@ function renderTitle() {
       <section class="title-hero">
         <div class="title-copy">
           <div class="brand-mark" aria-hidden="true">
-            <img src="./public/assets/deep-signal-mark.png" alt="">
+            <img src="./public/assets/deep-signal-mark.png?v=20260523-title2" alt="">
           </div>
           <h1>딥 시그널</h1>
-          <p>침수된 데이터 심해로 내려가 카드를 고르고, 위험한 경로를 돌파해 최심부의 왜곡을 잠재우세요.</p>
+          <p>가라앉은 데이터 해역을 탐사하며 카드를 고르고, 위험한 길을 지나 최심부의 이상 신호를 잠재우세요.</p>
         </div>
         <section class="title-start-panel" aria-label="런 시작">
           <div class="title-start-copy">
@@ -3819,7 +3819,7 @@ function renderCharacterPanel() {
     <section class="character-panel" aria-label="선택한 캐릭터">
       <div class="character-core">
         <div class="diver-emblem" aria-hidden="true">
-          <img src="./public/assets/echo-diver-emblem.png" alt="">
+          <img src="./public/assets/echo-diver-emblem.png?v=20260523-title2" alt="">
         </div>
         <header>
           <span>플레이어</span>
@@ -4428,10 +4428,10 @@ function renderTopBar(run) {
       <button class="relic-row relic-row-button" data-action="open-relics" aria-label="유물 ${run.player.relics.length}개 상세 보기" title="유물 상세 보기">
         ${run.player.relics.map((id) => renderRelic(id, false, activeRelics.has(id), run)).join("")}
       </button>
-      <button class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="${run.player.deck.length}" title="덱 보기">덱 ${run.player.deck.length}</button>
+      <button class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="${run.player.deck.length}" aria-label="덱 ${run.player.deck.length}장 보기" title="덱 보기"><span class="hud-icon hud-icon-deck" aria-hidden="true"></span><span class="deck-toggle-count" aria-hidden="true">${run.player.deck.length}</span><span class="button-label">덱 ${run.player.deck.length}</span></button>
       <button class="icon-button" data-action="screen" data-id="codex" title="코덱스">코덱스</button>
       <button class="icon-button" data-action="screen" data-id="guide" title="가이드">가이드</button>
-      <button class="icon-button" data-action="screen" data-id="settings" title="설정">설정</button>
+      <button class="icon-button" data-action="screen" data-id="settings" aria-label="설정" title="설정"><span class="hud-icon hud-icon-settings" aria-hidden="true"></span><span class="button-label">설정</span></button>
     </header>
   `;
 }

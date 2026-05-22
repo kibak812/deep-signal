@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "imagesLoaded": true,
+  "oldTextGone": true,
+  "awkwardCopyGone": true,
+  "copyReady": true,
+  "boxesReady": true,
+  "brandText": "",
+  "diverText": "",
+  "brandSrc": "http://127.0.0.1:4212/public/assets/deep-signal-mark.png?v=20260523-title2",
+  "diverSrc": "http://127.0.0.1:4212/public/assets/echo-diver-emblem.png?v=20260523-title2",
+  "brandNaturalWidth": 256,
+  "diverNaturalWidth": 256,
+  "heroCopy": "가라앉은 데이터 해역을 탐사하며 카드를 고르고, 위험한 길을 지나 최심부의 이상 신호를 잠재우세요.",
+  "characterTitle": "심해 신호 추적자"
+}

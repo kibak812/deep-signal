@@ -73,15 +73,18 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
     resolve(root, "src/styles.css"),
     resolve(root, "src/engine/game.js"),
     resolve(root, "src/data/cards.js"),
+    resolve(root, "src/data/character.js"),
     resolve(root, "src/data/enemies.js"),
     resolve(root, "src/data/events.js"),
     resolve(root, "src/data/relics.js"),
+    resolve(root, "scripts/generate-hud-icons.py"),
     resolve(root, "scripts/generate-map-node-icons.py"),
     resolve(root, "scripts/generate-relic-icons.py"),
     resolve(root, "scripts/generate-resource-icons.py"),
     resolve(root, "scripts/generate-status-icons.py"),
     resolve(root, "scripts/generate-title-identity.py"),
     resolve(root, "public/assets/favicon.svg"),
+    resolve(root, "public/assets/hud-icons.png"),
     resolve(root, "public/assets/map-node-icons.png"),
     resolve(root, "public/assets/relic-icons.png"),
     resolve(root, "public/assets/resource-icons.png"),
@@ -217,6 +220,7 @@ async function main() {
   const buildSource = await readFile(resolve(root, "scripts/build.mjs"), "utf8");
   const cardArtScriptSource = await readFile(resolve(root, "scripts/rebuild-card-illustrations.py"), "utf8");
   const combatantScriptSource = await readFile(resolve(root, "scripts/rebuild-combatants.py"), "utf8");
+  const hudIconScriptSource = await readFile(resolve(root, "scripts/generate-hud-icons.py"), "utf8").catch(() => "");
   const mapNodeIconScriptSource = await readFile(resolve(root, "scripts/generate-map-node-icons.py"), "utf8").catch(() => "");
   const relicIconScriptSource = await readFile(resolve(root, "scripts/generate-relic-icons.py"), "utf8").catch(() => "");
   const resourceIconScriptSource = await readFile(resolve(root, "scripts/generate-resource-icons.py"), "utf8").catch(() => "");
@@ -233,6 +237,7 @@ async function main() {
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
   const playtestReportPath = resolve(root, "qa/release-playtest-report.json");
   const playtestReport = JSON.parse(await readFile(playtestReportPath, "utf8").catch(() => "null"));
+  const titleIdentityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-title-identity.json"), "utf8").catch(() => "null"));
   const mobileCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-mobile-combat-refreshed.json"), "utf8").catch(() => "null"));
   const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
   const enemyDensityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-density-readability.json"), "utf8").catch(() => "null"));
@@ -259,6 +264,8 @@ async function main() {
   const arenaProps = await readFile(resolve(root, "public/assets/arena-props.png"));
   const eventBackdrops = await readFile(resolve(root, "public/assets/event-backdrops.png"));
   const eventBackdropSize = pngDimensions(eventBackdrops);
+  const hudIcons = await readFile(resolve(root, "public/assets/hud-icons.png"));
+  const hudIconSize = pngDimensions(hudIcons);
   const mapNodeIcons = await readFile(resolve(root, "public/assets/map-node-icons.png"));
   const mapNodeIconSize = pngDimensions(mapNodeIcons);
   const relicIcons = await readFile(resolve(root, "public/assets/relic-icons.png"));
@@ -339,7 +346,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events", "assets:map", "assets:relics", "assets:resources", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
@@ -475,11 +482,13 @@ async function main() {
   record(
     "art-assets",
     "PNG 스프라이트/배경 아틀라스",
-    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, mapNodeIcons, relicIcons, resourceIcons, statusIcons, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
+    [atlas, cardAtlas, arenaAtlas, arenaProps, eventBackdrops, hudIcons, mapNodeIcons, relicIcons, resourceIcons, statusIcons, enemyPortraits, combatSprites, playerCombatant, catalogerCombatant, algorithmCombatant, lastGateCombatant, catalogerPhaseTwoCombatant, algorithmPhaseTwoCombatant, lastGatePhaseTwoCombatant, bailiffCombatant, engineCombatant, knightCombatant, cantorCombatant, colossusCombatant, ...enemyCombatants].every((asset) => asset.subarray(0, 8).toString("hex") === "89504e470d0a1a0a") &&
       cardAtlasSize?.width === 2880 &&
       cardAtlasSize?.height === 2304 &&
       eventBackdropSize?.width === 2304 &&
       eventBackdropSize?.height === 864 &&
+      hudIconSize?.width === 256 &&
+      hudIconSize?.height === 128 &&
       mapNodeIconSize?.width === 768 &&
       mapNodeIconSize?.height === 128 &&
       relicIconSize?.width === 3712 &&
@@ -489,7 +498,7 @@ async function main() {
       statusIconSize?.width === 2560 &&
       statusIconSize?.height === 128 &&
       combatantDimensions.every((size) => size?.width === 1024 && size?.height === 1536) &&
-      ["sprite-atlas.png", "card-illustrations.png", "arena-backdrops.png", "arena-props.png", "event-backdrops.png", "map-node-icons.png", "relic-icons.png", "resource-icons.png", "status-icons.png", "enemy-portraits.png", "combat-sprites.png", "combatants/player-echo-diver.png"].every((asset) => styleSource.includes(asset)) &&
+      ["sprite-atlas.png", "card-illustrations.png", "arena-backdrops.png", "arena-props.png", "event-backdrops.png", "hud-icons.png", "map-node-icons.png", "relic-icons.png", "resource-icons.png", "status-icons.png", "enemy-portraits.png", "combat-sprites.png", "combatants/player-echo-diver.png"].every((asset) => styleSource.includes(asset)) &&
       styleSource.includes("card-illustrations.png?v=20260521-cardart4") &&
       ["combatants/boss-cataloger.png", "combatants/boss-algorithm.png", "combatants/boss-lastgate.png", "combatants/boss-cataloger-phase2.png", "combatants/boss-algorithm-phase2.png", "combatants/boss-lastgate-phase2.png", "combatants/elite-bailiff.png", "combatants/elite-engine.png", "combatants/elite-knight.png", "combatants/elite-cantor.png", "combatants/elite-colossus.png", "combatants/enemy-${template.sprite}.png", "--enemy-sprite-image"].every((asset) => mainSource.includes(asset)) &&
       ["sprite-motion-echo", "sprite-ground-burst", "sprite-action-echo-player", "sprite-action-echo-enemy", "sprite-hit-echo", "sprite-ground-collapse", "--sprite-shift-x"].every((token) => styleSource.includes(token) || mainSource.includes(token)) &&
@@ -499,7 +508,7 @@ async function main() {
       mainSource.includes("data-atlas-cell") &&
       mainSource.includes("data-portrait-cell"),
     "카드/적/전투 배경 아트는 PNG 아틀라스와 아틀라스 셀, 카드별 전경 모티프, 적별 포즈 보정, 보스 2단계 전용 PNG, 스프라이트 동작 피드백을 사용해야 합니다.",
-    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, mapNodeIconBytes: mapNodeIcons.length, mapNodeIconSize, relicIconBytes: relicIcons.length, relicIconSize, resourceIconBytes: resourceIcons.length, resourceIconSize, statusIconBytes: statusIcons.length, statusIconSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
+    { spriteBytes: atlas.length, cardBytes: cardAtlas.length, cardAtlasSize, arenaBytes: arenaAtlas.length, arenaPropBytes: arenaProps.length, eventBackdropBytes: eventBackdrops.length, eventBackdropSize, hudIconBytes: hudIcons.length, hudIconSize, mapNodeIconBytes: mapNodeIcons.length, mapNodeIconSize, relicIconBytes: relicIcons.length, relicIconSize, resourceIconBytes: resourceIcons.length, resourceIconSize, statusIconBytes: statusIcons.length, statusIconSize, enemyPortraitBytes: enemyPortraits.length, combatSpriteBytes: combatSprites.length, combatantCanvas: combatantDimensions[0], playerCombatantBytes: playerCombatant.length, catalogerCombatantBytes: catalogerCombatant.length, algorithmCombatantBytes: algorithmCombatant.length, lastGateCombatantBytes: lastGateCombatant.length, catalogerPhaseTwoCombatantBytes: catalogerPhaseTwoCombatant.length, algorithmPhaseTwoCombatantBytes: algorithmPhaseTwoCombatant.length, lastGatePhaseTwoCombatantBytes: lastGatePhaseTwoCombatant.length, bailiffCombatantBytes: bailiffCombatant.length, engineCombatantBytes: engineCombatant.length, knightCombatantBytes: knightCombatant.length, cantorCombatantBytes: cantorCombatant.length, colossusCombatantBytes: colossusCombatant.length, enemyCombatants: enemyCombatants.length }
   );
   record(
     "relic-raster-icons",
@@ -528,6 +537,22 @@ async function main() {
       mapNodeIconScriptSource.includes('TYPES = ["combat", "elite", "event", "shop", "rest", "boss"]'),
     "지도와 경로 카드의 노드 표식은 인라인 SVG가 아니라 6셀 PNG 스프라이트에서 가져와야 합니다.",
     { mapNodeIconSize, mapNodeIconBytes: mapNodeIcons.length }
+  );
+  record(
+    "hud-raster-icons",
+    "상단 HUD 래스터 아이콘",
+    hudIconSize?.width === 256 &&
+      hudIconSize?.height === 128 &&
+      mainSource.includes('class="hud-icon hud-icon-deck"') &&
+      mainSource.includes('class="hud-icon hud-icon-settings"') &&
+      mainSource.includes('aria-label="덱 ${run.player.deck.length}장 보기"') &&
+      !styleSource.includes('content: "▤') &&
+      !styleSource.includes('content: "⚙"') &&
+      styleSource.includes("hud-icons.png") &&
+      styleSource.includes("background-size: 200% 100%") &&
+      hudIconScriptSource.includes('ICONS = ["deck", "settings"]'),
+    "상단 덱/설정 버튼은 문자 glyph가 아니라 2셀 PNG 스프라이트에서 가져와야 합니다.",
+    { hudIconSize, hudIconBytes: hudIcons.length }
   );
   record(
     "status-raster-icons",
@@ -617,9 +642,10 @@ async function main() {
       mainSource.includes("./public/assets/echo-diver-emblem.png") &&
       styleSource.includes("deep-signal-mark.png") &&
       titleIdentityScriptSource.includes("draw_deep_signal_mark") &&
-      titleIdentityScriptSource.includes("draw_echo_diver_emblem"),
+      titleIdentityScriptSource.includes("draw_echo_diver_emblem") &&
+      titleIdentityQa?.ok === true,
     "시작 화면의 브랜드 마크와 캐릭터 엠블럼은 약어 텍스트나 SVG 플레이스홀더가 아니라 재생성 가능한 PNG 게임 자산이어야 합니다.",
-    { titleMarkPng, diverEmblemPng }
+    { titleMarkPng, diverEmblemPng, titleIdentityQa }
   );
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
   record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });

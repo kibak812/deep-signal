@@ -233,11 +233,11 @@ test("visible copy stays Korean-first and avoids awkward placeholder phrasing", 
   }
   assert.match(visibleSources.get("main"), /딥 시그널/);
   assert.match(visibleSources.get("character"), /에코 다이버/);
-  assert.match(visibleSources.get("character"), /심해 신호를 쫓는 탐사자/);
+  assert.match(visibleSources.get("character"), /심해 신호 추적자/);
   assert.match(visibleSources.get("package"), /deep-signal/);
   assert.match(visibleSources.get("main"), /주력 고르기/);
   assert.match(visibleSources.get("main"), /뽑고, 쓰고, 남기지 않기/);
-  assert.match(visibleSources.get("main"), /침수된 데이터 심해/);
+  assert.match(visibleSources.get("main"), /가라앉은 데이터 해역/);
   assert.match(visibleSources.get("main"), /해로운 상태/);
   assert.match(visibleSources.get("main"), /경로 선택/);
   assert.match(visibleSources.get("main"), /보상 선택/);
@@ -251,6 +251,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
+  const hudIconSource = readFileSync(new URL("../scripts/generate-hud-icons.py", import.meta.url), "utf8");
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
   const relicIconSource = readFileSync(new URL("../scripts/generate-relic-icons.py", import.meta.url), "utf8");
   const resourceIconSource = readFileSync(new URL("../scripts/generate-resource-icons.py", import.meta.url), "utf8");
@@ -279,11 +280,15 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(packageSource, /"assets:hud": "python3 scripts\/generate-hud-icons\.py"/);
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
   assert.match(packageSource, /"assets:relics": "python3 scripts\/generate-relic-icons\.py"/);
   assert.match(packageSource, /"assets:resources": "python3 scripts\/generate-resource-icons\.py"/);
   assert.match(packageSource, /"assets:statuses": "python3 scripts\/generate-status-icons\.py"/);
   assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
+  assert.match(hudIconSource, /ICONS = \["deck", "settings"\]/);
+  assert.match(hudIconSource, /def draw_deck/);
+  assert.match(hudIconSource, /def draw_settings/);
   assert.match(mapNodeIconSource, /TYPES = \["combat", "elite", "event", "shop", "rest", "boss"\]/);
   assert.match(relicIconSource, /ICONS = \[/);
   assert.match(relicIconSource, /"hourglass"/);
@@ -348,11 +353,17 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /function writeAuditReportIfChanged\(report\)/);
   assert.match(auditSource, /Report unchanged at/);
   assert.match(auditSource, /title-raster-identity-assets/);
+  assert.match(auditSource, /browser-qa-title-identity\.json/);
+  assert.match(auditSource, /hud-raster-icons/);
   assert.match(auditSource, /map-raster-node-icons/);
   assert.match(auditSource, /relic-raster-icons/);
   assert.match(auditSource, /resource-raster-icons/);
   assert.match(auditSource, /status-raster-icons/);
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
+  assert.match(captureSource, /function assertTitleIdentityUx\(cdp\)/);
+  assert.match(captureSource, /browser-qa-title-identity\.json/);
+  assert.match(captureSource, /deep-signal-mark\.png\?v=20260523-title2/);
+  assert.match(captureSource, /echo-diver-emblem\.png\?v=20260523-title2/);
   assert.match(styleSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /echo-diver-emblem\.png/);
@@ -1470,7 +1481,9 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /data-action="preview-sound"/);
   assert.match(mainSource, /data-action="preview-music"/);
   assert.match(mainSource, /data-setting-value="\$\{key\}"/);
-  assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}"/);
+  assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}" aria-label="덱 \$\{run\.player\.deck\.length\}장 보기"/);
+  assert.match(mainSource, /class="hud-icon hud-icon-deck"/);
+  assert.match(mainSource, /class="hud-icon hud-icon-settings"/);
   assert.match(mainSource, /function renderTopRouteCompass\(run\)/);
   assert.match(mainSource, /class="top-route-compass \$\{progress\.tone\}"/);
   assert.match(mainSource, /class="top-route-pips" aria-hidden="true"/);
@@ -1493,7 +1506,11 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.phase-reward > \.top-bar \.top-route-compass/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.top-objective/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.brand-button::before/);
-  assert.match(styleSource, /\.phase-combat > \.top-bar \.deck-toggle-button::before/);
+  assert.match(styleSource, /hud-icons\.png/);
+  assert.match(styleSource, /\.hud-icon-deck[\s\S]*--hud-icon-position:\s*0% 50%/);
+  assert.match(styleSource, /\.hud-icon-settings[\s\S]*--hud-icon-position:\s*100% 50%/);
+  assert.doesNotMatch(styleSource, /content:\s*"▤/);
+  assert.doesNotMatch(styleSource, /content:\s*"⚙"/);
   assert.match(styleSource, /\.combat-board \.combat-route-beacon/);
   assert.match(styleSource, /\.combat-board \.combat-route-beacon \.route-kicker/);
   assert.match(styleSource, /\.combat-board \.combat-route-beacon small/);
@@ -1586,6 +1603,8 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(captureSource, /panelCenteredInStack/);
   assert.match(captureSource, /assertHighEnergyHud\(cdp\)/);
   assert.match(captureSource, /browser-qa-combat-high-energy-hud\.json/);
+  assert.match(captureSource, /usesHudSprite/);
+  assert.match(captureSource, /hud-icons\.png/);
   assert.match(captureSource, /usesResourceSprite/);
   assert.match(captureSource, /resource-icons\.png/);
   assert.match(captureSource, /usesStatusSprite/);

@@ -52,6 +52,9 @@ try {
   await setViewport(cdp, 1280, 720);
 
   await navigate(cdp, baseUrl);
+  await waitForSelector(cdp, ".title-screen");
+  const titleIdentityEvidence = await assertTitleIdentityUx(cdp);
+  await writeFile(resolve(qaDir, "browser-qa-title-identity.json"), `${JSON.stringify(titleIdentityEvidence, null, 2)}\n`);
   await capture(cdp, "browser-qa-title-refreshed.png");
 
   await clickText(cdp, "게임 정보");
@@ -454,6 +457,52 @@ async function capture(cdp, file) {
 async function waitForVisibleTransitionToFinish(cdp) {
   const hasVisibleTransition = await evaluate(cdp, `Boolean(document.querySelector(".phase-transition:not(.phase-combat)"))`);
   if (hasVisibleTransition) await wait(1450);
+}
+
+async function assertTitleIdentityUx(cdp) {
+  const evidence = await evaluate(cdp, `(() => {
+    const brand = document.querySelector(".brand-mark");
+    const brandImg = brand?.querySelector("img");
+    const diver = document.querySelector(".diver-emblem");
+    const diverImg = diver?.querySelector("img");
+    const heroCopy = document.querySelector(".title-hero p")?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const characterTitle = document.querySelector(".character-panel header p")?.innerText.replace(/\\s+/g, " ").trim() ?? "";
+    const bodyText = document.body.innerText;
+    const brandBox = brand?.getBoundingClientRect();
+    const diverBox = diver?.getBoundingClientRect();
+    const oldTextGone = !/(^|\\s)(DS|ED)(\\s|$)/.test(brand?.innerText ?? "") && !/(^|\\s)(DS|ED)(\\s|$)/.test(diver?.innerText ?? "");
+    const awkwardCopyGone = !/심해 네트워크|신호 심해 탐사자|마지막 신호를 끊/.test(bodyText);
+    const imagesLoaded = Boolean(
+      brandImg?.complete &&
+        brandImg.naturalWidth >= 128 &&
+        brandImg.currentSrc.includes("deep-signal-mark.png?v=20260523-title2") &&
+        diverImg?.complete &&
+        diverImg.naturalWidth >= 128 &&
+        diverImg.currentSrc.includes("echo-diver-emblem.png?v=20260523-title2")
+    );
+    const copyReady = heroCopy.includes("가라앉은 데이터 해역") && heroCopy.includes("이상 신호") && characterTitle === "심해 신호 추적자";
+    const boxesReady = Boolean(brandBox && brandBox.width >= 56 && brandBox.height >= 56 && diverBox && diverBox.width >= 56 && diverBox.height >= 56);
+    return {
+      ok: imagesLoaded && oldTextGone && awkwardCopyGone && copyReady && boxesReady,
+      imagesLoaded,
+      oldTextGone,
+      awkwardCopyGone,
+      copyReady,
+      boxesReady,
+      brandText: brand?.innerText.trim() ?? "",
+      diverText: diver?.innerText.trim() ?? "",
+      brandSrc: brandImg?.currentSrc ?? "",
+      diverSrc: diverImg?.currentSrc ?? "",
+      brandNaturalWidth: brandImg?.naturalWidth ?? 0,
+      diverNaturalWidth: diverImg?.naturalWidth ?? 0,
+      heroCopy,
+      characterTitle
+    };
+  })()`);
+  if (!evidence.ok) {
+    throw new Error(`Title identity UX failed: ${JSON.stringify(evidence)}`);
+  }
+  return evidence;
 }
 
 async function assertCodexConceptUx(cdp) {
@@ -1690,6 +1739,8 @@ async function assertHighEnergyHud(cdp) {
     const stack = document.querySelector(".combat-resource-stack");
     const panel = document.querySelector(".combat-energy-panel");
     const energyMark = document.querySelector(".combat-energy-mark.resource-icon");
+    const topDeckIcon = document.querySelector(".top-bar .deck-toggle-button .hud-icon-deck");
+    const topSettingsIcon = document.querySelector(".top-bar .icon-button[data-id='settings'] .hud-icon-settings");
     const pips = document.querySelector(".energy-pips");
     const bars = [...document.querySelectorAll(".energy-pips i")];
     const stackBox = stack?.getBoundingClientRect();
@@ -1699,11 +1750,20 @@ async function assertHighEnergyHud(cdp) {
     const style = pips ? getComputedStyle(pips) : null;
     const panelStyle = panel ? getComputedStyle(panel) : null;
     const energyMarkStyle = energyMark ? getComputedStyle(energyMark) : null;
+    const topDeckIconStyle = topDeckIcon ? getComputedStyle(topDeckIcon) : null;
+    const topSettingsIconStyle = topSettingsIcon ? getComputedStyle(topSettingsIcon) : null;
     const text = panel?.innerText.replace(/\\s+/g, " ").trim() ?? "";
     const usesResourceSprite =
       Boolean(energyMarkStyle?.backgroundImage?.includes("resource-icons.png")) &&
       energyMarkStyle?.backgroundSize === "500% 100%" &&
       !(energyMark?.textContent ?? "").trim();
+    const usesHudSprite =
+      Boolean(topDeckIconStyle?.backgroundImage?.includes("hud-icons.png")) &&
+      Boolean(topSettingsIconStyle?.backgroundImage?.includes("hud-icons.png")) &&
+      topDeckIconStyle?.backgroundSize === "200% 100%" &&
+      topSettingsIconStyle?.backgroundSize === "200% 100%" &&
+      !(topDeckIcon?.textContent ?? "").trim() &&
+      !(topSettingsIcon?.textContent ?? "").trim();
     const oneRow = barBoxes.every((box) => Math.abs(box.top - barBoxes[0].top) <= 1);
     const barsInsidePanel = Boolean(panelBox && pipsBox && pipsBox.left >= panelBox.left && pipsBox.right <= panelBox.right && pipsBox.bottom <= panelBox.bottom);
     const panelCenteredInStack = Boolean(stackBox && panelBox && Math.abs((panelBox.left + panelBox.width / 2) - (stackBox.left + stackBox.width / 2)) <= 1);
@@ -1713,6 +1773,7 @@ async function assertHighEnergyHud(cdp) {
       Boolean(pips) &&
       /5\\s*\\/\\s*5/.test(text) &&
       usesResourceSprite &&
+      usesHudSprite &&
       pips?.style.getPropertyValue("--energy-pip-count") === "5" &&
       panelStyle?.justifySelf === "center" &&
       style?.gridTemplateColumns.split(" ").length === 5 &&
@@ -1724,7 +1785,10 @@ async function assertHighEnergyHud(cdp) {
       ok,
       text,
       usesResourceSprite,
+      usesHudSprite,
       energyMarkClass: energyMark?.className ?? "",
+      topDeckIconClass: topDeckIcon?.className ?? "",
+      topSettingsIconClass: topSettingsIcon?.className ?? "",
       pipCountVar: pips?.style.getPropertyValue("--energy-pip-count") ?? "",
       gridTemplateColumns: style?.gridTemplateColumns ?? "",
       panelJustifySelf: panelStyle?.justifySelf ?? "",

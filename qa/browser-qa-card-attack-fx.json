@@ -39,7 +39,7 @@
       "left": 234,
       "top": 112,
       "right": 313,
-      "bottom": 180,
+      "bottom": 179,
       "width": 80,
       "height": 68
     },
@@ -53,7 +53,7 @@
     },
     "spark": {
       "left": 443,
-      "top": 158,
+      "top": 157,
       "right": 453,
       "bottom": 167,
       "width": 9,
@@ -61,7 +61,7 @@
     },
     "impact": {
       "left": 1034,
-      "top": 156,
+      "top": 155,
       "right": 1128,
       "bottom": 217,
       "width": 94,

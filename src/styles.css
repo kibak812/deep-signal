@@ -1689,6 +1689,38 @@ dd,
   white-space: nowrap;
 }
 
+.hud-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  background-image: url("../public/assets/hud-icons.png");
+  background-repeat: no-repeat;
+  background-size: 200% 100%;
+  background-position: var(--hud-icon-position, 0% 50%);
+  filter: drop-shadow(0 0 6px var(--hud-icon-glow, rgba(125, 211, 252, 0.22)));
+  vertical-align: middle;
+}
+
+.hud-icon-deck { --hud-icon-position: 0% 50%; --hud-icon-glow: rgba(125, 211, 252, 0.25); }
+.hud-icon-settings { --hud-icon-position: 100% 50%; --hud-icon-glow: rgba(169, 190, 185, 0.22); }
+
+.top-bar .deck-toggle-button,
+.top-bar .icon-button[data-id="settings"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.top-bar .deck-toggle-count {
+  color: var(--cyan);
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.86rem;
+  font-weight: 1000;
+  line-height: 1;
+}
+
 .map-layout,
 .reward-layout,
 .event-layout,
@@ -10567,7 +10599,7 @@ dd,
   content: "";
   width: 28px;
   height: 28px;
-  background: url("../public/assets/deep-signal-mark.png") center / contain no-repeat;
+  background: url("../public/assets/deep-signal-mark.png?v=20260523-title2") center / contain no-repeat;
   filter: drop-shadow(0 0 8px rgba(125, 211, 252, 0.34));
 }
 
@@ -10623,29 +10655,20 @@ dd,
 .phase-combat-victory > .top-bar .icon-button[data-id="settings"] {
   min-width: 40px;
   height: 32px;
-  display: grid;
-  place-items: center;
   overflow: hidden;
-  color: transparent;
-  font-size: 0;
+  padding: 4px 7px;
 }
 
-.phase-combat > .top-bar .deck-toggle-button::before,
-.phase-combat-victory > .top-bar .deck-toggle-button::before {
-  color: var(--cyan);
-  content: "▤ " attr(data-count);
-  font-size: 0.78rem;
-  font-weight: 1000;
-  letter-spacing: 0;
-}
-
-.phase-combat > .top-bar .icon-button[data-id="settings"]::before,
-.phase-combat-victory > .top-bar .icon-button[data-id="settings"]::before {
-  color: var(--text);
-  content: "⚙";
-  font-size: 0.92rem;
-  font-weight: 900;
-  line-height: 1;
+.phase-combat > .top-bar .deck-toggle-button .button-label,
+.phase-combat-victory > .top-bar .deck-toggle-button .button-label,
+.phase-combat > .top-bar .icon-button[data-id="settings"] .button-label,
+.phase-combat-victory > .top-bar .icon-button[data-id="settings"] .button-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .phase-combat > .top-bar .relic-row-button .relic,
@@ -23276,6 +23299,11 @@ input[type="range"] {
 .high-contrast .resource-icon {
   background-image: url("../public/assets/resource-icons.png");
   background-size: 500% 100%;
+}
+
+.high-contrast .hud-icon {
+  background-image: url("../public/assets/hud-icons.png");
+  background-size: 200% 100%;
 }
 
 .high-contrast .combat-pile-dock .pile-icon.resource-icon {
