@@ -9072,7 +9072,7 @@ function renderSummaryFinale(summary, defeatedBosses, replaySeed, nextDifficulty
       <div class="summary-finale-copy">
         <span>최종 보스 격파</span>
         <h2>심해 코어 회수</h2>
-        <p>${finalBoss}를 넘고 마지막 신호를 끊었습니다.</p>
+        <p>${finalBoss}를 넘고 최심부의 왜곡을 끊어냈습니다.</p>
         <div class="summary-finale-chips" aria-label="완주 핵심 수치">
           <i><b>도달</b>${summary.floors ?? 0}층</i>
           <i><b>체력</b>${summary.hp ?? 0}/${summary.maxHp ?? "?"}</i>

@@ -224,7 +224,7 @@ test("visible copy stays Korean-first and avoids awkward placeholder phrasing", 
     /버림 더미 재섞기 대기/,
     /심해 네트워크/,
     /신호 심해 탐사자/,
-    /마지막 신호를 끊으세요/
+    /마지막 신호를 끊/
   ];
   for (const [name, source] of visibleSources) {
     for (const pattern of bannedCopy) {
