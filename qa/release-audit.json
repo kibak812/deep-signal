@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-22T22:14:13.306Z",
+  "generatedAt": "2026-05-22T22:32:45.021Z",
   "ok": true,
-  "passed": 44,
+  "passed": 45,
   "failed": 0,
-  "total": 44,
+  "total": 45,
   "summary": {
-    "passed": 44,
+    "passed": 45,
     "failed": 0,
-    "total": 44
+    "total": 45
   },
   "checks": [
     {
@@ -368,9 +368,9 @@
       "ok": true,
       "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
       "evidence": {
-        "sourceFreshAfter": "2026-05-22T22:12:55.832Z",
-        "sourceFingerprint": "sha256:f898339a509b6e80d3c343ff6d257cbe6a6c3eb5086f58b9988b456689683d5c",
-        "reportMtime": "2026-05-22T22:13:45.779Z",
+        "sourceFreshAfter": "2026-05-22T22:31:22.839Z",
+        "sourceFingerprint": "sha256:bc80e4b484396fc40188e61d3a2be417cbd19815dfe0eb6b1cce42bfd39b530a",
+        "reportMtime": "2026-05-22T22:31:48.348Z",
         "summary": {
           "scenarios": 2,
           "failed": 0,
@@ -803,10 +803,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T22:07:49.224Z",
-        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
-        "sourceFingerprint": "sha256:57acc5acd0b6febb99ab50a8ae9e70032d01961759fe6667d046221e893f47b0",
-        "reportMtime": "2026-05-22T22:07:49.229Z",
+        "generatedAt": "2026-05-22T22:32:36.704Z",
+        "sourceFreshAfter": "2026-05-22T22:32:27.556Z",
+        "sourceFingerprint": "sha256:1ca0b405897d4ca65bb4ede836db5440d56bb6fc4c81d46ad7cf5b006da90fa4",
+        "reportMtime": "2026-05-22T22:32:36.707Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -856,30 +856,30 @@
       "ok": true,
       "detail": "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률과 최종 보스 보상/마무리 안내 지표가 허용 범위에 있어야 합니다.",
       "evidence": {
-        "sourceFingerprint": "sha256:5d31be207473b50c7f6d41722ed84fdafbff848cb84f009e458c5979f5e7a59a",
+        "sourceFingerprint": "sha256:234f461d636633334332fd7e34139e3d48c9d90fb64df4c8317f4e91a696ce22",
         "totals": {
           "runs": 108,
-          "wins": 70,
-          "winRate": 0.65,
-          "averageFloors": 19.56,
-          "averageSteps": 115.53,
+          "wins": 78,
+          "winRate": 0.72,
+          "averageFloors": 19.45,
+          "averageSteps": 109.71,
           "problemRuns": 0
         },
         "easiest": {
           "difficulty": 0,
           "difficultyName": "표층",
           "runs": 18,
-          "wins": 16,
-          "averageFloors": 19.22,
-          "averageDeckSize": 23.39,
-          "averageRelics": 9.11,
-          "averageDamageTaken": 140.67,
+          "wins": 17,
+          "averageFloors": 20.11,
+          "averageDeckSize": 24.17,
+          "averageRelics": 10.28,
+          "averageDamageTaken": 136.89,
           "problemRuns": 0,
           "floorBands": [
             {
               "id": "early",
               "label": "초반 1-7층",
-              "runs": 2,
+              "runs": 1,
               "wins": 0,
               "winRate": 0
             },
@@ -900,34 +900,34 @@
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 16,
-              "wins": 16,
+              "runs": 17,
+              "wins": 17,
               "winRate": 1
             }
           ],
           "lossReasons": [
             {
-              "label": "초반 성장 실패",
-              "count": 2
+              "label": "상태 누적",
+              "count": 1
             }
           ],
-          "winRate": 0.8888888888888888
+          "winRate": 0.9444444444444444
         },
         "hardest": {
           "difficulty": 5,
           "difficultyName": "최심층",
           "runs": 18,
-          "wins": 7,
-          "averageFloors": 19.83,
-          "averageDeckSize": 21.61,
-          "averageRelics": 7.67,
-          "averageDamageTaken": 196.72,
+          "wins": 8,
+          "averageFloors": 17.89,
+          "averageDeckSize": 20.78,
+          "averageRelics": 7.56,
+          "averageDamageTaken": 172.11,
           "problemRuns": 0,
           "floorBands": [
             {
               "id": "early",
               "label": "초반 1-7층",
-              "runs": 0,
+              "runs": 2,
               "wins": 0,
               "winRate": 0
             },
@@ -941,38 +941,46 @@
             {
               "id": "late",
               "label": "후반 15-20층",
-              "runs": 0,
+              "runs": 1,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 15,
-              "wins": 7,
-              "winRate": 0.47
+              "runs": 12,
+              "wins": 8,
+              "winRate": 0.67
             }
           ],
           "lossReasons": [
             {
               "label": "최종 보스",
-              "count": 8
+              "count": 4
             },
             {
               "label": "중반 강적",
               "count": 3
+            },
+            {
+              "label": "초반 성장 실패",
+              "count": 2
+            },
+            {
+              "label": "후반 체력 부족",
+              "count": 1
             }
           ],
-          "winRate": 0.3888888888888889
+          "winRate": 0.4444444444444444
         },
         "rewardGuidance": {
-          "samples": 149,
-          "chosen": 149,
+          "samples": 164,
+          "chosen": 164,
           "skipped": 0,
           "roleCounts": [
             {
-              "label": "burstDefense",
-              "count": 52
+              "label": "statusControl",
+              "count": 56
             },
             {
               "label": "flow",
@@ -980,68 +988,75 @@
             },
             {
               "label": "defense",
-              "count": 24
-            },
-            {
-              "label": "statusControl",
-              "count": 22
+              "count": 28
             },
             {
               "label": "finish",
-              "count": 7
+              "count": 20
+            },
+            {
+              "label": "burstDefense",
+              "count": 16
             }
           ],
-          "defensiveRecommendations": 76,
-          "defensiveShare": 0.51,
+          "defensiveRecommendations": 44,
+          "defensiveShare": 0.27,
           "defenseWhileFinishMissing": 0,
-          "defenseWithoutDefenseMissing": 6,
-          "finishRecommendations": 7,
+          "defenseWithoutDefenseMissing": 12,
+          "finishRecommendations": 20,
           "flowRecommendations": 44,
-          "statusRecommendations": 22,
+          "statusRecommendations": 56,
           "examples": [
             {
               "floor": 18,
               "distance": 3,
               "missing": [],
-              "card": "lantern_overclock",
-              "role": "statusControl",
-              "score": 12.2,
+              "card": "hold_breath",
+              "role": "defense",
+              "score": 14.3,
+              "threshold": 5
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [],
+              "card": "deep_index",
+              "role": "flow",
+              "score": 25.55,
               "threshold": 9
             },
             {
               "floor": 21,
               "distance": 0,
               "missing": [
-                "체력",
-                "카드 뽑기"
+                "체력"
               ],
-              "card": "lantern_overclock",
-              "role": "statusControl",
-              "score": 17.2,
+              "card": "hold_breath",
+              "role": "defense",
+              "score": 12,
               "threshold": 7
             },
             {
               "floor": 18,
               "distance": 3,
               "missing": [
-                "연속 방어"
+                "연속 방어",
+                "정화·약화"
               ],
-              "card": "wire_reef",
+              "card": "emergency_seal",
               "role": "burstDefense",
-              "score": 24.32,
-              "threshold": 7
+              "score": 32.35,
+              "threshold": 3
             },
             {
               "floor": 19,
               "distance": 2,
               "missing": [
-                "체력",
-                "방어",
-                "카드 뽑기"
+                "연속 방어"
               ],
-              "card": "undertow_kick",
-              "role": "defense",
-              "score": 23.42,
+              "card": "archive_dust",
+              "role": "statusControl",
+              "score": 17.66,
               "threshold": 7
             },
             {
@@ -1052,140 +1067,126 @@
                 "연속 방어",
                 "카드 뽑기"
               ],
-              "card": "archive_dust",
-              "role": "burstDefense",
-              "score": 18.76,
+              "card": "redaction_blade",
+              "role": "finish",
+              "score": 22.05,
               "threshold": 7
-            },
-            {
-              "floor": 19,
-              "distance": 2,
-              "missing": [
-                "방어",
-                "정화·약화"
-              ],
-              "card": "pale_firewall",
-              "role": "defense",
-              "score": 31.78,
-              "threshold": 3
             }
           ]
         },
         "reserveSignals": {
-          "reached": 93,
-          "signalRuns": 85,
-          "signalRunRate": 0.91,
-          "signals": 119,
-          "averageSignalsPerReached": 1.28,
+          "reached": 92,
+          "signalRuns": 59,
+          "signalRunRate": 0.64,
+          "signals": 63,
+          "averageSignalsPerReached": 0.68,
           "maxSignalsPerRun": 3,
-          "phasePushSignals": 54,
-          "nearPhaseSignals": 65,
+          "phasePushSignals": 38,
+          "nearPhaseSignals": 25,
           "bossFinishSignals": 0,
           "typeCounts": [
             {
-              "label": "nearPhaseReserve",
-              "count": 65
+              "label": "phasePushReserve",
+              "count": 38
             },
             {
-              "label": "phasePushReserve",
-              "count": 54
+              "label": "nearPhaseReserve",
+              "count": 25
             }
           ],
           "examples": [
             {
-              "turn": 17,
+              "turn": 10,
               "type": "nearPhaseReserve",
-              "bossHp": 188,
-              "damageToPhase": 17,
-              "bestBossDamage": 0,
-              "finisherCards": 2,
+              "bossHp": 195,
+              "damageToPhase": 22,
+              "bestBossDamage": 17,
+              "finisherCards": 5,
               "hand": [
                 "hold_breath",
-                "chronograph_anchor",
+                "kelp_circuit",
+                "quarantine",
+                "null_pin",
                 "memory_sift",
-                "pale_firewall",
-                "echo_tap",
-                "pale_firewall",
-                "cleanse_cache"
+                "chronograph_anchor",
+                "pulse_lance"
               ]
             },
             {
-              "turn": 18,
+              "turn": 13,
               "type": "nearPhaseReserve",
-              "bossHp": 188,
-              "damageToPhase": 17,
-              "bestBossDamage": 12,
-              "finisherCards": 3,
+              "bossHp": 193,
+              "damageToPhase": 18,
+              "bestBossDamage": 6,
+              "finisherCards": 1,
               "hand": [
                 "hold_breath",
+                "hold_breath",
+                "coral_guard",
+                "tide_ward",
                 "pulse_lance",
-                "floodgate",
-                "glass_lung",
+                "hold_breath",
+                "reef_bastion"
+              ]
+            },
+            {
+              "turn": 10,
+              "type": "nearPhaseReserve",
+              "bossHp": 171,
+              "damageToPhase": 7,
+              "bestBossDamage": 6,
+              "finisherCards": 1,
+              "hand": [
                 "pulse_lance",
+                "compression_rite",
+                "tide_ward",
+                "index_spark",
                 "tide_ward"
               ]
             },
             {
-              "turn": 19,
+              "turn": 7,
               "type": "phasePushReserve",
-              "bossHp": 176,
-              "damageToPhase": 5,
-              "bestBossDamage": 17,
+              "bossHp": 163,
+              "damageToPhase": 8,
+              "bestBossDamage": 13,
               "finisherCards": 3,
               "hand": [
-                "hold_breath",
+                "coral_guard",
+                "wire_reef",
+                "pulse_lance",
                 "current_siphon",
-                "tide_ward",
-                "cleanse_cache",
-                "rill_cut",
-                "pulse_lance"
+                "tide_ward"
               ]
             },
             {
               "turn": 5,
               "type": "nearPhaseReserve",
-              "bossHp": 161,
-              "damageToPhase": 7,
-              "bestBossDamage": 0,
+              "bossHp": 192,
+              "damageToPhase": 27,
+              "bestBossDamage": 22,
               "finisherCards": 3,
               "hand": [
-                "tide_ward",
-                "axiom_break",
-                "null_pin",
-                "pale_firewall",
-                "pulse_lance"
+                "redaction_blade",
+                "viridian_outbreak",
+                "reef_bastion",
+                "archive_dust",
+                "silt_needle"
               ]
             },
             {
-              "turn": 9,
+              "turn": 7,
               "type": "phasePushReserve",
-              "bossHp": 165,
-              "damageToPhase": 9,
-              "bestBossDamage": 16,
+              "bossHp": 168,
+              "damageToPhase": 8,
+              "bestBossDamage": 19,
               "finisherCards": 3,
               "hand": [
-                "hold_breath",
-                "hold_breath",
+                "pulse_lance",
+                "memory_sift",
+                "anchor_drag",
                 "rill_cut",
-                "pulse_lance",
-                "cleanse_cache",
-                "pulse_lance",
-                "tide_ward"
-              ]
-            },
-            {
-              "turn": 6,
-              "type": "nearPhaseReserve",
-              "bossHp": 160,
-              "damageToPhase": 7,
-              "bestBossDamage": 0,
-              "finisherCards": 4,
-              "hand": [
-                "rust_bloom",
-                "echo_tap",
-                "tide_ward",
-                "pulse_lance",
-                "floodgate"
+                "cleanse_cache"
               ]
             }
           ]
@@ -1198,7 +1199,7 @@
       "ok": true,
       "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
       "evidence": {
-        "sourceFingerprint": "sha256:5d31be207473b50c7f6d41722ed84fdafbff848cb84f009e458c5979f5e7a59a",
+        "sourceFingerprint": "sha256:234f461d636633334332fd7e34139e3d48c9d90fb64df4c8317f4e91a696ce22",
         "config": {
           "seedCount": 36,
           "difficulties": [
@@ -1209,14 +1210,21 @@
             4,
             5
           ],
-          "maxSteps": 1800
+          "maxSteps": 1800,
+          "archetypes": [
+            "charge",
+            "mark",
+            "virus",
+            "ward",
+            "cycle"
+          ]
         },
         "totals": {
           "runs": 216,
-          "wins": 142,
-          "winRate": 0.66,
-          "averageFloors": 19.49,
-          "averageSteps": 114.32,
+          "wins": 153,
+          "winRate": 0.71,
+          "averageFloors": 19.58,
+          "averageSteps": 110.54,
           "problemRuns": 0
         },
         "byDifficulty": [
@@ -1224,11 +1232,107 @@
             "difficulty": 0,
             "difficultyName": "표층",
             "runs": 36,
-            "wins": 32,
-            "averageFloors": 19.67,
-            "averageDeckSize": 23.44,
-            "averageRelics": 9.06,
-            "averageDamageTaken": 140.44,
+            "wins": 35,
+            "averageFloors": 20.56,
+            "averageDeckSize": 24,
+            "averageRelics": 9.69,
+            "averageDamageTaken": 130.69,
+            "problemRuns": 0,
+            "floorBands": [
+              {
+                "id": "early",
+                "label": "초반 1-7층",
+                "runs": 1,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "middle",
+                "label": "중반 8-14층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "late",
+                "label": "후반 15-20층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "final",
+                "label": "최종 21층",
+                "runs": 35,
+                "wins": 35,
+                "winRate": 1
+              }
+            ],
+            "lossReasons": [
+              {
+                "label": "상태 누적",
+                "count": 1
+              }
+            ],
+            "winRate": 0.9722222222222222
+          },
+          {
+            "difficulty": 1,
+            "difficultyName": "냉수층",
+            "runs": 36,
+            "wins": 29,
+            "averageFloors": 21,
+            "averageDeckSize": 24.31,
+            "averageRelics": 9.36,
+            "averageDamageTaken": 163.53,
+            "problemRuns": 0,
+            "floorBands": [
+              {
+                "id": "early",
+                "label": "초반 1-7층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "middle",
+                "label": "중반 8-14층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "late",
+                "label": "후반 15-20층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "final",
+                "label": "최종 21층",
+                "runs": 36,
+                "wins": 29,
+                "winRate": 0.81
+              }
+            ],
+            "lossReasons": [
+              {
+                "label": "최종 보스",
+                "count": 7
+              }
+            ],
+            "winRate": 0.8055555555555556
+          },
+          {
+            "difficulty": 2,
+            "difficultyName": "무광층",
+            "runs": 36,
+            "wins": 27,
+            "averageFloors": 19.83,
+            "averageDeckSize": 22.64,
+            "averageRelics": 9.25,
+            "averageDamageTaken": 160.61,
             "problemRuns": 0,
             "floorBands": [
               {
@@ -1256,209 +1360,41 @@
                 "id": "final",
                 "label": "최종 21층",
                 "runs": 32,
-                "wins": 32,
-                "winRate": 1
-              }
-            ],
-            "lossReasons": [
-              {
-                "label": "초반 성장 실패",
-                "count": 2
-              },
-              {
-                "label": "상태 누적",
-                "count": 1
-              },
-              {
-                "label": "중반 강적",
-                "count": 1
-              }
-            ],
-            "winRate": 0.8888888888888888
-          },
-          {
-            "difficulty": 1,
-            "difficultyName": "냉수층",
-            "runs": 36,
-            "wins": 27,
-            "averageFloors": 20.36,
-            "averageDeckSize": 23.5,
-            "averageRelics": 8.64,
-            "averageDamageTaken": 171.06,
-            "problemRuns": 0,
-            "floorBands": [
-              {
-                "id": "early",
-                "label": "초반 1-7층",
-                "runs": 1,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "middle",
-                "label": "중반 8-14층",
-                "runs": 1,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "late",
-                "label": "후반 15-20층",
-                "runs": 0,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "final",
-                "label": "최종 21층",
-                "runs": 34,
                 "wins": 27,
-                "winRate": 0.79
+                "winRate": 0.84
               }
             ],
             "lossReasons": [
               {
                 "label": "최종 보스",
-                "count": 7
+                "count": 5
               },
               {
                 "label": "중반 강적",
-                "count": 1
+                "count": 2
               },
               {
                 "label": "초반 성장 실패",
-                "count": 1
+                "count": 2
               }
             ],
             "winRate": 0.75
           },
           {
-            "difficulty": 2,
-            "difficultyName": "무광층",
-            "runs": 36,
-            "wins": 26,
-            "averageFloors": 20.17,
-            "averageDeckSize": 23.31,
-            "averageRelics": 9.28,
-            "averageDamageTaken": 167.11,
-            "problemRuns": 0,
-            "floorBands": [
-              {
-                "id": "early",
-                "label": "초반 1-7층",
-                "runs": 2,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "middle",
-                "label": "중반 8-14층",
-                "runs": 0,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "late",
-                "label": "후반 15-20층",
-                "runs": 0,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "final",
-                "label": "최종 21층",
-                "runs": 34,
-                "wins": 26,
-                "winRate": 0.76
-              }
-            ],
-            "lossReasons": [
-              {
-                "label": "최종 보스",
-                "count": 8
-              },
-              {
-                "label": "초반 성장 실패",
-                "count": 2
-              }
-            ],
-            "winRate": 0.7222222222222222
-          },
-          {
             "difficulty": 3,
             "difficultyName": "압력층",
             "runs": 36,
-            "wins": 24,
-            "averageFloors": 19.42,
-            "averageDeckSize": 22.72,
-            "averageRelics": 8,
-            "averageDamageTaken": 165.67,
+            "wins": 27,
+            "averageFloors": 19.22,
+            "averageDeckSize": 22.56,
+            "averageRelics": 8.11,
+            "averageDamageTaken": 159.31,
             "problemRuns": 0,
             "floorBands": [
               {
                 "id": "early",
                 "label": "초반 1-7층",
                 "runs": 2,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "middle",
-                "label": "중반 8-14층",
-                "runs": 3,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "late",
-                "label": "후반 15-20층",
-                "runs": 0,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "final",
-                "label": "최종 21층",
-                "runs": 31,
-                "wins": 24,
-                "winRate": 0.77
-              }
-            ],
-            "lossReasons": [
-              {
-                "label": "최종 보스",
-                "count": 7
-              },
-              {
-                "label": "중반 강적",
-                "count": 3
-              },
-              {
-                "label": "상태 누적",
-                "count": 1
-              },
-              {
-                "label": "초반 성장 실패",
-                "count": 1
-              }
-            ],
-            "winRate": 0.6666666666666666
-          },
-          {
-            "difficulty": 4,
-            "difficultyName": "무호흡층",
-            "runs": 36,
-            "wins": 19,
-            "averageFloors": 19.28,
-            "averageDeckSize": 22.25,
-            "averageRelics": 8.47,
-            "averageDamageTaken": 179.72,
-            "problemRuns": 0,
-            "floorBands": [
-              {
-                "id": "early",
-                "label": "초반 1-7층",
-                "runs": 1,
                 "wins": 0,
                 "winRate": 0
               },
@@ -1472,66 +1408,6 @@
               {
                 "id": "late",
                 "label": "후반 15-20층",
-                "runs": 3,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "final",
-                "label": "최종 21층",
-                "runs": 28,
-                "wins": 19,
-                "winRate": 0.68
-              }
-            ],
-            "lossReasons": [
-              {
-                "label": "최종 보스",
-                "count": 9
-              },
-              {
-                "label": "중반 강적",
-                "count": 4
-              },
-              {
-                "label": "후반 체력 부족",
-                "count": 3
-              },
-              {
-                "label": "초반 성장 실패",
-                "count": 1
-              }
-            ],
-            "winRate": 0.5277777777777778
-          },
-          {
-            "difficulty": 5,
-            "difficultyName": "최심층",
-            "runs": 36,
-            "wins": 14,
-            "averageFloors": 18.06,
-            "averageDeckSize": 20.72,
-            "averageRelics": 7.11,
-            "averageDamageTaken": 182.17,
-            "problemRuns": 0,
-            "floorBands": [
-              {
-                "id": "early",
-                "label": "초반 1-7층",
-                "runs": 3,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "middle",
-                "label": "중반 8-14층",
-                "runs": 7,
-                "wins": 0,
-                "winRate": 0
-              },
-              {
-                "id": "late",
-                "label": "후반 15-20층",
                 "runs": 0,
                 "wins": 0,
                 "winRate": 0
@@ -1539,19 +1415,19 @@
               {
                 "id": "final",
                 "label": "최종 21층",
-                "runs": 26,
-                "wins": 14,
-                "winRate": 0.54
+                "runs": 30,
+                "wins": 27,
+                "winRate": 0.9
               }
             ],
             "lossReasons": [
               {
-                "label": "최종 보스",
-                "count": 12
+                "label": "중반 강적",
+                "count": 3
               },
               {
-                "label": "중반 강적",
-                "count": 6
+                "label": "최종 보스",
+                "count": 3
               },
               {
                 "label": "상태 누적",
@@ -1559,34 +1435,154 @@
               },
               {
                 "label": "초반 성장 실패",
-                "count": 2
+                "count": 1
               }
             ],
-            "winRate": 0.3888888888888889
+            "winRate": 0.75
+          },
+          {
+            "difficulty": 4,
+            "difficultyName": "무호흡층",
+            "runs": 36,
+            "wins": 22,
+            "averageFloors": 19.72,
+            "averageDeckSize": 22.53,
+            "averageRelics": 8.14,
+            "averageDamageTaken": 184.86,
+            "problemRuns": 0,
+            "floorBands": [
+              {
+                "id": "early",
+                "label": "초반 1-7층",
+                "runs": 0,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "middle",
+                "label": "중반 8-14층",
+                "runs": 5,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "late",
+                "label": "후반 15-20층",
+                "runs": 1,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "final",
+                "label": "최종 21층",
+                "runs": 30,
+                "wins": 22,
+                "winRate": 0.73
+              }
+            ],
+            "lossReasons": [
+              {
+                "label": "최종 보스",
+                "count": 8
+              },
+              {
+                "label": "중반 강적",
+                "count": 5
+              },
+              {
+                "label": "후반 체력 부족",
+                "count": 1
+              }
+            ],
+            "winRate": 0.6111111111111112
+          },
+          {
+            "difficulty": 5,
+            "difficultyName": "최심층",
+            "runs": 36,
+            "wins": 13,
+            "averageFloors": 17.17,
+            "averageDeckSize": 20.5,
+            "averageRelics": 6.81,
+            "averageDamageTaken": 174.22,
+            "problemRuns": 0,
+            "floorBands": [
+              {
+                "id": "early",
+                "label": "초반 1-7층",
+                "runs": 4,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "middle",
+                "label": "중반 8-14층",
+                "runs": 8,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "late",
+                "label": "후반 15-20층",
+                "runs": 1,
+                "wins": 0,
+                "winRate": 0
+              },
+              {
+                "id": "final",
+                "label": "최종 21층",
+                "runs": 23,
+                "wins": 13,
+                "winRate": 0.57
+              }
+            ],
+            "lossReasons": [
+              {
+                "label": "최종 보스",
+                "count": 10
+              },
+              {
+                "label": "중반 강적",
+                "count": 8
+              },
+              {
+                "label": "초반 성장 실패",
+                "count": 3
+              },
+              {
+                "label": "상태 누적",
+                "count": 1
+              },
+              {
+                "label": "후반 체력 부족",
+                "count": 1
+              }
+            ],
+            "winRate": 0.3611111111111111
           }
         ],
         "easiest": {
           "difficulty": 0,
           "difficultyName": "표층",
           "runs": 36,
-          "wins": 32,
-          "averageFloors": 19.67,
-          "averageDeckSize": 23.44,
-          "averageRelics": 9.06,
-          "averageDamageTaken": 140.44,
+          "wins": 35,
+          "averageFloors": 20.56,
+          "averageDeckSize": 24,
+          "averageRelics": 9.69,
+          "averageDamageTaken": 130.69,
           "problemRuns": 0,
           "floorBands": [
             {
               "id": "early",
               "label": "초반 1-7층",
-              "runs": 2,
+              "runs": 1,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 2,
+              "runs": 0,
               "wins": 0,
               "winRate": 0
             },
@@ -1600,164 +1596,167 @@
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 32,
-              "wins": 32,
+              "runs": 35,
+              "wins": 35,
               "winRate": 1
             }
           ],
           "lossReasons": [
             {
-              "label": "초반 성장 실패",
-              "count": 2
-            },
-            {
               "label": "상태 누적",
-              "count": 1
-            },
-            {
-              "label": "중반 강적",
               "count": 1
             }
           ],
-          "winRate": 0.8888888888888888
+          "winRate": 0.9722222222222222
         },
         "hardest": {
           "difficulty": 5,
           "difficultyName": "최심층",
           "runs": 36,
-          "wins": 14,
-          "averageFloors": 18.06,
-          "averageDeckSize": 20.72,
-          "averageRelics": 7.11,
-          "averageDamageTaken": 182.17,
+          "wins": 13,
+          "averageFloors": 17.17,
+          "averageDeckSize": 20.5,
+          "averageRelics": 6.81,
+          "averageDamageTaken": 174.22,
           "problemRuns": 0,
           "floorBands": [
             {
               "id": "early",
               "label": "초반 1-7층",
-              "runs": 3,
+              "runs": 4,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "middle",
               "label": "중반 8-14층",
-              "runs": 7,
+              "runs": 8,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "late",
               "label": "후반 15-20층",
-              "runs": 0,
+              "runs": 1,
               "wins": 0,
               "winRate": 0
             },
             {
               "id": "final",
               "label": "최종 21층",
-              "runs": 26,
-              "wins": 14,
-              "winRate": 0.54
+              "runs": 23,
+              "wins": 13,
+              "winRate": 0.57
             }
           ],
           "lossReasons": [
             {
               "label": "최종 보스",
-              "count": 12
+              "count": 10
             },
             {
               "label": "중반 강적",
-              "count": 6
-            },
-            {
-              "label": "상태 누적",
-              "count": 2
+              "count": 8
             },
             {
               "label": "초반 성장 실패",
-              "count": 2
+              "count": 3
+            },
+            {
+              "label": "상태 누적",
+              "count": 1
+            },
+            {
+              "label": "후반 체력 부족",
+              "count": 1
             }
           ],
-          "winRate": 0.3888888888888889
+          "winRate": 0.3611111111111111
         },
         "rewardGuidance": {
-          "samples": 305,
-          "chosen": 304,
-          "skipped": 1,
+          "samples": 326,
+          "chosen": 326,
+          "skipped": 0,
           "roleCounts": [
             {
-              "label": "burstDefense",
-              "count": 113
+              "label": "statusControl",
+              "count": 104
             },
             {
               "label": "flow",
-              "count": 84
+              "count": 92
             },
             {
               "label": "defense",
-              "count": 50
-            },
-            {
-              "label": "statusControl",
-              "count": 45
+              "count": 59
             },
             {
               "label": "finish",
-              "count": 12
+              "count": 36
+            },
+            {
+              "label": "burstDefense",
+              "count": 35
             }
           ],
-          "defensiveRecommendations": 163,
-          "defensiveShare": 0.54,
+          "defensiveRecommendations": 94,
+          "defensiveShare": 0.29,
           "defenseWhileFinishMissing": 0,
-          "defenseWithoutDefenseMissing": 16,
-          "finishRecommendations": 12,
-          "flowRecommendations": 84,
-          "statusRecommendations": 45,
+          "defenseWithoutDefenseMissing": 17,
+          "finishRecommendations": 36,
+          "flowRecommendations": 92,
+          "statusRecommendations": 104,
           "examples": [
             {
               "floor": 18,
               "distance": 3,
               "missing": [],
-              "card": "lantern_overclock",
-              "role": "statusControl",
-              "score": 12.2,
+              "card": "hold_breath",
+              "role": "defense",
+              "score": 14.3,
+              "threshold": 5
+            },
+            {
+              "floor": 19,
+              "distance": 2,
+              "missing": [],
+              "card": "deep_index",
+              "role": "flow",
+              "score": 25.55,
               "threshold": 9
             },
             {
               "floor": 21,
               "distance": 0,
               "missing": [
-                "체력",
-                "카드 뽑기"
+                "체력"
               ],
-              "card": "lantern_overclock",
-              "role": "statusControl",
-              "score": 17.2,
+              "card": "hold_breath",
+              "role": "defense",
+              "score": 12,
               "threshold": 7
             },
             {
               "floor": 18,
               "distance": 3,
               "missing": [
-                "연속 방어"
+                "연속 방어",
+                "정화·약화"
               ],
-              "card": "wire_reef",
+              "card": "emergency_seal",
               "role": "burstDefense",
-              "score": 24.32,
-              "threshold": 7
+              "score": 32.35,
+              "threshold": 3
             },
             {
               "floor": 19,
               "distance": 2,
               "missing": [
-                "체력",
-                "방어",
-                "카드 뽑기"
+                "연속 방어"
               ],
-              "card": "undertow_kick",
-              "role": "defense",
-              "score": 23.42,
+              "card": "archive_dust",
+              "role": "statusControl",
+              "score": 17.66,
               "threshold": 7
             },
             {
@@ -1768,143 +1767,326 @@
                 "연속 방어",
                 "카드 뽑기"
               ],
-              "card": "archive_dust",
-              "role": "burstDefense",
-              "score": 18.76,
+              "card": "redaction_blade",
+              "role": "finish",
+              "score": 22.05,
               "threshold": 7
-            },
-            {
-              "floor": 19,
-              "distance": 2,
-              "missing": [
-                "방어",
-                "정화·약화"
-              ],
-              "card": "pale_firewall",
-              "role": "defense",
-              "score": 31.78,
-              "threshold": 3
             }
           ]
         },
         "reserveSignals": {
-          "reached": 185,
-          "signalRuns": 161,
-          "signalRunRate": 0.87,
-          "signals": 234,
-          "averageSignalsPerReached": 1.26,
+          "reached": 186,
+          "signalRuns": 126,
+          "signalRunRate": 0.68,
+          "signals": 147,
+          "averageSignalsPerReached": 0.79,
           "maxSignalsPerRun": 3,
-          "phasePushSignals": 102,
-          "nearPhaseSignals": 132,
+          "phasePushSignals": 84,
+          "nearPhaseSignals": 63,
           "bossFinishSignals": 0,
           "typeCounts": [
             {
-              "label": "nearPhaseReserve",
-              "count": 132
+              "label": "phasePushReserve",
+              "count": 84
             },
             {
-              "label": "phasePushReserve",
-              "count": 102
+              "label": "nearPhaseReserve",
+              "count": 63
             }
           ],
           "examples": [
             {
-              "turn": 17,
+              "turn": 10,
               "type": "nearPhaseReserve",
-              "bossHp": 188,
-              "damageToPhase": 17,
-              "bestBossDamage": 0,
-              "finisherCards": 2,
+              "bossHp": 195,
+              "damageToPhase": 22,
+              "bestBossDamage": 17,
+              "finisherCards": 5,
               "hand": [
                 "hold_breath",
-                "chronograph_anchor",
+                "kelp_circuit",
+                "quarantine",
+                "null_pin",
                 "memory_sift",
-                "pale_firewall",
-                "echo_tap",
-                "pale_firewall",
-                "cleanse_cache"
+                "chronograph_anchor",
+                "pulse_lance"
               ]
             },
             {
-              "turn": 18,
+              "turn": 13,
               "type": "nearPhaseReserve",
-              "bossHp": 188,
-              "damageToPhase": 17,
-              "bestBossDamage": 12,
-              "finisherCards": 3,
+              "bossHp": 193,
+              "damageToPhase": 18,
+              "bestBossDamage": 6,
+              "finisherCards": 1,
               "hand": [
                 "hold_breath",
+                "hold_breath",
+                "coral_guard",
+                "tide_ward",
                 "pulse_lance",
-                "floodgate",
-                "glass_lung",
+                "hold_breath",
+                "reef_bastion"
+              ]
+            },
+            {
+              "turn": 10,
+              "type": "nearPhaseReserve",
+              "bossHp": 171,
+              "damageToPhase": 7,
+              "bestBossDamage": 6,
+              "finisherCards": 1,
+              "hand": [
                 "pulse_lance",
+                "compression_rite",
+                "tide_ward",
+                "index_spark",
                 "tide_ward"
               ]
             },
             {
-              "turn": 19,
+              "turn": 7,
               "type": "phasePushReserve",
-              "bossHp": 176,
-              "damageToPhase": 5,
-              "bestBossDamage": 17,
+              "bossHp": 163,
+              "damageToPhase": 8,
+              "bestBossDamage": 13,
               "finisherCards": 3,
               "hand": [
-                "hold_breath",
+                "coral_guard",
+                "wire_reef",
+                "pulse_lance",
                 "current_siphon",
-                "tide_ward",
-                "cleanse_cache",
-                "rill_cut",
-                "pulse_lance"
+                "tide_ward"
               ]
             },
             {
               "turn": 5,
               "type": "nearPhaseReserve",
-              "bossHp": 161,
-              "damageToPhase": 7,
-              "bestBossDamage": 0,
+              "bossHp": 192,
+              "damageToPhase": 27,
+              "bestBossDamage": 22,
               "finisherCards": 3,
               "hand": [
-                "tide_ward",
-                "axiom_break",
-                "null_pin",
-                "pale_firewall",
-                "pulse_lance"
+                "redaction_blade",
+                "viridian_outbreak",
+                "reef_bastion",
+                "archive_dust",
+                "silt_needle"
               ]
             },
             {
-              "turn": 9,
+              "turn": 7,
               "type": "phasePushReserve",
-              "bossHp": 165,
-              "damageToPhase": 9,
-              "bestBossDamage": 16,
+              "bossHp": 168,
+              "damageToPhase": 8,
+              "bestBossDamage": 19,
               "finisherCards": 3,
               "hand": [
-                "hold_breath",
-                "hold_breath",
+                "pulse_lance",
+                "memory_sift",
+                "anchor_drag",
                 "rill_cut",
-                "pulse_lance",
-                "cleanse_cache",
-                "pulse_lance",
-                "tide_ward"
-              ]
-            },
-            {
-              "turn": 6,
-              "type": "nearPhaseReserve",
-              "bossHp": 160,
-              "damageToPhase": 7,
-              "bestBossDamage": 0,
-              "finisherCards": 4,
-              "hand": [
-                "rust_bloom",
-                "echo_tap",
-                "tide_ward",
-                "pulse_lance",
-                "floodgate"
+                "cleanse_cache"
               ]
             }
           ]
+        }
+      }
+    },
+    {
+      "id": "build-diversity-playtest",
+      "label": "자동 플레이 빌드 다양성",
+      "ok": true,
+      "detail": "밸런스 자동 플레이는 최소 4개 이상의 덱 방향을 의도적으로 샘플링하고, 각 방향이 충분한 도달층/승률/주력 일치율을 보여야 합니다.",
+      "evidence": {
+        "baseline": [
+          {
+            "tag": "virus",
+            "label": "바이러스",
+            "runs": 24,
+            "wins": 22,
+            "primaryMatches": 24,
+            "averageFloors": 21,
+            "averageDeckSize": 24.42,
+            "averageRelics": 9.67,
+            "winRate": 0.92,
+            "primaryMatchRate": 1,
+            "playable": true
+          },
+          {
+            "tag": "mark",
+            "label": "표식",
+            "runs": 24,
+            "wins": 17,
+            "primaryMatches": 24,
+            "averageFloors": 19.58,
+            "averageDeckSize": 22.92,
+            "averageRelics": 9.08,
+            "winRate": 0.71,
+            "primaryMatchRate": 1,
+            "playable": true
+          },
+          {
+            "tag": "charge",
+            "label": "전하",
+            "runs": 24,
+            "wins": 14,
+            "primaryMatches": 16,
+            "averageFloors": 18.67,
+            "averageDeckSize": 22,
+            "averageRelics": 8.29,
+            "winRate": 0.58,
+            "primaryMatchRate": 0.67,
+            "playable": true
+          },
+          {
+            "tag": "cycle",
+            "label": "순환",
+            "runs": 18,
+            "wins": 13,
+            "primaryMatches": 17,
+            "averageFloors": 18.94,
+            "averageDeckSize": 22.22,
+            "averageRelics": 8.44,
+            "winRate": 0.72,
+            "primaryMatchRate": 0.94,
+            "playable": true
+          },
+          {
+            "tag": "ward",
+            "label": "방어",
+            "runs": 18,
+            "wins": 12,
+            "primaryMatches": 17,
+            "averageFloors": 18.78,
+            "averageDeckSize": 22.61,
+            "averageRelics": 8.06,
+            "winRate": 0.67,
+            "primaryMatchRate": 0.94,
+            "playable": true
+          }
+        ],
+        "long": [
+          {
+            "tag": "charge",
+            "label": "전하",
+            "runs": 48,
+            "wins": 30,
+            "primaryMatches": 35,
+            "averageFloors": 18.88,
+            "averageDeckSize": 21.98,
+            "averageRelics": 8.21,
+            "winRate": 0.63,
+            "primaryMatchRate": 0.73,
+            "playable": true
+          },
+          {
+            "tag": "virus",
+            "label": "바이러스",
+            "runs": 42,
+            "wins": 37,
+            "primaryMatches": 42,
+            "averageFloors": 20.69,
+            "averageDeckSize": 24.05,
+            "averageRelics": 9.55,
+            "winRate": 0.88,
+            "primaryMatchRate": 1,
+            "playable": true
+          },
+          {
+            "tag": "mark",
+            "label": "표식",
+            "runs": 42,
+            "wins": 30,
+            "primaryMatches": 41,
+            "averageFloors": 19.69,
+            "averageDeckSize": 22.98,
+            "averageRelics": 8.67,
+            "winRate": 0.71,
+            "primaryMatchRate": 0.98,
+            "playable": true
+          },
+          {
+            "tag": "cycle",
+            "label": "순환",
+            "runs": 42,
+            "wins": 29,
+            "primaryMatches": 38,
+            "averageFloors": 19.05,
+            "averageDeckSize": 22.07,
+            "averageRelics": 8.07,
+            "winRate": 0.69,
+            "primaryMatchRate": 0.9,
+            "playable": true
+          },
+          {
+            "tag": "ward",
+            "label": "방어",
+            "runs": 42,
+            "wins": 27,
+            "primaryMatches": 41,
+            "averageFloors": 19.71,
+            "averageDeckSize": 22.81,
+            "averageRelics": 8.36,
+            "winRate": 0.64,
+            "primaryMatchRate": 0.98,
+            "playable": true
+          }
+        ],
+        "primaryBuilds": [
+          {
+            "tag": "ward",
+            "runs": 51,
+            "wins": 31,
+            "averageFloors": 18.78,
+            "averageDeckSize": 21.96,
+            "averageRelics": 8.08,
+            "winRate": 0.61
+          },
+          {
+            "tag": "virus",
+            "runs": 45,
+            "wins": 39,
+            "averageFloors": 20.51,
+            "averageDeckSize": 23.84,
+            "averageRelics": 9.49,
+            "winRate": 0.87
+          },
+          {
+            "tag": "mark",
+            "runs": 43,
+            "wins": 30,
+            "averageFloors": 19.47,
+            "averageDeckSize": 22.88,
+            "averageRelics": 8.63,
+            "winRate": 0.7
+          },
+          {
+            "tag": "cycle",
+            "runs": 40,
+            "wins": 29,
+            "averageFloors": 19.55,
+            "averageDeckSize": 22.53,
+            "averageRelics": 8.28,
+            "winRate": 0.73
+          },
+          {
+            "tag": "charge",
+            "runs": 37,
+            "wins": 24,
+            "averageFloors": 19.73,
+            "averageDeckSize": 22.62,
+            "averageRelics": 8.32,
+            "winRate": 0.65
+          }
+        ],
+        "bounds": {
+          "baselineMinimumRuns": 18,
+          "longMinimumRuns": 36,
+          "minimumAverageFloors": 15,
+          "minimumWinRate": 0.18,
+          "minimumPrimaryMatchRate": 0.35,
+          "longPrimaryRuns": 24
         }
       }
     },
@@ -1915,32 +2097,32 @@
       "detail": "마지막 문 직전 추천은 방어만 과하게 밀지 않아야 하고, 마무리 보존 경고는 부족하지도 과하지도 않은 빈도로 관측되어야 합니다.",
       "evidence": {
         "baseline": {
-          "samples": 149,
-          "chosen": 149,
-          "defensiveShare": 0.51,
+          "samples": 164,
+          "chosen": 164,
+          "defensiveShare": 0.27,
           "defenseWhileFinishMissing": 0,
-          "defenseWithoutDefenseMissing": 6,
-          "defenseWithoutNeedShare": 0.04,
-          "reserveReached": 93,
-          "signalRunRate": 0.91,
-          "averageSignalsPerReached": 1.28,
+          "defenseWithoutDefenseMissing": 12,
+          "defenseWithoutNeedShare": 0.07,
+          "reserveReached": 92,
+          "signalRunRate": 0.64,
+          "averageSignalsPerReached": 0.68,
           "maxSignalsPerRun": 3,
-          "phasePushSignals": 54,
-          "nearPhaseSignals": 65
+          "phasePushSignals": 38,
+          "nearPhaseSignals": 25
         },
         "long": {
-          "samples": 305,
-          "chosen": 304,
-          "defensiveShare": 0.54,
+          "samples": 326,
+          "chosen": 326,
+          "defensiveShare": 0.29,
           "defenseWhileFinishMissing": 0,
-          "defenseWithoutDefenseMissing": 16,
+          "defenseWithoutDefenseMissing": 17,
           "defenseWithoutNeedShare": 0.05,
-          "reserveReached": 185,
-          "signalRunRate": 0.87,
-          "averageSignalsPerReached": 1.26,
+          "reserveReached": 186,
+          "signalRunRate": 0.68,
+          "averageSignalsPerReached": 0.79,
           "maxSignalsPerRun": 3,
-          "phasePushSignals": 102,
-          "nearPhaseSignals": 132
+          "phasePushSignals": 84,
+          "nearPhaseSignals": 63
         },
         "bounds": {
           "defensiveShareMax": 0.62,

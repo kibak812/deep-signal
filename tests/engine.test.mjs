@@ -1502,6 +1502,9 @@ test("balance report highlights death causes, floor bands, and build performance
   assert.ok(report.buildTags.every((entry) => typeof entry.winRate === "number"));
   assert.ok(report.primaryBuilds.length > 0);
   assert.ok(report.primaryBuilds.every((entry) => entry.runs >= entry.wins));
+  assert.ok(report.config.archetypes.includes("charge"));
+  assert.ok(report.archetypeCoverage.length > 0);
+  assert.ok(report.archetypeCoverage.every((entry) => typeof entry.primaryMatchRate === "number"));
   assert.equal(typeof report.finalBossAnalysis.reached, "number");
   assert.ok(Array.isArray(report.finalBossAnalysis.lossMoves));
   assert.ok(Array.isArray(report.finalBossAnalysis.timelineSamples));

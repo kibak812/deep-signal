@@ -27,7 +27,7 @@ import {
   shopServicePrices,
   skipReward
 } from "../src/engine/game.js";
-import { CARD_BY_ID } from "../src/data/cards.js";
+import { CARD_BY_ID, STARTER_DECK } from "../src/data/cards.js";
 import { ENEMY_BY_ID } from "../src/data/enemies.js";
 import { EVENT_BY_ID } from "../src/data/events.js";
 import { RELIC_BY_ID } from "../src/data/relics.js";
@@ -53,19 +53,59 @@ const FINAL_BOSS_MOVE_LABELS = {
   phase_requiem: "종말 레퀴엠",
   unknown: "알 수 없음"
 };
+const PILOT_BUILD_ARCHETYPES = [
+  {
+    id: "charge",
+    label: "전하",
+    keywords: ["charge", "focus"],
+    effects: ["gainCharge", "gainFocus", "damageByCharge", "spendChargeDamage", "chargePerEnemy"]
+  },
+  {
+    id: "mark",
+    label: "표식",
+    keywords: ["mark"],
+    effects: ["apply", "damage"]
+  },
+  {
+    id: "virus",
+    label: "바이러스",
+    keywords: ["virus", "weak", "vulnerable", "frail"],
+    effects: ["apply"]
+  },
+  {
+    id: "ward",
+    label: "방어",
+    keywords: ["block", "counter", "plated"],
+    effects: ["block", "blockPerHand"]
+  },
+  {
+    id: "cycle",
+    label: "순환",
+    keywords: ["exhaust", "temporary", "retain"],
+    effects: ["draw", "generate", "discardRandom", "resetHand", "exhaustRandomHand", "discountRandomHand", "upgradeRandomHand"]
+  }
+];
+const PILOT_BUILD_BY_ID = Object.fromEntries(PILOT_BUILD_ARCHETYPES.map((archetype) => [archetype.id, archetype]));
+const STARTER_CARD_COUNTS = STARTER_DECK.reduce((counts, cardId) => {
+  counts[cardId] = (counts[cardId] ?? 0) + 1;
+  return counts;
+}, {});
+const STARTER_BUILD_WEIGHT = 0.28;
 
 export function runBalanceSuite({
   seeds = DEFAULT_SEEDS,
   difficulties = DEFAULT_DIFFICULTIES,
-  maxSteps = MAX_STEPS
+  maxSteps = MAX_STEPS,
+  archetypes = PILOT_BUILD_ARCHETYPES.map((archetype) => archetype.id)
 } = {}) {
   const runs = [];
   for (const difficulty of difficulties) {
-    for (const seed of seeds) {
-      runs.push(simulateRun({ seed: `${seed}-d${difficulty}`, difficulty, maxSteps }));
+    for (const [seedIndex, seed] of seeds.entries()) {
+      const pilotArchetype = archetypes.length ? archetypes[seedIndex % archetypes.length] : null;
+      runs.push(simulateRun({ seed: `${seed}-d${difficulty}`, difficulty, maxSteps, pilotArchetype }));
     }
   }
-  return summarizeRuns(runs, { seedCount: seeds.length, difficulties, maxSteps });
+  return summarizeRuns(runs, { seedCount: seeds.length, difficulties, maxSteps, archetypes });
 }
 
 export function createBalanceSeeds(count = DEFAULT_SEED_COUNT, prefix = DEFAULT_SEED_PREFIX) {
@@ -74,8 +114,9 @@ export function createBalanceSeeds(count = DEFAULT_SEED_COUNT, prefix = DEFAULT_
   return Array.from({ length: safeCount }, (_, index) => `${prefix}-${String(index + 1).padStart(2, "0")}`);
 }
 
-export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {}) {
+export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS, pilotArchetype = null } = {}) {
   const run = newRun({ seed, difficulty });
+  run.pilotArchetype = PILOT_BUILD_BY_ID[pilotArchetype] ? pilotArchetype : null;
   const route = [];
   const problems = [];
   const startedAt = Date.now();
@@ -137,7 +178,10 @@ export function simulateRun({ seed, difficulty = 0, maxSteps = MAX_STEPS } = {})
     elites: run.stats.elitesKilled,
     damageDealt: run.stats.damageDealt,
     damageTaken: run.stats.damageTaken,
-    build: run.summary?.build ?? topBuildTags(run),
+    pilotArchetype: run.pilotArchetype,
+    build: balanceBuildTags(run),
+    summaryBuild: run.summary?.build ?? topBuildTags(run),
+    buildScores: balanceBuildScores(run).slice(0, 5),
     roleProfile: deckRoleProfile(run),
     finalBoss: finalBossSnapshot,
     finalBossTimeline: finalBossTimelineReport,
@@ -453,6 +497,7 @@ function rewardRelicScore(run, relicId) {
   if (/소멸/.test(relic.text)) score += (counts.exhaust ?? 0) * 1.5;
   if (/스킬/.test(relic.text)) score += (counts.skill ?? 0) * 0.35;
   if (/공격/.test(relic.text)) score += (counts.attack ?? 0) * 0.35;
+  score += pilotArchetypeRelicBonus(run, relic);
   if (relicId === "dead_battery" && run.player.hp < 24) score -= 5;
   if (relicId === "brittle_crown" && run.player.gold > 220) score -= 3;
   return score;
@@ -480,9 +525,40 @@ function rewardCardScore(run, cardId) {
     if (effect.op === "block") score += Math.min(4, effect.amount * 0.25);
     if (effect.op === "loseHp" || effect.op === "loseMaxHp") score -= effect.amount * 0.5;
   }
+  score += pilotArchetypeCardBonus(run, card);
   score += bossPreparationBonus(run, card);
   if (run.player.deck.length > 28 && card.rarity === "common" && !card.keywords?.some((keyword) => (counts[keyword] ?? 0) >= 3)) score -= 5;
   return score;
+}
+
+function pilotArchetypeCardBonus(run, card) {
+  const archetype = PILOT_BUILD_BY_ID[run.pilotArchetype];
+  if (!archetype) return 0;
+  const signal = cardBuildAxisScore(card, archetype);
+  if (signal <= 0) return 0;
+  const bossPrep = bossPrepContext(run);
+  const finalBossRole = finalBossRewardRole(card);
+  if (bossPrep?.finalAct && bossPrep.needsFinish && isFinalBossDefenseRole(finalBossRole)) return 0;
+  if (bossPrep?.finalAct && !bossPrep.needsDefense && !bossPrep.needsBurstDefense && isFinalBossDefenseRole(finalBossRole)) return 0;
+  const buildScores = balanceBuildScores(run);
+  const current = buildScores.find((entry) => entry.tag === archetype.id);
+  const commitment = current ? Math.min(3, current.acquiredCards) * 0.65 : 0;
+  const earlyCommitment = run.stats.floors <= 8 ? 1.8 : 0;
+  return Math.min(14, signal * 3.2 + commitment + earlyCommitment);
+}
+
+function pilotArchetypeRelicBonus(run, relic) {
+  const archetype = PILOT_BUILD_BY_ID[run.pilotArchetype];
+  if (!archetype) return 0;
+  const text = `${relic.name} ${relic.text} ${relic.timing}`;
+  const patterns = {
+    charge: /전하|집중|에너지/,
+    mark: /표식|공격/,
+    virus: /바이러스|지속 피해|약화|취약/,
+    ward: /방어|반격|도금|스킬/,
+    cycle: /소멸|카드|뽑|손패/
+  };
+  return patterns[archetype.id]?.test(text) ? 2.7 : 0;
 }
 
 function bossPreparationBonus(run, card) {
@@ -501,12 +577,22 @@ function bossPreparationBonus(run, card) {
 
 function finalBossRewardRole(card) {
   if (!card) return "unknown";
+  if (cardSupportsPrimaryStatusControl(card)) return "statusControl";
   if (cardSupportsBurstDefense(card)) return "burstDefense";
   if (cardSupportsDefense(card)) return "defense";
   if (cardSupportsStatusControl(card)) return "statusControl";
   if (cardSupportsFlow(card)) return "flow";
   if (cardSupportsFinish(card)) return "finish";
   return card.type ?? "other";
+}
+
+function cardSupportsPrimaryStatusControl(card) {
+  if (!cardSupportsStatusControl(card)) return false;
+  const keywords = new Set(card.keywords ?? []);
+  const effects = collectEffects(card.effects ?? []);
+  const hasDefensiveKeyword = ["block", "counter", "plated"].some((keyword) => keywords.has(keyword));
+  const hasDefensiveEffect = effects.some((effect) => effect.op === "block" || effect.op === "blockPerHand" || (effect.op === "gainStatus" && ["counter", "plated"].includes(effect.status)));
+  return cardSupportsCleanse(card) || (!hasDefensiveKeyword && !hasDefensiveEffect);
 }
 
 function isFinalBossDefenseRole(role) {
@@ -947,6 +1033,7 @@ function recordFinalBossReserveSignal(run, signals) {
   if (!signal) return;
   const previous = signals.at(-1);
   if (previous?.stateKey === signal.stateKey) return;
+  if (signals.some((entry) => entry.turn === signal.turn && entry.type === signal.type)) return;
   signals.push(signal);
 }
 
@@ -973,7 +1060,7 @@ function finalBossReserveSignal(run) {
   const canFinishBoss = bestBossDamage >= boss.hp;
   const canOpenPhase = damageToPhase > 0 && bestBossDamage >= damageToPhase && !canFinishBoss;
   const nearPhaseLine = damageToPhase > 0 && damageToPhase <= Math.max(8, Math.ceil(boss.maxHp * 0.08));
-  const type = canFinishBoss ? "bossFinish" : canOpenPhase ? "phasePushReserve" : nearPhaseLine && finisherCards ? "nearPhaseReserve" : null;
+  const type = canFinishBoss ? "bossFinish" : canOpenPhase ? "phasePushReserve" : nearPhaseLine && bestBossDamage > 0 && finisherCards ? "nearPhaseReserve" : null;
   if (!type) return null;
   const stateKey = [run.combat.turn, type, boss.hp, boss.block, bestBossDamage, run.combat.energy, run.combat.hand.map((card) => card.uid).join("|")].join(":");
   return {
@@ -1123,6 +1210,69 @@ function topBuildTags(run) {
     .map(([key]) => key);
 }
 
+function balanceBuildTags(run) {
+  const scores = balanceBuildScores(run)
+    .filter((entry) => entry.score >= 2.8 || entry.acquiredCards >= 2)
+    .slice(0, 4);
+  const pilotIndex = scores.findIndex((entry) => entry.tag === run.pilotArchetype);
+  if (pilotIndex > 0 && pilotBuildIsCommitted(scores[pilotIndex], scores[0])) {
+    const [pilot] = scores.splice(pilotIndex, 1);
+    scores.unshift(pilot);
+  }
+  return scores
+    .map((entry) => entry.tag);
+}
+
+function pilotBuildIsCommitted(pilot, leader) {
+  if (!pilot || !leader) return false;
+  return pilot.acquiredCards >= 3 && pilot.score >= 8 && (leader.score - pilot.score <= 14 || pilot.score >= 14);
+}
+
+function balanceBuildScores(run) {
+  const starterRemaining = { ...STARTER_CARD_COUNTS };
+  const scores = Object.fromEntries(PILOT_BUILD_ARCHETYPES.map((archetype) => [archetype.id, 0]));
+  const acquiredCards = Object.fromEntries(PILOT_BUILD_ARCHETYPES.map((archetype) => [archetype.id, 0]));
+  for (const cardInstance of run.player.deck) {
+    const card = effectiveCard(cardInstance);
+    const isStarterCopy = (starterRemaining[card.id] ?? 0) > 0;
+    if (isStarterCopy) starterRemaining[card.id] -= 1;
+    const weight = isStarterCopy ? STARTER_BUILD_WEIGHT : 1;
+    for (const archetype of PILOT_BUILD_ARCHETYPES) {
+      const axisScore = cardBuildAxisScore(card, archetype);
+      if (axisScore <= 0) continue;
+      scores[archetype.id] += axisScore * weight;
+      if (!isStarterCopy) acquiredCards[archetype.id] += 1;
+    }
+  }
+  return PILOT_BUILD_ARCHETYPES.map((archetype) => ({
+    tag: archetype.id,
+    label: archetype.label,
+    score: round(scores[archetype.id]),
+    acquiredCards: acquiredCards[archetype.id]
+  })).sort((left, right) => right.score - left.score || right.acquiredCards - left.acquiredCards || left.tag.localeCompare(right.tag));
+}
+
+function cardBuildAxisScore(card, archetype) {
+  const keywords = new Set(card.keywords ?? []);
+  const effects = collectEffects(card.effects ?? []);
+  let score = 0;
+  for (const keyword of archetype.keywords) {
+    if (keywords.has(keyword)) score += 2;
+  }
+  for (const effect of effects) {
+    if (!archetype.effects.includes(effect.op)) continue;
+    if (effect.op === "apply") {
+      if (archetype.keywords.includes(effect.status)) score += 1.6;
+      continue;
+    }
+    score += 1;
+  }
+  if (archetype.id === "mark" && card.type === "attack" && (keywords.has("mark") || effects.some((effect) => effect.status === "mark"))) score += 0.8;
+  if (archetype.id === "ward" && card.type === "skill" && (keywords.has("block") || effects.some((effect) => ["block", "blockPerHand"].includes(effect.op)))) score += 0.7;
+  if (archetype.id === "cycle" && card.cost === 0 && (keywords.has("exhaust") || keywords.has("temporary") || effects.some((effect) => effect.op === "draw"))) score += 0.5;
+  return score;
+}
+
 function canPay(run, effects) {
   return effects.every((effect) => effect.op !== "loseGold" || run.player.gold >= effect.amount);
 }
@@ -1214,6 +1364,7 @@ function summarizeRuns(runs, config = {}) {
   const floorBands = aggregateFloorBands(runs);
   const buildTags = aggregateBuildTags(runs);
   const primaryBuilds = aggregatePrimaryBuilds(runs);
+  const archetypeCoverage = aggregateArchetypeCoverage(runs);
   const finalBossAnalysis = aggregateFinalBossAnalysis(runs);
 
   return {
@@ -1226,8 +1377,9 @@ function summarizeRuns(runs, config = {}) {
     floorBands,
     buildTags,
     primaryBuilds,
+    archetypeCoverage,
     finalBossAnalysis,
-    recommendations: balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, finalBossAnalysis })
+    recommendations: balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, archetypeCoverage, finalBossAnalysis })
   };
 }
 
@@ -1358,6 +1510,41 @@ function aggregatePrimaryBuilds(runs) {
     .map((group) => ({
       ...group,
       winRate: round(group.wins / group.runs),
+      averageFloors: round(group.averageFloors / group.runs),
+      averageDeckSize: round(group.averageDeckSize / group.runs),
+      averageRelics: round(group.averageRelics / group.runs)
+    }))
+    .sort((left, right) => right.runs - left.runs || right.winRate - left.winRate || left.tag.localeCompare(right.tag));
+}
+
+function aggregateArchetypeCoverage(runs) {
+  const groups = {};
+  for (const run of runs) {
+    const tag = run.pilotArchetype ?? "unguided";
+    const archetype = PILOT_BUILD_BY_ID[tag] ?? { label: tag };
+    groups[tag] ??= {
+      tag,
+      label: archetype.label,
+      runs: 0,
+      wins: 0,
+      primaryMatches: 0,
+      averageFloors: 0,
+      averageDeckSize: 0,
+      averageRelics: 0
+    };
+    const group = groups[tag];
+    group.runs += 1;
+    group.wins += run.won ? 1 : 0;
+    group.primaryMatches += run.build?.[0] === tag ? 1 : 0;
+    group.averageFloors += run.floors;
+    group.averageDeckSize += run.deckSize;
+    group.averageRelics += run.relics;
+  }
+  return Object.values(groups)
+    .map((group) => ({
+      ...group,
+      winRate: round(group.wins / group.runs),
+      primaryMatchRate: round(group.primaryMatches / group.runs),
       averageFloors: round(group.averageFloors / group.runs),
       averageDeckSize: round(group.averageDeckSize / group.runs),
       averageRelics: round(group.averageRelics / group.runs)
@@ -1685,7 +1872,7 @@ function rankedEntries(source) {
     .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label));
 }
 
-function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, finalBossAnalysis }) {
+function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands, primaryBuilds, archetypeCoverage, finalBossAnalysis }) {
   const recommendations = [];
   if (totals.problemRuns > 0) {
     recommendations.push({
@@ -1792,6 +1979,14 @@ function balanceRecommendations({ totals, byDifficulty, lossReasons, floorBands,
       tone: "steady",
       area: "덱 방향",
       text: `${dominantBuild.tag} 계열 승률이 ${percent(dominantBuild.winRate)}로 높습니다. 다른 계열의 방어/마무리 수단이 뒤처지는지 비교하세요.`
+    });
+  }
+  const playableArchetypes = (archetypeCoverage ?? []).filter((entry) => entry.tag !== "unguided" && entry.averageFloors >= 15 && entry.winRate >= 0.18 && entry.primaryMatchRate >= 0.35);
+  if (playableArchetypes.length < 4) {
+    recommendations.push({
+      tone: "warning",
+      area: "덱 방향 샘플링",
+      text: `파일럿이 의도한 빌드로 성장한 축이 ${playableArchetypes.length}개입니다. 출시 전 자동 표본에서 최소 4개 축이 15층 이상과 주력 일치율 35% 이상을 보여야 합니다.`
     });
   }
   if (!recommendations.length) {
@@ -1912,6 +2107,7 @@ async function main() {
         floorBands: report.floorBands,
         buildTags: report.buildTags.slice(0, 8),
         primaryBuilds: report.primaryBuilds.slice(0, 8),
+        archetypeCoverage: report.archetypeCoverage,
         finalBossAnalysis: report.finalBossAnalysis,
         recommendations: report.recommendations,
         reportPath: options.reportPath

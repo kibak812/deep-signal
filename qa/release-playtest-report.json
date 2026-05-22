@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-22T22:13:45.773Z",
-  "sourceFingerprint": "sha256:f898339a509b6e80d3c343ff6d257cbe6a6c3eb5086f58b9988b456689683d5c",
+  "generatedAt": "2026-05-22T22:31:48.345Z",
+  "sourceFingerprint": "sha256:bc80e4b484396fc40188e61d3a2be417cbd19815dfe0eb6b1cce42bfd39b530a",
   "sourceFiles": [
     "src/engine/game.js",
     "src/data/cards.js",
@@ -91,9 +91,9 @@
       },
       "build": [
         "ward",
-        "mark",
         "cycle",
-        "charge"
+        "charge",
+        "mark"
       ],
       "roleProfile": {
         "defense": 9,
@@ -203,9 +203,9 @@
         "event": 4
       },
       "build": [
-        "mark",
-        "ward",
         "virus",
+        "ward",
+        "mark",
         "cycle"
       ],
       "roleProfile": {

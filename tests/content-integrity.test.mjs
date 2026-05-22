@@ -365,6 +365,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /averageSignalsPerReached/);
   assert.match(auditSource, /function finalBossGuidanceBounds\(report\)/);
   assert.match(auditSource, /final-boss-guidance-bounds/);
+  assert.match(auditSource, /build-diversity-playtest/);
+  assert.match(auditSource, /playableArchetypeCoverage/);
+  assert.match(auditSource, /minimumPrimaryMatchRate/);
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
   assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);

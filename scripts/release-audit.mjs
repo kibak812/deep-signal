@@ -213,6 +213,19 @@ function finalBossGuidanceWithinBounds(evidence, minimumSamples) {
     evidence.maxSignalsPerRun <= 4;
 }
 
+function playableArchetypeCoverage(report, { minimumRuns, minimumAverageFloors = 15, minimumWinRate = 0.18, minimumPrimaryMatchRate = 0.35 } = {}) {
+  return (report.archetypeCoverage ?? [])
+    .filter((entry) => entry.tag !== "unguided")
+    .map((entry) => ({
+      ...entry,
+      playable:
+        entry.runs >= minimumRuns &&
+        entry.averageFloors >= minimumAverageFloors &&
+        entry.winRate >= minimumWinRate &&
+        entry.primaryMatchRate >= minimumPrimaryMatchRate
+    }));
+}
+
 async function main() {
   const counts = contentCounts();
   const mainSource = await readFile(resolve(root, "src/main.js"), "utf8");
@@ -761,6 +774,8 @@ async function main() {
   const longReserveSignals = longBalance.finalBossAnalysis?.reserveSignals;
   const finalBossGuidance = finalBossGuidanceBounds(balance);
   const longFinalBossGuidance = finalBossGuidanceBounds(longBalance);
+  const playableBuilds = playableArchetypeCoverage(balance, { minimumRuns: 18 });
+  const longPlayableBuilds = playableArchetypeCoverage(longBalance, { minimumRuns: 36 });
   record(
     "balance-report",
     "밸런스 리포트 안정성",
@@ -802,6 +817,27 @@ async function main() {
       longReserveSignals?.maxSignalsPerRun <= 5,
     "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
     { sourceFingerprint: balanceSourceFingerprint, config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest, rewardGuidance: longRewardGuidance, reserveSignals: longReserveSignals }
+  );
+  record(
+    "build-diversity-playtest",
+    "자동 플레이 빌드 다양성",
+    playableBuilds.filter((entry) => entry.playable).length >= 4 &&
+      longPlayableBuilds.filter((entry) => entry.playable).length >= 4 &&
+      (longBalance.primaryBuilds ?? []).filter((entry) => entry.runs >= 24).length >= 4,
+    "밸런스 자동 플레이는 최소 4개 이상의 덱 방향을 의도적으로 샘플링하고, 각 방향이 충분한 도달층/승률/주력 일치율을 보여야 합니다.",
+    {
+      baseline: playableBuilds,
+      long: longPlayableBuilds,
+      primaryBuilds: longBalance.primaryBuilds,
+      bounds: {
+        baselineMinimumRuns: 18,
+        longMinimumRuns: 36,
+        minimumAverageFloors: 15,
+        minimumWinRate: 0.18,
+        minimumPrimaryMatchRate: 0.35,
+        longPrimaryRuns: 24
+      }
+    }
   );
   record(
     "final-boss-guidance-bounds",
