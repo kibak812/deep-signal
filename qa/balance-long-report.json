@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-21T23:18:14.467Z",
+  "generatedAt": "2026-05-22T22:13:46.408Z",
   "config": {
     "seedCount": 36,
     "difficulties": [
@@ -108,7 +108,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 18,
+      "durationMs": 19,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 3
     },
@@ -208,7 +208,7 @@
       ],
       "steps": 98,
       "problems": [],
-      "durationMs": 5,
+      "durationMs": 9,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 0
     },
@@ -307,7 +307,7 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -406,7 +406,7 @@
       ],
       "steps": 156,
       "problems": [],
-      "durationMs": 7,
+      "durationMs": 8,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -503,7 +503,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 5,
+      "durationMs": 7,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -802,7 +802,7 @@
       ],
       "steps": 151,
       "problems": [],
-      "durationMs": 7,
+      "durationMs": 8,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -901,7 +901,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 5,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -1000,7 +1000,7 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 7,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -1099,7 +1099,7 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 8,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -1345,7 +1345,7 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 5,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -1393,7 +1393,7 @@
       ],
       "steps": 32,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -1595,7 +1595,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -1790,7 +1790,7 @@
       ],
       "steps": 121,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -1888,7 +1888,7 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -1991,7 +1991,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -2091,7 +2091,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -2189,7 +2189,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 5,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -2289,7 +2289,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 7,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -2444,7 +2444,7 @@
       ],
       "steps": 88,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -2543,7 +2543,7 @@
       ],
       "steps": 128,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -2741,7 +2741,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 1
     },
@@ -3045,7 +3045,7 @@
       ],
       "steps": 159,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -3102,7 +3102,7 @@
       ],
       "steps": 86,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -3205,7 +3205,7 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -3406,7 +3406,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -4134,7 +4134,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -4232,7 +4232,7 @@
       ],
       "steps": 111,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -4330,7 +4330,7 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -5140,7 +5140,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 3
     },
@@ -5649,7 +5649,7 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -5748,7 +5748,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 3
     },
@@ -5848,7 +5848,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -6372,7 +6372,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 0
     },
@@ -6670,7 +6670,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -6919,7 +6919,7 @@
       ],
       "steps": 46,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -6974,7 +6974,7 @@
       ],
       "steps": 75,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -7075,7 +7075,7 @@
       ],
       "steps": 97,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -7175,7 +7175,7 @@
       ],
       "steps": 102,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -7486,7 +7486,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 3
     },
@@ -7816,7 +7816,7 @@
       ],
       "steps": 139,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -7917,7 +7917,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 2
     },
@@ -8214,7 +8214,7 @@
       ],
       "steps": 110,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -8312,7 +8312,7 @@
       ],
       "steps": 96,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -8410,7 +8410,7 @@
       ],
       "steps": 146,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 1
     },
@@ -8832,7 +8832,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 3
     },
@@ -9160,7 +9160,7 @@
       ],
       "steps": 137,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 7,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 1
     },
@@ -9258,7 +9258,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -10110,7 +10110,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -10616,7 +10616,7 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 0
     },
@@ -11144,7 +11144,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 0
     },
@@ -11920,7 +11920,7 @@
       ],
       "steps": 27,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 0,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -12218,7 +12218,7 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -12417,7 +12417,7 @@
       ],
       "steps": 117,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -12518,7 +12518,7 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -12616,7 +12616,7 @@
       ],
       "steps": 119,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 1
     },
@@ -13630,7 +13630,7 @@
       ],
       "steps": 115,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -14554,7 +14554,7 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 6,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -14604,7 +14604,7 @@
       ],
       "steps": 42,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -14661,7 +14661,7 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -14761,7 +14761,7 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -14806,7 +14806,7 @@
       ],
       "steps": 21,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -14907,7 +14907,7 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -15008,7 +15008,7 @@
       ],
       "steps": 122,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -15370,7 +15370,7 @@
       ],
       "steps": 137,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 2
     },
@@ -15968,7 +15968,7 @@
       ],
       "steps": 138,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -16067,7 +16067,7 @@
       ],
       "steps": 142,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -16167,7 +16167,7 @@
       ],
       "steps": 105,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -16572,7 +16572,7 @@
       ],
       "steps": 124,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -16868,7 +16868,7 @@
       ],
       "steps": 126,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -17169,7 +17169,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -17463,7 +17463,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 6,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -17520,7 +17520,7 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -17620,7 +17620,7 @@
       ],
       "steps": 109,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -18026,7 +18026,7 @@
       ],
       "steps": 163,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 3
     },
@@ -18805,7 +18805,7 @@
       ],
       "steps": 108,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -19644,7 +19644,7 @@
       ],
       "steps": 116,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -20200,7 +20200,7 @@
       ],
       "steps": 101,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 1
     },
@@ -20297,7 +20297,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -20396,7 +20396,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 5,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -20494,7 +20494,7 @@
       ],
       "steps": 141,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 6,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -20658,7 +20658,7 @@
       ],
       "steps": 162,
       "problems": [],
-      "durationMs": 4,
+      "durationMs": 6,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 3
     },
@@ -20960,7 +20960,7 @@
       ],
       "steps": 120,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -21291,7 +21291,7 @@
       ],
       "steps": 100,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -21608,7 +21608,7 @@
       ],
       "steps": 92,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -21916,7 +21916,7 @@
       ],
       "steps": 132,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -22547,7 +22547,7 @@
       ],
       "steps": 145,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 0
     },
@@ -23170,7 +23170,7 @@
       ],
       "steps": 131,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 3,
       "finalBossReserveSignalCount": 1
     },
@@ -23269,7 +23269,7 @@
       ],
       "steps": 129,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -23369,7 +23369,7 @@
       ],
       "steps": 89,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 0
     },
@@ -23620,7 +23620,7 @@
       ],
       "steps": 62,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -23989,7 +23989,7 @@
       ],
       "steps": 90,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -24244,7 +24244,7 @@
       ],
       "steps": 107,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 2,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -24583,7 +24583,7 @@
       ],
       "steps": 114,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -24784,7 +24784,7 @@
       ],
       "steps": 110,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -24883,7 +24883,7 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -24984,7 +24984,7 @@
       ],
       "steps": 118,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -25294,7 +25294,7 @@
       ],
       "steps": 133,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 2
     },
@@ -26005,7 +26005,7 @@
       ],
       "steps": 112,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 0
     },
@@ -26307,7 +26307,7 @@
       ],
       "steps": 144,
       "problems": [],
-      "durationMs": 3,
+      "durationMs": 4,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -27184,7 +27184,7 @@
       ],
       "steps": 48,
       "problems": [],
-      "durationMs": 0,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -27510,7 +27510,7 @@
       ],
       "steps": 123,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 2
     },
@@ -27974,7 +27974,7 @@
       ],
       "steps": 40,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 0,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -28073,7 +28073,7 @@
       ],
       "steps": 127,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 1
     },
@@ -28269,7 +28269,7 @@
       ],
       "steps": 134,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 2
     },
@@ -28326,7 +28326,7 @@
       ],
       "steps": 99,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 1,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -28645,7 +28645,7 @@
       ],
       "steps": 113,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 1,
       "finalBossReserveSignalCount": 3
     },
@@ -28843,7 +28843,7 @@
       ],
       "steps": 104,
       "problems": [],
-      "durationMs": 2,
+      "durationMs": 3,
       "finalBossRewardSampleCount": 2,
       "finalBossReserveSignalCount": 1
     },
@@ -29049,7 +29049,7 @@
       ],
       "steps": 77,
       "problems": [],
-      "durationMs": 1,
+      "durationMs": 0,
       "finalBossRewardSampleCount": 0,
       "finalBossReserveSignalCount": 0
     },
@@ -30898,5 +30898,17 @@
       "area": "마무리 보존 안내",
       "text": "최종 보스 도달 185런 중 161런에서 마무리 보존 신호가 관측됐고, 도달 런당 평균 1.26회입니다. 2단계 전환선 경고는 102회, 근접 보존 안내는 132회입니다."
     }
+  ],
+  "sourceFingerprint": "sha256:5d31be207473b50c7f6d41722ed84fdafbff848cb84f009e458c5979f5e7a59a",
+  "sourceFiles": [
+    "src/engine/game.js",
+    "src/data/cards.js",
+    "src/data/character.js",
+    "src/data/challenges.js",
+    "src/data/enemies.js",
+    "src/data/events.js",
+    "src/data/keywords.js",
+    "src/data/relics.js",
+    "scripts/balance-runner.mjs"
   ]
 }

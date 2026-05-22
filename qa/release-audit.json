@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T22:08:00.394Z",
+  "generatedAt": "2026-05-22T22:14:13.306Z",
   "ok": true,
   "passed": 44,
   "failed": 0,
@@ -368,9 +368,9 @@
       "ok": true,
       "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
       "evidence": {
-        "sourceFreshAfter": "2026-05-22T22:01:09.098Z",
-        "sourceFingerprint": "sha256:4ea623e07de757b368ae2a705f535e7f4853b10d3d0f1b2a443a73976af2a053",
-        "reportMtime": "2026-05-22T22:03:54.564Z",
+        "sourceFreshAfter": "2026-05-22T22:12:55.832Z",
+        "sourceFingerprint": "sha256:f898339a509b6e80d3c343ff6d257cbe6a6c3eb5086f58b9988b456689683d5c",
+        "reportMtime": "2026-05-22T22:13:45.779Z",
         "summary": {
           "scenarios": 2,
           "failed": 0,
@@ -856,6 +856,7 @@
       "ok": true,
       "detail": "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률과 최종 보스 보상/마무리 안내 지표가 허용 범위에 있어야 합니다.",
       "evidence": {
+        "sourceFingerprint": "sha256:5d31be207473b50c7f6d41722ed84fdafbff848cb84f009e458c5979f5e7a59a",
         "totals": {
           "runs": 108,
           "wins": 70,
@@ -1197,6 +1198,7 @@
       "ok": true,
       "detail": "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
       "evidence": {
+        "sourceFingerprint": "sha256:5d31be207473b50c7f6d41722ed84fdafbff848cb84f009e458c5979f5e7a59a",
         "config": {
           "seedCount": 36,
           "difficulties": [

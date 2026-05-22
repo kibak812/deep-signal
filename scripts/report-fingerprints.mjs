@@ -19,6 +19,18 @@ export const RELEASE_PLAYTEST_SOURCE_FILES = [
   "scripts/release-playtest-report.mjs"
 ];
 
+export const BALANCE_SOURCE_FILES = [
+  "src/engine/game.js",
+  "src/data/cards.js",
+  "src/data/character.js",
+  "src/data/challenges.js",
+  "src/data/enemies.js",
+  "src/data/events.js",
+  "src/data/keywords.js",
+  "src/data/relics.js",
+  "scripts/balance-runner.mjs"
+];
+
 export const KOREAN_COPY_SOURCE_FILES = [
   "src/main.js",
   "src/engine/game.js",

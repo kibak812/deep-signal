@@ -2,6 +2,7 @@ import { access, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promi
 import { resolve } from "node:path";
 import {
   AUDIO_MIX_SOURCE_FILES,
+  BALANCE_SOURCE_FILES,
   BROWSER_QA_SOURCE_FILES,
   KOREAN_COPY_SOURCE_FILES,
   RELEASE_PLAYTEST_SOURCE_FILES,
@@ -238,6 +239,7 @@ async function main() {
   const packageJson = JSON.parse(await readFile(resolve(root, "package.json"), "utf8"));
   const balance = JSON.parse(await readFile(resolve(root, "qa/balance-report.json"), "utf8"));
   const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
+  const balanceSourceFingerprint = await sourceFingerprint(BALANCE_SOURCE_FILES, { root });
   const audioMixReportPath = resolve(root, "qa/audio-mix-report.json");
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
   const koreanCopyReportPath = resolve(root, "qa/korean-copy-report.json");
@@ -763,6 +765,7 @@ async function main() {
     "balance-report",
     "밸런스 리포트 안정성",
     balance.totals?.runs >= 108 &&
+      balance.sourceFingerprint === balanceSourceFingerprint &&
       balance.totals?.problemRuns === 0 &&
       balance.totals?.winRate >= 0.25 &&
       balance.totals?.winRate <= 0.75 &&
@@ -775,12 +778,13 @@ async function main() {
       reserveSignals?.averageSignalsPerReached <= 2.4 &&
       reserveSignals?.maxSignalsPerRun <= 5,
     "밸런스 자동 플레이는 진행 불가가 없고, 전체/입문/최상위 난이도 승률과 최종 보스 보상/마무리 안내 지표가 허용 범위에 있어야 합니다.",
-    { totals: balance.totals, easiest, hardest, rewardGuidance, reserveSignals }
+    { sourceFingerprint: balanceSourceFingerprint, totals: balance.totals, easiest, hardest, rewardGuidance, reserveSignals }
   );
   record(
     "balance-long-report",
     "장시간 밸런스 리포트",
     longBalance.totals?.runs >= 216 &&
+      longBalance.sourceFingerprint === balanceSourceFingerprint &&
       longBalance.config?.seedCount >= 36 &&
       longBalance.totals?.problemRuns === 0 &&
       longBalance.totals?.winRate >= 0.25 &&
@@ -797,7 +801,7 @@ async function main() {
       longReserveSignals?.averageSignalsPerReached <= 2.4 &&
       longReserveSignals?.maxSignalsPerRun <= 5,
     "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
-    { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest, rewardGuidance: longRewardGuidance, reserveSignals: longReserveSignals }
+    { sourceFingerprint: balanceSourceFingerprint, config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest, rewardGuidance: longRewardGuidance, reserveSignals: longReserveSignals }
   );
   record(
     "final-boss-guidance-bounds",

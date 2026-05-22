@@ -1,5 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, resolve } from "node:path";
+import { BALANCE_SOURCE_FILES, sourceFingerprint } from "./report-fingerprints.mjs";
 import {
   buyShopCard,
   buyShopHeal,
@@ -36,6 +37,7 @@ const DEFAULT_SEED_PREFIX = "balance";
 const DEFAULT_SEEDS = createBalanceSeeds(DEFAULT_SEED_COUNT);
 const DEFAULT_DIFFICULTIES = [0, 1, 2, 3, 4, 5];
 const DEFAULT_REPORT_PATH = "qa/balance-report.json";
+const root = resolve(import.meta.dirname, "..");
 const MAX_STEPS = 1800;
 const COMBAT_TURN_LIMITS = {
   combat: 30,
@@ -1890,6 +1892,8 @@ async function main() {
     seeds: createBalanceSeeds(options.seedCount),
     maxSteps: options.maxSteps
   });
+  report.sourceFingerprint = await sourceFingerprint(BALANCE_SOURCE_FILES, { root });
+  report.sourceFiles = BALANCE_SOURCE_FILES;
   await mkdir(dirname(options.reportPath), { recursive: true });
   await writeFile(options.reportPath, `${JSON.stringify(report, null, 2)}\n`);
   console.log(

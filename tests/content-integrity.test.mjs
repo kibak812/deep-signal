@@ -347,6 +347,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(koreanCopySource, /requiredCopy/);
   assert.match(koreanCopySource, /sourceFreshAfter/);
   assert.match(fingerprintSource, /AUDIO_MIX_SOURCE_FILES/);
+  assert.match(fingerprintSource, /BALANCE_SOURCE_FILES/);
   assert.match(fingerprintSource, /RELEASE_PLAYTEST_SOURCE_FILES/);
   assert.match(fingerprintSource, /BROWSER_QA_SOURCE_FILES/);
   assert.match(fingerprintSource, /sourceFingerprint/);
@@ -356,6 +357,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약/);
   assert.match(auditSource, /balance:long/);
   assert.match(auditSource, /balance-long-report/);
+  assert.match(auditSource, /balance\.sourceFingerprint === balanceSourceFingerprint/);
+  assert.match(auditSource, /longBalance\.sourceFingerprint === balanceSourceFingerprint/);
   assert.match(auditSource, /rewardGuidance/);
   assert.match(auditSource, /reserveSignals/);
   assert.match(auditSource, /defenseWhileFinishMissing/);
@@ -756,6 +759,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
 
 test("balance pilot prepares intentionally before late bosses", () => {
   const balanceSource = readFileSync(new URL("../scripts/balance-runner.mjs", import.meta.url), "utf8");
+  assert.match(balanceSource, /BALANCE_SOURCE_FILES/);
+  assert.match(balanceSource, /sourceFingerprint/);
   assert.match(balanceSource, /function bossPrepContext\(run\)/);
   assert.match(balanceSource, /const hpTarget = finalAct \? \(close \? 0\.82 : 0\.72\) : close \? 0\.72 : 0\.62/);
   assert.match(balanceSource, /needsDefense/);
