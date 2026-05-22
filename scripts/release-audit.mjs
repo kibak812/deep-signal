@@ -216,6 +216,7 @@ async function main() {
     resolve(root, "src/data/enemies.js"),
     resolve(root, "src/data/events.js"),
     resolve(root, "src/data/relics.js"),
+    resolve(root, "src/engine/save-slots.js"),
     resolve(root, "scripts/balance-runner.mjs"),
     resolve(root, "scripts/release-playtest-report.mjs")
   ]);
@@ -369,8 +370,12 @@ async function main() {
         scenario.floors >= 21 &&
         scenario.finalBoss?.bossPhase === 2 &&
         /쓰러졌습니다/.test(scenario.reason ?? "")
-      ),
-    "고정 시드 출시 플레이테스트는 표층 완주와 최심층 최종 보스 패배를 모두 요약 화면까지 재현해야 합니다.",
+      ) &&
+      playtestReport.persistence?.id === "save-reload-recovery" &&
+      Object.values(playtestReport.persistence?.checks ?? {}).every(Boolean) &&
+      /백업/.test(playtestReport.persistence?.recovered?.noticeTitle ?? "") &&
+      /이어하기/.test(playtestReport.persistence?.recovered?.noticeDetail ?? ""),
+    "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구를 재현해야 합니다.",
     {
       sourceFreshAfter: new Date(playtestSourceMtime).toISOString(),
       reportMtime: playtestReportMtime ? new Date(playtestReportMtime).toISOString() : null,
@@ -383,7 +388,14 @@ async function main() {
         floors: scenario.floors,
         routeTypes: scenario.routeTypes,
         reason: scenario.reason
-      })) ?? []
+      })) ?? [],
+      persistence: {
+        id: playtestReport?.persistence?.id ?? null,
+        seed: playtestReport?.persistence?.seed ?? null,
+        savedPhase: playtestReport?.persistence?.savedPhase ?? null,
+        recovered: playtestReport?.persistence?.recovered ?? null,
+        checks: playtestReport?.persistence?.checks ?? null
+      }
     }
   );
   record("save-records", "저장/이어하기/기록 코드", ["loadRunFromStorage", "saveRunToStorage", "deleteSavedRun", "recordRunSummary"].every((text) => mainSource.includes(text)), "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.");

@@ -1,11 +1,12 @@
 {
-  "generatedAt": "2026-05-22T15:45:43.144Z",
+  "generatedAt": "2026-05-22T15:52:45.799Z",
   "ok": true,
   "summary": {
     "scenarios": 2,
     "failed": 0,
     "wins": 1,
     "defeats": 1,
+    "persistenceRecovered": true,
     "requiredRouteTypes": [
       "combat",
       "event",
@@ -243,5 +244,41 @@
         "defeatDebriefEvidence": true
       }
     }
-  ]
+  ],
+  "persistence": {
+    "id": "save-reload-recovery",
+    "label": "새로고침 뒤 이어하기와 백업 복구",
+    "seed": "release-save-continue",
+    "difficulty": 1,
+    "savedPhase": "combat",
+    "savedNodeId": "n-0-0",
+    "savedEnemyCount": 1,
+    "savedHandSize": 6,
+    "primaryBeforeCorruption": {
+      "seed": "release-save-continue",
+      "phase": "combat",
+      "updatedAt": 3000
+    },
+    "reloaded": {
+      "seed": "release-save-continue",
+      "phase": "combat",
+      "enemyCount": 1,
+      "handSize": 6
+    },
+    "recovered": {
+      "seed": "release-save-continue",
+      "phase": "combat",
+      "noticeTitle": "자동 저장 백업으로 복구됨",
+      "noticeDetail": "주 저장 슬롯이 손상되어 마지막 정상 백업에서 이어하기를 준비했습니다."
+    },
+    "checks": {
+      "saveSucceeded": true,
+      "wrotePrimaryAndBackup": true,
+      "reloadRestoresCombatRun": true,
+      "corruptedPrimaryRecoversBackup": true,
+      "recoveryNoticeReadable": true,
+      "recoveryMirrorsPrimary": true,
+      "deleteClearsSavedRun": true
+    }
+  }
 }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T15:46:27.010Z",
+  "generatedAt": "2026-05-22T15:53:20.671Z",
   "summary": {
     "passed": 31,
     "failed": 0,
@@ -329,15 +329,16 @@
       "id": "release-playtest-report",
       "label": "출시 플레이테스트 리포트",
       "ok": true,
-      "detail": "고정 시드 출시 플레이테스트는 표층 완주와 최심층 최종 보스 패배를 모두 요약 화면까지 재현해야 합니다.",
+      "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구를 재현해야 합니다.",
       "evidence": {
-        "sourceFreshAfter": "2026-05-22T15:44:03.740Z",
-        "reportMtime": "2026-05-22T15:45:43.147Z",
+        "sourceFreshAfter": "2026-05-22T15:51:45.792Z",
+        "reportMtime": "2026-05-22T15:52:45.803Z",
         "summary": {
           "scenarios": 2,
           "failed": 0,
           "wins": 1,
           "defeats": 1,
+          "persistenceRecovered": true,
           "requiredRouteTypes": [
             "combat",
             "event",
@@ -379,7 +380,27 @@
             ],
             "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다."
           }
-        ]
+        ],
+        "persistence": {
+          "id": "save-reload-recovery",
+          "seed": "release-save-continue",
+          "savedPhase": "combat",
+          "recovered": {
+            "seed": "release-save-continue",
+            "phase": "combat",
+            "noticeTitle": "자동 저장 백업으로 복구됨",
+            "noticeDetail": "주 저장 슬롯이 손상되어 마지막 정상 백업에서 이어하기를 준비했습니다."
+          },
+          "checks": {
+            "saveSucceeded": true,
+            "wrotePrimaryAndBackup": true,
+            "reloadRestoresCombatRun": true,
+            "corruptedPrimaryRecoversBackup": true,
+            "recoveryNoticeReadable": true,
+            "recoveryMirrorsPrimary": true,
+            "deleteClearsSavedRun": true
+          }
+        }
       }
     },
     {

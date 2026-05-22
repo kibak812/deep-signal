@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import { simulateRun } from "./balance-runner.mjs";
+import { enterNode, newRun } from "../src/engine/game.js";
+import { deleteSavedRun, loadRunFromStorage, saveRunToStorage, SAVE_BACKUP_KEY, SAVE_KEY } from "../src/engine/save-slots.js";
 
 const DEFAULT_REPORT_PATH = "qa/release-playtest-report.json";
 const SCENARIOS = [
@@ -102,6 +104,74 @@ function scenarioReport(scenario) {
   };
 }
 
+function memoryStorage() {
+  const slots = new Map();
+  return {
+    getItem(key) {
+      return slots.has(key) ? slots.get(key) : null;
+    },
+    setItem(key, value) {
+      slots.set(key, String(value));
+    },
+    removeItem(key) {
+      slots.delete(key);
+    }
+  };
+}
+
+function persistenceReport() {
+  const storage = memoryStorage();
+  const run = newRun({ seed: "release-save-continue", difficulty: 1 });
+  enterNode(run, run.availableNodeIds[0]);
+  run.updatedAt = 3000;
+  const saved = saveRunToStorage(storage, run);
+  const wrotePrimaryAndBackup = Boolean(storage.getItem(SAVE_KEY)) && Boolean(storage.getItem(SAVE_BACKUP_KEY));
+  const reloaded = loadRunFromStorage(storage);
+  const primaryBeforeCorruption = JSON.parse(storage.getItem(SAVE_KEY));
+  storage.setItem(SAVE_KEY, "{broken primary");
+  const recovered = loadRunFromStorage(storage);
+  const mirroredPrimary = JSON.parse(storage.getItem(SAVE_KEY));
+  deleteSavedRun(storage);
+  const deleted = loadRunFromStorage(storage);
+  const checks = {
+    saveSucceeded: saved.ok === true,
+    wrotePrimaryAndBackup,
+    reloadRestoresCombatRun: reloaded.run?.seed === run.seed && reloaded.run?.phase === "combat" && reloaded.run?.combat?.enemies?.length >= 1,
+    corruptedPrimaryRecoversBackup: recovered.run?.seed === run.seed && recovered.notice?.recovered === true,
+    recoveryNoticeReadable: /백업/.test(recovered.notice?.title ?? "") && /이어하기/.test(recovered.notice?.detail ?? ""),
+    recoveryMirrorsPrimary: mirroredPrimary.seed === run.seed && mirroredPrimary.phase === "combat",
+    deleteClearsSavedRun: deleted.run === null && deleted.notice === null
+  };
+  return {
+    id: "save-reload-recovery",
+    label: "새로고침 뒤 이어하기와 백업 복구",
+    seed: run.seed,
+    difficulty: run.difficulty,
+    savedPhase: run.phase,
+    savedNodeId: run.currentNodeId,
+    savedEnemyCount: run.combat?.enemies?.length ?? 0,
+    savedHandSize: run.combat?.hand?.length ?? 0,
+    primaryBeforeCorruption: {
+      seed: primaryBeforeCorruption.seed,
+      phase: primaryBeforeCorruption.phase,
+      updatedAt: primaryBeforeCorruption.updatedAt
+    },
+    reloaded: {
+      seed: reloaded.run?.seed ?? null,
+      phase: reloaded.run?.phase ?? null,
+      enemyCount: reloaded.run?.combat?.enemies?.length ?? 0,
+      handSize: reloaded.run?.combat?.hand?.length ?? 0
+    },
+    recovered: {
+      seed: recovered.run?.seed ?? null,
+      phase: recovered.run?.phase ?? null,
+      noticeTitle: recovered.notice?.title ?? "",
+      noticeDetail: recovered.notice?.detail ?? ""
+    },
+    checks
+  };
+}
+
 function reportComparable(report) {
   return JSON.stringify({ ...report, generatedAt: null });
 }
@@ -141,10 +211,15 @@ function parseCliArgs() {
 async function main() {
   const options = parseCliArgs();
   const scenarios = SCENARIOS.map(scenarioReport);
+  const persistence = persistenceReport();
   const failed = scenarios.flatMap((scenario) =>
     Object.entries(scenario.checks)
       .filter(([, ok]) => !ok)
       .map(([check]) => `${scenario.id}:${check}`)
+  ).concat(
+    Object.entries(persistence.checks)
+      .filter(([, ok]) => !ok)
+      .map(([check]) => `${persistence.id}:${check}`)
   );
   const report = {
     generatedAt: new Date().toISOString(),
@@ -154,9 +229,11 @@ async function main() {
       failed: failed.length,
       wins: scenarios.filter((scenario) => scenario.won).length,
       defeats: scenarios.filter((scenario) => !scenario.won).length,
+      persistenceRecovered: persistence.checks.corruptedPrimaryRecoversBackup,
       requiredRouteTypes: [...new Set(SCENARIOS.flatMap((scenario) => scenario.requiredRouteTypes))]
     },
-    scenarios
+    scenarios,
+    persistence
   };
   const written = await writeReportIfChanged(report, options.reportPath);
   if (!report.ok) {
@@ -164,7 +241,7 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length}`);
+  console.log(`Release playtest passed: ${scenarios.length}/${scenarios.length} scenarios + persistence`);
   console.log(`${written ? "Wrote" : "Report unchanged at"} ${options.reportPath}`);
 }
 
