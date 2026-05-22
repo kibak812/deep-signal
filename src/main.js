@@ -13958,44 +13958,8 @@ function cleanRouteLabel(text) {
 }
 
 function nodeIcon(type) {
-  const icons = {
-    combat: `
-      <path d="M8 23 23 8"/>
-      <path d="M10 8 24 22"/>
-      <path d="M6 25h8M18 25h8"/>
-    `,
-    elite: `
-      <path d="M16 4 27 16 16 28 5 16Z"/>
-      <path d="M16 8v16M10 16h12"/>
-      <circle cx="16" cy="16" r="3"/>
-    `,
-    event: `
-      <path d="M9 9c2-3 7-5 11-2 5 4 1 9-3 10-2 1-2 2-2 4"/>
-      <path d="M15 25h.01"/>
-      <path d="M6 16c0-6 4-11 10-11s10 5 10 11"/>
-    `,
-    shop: `
-      <circle cx="16" cy="16" r="8"/>
-      <path d="M16 9v14M12 12c1-2 7-2 8 1M12 20c1 2 7 2 8-1"/>
-      <path d="M7 24h18"/>
-    `,
-    rest: `
-      <path d="M8 17c0-5 4-9 8-9s8 4 8 9"/>
-      <path d="M7 17h18v7H7Z"/>
-      <path d="M16 11v10M11 16h10"/>
-    `,
-    boss: `
-      <path d="M8 27V12c0-5 16-5 16 0v15"/>
-      <path d="M12 27V14c0-2 8-2 8 0v13"/>
-      <path d="M8 18h16M16 7v20"/>
-      <circle cx="16" cy="6" r="2"/>
-    `
-  };
-  return `
-    <svg class="node-icon node-icon-${type}" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      ${icons[type] ?? icons.combat}
-    </svg>
-  `;
+  const safeType = ["combat", "elite", "event", "shop", "rest", "boss"].includes(type) ? type : "combat";
+  return `<span class="node-icon node-icon-${safeType}" aria-hidden="true"></span>`;
 }
 
 function typeLabel(type) {

@@ -2373,16 +2373,34 @@ dd,
   width: 22px;
   height: 22px;
   display: block;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+  background-image: url("../public/assets/map-node-icons.png");
+  background-repeat: no-repeat;
+  background-size: 600% 100%;
+  filter: drop-shadow(0 0 5px rgba(125, 211, 252, 0.22));
 }
 
-.node-icon circle {
-  fill: currentColor;
-  stroke: none;
+.node-icon-combat {
+  background-position: 0% 50%;
+}
+
+.node-icon-elite {
+  background-position: 20% 50%;
+}
+
+.node-icon-event {
+  background-position: 40% 50%;
+}
+
+.node-icon-shop {
+  background-position: 60% 50%;
+}
+
+.node-icon-rest {
+  background-position: 80% 50%;
+}
+
+.node-icon-boss {
+  background-position: 100% 50%;
 }
 
 .route-preview {
@@ -2656,7 +2674,7 @@ dd,
 .route-trail .node-icon {
   width: 12px;
   height: 12px;
-  stroke-width: 2.8;
+  filter: drop-shadow(0 0 3px rgba(125, 211, 252, 0.18));
 }
 
 .route-trail .elite {

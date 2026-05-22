@@ -251,6 +251,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
+  const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
   const titleIdentitySource = readFileSync(new URL("../scripts/generate-title-identity.py", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   const settingsSource = readFileSync(new URL("../src/engine/settings.js", import.meta.url), "utf8");
@@ -275,7 +276,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
   assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
+  assert.match(mapNodeIconSource, /TYPES = \["combat", "elite", "event", "shop", "rest", "boss"\]/);
   assert.match(titleIdentitySource, /def draw_deep_signal_mark\(\):/);
   assert.match(titleIdentitySource, /def draw_echo_diver_emblem\(\):/);
   assert.match(readme, /npm run playtest/);
@@ -329,6 +332,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /function writeAuditReportIfChanged\(report\)/);
   assert.match(auditSource, /Report unchanged at/);
   assert.match(auditSource, /title-raster-identity-assets/);
+  assert.match(auditSource, /map-raster-node-icons/);
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
   assert.match(styleSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /deep-signal-mark\.png/);
@@ -4009,8 +4013,8 @@ test("map route choices explain risk, reward, and upcoming branches", () => {
   assert.match(mainSource, /<i>\$\{branchText\}<\/i>/);
   assert.match(mainSource, /class="route-action"/);
   assert.match(mainSource, /추천|선택/);
-  assert.match(mainSource, /<svg class="node-icon node-icon-\$\{type\}"/);
-  assert.match(mainSource, /aria-hidden="true" focusable="false"/);
+  assert.match(mainSource, /class="node-icon node-icon-\$\{safeType\}" aria-hidden="true"/);
+  assert.doesNotMatch(mainSource, /<svg class="node-icon/);
   assert.doesNotMatch(mainSource, /combat:\s*"X"/);
   assert.doesNotMatch(mainSource, /elite:\s*"E"/);
   assert.doesNotMatch(mainSource, /boss:\s*"B"/);
@@ -4067,6 +4071,8 @@ test("map route choices explain risk, reward, and upcoming branches", () => {
   assert.match(styleSource, /\.route-head-tools/);
   assert.match(styleSource, /\.route-trail/);
   assert.match(styleSource, /\.route-trail \.node-icon/);
+  assert.match(styleSource, /map-node-icons\.png/);
+  assert.match(styleSource, /background-size:\s*600% 100%/);
   assert.match(styleSource, /\.route-copy em[\s\S]*display:\s*inline-flex/);
   assert.match(styleSource, /\.route-meta[\s\S]*max-height:\s*24px/);
   assert.match(styleSource, /\.route-meta i[\s\S]*display:\s*inline-flex/);
