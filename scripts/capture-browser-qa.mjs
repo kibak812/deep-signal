@@ -69,6 +69,27 @@ try {
   await capture(cdp, "browser-qa-settings-refreshed.png");
 
   await clearSavedRun(cdp);
+  await navigate(cdp, baseUrl);
+  await clickText(cdp, "새 런 시작");
+  await waitForSelector(cdp, ".map-layout");
+  await waitFor(cdp, `Boolean(localStorage.getItem("abyssalArchive.save.v1")) && Boolean(localStorage.getItem("abyssalArchive.save.backup.v1"))`, 6000);
+  await clickText(cdp, "설정");
+  await waitForSelector(cdp, ".settings-screen");
+  await clickText(cdp, "저장 삭제");
+  await waitForSelector(cdp, ".delete-confirm");
+  const deleteSaveConfirmEvidence = await assertDeleteSaveConfirmUx(cdp);
+  await capture(cdp, "browser-qa-delete-save-confirm.png");
+  await pressKey(cdp, "Escape");
+  await waitFor(cdp, `!document.querySelector(".delete-confirm")`, 4000);
+  const deleteSaveEscapeEvidence = await assertDeleteSaveEscapeUx(cdp);
+  await clickText(cdp, "저장 삭제");
+  await waitForSelector(cdp, ".delete-confirm");
+  await clickText(cdp, "삭제 확정");
+  await waitFor(cdp, `!localStorage.getItem("abyssalArchive.save.v1") && !localStorage.getItem("abyssalArchive.save.backup.v1") && !document.querySelector(".delete-confirm")`, 5000);
+  const deleteSaveConfirmedEvidence = await assertDeleteSaveConfirmedUx(cdp);
+  await writeFile(resolve(qaDir, "browser-qa-delete-save.json"), `${JSON.stringify({ confirm: deleteSaveConfirmEvidence, escape: deleteSaveEscapeEvidence, confirmed: deleteSaveConfirmedEvidence }, null, 2)}\n`);
+
+  await clearSavedRun(cdp);
   await clearRecords(cdp);
   await navigate(cdp, baseUrl);
   await clickText(cdp, "새 런 시작");
@@ -701,6 +722,12 @@ async function clickSelector(cdp, selector) {
   if (!rect) throw new Error(`Selector not found: ${selector}`);
   await dispatchClick(cdp, rect.x, rect.y);
   await wait(450);
+}
+
+async function pressKey(cdp, key) {
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", key });
+  await cdp.send("Input.dispatchKeyEvent", { type: "keyUp", key });
+  await wait(240);
 }
 
 async function stageActInterludeFixture(cdp) {
@@ -3865,6 +3892,109 @@ async function assertAbandonRunConfirmUx(cdp) {
   })()`);
   if (!result.ok) {
     throw new Error(`Abandon run confirmation UX failed: ${JSON.stringify(result)}`);
+  }
+  return result;
+}
+
+async function assertDeleteSaveConfirmUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const dialog = document.querySelector(".delete-confirm");
+    const text = document.body.innerText;
+    const buttons = dialog ? [...dialog.querySelectorAll("button")].map((button) => ({
+      action: button.dataset.action ?? "",
+      text: button.innerText.trim(),
+      disabled: button.disabled
+    })) : [];
+    const activeAction = document.activeElement?.dataset?.action ?? "";
+    const box = dialog?.getBoundingClientRect();
+    const savedPrimary = Boolean(localStorage.getItem("abyssalArchive.save.v1"));
+    const savedBackup = Boolean(localStorage.getItem("abyssalArchive.save.backup.v1"));
+    const ok =
+      Boolean(dialog) &&
+      savedPrimary &&
+      savedBackup &&
+      text.includes("저장된 런을 삭제할까요?") &&
+      text.includes("주 저장과 백업 저장을 모두 지웁니다") &&
+      text.includes("현재 저장") &&
+      text.includes("저장 시각") &&
+      buttons.some((button) => button.action === "delete-save-cancel" && button.text.includes("취소") && !button.disabled) &&
+      buttons.some((button) => button.action === "delete-save-confirmed" && button.text.includes("삭제 확정") && !button.disabled) &&
+      activeAction === "delete-save-cancel" &&
+      Boolean(box && box.width <= window.innerWidth - 24 && box.top >= 0 && box.bottom <= window.innerHeight) &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok,
+      buttons,
+      activeAction,
+      savedPrimary,
+      savedBackup,
+      hasWarningCopy: text.includes("주 저장과 백업 저장을 모두 지웁니다"),
+      box: box ? { top: Math.round(box.top), bottom: Math.round(box.bottom), width: Math.round(box.width) } : null,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Delete save confirmation UX failed: ${JSON.stringify(result)}`);
+  }
+  return result;
+}
+
+async function assertDeleteSaveEscapeUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const settings = document.querySelector(".settings-screen");
+    const savedPrimary = Boolean(localStorage.getItem("abyssalArchive.save.v1"));
+    const savedBackup = Boolean(localStorage.getItem("abyssalArchive.save.backup.v1"));
+    const ok =
+      Boolean(settings) &&
+      !document.querySelector(".delete-confirm") &&
+      savedPrimary &&
+      savedBackup &&
+      [...document.querySelectorAll("button")].some((button) => button.dataset.action === "delete-save" && button.innerText.includes("저장 삭제") && !button.disabled) &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok,
+      savedPrimary,
+      savedBackup,
+      dialogClosed: !document.querySelector(".delete-confirm"),
+      settingsVisible: Boolean(settings),
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Delete save Escape cancel failed: ${JSON.stringify(result)}`);
+  }
+  return result;
+}
+
+async function assertDeleteSaveConfirmedUx(cdp) {
+  const result = await evaluate(cdp, `(() => {
+    const settings = document.querySelector(".settings-screen");
+    const savedPrimary = Boolean(localStorage.getItem("abyssalArchive.save.v1"));
+    const savedBackup = Boolean(localStorage.getItem("abyssalArchive.save.backup.v1"));
+    const text = document.body.innerText;
+    const ok =
+      Boolean(settings) &&
+      !document.querySelector(".delete-confirm") &&
+      !savedPrimary &&
+      !savedBackup &&
+      text.includes("설정") &&
+      text.includes("저장 삭제") &&
+      document.documentElement.scrollWidth <= window.innerWidth + 2;
+    return {
+      ok,
+      savedPrimary,
+      savedBackup,
+      dialogClosed: !document.querySelector(".delete-confirm"),
+      settingsVisible: Boolean(settings),
+      hasDeleteAction: text.includes("저장 삭제"),
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: window.innerWidth
+    };
+  })()`);
+  if (!result.ok) {
+    throw new Error(`Delete save confirmed state failed: ${JSON.stringify(result)}`);
   }
   return result;
 }

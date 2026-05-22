@@ -250,6 +250,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
+  const koreanCopySource = readFileSync(new URL("../scripts/korean-copy-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
   const hudIconSource = readFileSync(new URL("../scripts/generate-hud-icons.py", import.meta.url), "utf8");
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
@@ -277,10 +278,13 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /## 검증 산출물/);
   assert.match(readme, /qa\/release-audit\.json/);
   assert.match(readme, /qa\/audio-mix-report\.json/);
+  assert.match(readme, /qa\/korean-copy-report\.json/);
+  assert.match(readme, /한국어 문구 검수/);
   assert.match(readme, /qa\/release-playtest-report\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
   assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(packageSource, /"copy:audit": "node scripts\/korean-copy-report\.mjs"/);
   assert.match(packageSource, /"assets:hud": "python3 scripts\/generate-hud-icons\.py"/);
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
   assert.match(packageSource, /"assets:relics": "python3 scripts\/generate-relic-icons\.py"/);
@@ -308,6 +312,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(statusIconSource, /"more"/);
   assert.match(titleIdentitySource, /def draw_deep_signal_mark\(\):/);
   assert.match(titleIdentitySource, /def draw_echo_diver_emblem\(\):/);
+  assert.match(readme, /npm run copy:audit/);
   assert.match(readme, /npm run playtest/);
   assert.match(readme, /표층 전체 완주와 최심층 최종 보스 패배/);
   assert.match(readme, /새로고침 뒤 이어하기와 백업 복구/);
@@ -332,6 +337,14 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(mainSource, /import \{ loadSettingsFromStorage, saveSettingsToStorage \} from "\.\/engine\/settings\.js"/);
   assert.match(auditSource, /release-playtest-report/);
   assert.match(auditSource, /playtestReport/);
+  assert.match(auditSource, /korean-copy-report/);
+  assert.match(auditSource, /koreanCopyReport/);
+  assert.match(auditSource, /copy:audit/);
+  assert.match(koreanCopySource, /bannedCopy/);
+  assert.match(koreanCopySource, /requiredCopy/);
+  assert.match(koreanCopySource, /sourceFreshAfter/);
+  assert.match(koreanCopySource, /browser-qa-title-identity\.json/);
+  assert.match(koreanCopySource, /writeReportIfChanged/);
   assert.match(auditSource, /표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약/);
   assert.match(auditSource, /balance:long/);
   assert.match(auditSource, /balance-long-report/);
@@ -344,6 +357,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
   assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);
+  assert.match(auditSource, /no-debug-qa-artifacts/);
+  assert.match(auditSource, /debugQaFiles\.length === 0/);
   assert.match(readme, /추천\/경고 피로도 게이트/);
   assert.match(auditSource, /enemy-silhouette-depth/);
   assert.match(auditSource, /enemyDensityQa/);
@@ -377,7 +392,6 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(styleSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /deep-signal-mark\.png/);
   assert.match(mainSource, /echo-diver-emblem\.png/);
-  assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);
   assert.match(readme, /browser-qa-card-attack-hover\.png/);
@@ -415,7 +429,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /browser-qa-mobile-combat-refreshed\.json/);
   assert.match(readme, /browser-qa-tablet-combat-refreshed\.png/);
   assert.match(readme, /browser-qa-tablet-combat-refreshed\.json/);
-  assert.match(readme, /다시 캡처해야 출시 감사가 통과합니다/);
+  assert.match(readme, /최신 브라우저 검증본만 유지합니다/);
   assert.match(readme, /드래그 시 카드에서 대상까지 이어지는 조준선/);
   assert.match(readme, /크레딧/);
   assert.match(readme, /이용 안내·라이선스/);
@@ -424,7 +438,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /function browserQaFreshness\(qaFiles, requiredBrowserQa\)/);
   assert.match(auditSource, /sourceFreshAfter/);
   assert.match(auditSource, /freshFiles/);
-  assert.match(auditSource, /staleFiles/);
+  assert.match(auditSource, /staleCount/);
+  assert.match(auditSource, /browserQa\.staleCount === 0/);
+  assert.match(auditSource, /missingRequired/);
   assert.match(auditSource, /현재 소스 변경 이후 다시 찍은/);
   assert.match(auditSource, /credits-license/);
   assert.match(auditSource, /distribution-polish/);
@@ -504,6 +520,13 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function assertAbandonRunConfirmUx\(cdp\)/);
   assert.match(captureSource, /function assertAbandonedSummaryUx\(cdp\)/);
   assert.match(captureSource, /activeAction === "abandon-run-cancel"/);
+  assert.match(captureSource, /browser-qa-delete-save-confirm\.png/);
+  assert.match(captureSource, /browser-qa-delete-save\.json/);
+  assert.match(captureSource, /function assertDeleteSaveConfirmUx\(cdp\)/);
+  assert.match(captureSource, /function assertDeleteSaveEscapeUx\(cdp\)/);
+  assert.match(captureSource, /function assertDeleteSaveConfirmedUx\(cdp\)/);
+  assert.match(captureSource, /activeAction === "delete-save-cancel"/);
+  assert.match(captureSource, /pressKey\(cdp, "Escape"\)/);
   assert.match(captureSource, /browser-qa-records-refreshed\.png/);
   assert.match(captureSource, /browser-qa-guide-refreshed\.png/);
   assert.match(captureSource, /function assertGuidePlaybookUx\(cdp\)/);

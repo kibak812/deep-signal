@@ -1,0 +1,119 @@
+{
+  "generatedAt": "2026-05-22T21:45:48.735Z",
+  "sourceFreshAfter": "2026-05-22T21:44:41.076Z",
+  "ok": true,
+  "summary": {
+    "checkedSources": 11,
+    "bannedPhrases": 36,
+    "violations": 0,
+    "requiredPhrases": 19,
+    "missingRequired": 0
+  },
+  "checks": {
+    "bannedCopy": {
+      "ok": true,
+      "violations": []
+    },
+    "requiredCopy": {
+      "ok": true,
+      "required": [
+        {
+          "phrase": "딥 시그널",
+          "present": true
+        },
+        {
+          "phrase": "에코 다이버",
+          "present": true
+        },
+        {
+          "phrase": "심해 신호 추적자",
+          "present": true
+        },
+        {
+          "phrase": "가라앉은 데이터 해역",
+          "present": true
+        },
+        {
+          "phrase": "경로 선택",
+          "present": true
+        },
+        {
+          "phrase": "보상 선택",
+          "present": true
+        },
+        {
+          "phrase": "저장 삭제",
+          "present": true
+        },
+        {
+          "phrase": "런 포기",
+          "present": true
+        },
+        {
+          "phrase": "플레이 힌트",
+          "present": true
+        },
+        {
+          "phrase": "피해",
+          "present": true
+        },
+        {
+          "phrase": "방어도",
+          "present": true
+        },
+        {
+          "phrase": "취약",
+          "present": true
+        },
+        {
+          "phrase": "약화",
+          "present": true
+        },
+        {
+          "phrase": "바이러스",
+          "present": true
+        },
+        {
+          "phrase": "표식",
+          "present": true
+        },
+        {
+          "phrase": "전하",
+          "present": true
+        },
+        {
+          "phrase": "소멸",
+          "present": true
+        },
+        {
+          "phrase": "보존",
+          "present": true
+        },
+        {
+          "phrase": "강화",
+          "present": true
+        }
+      ]
+    },
+    "titleCopy": {
+      "ok": true,
+      "heroCopy": "가라앉은 데이터 해역을 탐사하며 카드를 고르고, 위험한 길을 지나 최심부의 이상 신호를 잠재우세요.",
+      "characterTitle": "심해 신호 추적자",
+      "awkwardCopyGone": true,
+      "copyReady": true
+    }
+  },
+  "sourceFiles": [
+    "src/main.js",
+    "src/engine/game.js",
+    "src/data/character.js",
+    "src/data/cards.js",
+    "src/data/events.js",
+    "src/data/relics.js",
+    "src/data/enemies.js",
+    "src/data/keywords.js",
+    "src/data/challenges.js",
+    "index.html",
+    "README.md"
+  ]
+}

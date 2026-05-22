@@ -115,10 +115,12 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
   }));
   return {
     sourceFreshAfter: new Date(sourceMtime).toISOString(),
-    files: metadata,
+    fileCount: metadata.length,
+    freshCount: freshFiles.length,
+    staleCount: metadata.length - freshFiles.length,
     freshFiles,
-    staleFiles: metadata.filter((item) => !item.fresh).map((item) => item.file),
-    requiredFresh
+    requiredFresh,
+    missingRequired: requiredFresh.filter((item) => item.matched.length === 0).map((item) => item.id)
   };
 }
 
@@ -242,6 +244,8 @@ async function main() {
   const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
   const audioMixReportPath = resolve(root, "qa/audio-mix-report.json");
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
+  const koreanCopyReportPath = resolve(root, "qa/korean-copy-report.json");
+  const koreanCopyReport = JSON.parse(await readFile(koreanCopyReportPath, "utf8").catch(() => "null"));
   const playtestReportPath = resolve(root, "qa/release-playtest-report.json");
   const playtestReport = JSON.parse(await readFile(playtestReportPath, "utf8").catch(() => "null"));
   const titleIdentityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-title-identity.json"), "utf8").catch(() => "null"));
@@ -251,6 +255,22 @@ async function main() {
   const groupedEnemyFxQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-grouped-fx.json"), "utf8").catch(() => "null"));
   const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
+  const koreanCopySourceMtime = await newestMtime([
+    resolve(root, "src/main.js"),
+    resolve(root, "src/engine/game.js"),
+    resolve(root, "src/data/character.js"),
+    resolve(root, "src/data/cards.js"),
+    resolve(root, "src/data/events.js"),
+    resolve(root, "src/data/relics.js"),
+    resolve(root, "src/data/enemies.js"),
+    resolve(root, "src/data/keywords.js"),
+    resolve(root, "src/data/challenges.js"),
+    resolve(root, "index.html"),
+    resolve(root, "README.md"),
+    resolve(root, "scripts/korean-copy-report.mjs"),
+    resolve(root, "qa/browser-qa-title-identity.json")
+  ]);
+  const koreanCopyReportMtime = await newestMtime([koreanCopyReportPath]);
   const playtestSourceMtime = await newestMtime([
     resolve(root, "src/engine/game.js"),
     resolve(root, "src/data/cards.js"),
@@ -340,6 +360,7 @@ async function main() {
     { id: "summary-won", match: /browser-qa-summary-won/ },
     { id: "records", match: /browser-qa-records/ },
     { id: "settings", match: /browser-qa-settings/ },
+    { id: "delete-save", match: /browser-qa-delete-save/ },
     { id: "abandon-run", match: /browser-qa-abandon/ },
     { id: "mobile", match: /browser-qa-mobile/ },
     { id: "mobile-combat", match: /browser-qa-mobile-combat/ },
@@ -347,6 +368,7 @@ async function main() {
     { id: "codex", match: /browser-qa-codex/ }
   ];
   const browserQa = await browserQaFreshness(qaFiles, requiredBrowserQa);
+  const debugQaFiles = qaFiles.filter((file) => /(^|[-_])debug([-_.]|$)/i.test(file));
   const requiredReleaseInfo = ["핵심 조작", "크레딧", "이용 안내 · 라이선스", "외부 저작권 IP", "상용 이미지", "외부 음악 파일"];
   const requiredFlowDocs = ["새 런 시작", "전투", "보상 선택", "맵 이동", "상점", "휴식", "보스전", "승리/패배", "이어하기", "저장 삭제 확인", "런 포기 확인", "콘솔 오류 없음"];
   const requiredFlowTests = [
@@ -357,8 +379,9 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:card-ui", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:shop", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "copy:audit", "playtest", "balance", "balance:long", "assets:cards", "assets:card-ui", "assets:combatants", "assets:events", "assets:hud", "assets:map", "assets:relics", "assets:resources", "assets:shop", "assets:statuses", "assets:title"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 문구 검수, 플레이테스트, 밸런스와 에셋 재생성 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
+  record("no-debug-qa-artifacts", "디버그 검증 산출물 없음", debugQaFiles.length === 0, "출시 후보 검증 폴더에는 debug 이름의 임시 스크린샷이나 리포트가 남지 않아야 합니다.", { debugQaFiles });
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
   record("build-axes", "4개 이상의 덱 방향 축", axes.filter((axis) => axis.rewardCards >= 4).length >= 4, "보상 카드 기준으로 최소 4개 이상의 빌드 축이 실제 카드 풀에 있어야 합니다.", axes);
@@ -390,7 +413,7 @@ async function main() {
       readme.includes("터치 대상 전환") &&
       mobileCombatQa?.targetSwitchReady &&
       tabletCombatQa?.targetSwitchReady,
-    "작은 화면 전투에는 손가락으로 이전/다음 적을 바꾸는 버튼과 최신 브라우저 QA 증거가 있어야 합니다.",
+    "작은 화면 전투에는 손가락으로 이전/다음 적을 바꾸는 버튼과 최신 브라우저 검증 증거가 있어야 합니다.",
     {
       mobile: {
         targetSwitchReady: mobileCombatQa?.targetSwitchReady ?? false,
@@ -713,6 +736,24 @@ async function main() {
     { titleMarkPng, diverEmblemPng, titleIdentityQa }
   );
   record("korean-copy", "한국어 우선 카피", !/(장서관|맥동 창|상태 대응을 시험|초반 빌드 선언|덱 순환 압박|Slay the Spire 클론)/.test(mainSource + readme), "사용자에게 보이는 주요 카피에 어색한 번역투와 클론 표현이 없어야 합니다.");
+  record(
+    "korean-copy-report",
+    "한국어 문구 검수 리포트",
+    Boolean(koreanCopyReport?.ok) &&
+      koreanCopyReportMtime >= koreanCopySourceMtime &&
+      koreanCopyReport.summary?.violations === 0 &&
+      koreanCopyReport.summary?.missingRequired === 0 &&
+      koreanCopyReport.checks?.titleCopy?.awkwardCopyGone === true &&
+      koreanCopyReport.checks?.titleCopy?.copyReady === true,
+    "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
+    {
+      generatedAt: koreanCopyReport?.generatedAt ?? null,
+      sourceFreshAfter: new Date(koreanCopySourceMtime).toISOString(),
+      reportMtime: koreanCopyReportMtime ? new Date(koreanCopyReportMtime).toISOString() : null,
+      summary: koreanCopyReport?.summary ?? null,
+      titleCopy: koreanCopyReport?.checks?.titleCopy ?? null
+    }
+  );
   record("distribution-polish", "배포 기본 메타와 에셋 경로", indexSource.includes('rel="icon"') && indexSource.includes("./public/assets/favicon.svg") && indexSource.includes("theme-color") && faviconSource.includes("<svg") && !styleSource.includes('url("./public/assets/'), "정적 배포에서 favicon과 주요 CSS 에셋 경로가 404를 만들지 않아야 합니다.", { favicon: "./public/assets/favicon.svg" });
   const hasPagesWorkflow =
     deployWorkflowSource.includes("branches: [main]") &&
@@ -812,9 +853,9 @@ async function main() {
   );
   record(
     "browser-qa-artifacts",
-    "최신 브라우저 QA 산출물",
-    requiredBrowserQa.every((item) => browserQa.freshFiles.some((file) => item.match.test(file))) && browserQa.freshFiles.length >= 8,
-    "qa 폴더에는 현재 소스 변경 이후 다시 찍은 전투, 맵, 보상, 승리 연출, 보스 상태, 설정, 모바일, 코덱스 등 핵심 화면 브라우저 스크린샷이 있어야 합니다.",
+    "최신 브라우저 검증 산출물",
+    requiredBrowserQa.every((item) => browserQa.freshFiles.some((file) => item.match.test(file))) && browserQa.freshFiles.length >= 8 && browserQa.staleCount === 0,
+    "qa 폴더에는 현재 소스 변경 이후 다시 찍은 전투, 맵, 보상, 승리 연출, 보스 상태, 설정, 모바일, 코덱스 등 핵심 화면 브라우저 스크린샷만 남아야 합니다.",
     {
       required: requiredBrowserQa.map((item) => item.id),
       ...browserQa

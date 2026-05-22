@@ -1,0 +1,47 @@
+{
+  "confirm": {
+    "ok": true,
+    "buttons": [
+      {
+        "action": "delete-save-cancel",
+        "text": "취소",
+        "disabled": false
+      },
+      {
+        "action": "delete-save-confirmed",
+        "text": "삭제 확정",
+        "disabled": false
+      }
+    ],
+    "activeAction": "delete-save-cancel",
+    "savedPrimary": true,
+    "savedBackup": true,
+    "hasWarningCopy": true,
+    "box": {
+      "top": 218,
+      "bottom": 502,
+      "width": 680
+    },
+    "scrollWidth": 1280,
+    "viewportWidth": 1280
+  },
+  "escape": {
+    "ok": true,
+    "savedPrimary": true,
+    "savedBackup": true,
+    "dialogClosed": true,
+    "settingsVisible": true,
+    "scrollWidth": 1280,
+    "viewportWidth": 1280
+  },
+  "confirmed": {
+    "ok": true,
+    "savedPrimary": false,
+    "savedBackup": false,
+    "dialogClosed": true,
+    "settingsVisible": true,
+    "hasDeleteAction": true,
+    "scrollWidth": 1280,
+    "viewportWidth": 1280
+  }
+}
