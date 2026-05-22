@@ -202,12 +202,24 @@ async function main() {
   const longBalance = JSON.parse(await readFile(resolve(root, "qa/balance-long-report.json"), "utf8"));
   const audioMixReportPath = resolve(root, "qa/audio-mix-report.json");
   const audioMixReport = JSON.parse(await readFile(audioMixReportPath, "utf8").catch(() => "null"));
+  const playtestReportPath = resolve(root, "qa/release-playtest-report.json");
+  const playtestReport = JSON.parse(await readFile(playtestReportPath, "utf8").catch(() => "null"));
   const mobileCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-mobile-combat-refreshed.json"), "utf8").catch(() => "null"));
   const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
   const enemyDensityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-density-readability.json"), "utf8").catch(() => "null"));
   const groupedEnemyFxQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-grouped-fx.json"), "utf8").catch(() => "null"));
   const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
+  const playtestSourceMtime = await newestMtime([
+    resolve(root, "src/engine/game.js"),
+    resolve(root, "src/data/cards.js"),
+    resolve(root, "src/data/enemies.js"),
+    resolve(root, "src/data/events.js"),
+    resolve(root, "src/data/relics.js"),
+    resolve(root, "scripts/balance-runner.mjs"),
+    resolve(root, "scripts/release-playtest-report.mjs")
+  ]);
+  const playtestReportMtime = await newestMtime([playtestReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
   const atlas = await readFile(resolve(root, "public/assets/sprite-atlas.png"));
   const cardAtlas = await readFile(resolve(root, "public/assets/card-illustrations.png"));
@@ -286,7 +298,7 @@ async function main() {
     "run summary surfaces replay-relevant build evidence"
   ];
 
-  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
+  record("scripts", "로컬 실행/빌드/테스트 명령", ["dev", "start", "test", "build", "audio:mix", "playtest", "balance", "balance:long", "assets:cards", "assets:combatants", "assets:events"].every((key) => packageJson.scripts?.[key]), "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스 명령이 있어야 합니다.", packageJson.scripts);
   record("content-counts", "콘텐츠 최소 수량", counts.cards >= 60 && counts.rewardCards >= 60 && counts.relics >= 30 && counts.normalEnemies >= 15 && counts.eliteEnemies >= 5 && counts.bosses >= 3 && counts.events >= 20 && counts.difficulties >= 5, "카드/유물/적/보스/이벤트/난이도 수량이 목표치를 넘어야 합니다.", counts);
   record("unique-content", "콘텐츠 ID 중복 없음", [CARDS, RELICS, ENEMIES, EVENTS].every(uniqueIds), "카드, 유물, 적, 이벤트 ID는 모두 고유해야 합니다.");
   record("character", "완성 캐릭터와 시작 덱", CHARACTER.name && CHARACTER.starterRelic && STARTER_DECK.length >= 10 && CHARACTER.mechanics.length >= 3, "캐릭터는 이름, 시작 유물, 시작 덱, 고유 메커니즘 설명을 가져야 합니다.", { name: CHARACTER.name, starterDeck: STARTER_DECK.length, mechanics: CHARACTER.mechanics });
@@ -335,6 +347,43 @@ async function main() {
       reportMtime: audioMixReportMtime ? new Date(audioMixReportMtime).toISOString() : null,
       gain: audioMixReport?.gain,
       checks: audioMixReport?.checks
+    }
+  );
+  record(
+    "release-playtest-report",
+    "출시 플레이테스트 리포트",
+    Boolean(playtestReport?.ok) &&
+      playtestReportMtime >= playtestSourceMtime &&
+      playtestReport.scenarios?.length >= 2 &&
+      playtestReport.scenarios.every((scenario) => Object.values(scenario.checks ?? {}).every(Boolean)) &&
+      playtestReport.scenarios.some((scenario) =>
+        scenario.id === "surface-full-clear" &&
+        scenario.won === true &&
+        scenario.floors >= 21 &&
+        scenario.bossesDefeated >= 3 &&
+        ["combat", "event", "shop", "rest", "elite", "boss"].every((type) => scenario.routeTypes?.includes(type))
+      ) &&
+      playtestReport.scenarios.some((scenario) =>
+        scenario.id === "deep-final-boss-loss" &&
+        scenario.won === false &&
+        scenario.floors >= 21 &&
+        scenario.finalBoss?.bossPhase === 2 &&
+        /쓰러졌습니다/.test(scenario.reason ?? "")
+      ),
+    "고정 시드 출시 플레이테스트는 표층 완주와 최심층 최종 보스 패배를 모두 요약 화면까지 재현해야 합니다.",
+    {
+      sourceFreshAfter: new Date(playtestSourceMtime).toISOString(),
+      reportMtime: playtestReportMtime ? new Date(playtestReportMtime).toISOString() : null,
+      summary: playtestReport?.summary ?? null,
+      scenarios: playtestReport?.scenarios?.map((scenario) => ({
+        id: scenario.id,
+        seed: scenario.seed,
+        difficultyName: scenario.difficultyName,
+        won: scenario.won,
+        floors: scenario.floors,
+        routeTypes: scenario.routeTypes,
+        reason: scenario.reason
+      })) ?? []
     }
   );
   record("save-records", "저장/이어하기/기록 코드", ["loadRunFromStorage", "saveRunToStorage", "deleteSavedRun", "recordRunSummary"].every((text) => mainSource.includes(text)), "로컬 저장, 삭제, 기록 집계 코드가 연결되어야 합니다.");

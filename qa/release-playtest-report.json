@@ -1,0 +1,247 @@
+{
+  "generatedAt": "2026-05-22T15:45:43.144Z",
+  "ok": true,
+  "summary": {
+    "scenarios": 2,
+    "failed": 0,
+    "wins": 1,
+    "defeats": 1,
+    "requiredRouteTypes": [
+      "combat",
+      "event",
+      "shop",
+      "rest",
+      "elite",
+      "boss"
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "surface-full-clear",
+      "label": "표층 전체 완주",
+      "seed": "release-candidate-d0",
+      "difficulty": 0,
+      "difficultyName": "표층",
+      "won": true,
+      "phase": "summary",
+      "floors": 21,
+      "bossesDefeated": 3,
+      "hp": 68,
+      "maxHp": 92,
+      "deckSize": 26,
+      "relics": 10,
+      "fights": 14,
+      "elites": 1,
+      "damageDealt": 1195,
+      "damageTaken": 172,
+      "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다.",
+      "route": [
+        "1:combat",
+        "2:combat",
+        "3:combat",
+        "4:shop",
+        "5:elite",
+        "6:rest",
+        "7:boss",
+        "8:combat",
+        "9:combat",
+        "10:event",
+        "11:shop",
+        "12:combat",
+        "13:rest",
+        "14:boss",
+        "15:combat",
+        "16:combat",
+        "17:combat",
+        "18:combat",
+        "19:shop",
+        "20:rest",
+        "21:boss"
+      ],
+      "routeTypes": [
+        "combat",
+        "shop",
+        "elite",
+        "rest",
+        "boss",
+        "event"
+      ],
+      "routeCounts": {
+        "combat": 10,
+        "shop": 3,
+        "elite": 1,
+        "rest": 3,
+        "boss": 3,
+        "event": 1
+      },
+      "build": [
+        "ward",
+        "mark",
+        "cycle",
+        "charge"
+      ],
+      "roleProfile": {
+        "defense": 9,
+        "burstDefense": 1,
+        "finish": 15,
+        "statusControl": 4,
+        "cleanse": 2,
+        "flow": 17,
+        "upgraded": 0
+      },
+      "finalBoss": {
+        "turn": 10,
+        "playerHp": 68,
+        "playerBlock": 4,
+        "incomingDamage": 0,
+        "bossHp": 45,
+        "bossMaxHp": 307,
+        "bossPhase": 2,
+        "bossMove": "intonation",
+        "bossIntent": "바이러스 3",
+        "hand": [
+          "chronograph_anchor",
+          "pulse_lance",
+          "pulse_lance",
+          "cleanse_cache",
+          "final_footnote",
+          "floodgate"
+        ],
+        "roles": {
+          "defense": 9,
+          "burstDefense": 1,
+          "finish": 15,
+          "statusControl": 3,
+          "cleanse": 1,
+          "flow": 16,
+          "upgraded": 0
+        }
+      },
+      "steps": 115,
+      "problems": [],
+      "checks": {
+        "reachedSummary": true,
+        "noProblems": true,
+        "expectedOutcome": true,
+        "traversedEnoughFloors": true,
+        "requiredRouteCoverage": true,
+        "hasReadableReason": true,
+        "hasBuildEvidence": true,
+        "hasRoleEvidence": true,
+        "fullClearEvidence": true
+      }
+    },
+    {
+      "id": "deep-final-boss-loss",
+      "label": "최심층 최종 보스 패배",
+      "seed": "balance-01-d0-d5",
+      "difficulty": 5,
+      "difficultyName": "최심층",
+      "won": false,
+      "phase": "summary",
+      "floors": 21,
+      "bossesDefeated": 2,
+      "hp": 0,
+      "maxHp": 90,
+      "deckSize": 23,
+      "relics": 7,
+      "fights": 11,
+      "elites": 0,
+      "damageDealt": 1230,
+      "damageTaken": 199,
+      "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다.",
+      "route": [
+        "1:combat",
+        "2:combat",
+        "3:combat",
+        "4:combat",
+        "5:shop",
+        "6:rest",
+        "7:boss",
+        "8:combat",
+        "9:combat",
+        "10:event",
+        "11:combat",
+        "12:shop",
+        "13:rest",
+        "14:boss",
+        "15:combat",
+        "16:event",
+        "17:event",
+        "18:event",
+        "19:shop",
+        "20:rest",
+        "21:boss"
+      ],
+      "routeTypes": [
+        "combat",
+        "shop",
+        "rest",
+        "boss",
+        "event"
+      ],
+      "routeCounts": {
+        "combat": 8,
+        "shop": 3,
+        "rest": 3,
+        "boss": 3,
+        "event": 4
+      },
+      "build": [
+        "mark",
+        "ward",
+        "virus",
+        "cycle"
+      ],
+      "roleProfile": {
+        "defense": 8,
+        "burstDefense": 2,
+        "finish": 15,
+        "statusControl": 3,
+        "cleanse": 1,
+        "flow": 11,
+        "upgraded": 5
+      },
+      "finalBoss": {
+        "turn": 17,
+        "playerHp": 13,
+        "playerBlock": 3,
+        "incomingDamage": 18,
+        "bossHp": 103,
+        "bossMaxHp": 519,
+        "bossPhase": 2,
+        "bossMove": "gate_slam",
+        "bossIntent": "공격 21",
+        "hand": [
+          "tide_ward",
+          "pulse_lance",
+          "rill_cut",
+          "null_pin",
+          "axiom_break"
+        ],
+        "roles": {
+          "defense": 8,
+          "burstDefense": 2,
+          "finish": 15,
+          "statusControl": 3,
+          "cleanse": 1,
+          "flow": 11,
+          "upgraded": 5
+        }
+      },
+      "steps": 120,
+      "problems": [],
+      "checks": {
+        "reachedSummary": true,
+        "noProblems": true,
+        "expectedOutcome": true,
+        "traversedEnoughFloors": true,
+        "requiredRouteCoverage": true,
+        "hasReadableReason": true,
+        "hasBuildEvidence": true,
+        "hasRoleEvidence": true,
+        "defeatDebriefEvidence": true
+      }
+    }
+  ]
+}

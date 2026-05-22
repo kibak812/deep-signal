@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-05-22T15:34:17.125Z",
+  "generatedAt": "2026-05-22T15:46:27.010Z",
   "summary": {
-    "passed": 30,
+    "passed": 31,
     "failed": 0,
-    "total": 30
+    "total": 31
   },
   "checks": [
     {
       "id": "scripts",
       "label": "로컬 실행/빌드/테스트 명령",
       "ok": true,
-      "detail": "package.json에 기본 실행, 빌드, 테스트, 밸런스 명령이 있어야 합니다.",
+      "detail": "package.json에 기본 실행, 빌드, 테스트, 플레이테스트, 밸런스 명령이 있어야 합니다.",
       "evidence": {
         "start": "python3 -m http.server 4173",
         "dev": "python3 -m http.server 4173",
@@ -24,6 +24,7 @@
         "assets:combatants": "python3 scripts/rebuild-combatants.py",
         "qa:screens": "node scripts/capture-browser-qa.mjs",
         "audio:mix": "node scripts/audio-mix-report.mjs",
+        "playtest": "node scripts/release-playtest-report.mjs",
         "balance": "node scripts/balance-runner.mjs",
         "balance:long": "node scripts/balance-runner.mjs --seed-count=36 --report=qa/balance-long-report.json",
         "audit": "node scripts/release-audit.mjs"
@@ -320,6 +321,63 @@
             "id": "mix-bus",
             "ok": true,
             "detail": "음악 버스에는 기본 저역 통과 필터와 컴프레서가 있어야 합니다."
+          }
+        ]
+      }
+    },
+    {
+      "id": "release-playtest-report",
+      "label": "출시 플레이테스트 리포트",
+      "ok": true,
+      "detail": "고정 시드 출시 플레이테스트는 표층 완주와 최심층 최종 보스 패배를 모두 요약 화면까지 재현해야 합니다.",
+      "evidence": {
+        "sourceFreshAfter": "2026-05-22T15:44:03.740Z",
+        "reportMtime": "2026-05-22T15:45:43.147Z",
+        "summary": {
+          "scenarios": 2,
+          "failed": 0,
+          "wins": 1,
+          "defeats": 1,
+          "requiredRouteTypes": [
+            "combat",
+            "event",
+            "shop",
+            "rest",
+            "elite",
+            "boss"
+          ]
+        },
+        "scenarios": [
+          {
+            "id": "surface-full-clear",
+            "seed": "release-candidate-d0",
+            "difficultyName": "표층",
+            "won": true,
+            "floors": 21,
+            "routeTypes": [
+              "combat",
+              "shop",
+              "elite",
+              "rest",
+              "boss",
+              "event"
+            ],
+            "reason": "마지막 문 성가대를 넘어 심해 코어를 회수했습니다."
+          },
+          {
+            "id": "deep-final-boss-loss",
+            "seed": "balance-01-d0-d5",
+            "difficultyName": "최심층",
+            "won": false,
+            "floors": 21,
+            "routeTypes": [
+              "combat",
+              "shop",
+              "rest",
+              "boss",
+              "event"
+            ],
+            "reason": "마지막 문 성가대의 공격으로 쓰러졌습니다."
           }
         ]
       }

@@ -249,6 +249,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   const buildSource = readFileSync(new URL("../scripts/build.mjs", import.meta.url), "utf8");
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
+  const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
+  const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
   let deployWorkflowSource = "";
   try {
     deployWorkflowSource = readFileSync(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8");
@@ -265,8 +267,19 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(readme, /## 검증 산출물/);
   assert.match(readme, /qa\/release-audit\.json/);
   assert.match(readme, /qa\/audio-mix-report\.json/);
+  assert.match(readme, /qa\/release-playtest-report\.json/);
   assert.match(readme, /qa\/balance-report\.json/);
   assert.match(readme, /qa\/balance-long-report\.json/);
+  assert.match(packageSource, /"playtest": "node scripts\/release-playtest-report\.mjs"/);
+  assert.match(readme, /npm run playtest/);
+  assert.match(readme, /표층 전체 완주와 최심층 최종 보스 패배/);
+  assert.match(playtestSource, /surface-full-clear/);
+  assert.match(playtestSource, /deep-final-boss-loss/);
+  assert.match(playtestSource, /requiredRouteCoverage/);
+  assert.match(playtestSource, /Report unchanged at/);
+  assert.match(auditSource, /release-playtest-report/);
+  assert.match(auditSource, /playtestReport/);
+  assert.match(auditSource, /표층 완주와 최심층 최종 보스 패배/);
   assert.match(auditSource, /balance:long/);
   assert.match(auditSource, /balance-long-report/);
   assert.match(auditSource, /rewardGuidance/);

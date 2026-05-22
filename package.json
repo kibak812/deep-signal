@@ -17,6 +17,7 @@
     "assets:combatants": "python3 scripts/rebuild-combatants.py",
     "qa:screens": "node scripts/capture-browser-qa.mjs",
     "audio:mix": "node scripts/audio-mix-report.mjs",
+    "playtest": "node scripts/release-playtest-report.mjs",
     "balance": "node scripts/balance-runner.mjs",
     "balance:long": "node scripts/balance-runner.mjs --seed-count=36 --report=qa/balance-long-report.json",
     "audit": "node scripts/release-audit.mjs"
