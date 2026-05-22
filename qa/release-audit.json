@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-22T23:03:16.787Z",
+  "generatedAt": "2026-05-22T23:09:30.605Z",
   "ok": true,
-  "passed": 48,
+  "passed": 49,
   "failed": 0,
-  "total": 48,
+  "total": 49,
   "summary": {
-    "passed": 48,
+    "passed": 49,
     "failed": 0,
-    "total": 48
+    "total": 49
   },
   "checks": [
     {
@@ -812,10 +812,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T23:03:07.675Z",
-        "sourceFreshAfter": "2026-05-22T23:02:39.165Z",
-        "sourceFingerprint": "sha256:d370c5286a936fc742d1bda2c2fee7deeb835f4280e2183a512cd5279bc598d3",
-        "reportMtime": "2026-05-22T23:03:07.678Z",
+        "generatedAt": "2026-05-22T23:08:24.501Z",
+        "sourceFreshAfter": "2026-05-22T23:07:53.763Z",
+        "sourceFingerprint": "sha256:d0ec2b0df99c043f85efd138280d93906f962ff38130184b4fe09ddbe6331772",
+        "reportMtime": "2026-05-22T23:08:24.504Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -877,6 +877,16 @@
       "evidence": {
         "nonRuntimeDistFiles": [],
         "distFileCount": 70
+      }
+    },
+    {
+      "id": "dist-static-reference-integrity",
+      "label": "정적 배포 참조 파일 무결성",
+      "ok": true,
+      "detail": "dist의 HTML, CSS, JS가 참조하는 정적 파일은 Pages artifact 안에 모두 존재해야 합니다.",
+      "evidence": {
+        "checkedReferences": 42,
+        "missingStaticReferences": []
       }
     },
     {

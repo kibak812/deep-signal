@@ -372,6 +372,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /unexpectedQaArtifacts/);
   assert.match(auditSource, /dist-artifact-hygiene/);
   assert.match(auditSource, /dist-runtime-asset-scope/);
+  assert.match(auditSource, /dist-static-reference-integrity/);
+  assert.match(auditSource, /collectDistStaticReferences/);
+  assert.match(auditSource, /missingStaticReferences/);
+  assert.match(auditSource, /ref\.startsWith\("\.\/public\/"\)/);
   assert.match(auditSource, /listRelativeFiles/);
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
