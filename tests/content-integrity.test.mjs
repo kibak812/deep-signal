@@ -355,9 +355,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /visiblePlayerImpactRingCount/);
   assert.match(auditSource, /singleResolvedAttackCue/);
   assert.match(readme, /상대 턴 공격 FX 단일화/);
+  assert.match(readme, /`ok`, `passed`, `failed`, `total`/);
   assert.match(readme, /generatedAt.*git 변경사항/s);
   assert.match(auditSource, /function writeAuditReportIfChanged\(report\)/);
   assert.match(auditSource, /Report unchanged at/);
+  assert.match(auditSource, /ok:\s*failed\.length === 0/);
+  assert.match(auditSource, /passed,\s*\n\s*failed:\s*failed\.length,\s*\n\s*total:\s*checks\.length/);
   assert.match(auditSource, /title-raster-identity-assets/);
   assert.match(auditSource, /browser-qa-title-identity\.json/);
   assert.match(auditSource, /hud-raster-icons/);
