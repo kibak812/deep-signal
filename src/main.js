@@ -8789,7 +8789,7 @@ function renderShopService(run, service, price, advice = null) {
   const metrics = preview.metrics.map((metric) => `<i class="${metric.tone}">${metric.label}</i>`).join("");
   return `
     <button class="shop-service ${preview.tone} ${recommended ? "recommended" : ""}" data-action="${preview.action}" aria-label="${aria}" ${preview.disabled ? "disabled" : ""}>
-      <span class="shop-service-icon" aria-hidden="true">${shopServiceGlyph(service)}</span>
+      <span class="shop-service-icon shop-service-icon-${service}" aria-hidden="true"></span>
       <span class="shop-service-head">
         <strong>${preview.label}</strong>
         ${recommended ? `<em class="service-recommendation">추천</em>` : ""}
@@ -8799,14 +8799,6 @@ function renderShopService(run, service, price, advice = null) {
       <small class="shop-service-cost" title="${preview.cost}">${preview.priceLabel}</small>
     </button>
   `;
-}
-
-function shopServiceGlyph(service) {
-  return {
-    heal: "+",
-    remove: "-",
-    upgrade: "↑"
-  }[service] ?? "•";
 }
 
 function shopAffordLabel(run, price, sold = false) {

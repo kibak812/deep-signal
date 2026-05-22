@@ -255,6 +255,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
   const relicIconSource = readFileSync(new URL("../scripts/generate-relic-icons.py", import.meta.url), "utf8");
   const resourceIconSource = readFileSync(new URL("../scripts/generate-resource-icons.py", import.meta.url), "utf8");
+  const shopServiceIconSource = readFileSync(new URL("../scripts/generate-shop-service-icons.py", import.meta.url), "utf8");
   const statusIconSource = readFileSync(new URL("../scripts/generate-status-icons.py", import.meta.url), "utf8");
   const titleIdentitySource = readFileSync(new URL("../scripts/generate-title-identity.py", import.meta.url), "utf8");
   const packageSource = readFileSync(new URL("../package.json", import.meta.url), "utf8");
@@ -284,6 +285,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(packageSource, /"assets:map": "python3 scripts\/generate-map-node-icons\.py"/);
   assert.match(packageSource, /"assets:relics": "python3 scripts\/generate-relic-icons\.py"/);
   assert.match(packageSource, /"assets:resources": "python3 scripts\/generate-resource-icons\.py"/);
+  assert.match(packageSource, /"assets:shop": "python3 scripts\/generate-shop-service-icons\.py"/);
   assert.match(packageSource, /"assets:statuses": "python3 scripts\/generate-status-icons\.py"/);
   assert.match(packageSource, /"assets:title": "python3 scripts\/generate-title-identity\.py"/);
   assert.match(hudIconSource, /ICONS = \["deck", "settings"\]/);
@@ -296,6 +298,10 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(resourceIconSource, /ICONS = \["energy", "draw", "hand", "discard", "exhaust"\]/);
   assert.match(resourceIconSource, /def draw_energy/);
   assert.match(resourceIconSource, /def draw_exhaust/);
+  assert.match(shopServiceIconSource, /ICONS = \["heal", "remove", "upgrade"\]/);
+  assert.match(shopServiceIconSource, /def draw_heal/);
+  assert.match(shopServiceIconSource, /def draw_remove/);
+  assert.match(shopServiceIconSource, /def draw_upgrade/);
   assert.match(statusIconSource, /STATUSES = \[/);
   assert.match(statusIconSource, /"vulnerable"/);
   assert.match(statusIconSource, /"haste"/);
@@ -355,6 +361,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /title-raster-identity-assets/);
   assert.match(auditSource, /browser-qa-title-identity\.json/);
   assert.match(auditSource, /hud-raster-icons/);
+  assert.match(auditSource, /shop-service-raster-icons/);
   assert.match(auditSource, /map-raster-node-icons/);
   assert.match(auditSource, /relic-raster-icons/);
   assert.match(auditSource, /resource-raster-icons/);
@@ -3698,6 +3705,7 @@ test("deck overlay explains build axes and maintenance pressure", () => {
 test("shop purchases preview deck fit and service outcomes", () => {
   const mainSource = readFileSync(new URL("../src/main.js", import.meta.url), "utf8");
   const styleSource = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
+  const captureSource = readFileSync(new URL("../scripts/capture-browser-qa.mjs", import.meta.url), "utf8");
   assert.match(mainSource, /function renderShopCardPreview\(run, item\)/);
   assert.match(mainSource, /function renderShopRelicPreview\(run, item\)/);
   assert.match(mainSource, /function renderShopPurchaseLine\(run, item, kind\)/);
@@ -3706,7 +3714,7 @@ test("shop purchases preview deck fit and service outcomes", () => {
   assert.match(mainSource, /<details class="shop-insight \$\{item\.sold \? "muted" : insight\.tone\}"/);
   assert.match(mainSource, /function shopCardSummary\(insight\)/);
   assert.match(mainSource, /function shopRelicSummary\(insight\)/);
-  assert.match(mainSource, /function shopServiceGlyph\(service\)/);
+  assert.doesNotMatch(mainSource, /function shopServiceGlyph\(service\)/);
   assert.match(mainSource, /function shopRelicInsight\(run, relicId\)/);
   assert.match(mainSource, /function conceptForRelic\(relicId, run = null\)/);
   assert.match(mainSource, /function shopPurchaseReserveNote\(run, afterGold\)/);
@@ -3807,6 +3815,13 @@ test("shop purchases preview deck fit and service outcomes", () => {
   assert.match(styleSource, /\.shop-insight-detail[\s\S]*-webkit-line-clamp:\s*2/);
   assert.match(styleSource, /\.shop-service/);
   assert.match(styleSource, /\.shop-service-icon/);
+  assert.match(styleSource, /shop-service-icons\.png/);
+  assert.match(styleSource, /\.shop-service-icon-heal[\s\S]*--shop-service-icon-position:\s*0% 50%/);
+  assert.match(styleSource, /\.shop-service-icon-remove[\s\S]*--shop-service-icon-position:\s*50% 50%/);
+  assert.match(styleSource, /\.shop-service-icon-upgrade[\s\S]*--shop-service-icon-position:\s*100% 50%/);
+  assert.match(mainSource, /class="shop-service-icon shop-service-icon-\$\{service\}"/);
+  assert.doesNotMatch(mainSource, /function shopServiceGlyph/);
+  assert.match(captureSource, /usesShopServiceSprite/);
   assert.match(styleSource, /\.shop-service-metrics/);
   assert.match(styleSource, /\.shop-service-metrics i\.wallet/);
   assert.match(styleSource, /\.shop-service-cost/);

@@ -16395,20 +16395,25 @@ dd,
   grid-row: 1 / span 3;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border: 1px solid rgba(125, 211, 252, 0.34);
-  border-radius: 50%;
-  background: rgba(125, 211, 252, 0.1);
-  color: var(--cyan);
-  font-size: 1.22rem;
-  font-weight: 900;
+  border-radius: 10px;
+  background-image: url("../public/assets/shop-service-icons.png");
+  background-repeat: no-repeat;
+  background-size: 300% 100%;
+  background-position: var(--shop-service-icon-position, 0% 50%);
+  box-shadow:
+    inset 0 0 14px rgba(125, 211, 252, 0.12),
+    0 0 14px var(--shop-service-icon-glow, rgba(125, 211, 252, 0.16));
+  filter: saturate(1.08) contrast(1.04);
 }
 
-.shop-service.heal .shop-service-icon {
-  border-color: rgba(102, 200, 137, 0.44);
-  color: #c8f6d0;
-}
+.shop-service-icon-heal { --shop-service-icon-position: 0% 50%; --shop-service-icon-glow: rgba(102, 200, 137, 0.22); }
+.shop-service-icon-remove { --shop-service-icon-position: 50% 50%; --shop-service-icon-glow: rgba(251, 113, 133, 0.2); }
+.shop-service-icon-upgrade { --shop-service-icon-position: 100% 50%; --shop-service-icon-glow: rgba(125, 211, 252, 0.22); }
+
+.shop-service.heal .shop-service-icon { border-color: rgba(102, 200, 137, 0.48); }
 
 .shop-service-head {
   grid-column: 2;
@@ -23304,6 +23309,11 @@ input[type="range"] {
 .high-contrast .hud-icon {
   background-image: url("../public/assets/hud-icons.png");
   background-size: 200% 100%;
+}
+
+.high-contrast .shop-service-icon {
+  background-image: url("../public/assets/shop-service-icons.png");
+  background-size: 300% 100%;
 }
 
 .high-contrast .combat-pile-dock .pile-icon.resource-icon {

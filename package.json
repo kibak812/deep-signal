@@ -16,6 +16,7 @@
     "assets:map": "python3 scripts/generate-map-node-icons.py",
     "assets:relics": "python3 scripts/generate-relic-icons.py",
     "assets:resources": "python3 scripts/generate-resource-icons.py",
+    "assets:shop": "python3 scripts/generate-shop-service-icons.py",
     "assets:statuses": "python3 scripts/generate-status-icons.py",
     "assets:title": "python3 scripts/generate-title-identity.py",
     "assets:cards": "python3 scripts/rebuild-card-illustrations.py",

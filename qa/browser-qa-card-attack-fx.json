@@ -46,22 +46,22 @@
     "trail": {
       "left": 278,
       "top": 144,
-      "right": 1067,
+      "right": 1068,
       "bottom": 226,
       "width": 790,
       "height": 82
     },
     "spark": {
       "left": 443,
-      "top": 157,
+      "top": 158,
       "right": 453,
       "bottom": 167,
       "width": 9,
-      "height": 9
+      "height": 10
     },
     "impact": {
       "left": 1034,
-      "top": 155,
+      "top": 156,
       "right": 1128,
       "bottom": 217,
       "width": 94,

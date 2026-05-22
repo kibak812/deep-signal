@@ -3894,7 +3894,16 @@ async function assertShopFocusUx(cdp) {
     const detailStyle = activeDetail ? getComputedStyle(activeDetail) : null;
     const sections = [...document.querySelectorAll(".shop-section")];
     const serviceMetrics = [...document.querySelectorAll(".shop-service-metrics")];
+    const serviceIcons = [...document.querySelectorAll(".shop-service-icon")];
     const serviceMetricText = serviceMetrics.map((row) => row.textContent.trim()).join(" ");
+    const serviceIconClasses = serviceIcons.map((icon) => icon.className);
+    const usesShopServiceSprite =
+      serviceIcons.length >= 3 &&
+      serviceIcons.every((icon) => {
+        const style = getComputedStyle(icon);
+        return style.backgroundImage.includes("shop-service-icons.png") && style.backgroundSize === "300% 100%" && !icon.textContent.trim();
+      }) &&
+      ["shop-service-icon-heal", "shop-service-icon-remove", "shop-service-icon-upgrade"].every((name) => serviceIconClasses.some((className) => className.includes(name)));
     const serviceMetricsInside = serviceMetrics.every((row) => {
       const button = row.closest(".shop-service");
       if (!button) return false;
@@ -3913,6 +3922,7 @@ async function assertShopFocusUx(cdp) {
       activeStyle.transform !== "none" &&
       sections.length >= 3 &&
       serviceMetrics.length >= 3 &&
+      usesShopServiceSprite &&
       /남음/.test(serviceMetricText) &&
       /덱 -1장/.test(serviceMetricText) &&
       serviceMetricsInside &&
@@ -3926,6 +3936,9 @@ async function assertShopFocusUx(cdp) {
       activeTransform: activeStyle?.transform ?? "",
       sections: sections.length,
       serviceMetrics: serviceMetrics.length,
+      serviceIcons: serviceIcons.length,
+      serviceIconClasses,
+      usesShopServiceSprite,
       serviceMetricText,
       serviceMetricsInside,
       scrollWidth: document.documentElement.scrollWidth,
