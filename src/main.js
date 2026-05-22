@@ -4417,7 +4417,10 @@ function renderTopBar(run) {
   const activeRelics = new Set(recentRelicTriggers(run).map((trigger) => trigger.relicId));
   return `
     <header class="top-bar">
-      <button class="brand-button" data-action="back-title" title="시작 화면">딥 시그널</button>
+      <button class="brand-button" data-action="back-title" aria-label="시작 화면으로 돌아가기" title="시작 화면">
+        <span class="brand-button-mark" aria-hidden="true"></span>
+        <span class="brand-button-label">딥 시그널</span>
+      </button>
       <div class="hud-stat"><span>체력</span><strong>${run.player.hp}/${run.player.maxHp}</strong></div>
       <div class="hud-stat"><span>크레딧</span><strong>${run.player.gold}</strong></div>
       <div class="hud-stat"><span>층</span><strong>${Math.max(1, run.stats.floors)}</strong></div>

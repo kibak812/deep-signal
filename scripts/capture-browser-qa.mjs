@@ -3917,6 +3917,21 @@ async function assertShopFocusUx(cdp) {
     const sections = [...document.querySelectorAll(".shop-section")];
     const serviceMetrics = [...document.querySelectorAll(".shop-service-metrics")];
     const serviceIcons = [...document.querySelectorAll(".shop-service-icon")];
+    const brandButton = document.querySelector(".top-bar .brand-button");
+    const brandMark = brandButton?.querySelector(".brand-button-mark");
+    const brandLabel = brandButton?.querySelector(".brand-button-label");
+    const topBar = document.querySelector(".phase-shop > .top-bar");
+    const visibleTopStats = [...document.querySelectorAll(".top-bar .hud-stat")]
+      .filter((item) => getComputedStyle(item).display !== "none")
+      .map((item) => item.innerText.replace(/\\s+/g, " ").trim());
+    const visibleTopNav = [...document.querySelectorAll(".top-bar .icon-button")]
+      .filter((item) => getComputedStyle(item).display !== "none")
+      .map((item) => item.innerText.replace(/\\s+/g, " ").trim());
+    const brandButtonBox = brandButton?.getBoundingClientRect();
+    const brandMarkBox = brandMark?.getBoundingClientRect();
+    const brandButtonStyle = brandButton ? getComputedStyle(brandButton) : null;
+    const brandMarkStyle = brandMark ? getComputedStyle(brandMark) : null;
+    const brandLabelStyle = brandLabel ? getComputedStyle(brandLabel) : null;
     const serviceMetricText = serviceMetrics.map((row) => row.textContent.trim()).join(" ");
     const serviceIconClasses = serviceIcons.map((icon) => icon.className);
     const usesShopServiceSprite =
@@ -3926,6 +3941,19 @@ async function assertShopFocusUx(cdp) {
         return style.backgroundImage.includes("shop-service-icons.png") && style.backgroundSize === "300% 100%" && !icon.textContent.trim();
       }) &&
       ["shop-service-icon-heal", "shop-service-icon-remove", "shop-service-icon-upgrade"].every((name) => serviceIconClasses.some((className) => className.includes(name)));
+    const usesBrandRasterButton =
+      Boolean(brandButtonBox && brandButtonBox.width <= 52 && brandButtonBox.height <= 52) &&
+      Boolean(brandMarkBox && brandMarkBox.width >= 28 && brandMarkBox.height >= 28) &&
+      brandButtonStyle?.fontSize === "0px" &&
+      brandLabelStyle?.fontSize === "0px" &&
+      brandButtonStyle?.color === "rgba(0, 0, 0, 0)" &&
+      brandMarkStyle?.backgroundImage.includes("deep-signal-mark.png");
+    const compactTopBar =
+      Boolean(topBar) &&
+      visibleTopStats.length === 2 &&
+      visibleTopStats.every((text) => /체력|크레딧/.test(text)) &&
+      !visibleTopStats.some((text) => /난이도|층/.test(text)) &&
+      !visibleTopNav.some((text) => /코덱스|가이드/.test(text));
     const serviceMetricsInside = serviceMetrics.every((row) => {
       const button = row.closest(".shop-service");
       if (!button) return false;
@@ -3945,6 +3973,8 @@ async function assertShopFocusUx(cdp) {
       sections.length >= 3 &&
       serviceMetrics.length >= 3 &&
       usesShopServiceSprite &&
+      usesBrandRasterButton &&
+      compactTopBar &&
       /남음/.test(serviceMetricText) &&
       /덱 -1장/.test(serviceMetricText) &&
       serviceMetricsInside &&
@@ -3961,6 +3991,12 @@ async function assertShopFocusUx(cdp) {
       serviceIcons: serviceIcons.length,
       serviceIconClasses,
       usesShopServiceSprite,
+      usesBrandRasterButton,
+      compactTopBar,
+      visibleTopStats,
+      visibleTopNav,
+      brandButton: brandButtonBox ? { width: Math.round(brandButtonBox.width), height: Math.round(brandButtonBox.height), fontSize: brandButtonStyle?.fontSize ?? "" } : null,
+      brandMark: brandMarkBox ? { width: Math.round(brandMarkBox.width), height: Math.round(brandMarkBox.height), image: brandMarkStyle?.backgroundImage ?? "" } : null,
       serviceMetricText,
       serviceMetricsInside,
       scrollWidth: document.documentElement.scrollWidth,

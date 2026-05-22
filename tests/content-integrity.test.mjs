@@ -1492,6 +1492,9 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(mainSource, /class="icon-button deck-toggle-button" data-action="toggle-deck" data-count="\$\{run\.player\.deck\.length\}" aria-label="덱 \$\{run\.player\.deck\.length\}장 보기"/);
   assert.match(mainSource, /class="hud-icon hud-icon-deck"/);
   assert.match(mainSource, /class="hud-icon hud-icon-settings"/);
+  assert.match(mainSource, /aria-label="시작 화면으로 돌아가기"/);
+  assert.match(mainSource, /class="brand-button-mark" aria-hidden="true"/);
+  assert.match(mainSource, /class="brand-button-label">딥 시그널/);
   assert.match(mainSource, /function renderTopRouteCompass\(run\)/);
   assert.match(mainSource, /class="top-route-compass \$\{progress\.tone\}"/);
   assert.match(mainSource, /class="top-route-pips" aria-hidden="true"/);
@@ -1513,7 +1516,15 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.phase-map > \.top-bar \.top-route-compass/);
   assert.match(styleSource, /\.phase-reward > \.top-bar \.top-route-compass/);
   assert.match(styleSource, /\.phase-combat > \.top-bar \.top-objective/);
-  assert.match(styleSource, /\.phase-combat > \.top-bar \.brand-button::before/);
+  assert.match(styleSource, /\.top-bar \.brand-button/);
+  assert.match(styleSource, /\.top-bar \.brand-button[\s\S]*flex:\s*0 0 44px/);
+  assert.match(styleSource, /\.brand-button-mark[\s\S]*deep-signal-mark\.png\?v=20260523-title2/);
+  assert.match(styleSource, /\.phase-combat > \.top-bar \.brand-button-mark/);
+  assert.match(styleSource, /\.phase-shop > \.top-bar/);
+  assert.match(styleSource, /\.phase-shop > \.top-bar \.hud-stat:nth-of-type\(n \+ 3\)/);
+  assert.match(styleSource, /\.phase-shop > \.top-bar \.icon-button\[data-id="codex"\]/);
+  assert.match(captureSource, /usesBrandRasterButton/);
+  assert.match(captureSource, /compactTopBar/);
   assert.match(styleSource, /hud-icons\.png/);
   assert.match(styleSource, /\.hud-icon-deck[\s\S]*--hud-icon-position:\s*0% 50%/);
   assert.match(styleSource, /\.hud-icon-settings[\s\S]*--hud-icon-position:\s*100% 50%/);

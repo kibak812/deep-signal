@@ -222,6 +222,7 @@ async function main() {
   const faviconSource = await readFile(resolve(root, "public/assets/favicon.svg"), "utf8");
   const readme = await readFile(resolve(root, "README.md"), "utf8");
   const buildSource = await readFile(resolve(root, "scripts/build.mjs"), "utf8");
+  const captureSource = await readFile(resolve(root, "scripts/capture-browser-qa.mjs"), "utf8");
   const cardArtScriptSource = await readFile(resolve(root, "scripts/rebuild-card-illustrations.py"), "utf8");
   const combatantScriptSource = await readFile(resolve(root, "scripts/rebuild-combatants.py"), "utf8");
   const cardUiIconScriptSource = await readFile(resolve(root, "scripts/generate-card-ui-icons.py"), "utf8").catch(() => "");
@@ -567,6 +568,23 @@ async function main() {
       hudIconScriptSource.includes('ICONS = ["deck", "settings"]'),
     "상단 덱/설정 버튼은 문자 glyph가 아니라 2셀 PNG 스프라이트에서 가져와야 합니다.",
     { hudIconSize, hudIconBytes: hudIcons.length }
+  );
+  record(
+    "topbar-brand-raster-button",
+    "런 상단 브랜드 래스터 버튼",
+    mainSource.includes('aria-label="시작 화면으로 돌아가기"') &&
+      mainSource.includes('class="brand-button-mark" aria-hidden="true"') &&
+      mainSource.includes('class="brand-button-label">딥 시그널') &&
+      styleSource.includes(".top-bar .brand-button") &&
+      styleSource.includes("flex: 0 0 44px") &&
+      styleSource.includes(".brand-button-mark") &&
+      styleSource.includes("deep-signal-mark.png?v=20260523-title2") &&
+      styleSource.includes("color: transparent") &&
+      styleSource.includes(".phase-shop > .top-bar") &&
+      styleSource.includes('.phase-shop > .top-bar .hud-stat:nth-of-type(n + 3)') &&
+      captureSource.includes("usesBrandRasterButton") &&
+      captureSource.includes("compactTopBar"),
+    "상점처럼 상단 정보가 많은 화면에서도 브랜드 텍스트나 난이도 표시가 세로로 깨지지 않도록, 런 상단 바는 전용 래스터 마크와 압축된 필수 정보로 표시되어야 합니다."
   );
   record(
     "card-ui-raster-icons",
