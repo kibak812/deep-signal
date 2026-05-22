@@ -26,7 +26,7 @@
     "selectedAfterBack": "11"
   },
   "targetSwitchText": "‹ 대상 익사한 페이지 1/2 · 바이러스 1 ›",
-  "arenaToHandGap": 286,
+  "arenaToHandGap": 270,
   "handStyle": {
     "overflowX": "auto",
     "touchAction": "pan-x",
@@ -36,11 +36,19 @@
   "boxes": {
     "hand": {
       "left": 116,
-      "top": 928,
+      "top": 912,
       "right": 704,
       "bottom": 1172,
       "width": 588,
-      "height": 244
+      "height": 260
+    },
+    "visibleHand": {
+      "left": 116,
+      "top": 941,
+      "right": 263,
+      "bottom": 1165,
+      "width": 147,
+      "height": 224
     },
     "command": {
       "left": 303,
@@ -59,9 +67,9 @@
       "height": 188
     },
     "energy": {
-      "left": 10,
+      "left": 12,
       "top": 1070,
-      "right": 100,
+      "right": 102,
       "bottom": 1160,
       "width": 90,
       "height": 90
@@ -92,11 +100,11 @@
     },
     "enemyLine": {
       "left": 292,
-      "top": 205,
+      "top": 201,
       "right": 786,
       "bottom": 642,
       "width": 494,
-      "height": 437
+      "height": 441
     },
     "playerPlate": {
       "left": 60,

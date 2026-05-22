@@ -3,50 +3,57 @@
   "text": "⚡ 5 /5",
   "pipCountVar": "5",
   "gridTemplateColumns": "10px 10px 10px 10px 10px",
+  "panelJustifySelf": "center",
   "oneRow": true,
+  "panelCenteredInStack": true,
   "barsInsidePanel": true,
   "barsReadable": true,
-  "panelBox": {
+  "stackBox": {
     "left": 13,
-    "right": 103,
+    "right": 145,
+    "width": 132
+  },
+  "panelBox": {
+    "left": 34,
+    "right": 124,
     "bottom": 694,
     "width": 90,
     "height": 90
   },
   "pipsBox": {
-    "left": 27,
-    "right": 89,
+    "left": 48,
+    "right": 110,
     "bottom": 686,
     "width": 62,
     "height": 6
   },
   "bars": [
     {
-      "left": 27,
+      "left": 48,
       "top": 680,
       "width": 10,
       "height": 6
     },
     {
-      "left": 40,
+      "left": 61,
       "top": 680,
       "width": 10,
       "height": 6
     },
     {
-      "left": 53,
+      "left": 74,
       "top": 680,
       "width": 10,
       "height": 6
     },
     {
-      "left": 66,
+      "left": 87,
       "top": 680,
       "width": 10,
       "height": 6
     },
     {
-      "left": 79,
+      "left": 100,
       "top": 680,
       "width": 10,
       "height": 6

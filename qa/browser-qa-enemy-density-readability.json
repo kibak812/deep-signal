@@ -27,6 +27,99 @@
   "overflowingLine": false,
   "plateOverlaps": [],
   "intentPlateOverlaps": [],
+  "intentSpriteOverlaps": [],
+  "threatSpriteOverlaps": [],
+  "intentPanelsReadable": true,
+  "intentReadouts": [
+    "✦ 연타 집게질 피해 4 x2 · 총 8",
+    "✦ 공격 활강 절단 피해 10",
+    "! 상태 감염 성가 바이러스 2",
+    "✦ 공격 반사 침 피해 9"
+  ],
+  "intentOutcomes": [
+    "피해 4 x2 · 총 8",
+    "피해 10",
+    "바이러스 2",
+    "피해 9"
+  ],
+  "spriteBoxes": [
+    {
+      "left": 503,
+      "top": 79,
+      "right": 649,
+      "bottom": 297,
+      "width": 145,
+      "height": 218
+    },
+    {
+      "left": 682,
+      "top": 56,
+      "right": 836,
+      "bottom": 287,
+      "width": 154,
+      "height": 231
+    },
+    {
+      "left": 865,
+      "top": 76,
+      "right": 1019,
+      "bottom": 307,
+      "width": 154,
+      "height": 231
+    },
+    {
+      "left": 1052,
+      "top": 72,
+      "right": 1198,
+      "bottom": 290,
+      "width": 146,
+      "height": 218
+    }
+  ],
+  "intentBoxes": [
+    {
+      "left": 505,
+      "top": 349,
+      "right": 647,
+      "bottom": 395,
+      "width": 143,
+      "height": 46
+    },
+    {
+      "left": 683,
+      "top": 362,
+      "right": 835,
+      "bottom": 411,
+      "width": 151,
+      "height": 49
+    },
+    {
+      "left": 866,
+      "top": 368,
+      "right": 1018,
+      "bottom": 417,
+      "width": 151,
+      "height": 49
+    },
+    {
+      "left": 1054,
+      "top": 343,
+      "right": 1196,
+      "bottom": 389,
+      "width": 143,
+      "height": 46
+    }
+  ],
+  "threatBoxes": [
+    {
+      "left": 866,
+      "top": 381,
+      "right": 1018,
+      "bottom": 458,
+      "width": 151,
+      "height": 77
+    }
+  ],
   "silhouetteReady": true,
   "silhouetteLayers": [
     {

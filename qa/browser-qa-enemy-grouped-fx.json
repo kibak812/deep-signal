@@ -1,4 +1,17 @@
 {
+  "preFx": {
+    "cueVisible": true,
+    "fxVisible": false,
+    "boardClass": "combat-board feedback-combat arena-act-1 arena-combat enemy-aiming enemy-aiming-danger turn-locked turn-cue-enemy arena-variant-4 arena-depth-entry arena-motif-archive",
+    "animationNames": [
+      "none",
+      "none",
+      "none",
+      "none",
+      "none"
+    ],
+    "preFxEnemyActionClean": true
+  },
   "fixture": {
     "enemies": [
       {

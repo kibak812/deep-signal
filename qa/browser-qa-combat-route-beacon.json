@@ -8,8 +8,22 @@
   "hasPlainProgress": true,
   "hasBossTarget": true,
   "hasRewardContext": true,
+  "goalInline": true,
+  "goalRowDisplay": "flex",
   "noCombatantOverlap": true,
   "noHandOverlap": true,
+  "distanceBox": {
+    "left": 402,
+    "top": 99,
+    "right": 452,
+    "bottom": 115
+  },
+  "targetBox": {
+    "left": 457,
+    "top": 99,
+    "right": 540,
+    "bottom": 115
+  },
   "box": {
     "left": 371,
     "top": 59,
@@ -32,16 +46,16 @@
       "bottom": 385
     },
     {
-      "left": 1042,
-      "top": 89,
-      "right": 1120,
-      "bottom": 127
+      "left": 977,
+      "top": 385,
+      "right": 1185,
+      "bottom": 435
     },
     {
       "left": 1002,
-      "top": 13,
+      "top": 91,
       "right": 1160,
-      "bottom": 251
+      "bottom": 328
     },
     {
       "left": 985,
