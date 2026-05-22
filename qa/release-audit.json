@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T21:45:57.168Z",
+  "generatedAt": "2026-05-22T22:08:00.394Z",
   "ok": true,
   "passed": 44,
   "failed": 0,
@@ -315,9 +315,10 @@
       "ok": true,
       "detail": "효과음과 배경음의 상대 볼륨, 덕킹, 믹스 버스 검증 리포트가 최신이어야 합니다.",
       "evidence": {
-        "checkedAt": "2026-05-22T20:56:48.255Z",
-        "sourceFreshAfter": "2026-05-22T20:44:49.348Z",
-        "reportMtime": "2026-05-22T20:56:48.256Z",
+        "checkedAt": "2026-05-22T22:07:49.209Z",
+        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
+        "sourceFingerprint": "sha256:d452c817f3e933938508eacb4e174e966b20319dd9cb91ff2a65aadc006a3546",
+        "reportMtime": "2026-05-22T22:07:49.211Z",
         "gain": {
           "musicGainScale": 0.35,
           "maxThemeGain": 0.048,
@@ -367,8 +368,9 @@
       "ok": true,
       "detail": "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
       "evidence": {
-        "sourceFreshAfter": "2026-05-22T16:29:29.146Z",
-        "reportMtime": "2026-05-22T16:31:29.758Z",
+        "sourceFreshAfter": "2026-05-22T22:01:09.098Z",
+        "sourceFingerprint": "sha256:4ea623e07de757b368ae2a705f535e7f4853b10d3d0f1b2a443a73976af2a053",
+        "reportMtime": "2026-05-22T22:03:54.564Z",
         "summary": {
           "scenarios": 2,
           "failed": 0,
@@ -801,9 +803,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T21:45:48.735Z",
-        "sourceFreshAfter": "2026-05-22T21:45:33.300Z",
-        "reportMtime": "2026-05-22T21:45:48.737Z",
+        "generatedAt": "2026-05-22T22:07:49.224Z",
+        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
+        "sourceFingerprint": "sha256:57acc5acd0b6febb99ab50a8ae9e70032d01961759fe6667d046221e893f47b0",
+        "reportMtime": "2026-05-22T22:07:49.229Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -833,7 +836,7 @@
       "id": "pages-deploy-workflow",
       "label": "GitHub Pages 배포 준비",
       "ok": true,
-      "detail": "GitHub Actions가 테스트와 빌드를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
+      "detail": "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
       "evidence": {
         "workflow": ".github/workflows/deploy-pages.yml",
         "mode": "github-actions-pages",
@@ -2041,7 +2044,10 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-22T20:53:02.703Z",
+        "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
+        "sourceFingerprint": "sha256:fd3fc3e51cde7a5aa1e4e243770172bb05571cc76be96955fa8a27a9b274edc0",
+        "manifestSourceFresh": true,
+        "manifestFileCount": 46,
         "fileCount": 46,
         "freshCount": 46,
         "staleCount": 0,

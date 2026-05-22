@@ -34,8 +34,14 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Run Korean copy audit
+        run: npm run copy:audit
+
       - name: Build static site
         run: npm run build
+
+      - name: Run release audit
+        run: npm run audit
 
       - name: Configure Pages
         uses: actions/configure-pages@v6

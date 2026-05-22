@@ -11476,7 +11476,7 @@ function renderAbout() {
           </div>
           <div>
             <strong>검증</strong>
-            <code>npm test · npm run build · npm run balance · npm run audit</code>
+            <code>npm test · npm run copy:audit · npm run build · npm run audit</code>
           </div>
         </section>
         <button data-action="return-screen">${returnButtonLabel()}</button>

@@ -1,6 +1,20 @@
 {
-  "generatedAt": "2026-05-22T21:45:48.735Z",
-  "sourceFreshAfter": "2026-05-22T21:44:41.076Z",
+  "generatedAt": "2026-05-22T22:07:49.224Z",
+  "sourceFreshAfter": "2026-05-22T22:07:28.261Z",
+  "sourceFingerprint": "sha256:57acc5acd0b6febb99ab50a8ae9e70032d01961759fe6667d046221e893f47b0",
+  "sourceFiles": [
+    "src/main.js",
+    "src/engine/game.js",
+    "src/data/character.js",
+    "src/data/cards.js",
+    "src/data/events.js",
+    "src/data/relics.js",
+    "src/data/enemies.js",
+    "src/data/keywords.js",
+    "src/data/challenges.js",
+    "index.html",
+    "README.md"
+  ],
   "ok": true,
   "summary": {
     "checkedSources": 11,
@@ -102,18 +116,5 @@
       "awkwardCopyGone": true,
       "copyReady": true
     }
-  },
-  "sourceFiles": [
-    "src/main.js",
-    "src/engine/game.js",
-    "src/data/character.js",
-    "src/data/cards.js",
-    "src/data/events.js",
-    "src/data/relics.js",
-    "src/data/enemies.js",
-    "src/data/keywords.js",
-    "src/data/challenges.js",
-    "index.html",
-    "README.md"
-  ]
+  }
 }

@@ -1,11 +1,13 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, resolve } from "node:path";
 import { simulateRun } from "./balance-runner.mjs";
+import { RELEASE_PLAYTEST_SOURCE_FILES, sourceFingerprint } from "./report-fingerprints.mjs";
 import { abandonRun, enterNode, newRun } from "../src/engine/game.js";
 import { deleteSavedRun, loadRunFromStorage, saveRunToStorage, SAVE_BACKUP_KEY, SAVE_KEY } from "../src/engine/save-slots.js";
 import { loadSettingsFromStorage, saveSettingsToStorage, SETTINGS_KEY } from "../src/engine/settings.js";
 
 const DEFAULT_REPORT_PATH = "qa/release-playtest-report.json";
+const root = resolve(import.meta.dirname, "..");
 const SCENARIOS = [
   {
     id: "surface-full-clear",
@@ -309,6 +311,8 @@ async function main() {
   );
   const report = {
     generatedAt: new Date().toISOString(),
+    sourceFingerprint: await sourceFingerprint(RELEASE_PLAYTEST_SOURCE_FILES, { root }),
+    sourceFiles: RELEASE_PLAYTEST_SOURCE_FILES,
     ok: failed.length === 0,
     summary: {
       scenarios: scenarios.length,

@@ -1,5 +1,17 @@
 {
-  "generatedAt": "2026-05-22T16:31:29.756Z",
+  "generatedAt": "2026-05-22T22:03:54.561Z",
+  "sourceFingerprint": "sha256:4ea623e07de757b368ae2a705f535e7f4853b10d3d0f1b2a443a73976af2a053",
+  "sourceFiles": [
+    "src/engine/game.js",
+    "src/data/cards.js",
+    "src/data/enemies.js",
+    "src/data/events.js",
+    "src/data/relics.js",
+    "src/engine/save-slots.js",
+    "src/engine/settings.js",
+    "scripts/balance-runner.mjs",
+    "scripts/release-playtest-report.mjs"
+  ],
   "ok": true,
   "summary": {
     "scenarios": 2,

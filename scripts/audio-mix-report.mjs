@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { AUDIO_MIX_SOURCE_FILES, sourceFingerprint } from "./report-fingerprints.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const qaDir = resolve(root, "qa");
@@ -88,6 +89,8 @@ const checks = [
 const report = {
   ok: checks.every((check) => check.ok),
   checkedAt: new Date().toISOString(),
+  sourceFingerprint: await sourceFingerprint(AUDIO_MIX_SOURCE_FILES, { root }),
+  sourceFiles: AUDIO_MIX_SOURCE_FILES,
   themeCount: themeNames.length,
   cueCount: cueNames.length,
   gain: {

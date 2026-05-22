@@ -1,5 +1,13 @@
 import { access, mkdir, readFile, readdir, stat, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import {
+  AUDIO_MIX_SOURCE_FILES,
+  BROWSER_QA_SOURCE_FILES,
+  KOREAN_COPY_SOURCE_FILES,
+  RELEASE_PLAYTEST_SOURCE_FILES,
+  buildBrowserQaManifest,
+  sourceFingerprint
+} from "./report-fingerprints.mjs";
 import { CARDS, REWARD_CARD_IDS, STARTER_DECK } from "../src/data/cards.js";
 import { CHARACTER, DIFFICULTIES } from "../src/data/character.js";
 import { ENEMIES, NORMAL_ENEMY_IDS, ELITE_ENEMY_IDS, BOSS_IDS } from "../src/data/enemies.js";
@@ -67,36 +75,11 @@ async function newestMtime(paths) {
 }
 
 async function browserQaFreshness(qaFiles, requiredBrowserQa) {
-  const sourcePaths = [
-    resolve(root, "index.html"),
-    resolve(root, "src/main.js"),
-    resolve(root, "src/styles.css"),
-    resolve(root, "src/engine/game.js"),
-    resolve(root, "src/data/cards.js"),
-    resolve(root, "src/data/character.js"),
-    resolve(root, "src/data/enemies.js"),
-    resolve(root, "src/data/events.js"),
-    resolve(root, "src/data/relics.js"),
-    resolve(root, "scripts/generate-card-ui-icons.py"),
-    resolve(root, "scripts/generate-hud-icons.py"),
-    resolve(root, "scripts/generate-map-node-icons.py"),
-    resolve(root, "scripts/generate-relic-icons.py"),
-    resolve(root, "scripts/generate-resource-icons.py"),
-    resolve(root, "scripts/generate-shop-service-icons.py"),
-    resolve(root, "scripts/generate-status-icons.py"),
-    resolve(root, "scripts/generate-title-identity.py"),
-    resolve(root, "public/assets/favicon.svg"),
-    resolve(root, "public/assets/card-ui-icons.png"),
-    resolve(root, "public/assets/hud-icons.png"),
-    resolve(root, "public/assets/map-node-icons.png"),
-    resolve(root, "public/assets/relic-icons.png"),
-    resolve(root, "public/assets/resource-icons.png"),
-    resolve(root, "public/assets/shop-service-icons.png"),
-    resolve(root, "public/assets/status-icons.png"),
-    resolve(root, "public/assets/deep-signal-mark.png"),
-    resolve(root, "public/assets/echo-diver-emblem.png")
-  ];
+  const sourcePaths = BROWSER_QA_SOURCE_FILES.map((file) => resolve(root, file));
   const sourceMtime = await newestMtime(sourcePaths);
+  const manifestPath = resolve(qaDir, "browser-qa-manifest.json");
+  const storedManifest = JSON.parse(await readFile(manifestPath, "utf8").catch(() => "null"));
+  const currentManifest = await buildBrowserQaManifest({ root, qaDir });
   const files = qaFiles.filter((file) => /^browser-qa-.+\.png$/.test(file)).sort();
   const metadata = await Promise.all(
     files.map(async (file) => {
@@ -108,13 +91,26 @@ async function browserQaFreshness(qaFiles, requiredBrowserQa) {
       };
     })
   );
-  const freshFiles = metadata.filter((item) => item.fresh).map((item) => item.file);
+  const storedFiles = new Map((storedManifest?.files ?? []).map((item) => [item.file, item]));
+  const manifestSourceFresh = storedManifest?.sourceFingerprint === currentManifest.sourceFingerprint;
+  const manifestFileFresh = new Set(
+    currentManifest.files
+      .filter((item) => storedFiles.get(item.file)?.sha256 === item.sha256)
+      .map((item) => item.file)
+  );
+  const hasManifest = Boolean(storedManifest?.sourceFingerprint && storedManifest?.files);
+  const freshFiles = hasManifest
+    ? files.filter((file) => manifestSourceFresh && manifestFileFresh.has(file))
+    : metadata.filter((item) => item.fresh).map((item) => item.file);
   const requiredFresh = requiredBrowserQa.map((item) => ({
     id: item.id,
     matched: freshFiles.filter((file) => item.match.test(file))
   }));
   return {
     sourceFreshAfter: new Date(sourceMtime).toISOString(),
+    sourceFingerprint: currentManifest.sourceFingerprint,
+    manifestSourceFresh,
+    manifestFileCount: storedManifest?.fileCount ?? 0,
     fileCount: metadata.length,
     freshCount: freshFiles.length,
     staleCount: metadata.length - freshFiles.length,
@@ -253,35 +249,14 @@ async function main() {
   const tabletCombatQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-tablet-combat-refreshed.json"), "utf8").catch(() => "null"));
   const enemyDensityQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-density-readability.json"), "utf8").catch(() => "null"));
   const groupedEnemyFxQa = JSON.parse(await readFile(resolve(root, "qa/browser-qa-enemy-grouped-fx.json"), "utf8").catch(() => "null"));
-  const sourceMtime = await newestMtime([resolve(root, "src/main.js"), resolve(root, "scripts/audio-mix-report.mjs")]);
+  const sourceMtime = await newestMtime(AUDIO_MIX_SOURCE_FILES.map((file) => resolve(root, file)));
+  const audioMixSourceFingerprint = await sourceFingerprint(AUDIO_MIX_SOURCE_FILES, { root });
   const audioMixReportMtime = await newestMtime([audioMixReportPath]);
-  const koreanCopySourceMtime = await newestMtime([
-    resolve(root, "src/main.js"),
-    resolve(root, "src/engine/game.js"),
-    resolve(root, "src/data/character.js"),
-    resolve(root, "src/data/cards.js"),
-    resolve(root, "src/data/events.js"),
-    resolve(root, "src/data/relics.js"),
-    resolve(root, "src/data/enemies.js"),
-    resolve(root, "src/data/keywords.js"),
-    resolve(root, "src/data/challenges.js"),
-    resolve(root, "index.html"),
-    resolve(root, "README.md"),
-    resolve(root, "scripts/korean-copy-report.mjs"),
-    resolve(root, "qa/browser-qa-title-identity.json")
-  ]);
+  const koreanCopySourceMtime = await newestMtime(KOREAN_COPY_SOURCE_FILES.map((file) => resolve(root, file)));
+  const koreanCopySourceFingerprint = await sourceFingerprint(KOREAN_COPY_SOURCE_FILES, { root });
   const koreanCopyReportMtime = await newestMtime([koreanCopyReportPath]);
-  const playtestSourceMtime = await newestMtime([
-    resolve(root, "src/engine/game.js"),
-    resolve(root, "src/data/cards.js"),
-    resolve(root, "src/data/enemies.js"),
-    resolve(root, "src/data/events.js"),
-    resolve(root, "src/data/relics.js"),
-    resolve(root, "src/engine/save-slots.js"),
-    resolve(root, "src/engine/settings.js"),
-    resolve(root, "scripts/balance-runner.mjs"),
-    resolve(root, "scripts/release-playtest-report.mjs")
-  ]);
+  const playtestSourceMtime = await newestMtime(RELEASE_PLAYTEST_SOURCE_FILES.map((file) => resolve(root, file)));
+  const playtestSourceFingerprint = await sourceFingerprint(RELEASE_PLAYTEST_SOURCE_FILES, { root });
   const playtestReportMtime = await newestMtime([playtestReportPath]);
   const qaFiles = await readdir(qaDir).catch(() => []);
   const atlas = await readFile(resolve(root, "public/assets/sprite-atlas.png"));
@@ -432,7 +407,7 @@ async function main() {
     "audio-mix-report",
     "효과음/배경음 믹스 리포트",
     Boolean(audioMixReport?.ok) &&
-      audioMixReportMtime >= sourceMtime &&
+      (audioMixReport.sourceFingerprint ? audioMixReport.sourceFingerprint === audioMixSourceFingerprint : audioMixReportMtime >= sourceMtime) &&
       audioMixReport.checks?.every((check) => check.ok) &&
       audioMixReport.gain?.duckMinRatio >= 0.5 &&
       audioMixReport.gain?.maxCueGain <= 0.065,
@@ -440,6 +415,7 @@ async function main() {
     {
       checkedAt: audioMixReport?.checkedAt,
       sourceFreshAfter: new Date(sourceMtime).toISOString(),
+      sourceFingerprint: audioMixSourceFingerprint,
       reportMtime: audioMixReportMtime ? new Date(audioMixReportMtime).toISOString() : null,
       gain: audioMixReport?.gain,
       checks: audioMixReport?.checks
@@ -449,7 +425,7 @@ async function main() {
     "release-playtest-report",
     "출시 플레이테스트 리포트",
     Boolean(playtestReport?.ok) &&
-      playtestReportMtime >= playtestSourceMtime &&
+      (playtestReport.sourceFingerprint ? playtestReport.sourceFingerprint === playtestSourceFingerprint : playtestReportMtime >= playtestSourceMtime) &&
       playtestReport.scenarios?.length >= 2 &&
       playtestReport.scenarios.every((scenario) => Object.values(scenario.checks ?? {}).every(Boolean)) &&
       playtestReport.scenarios.some((scenario) =>
@@ -481,6 +457,7 @@ async function main() {
     "고정 시드 출시 플레이테스트는 표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약을 재현해야 합니다.",
     {
       sourceFreshAfter: new Date(playtestSourceMtime).toISOString(),
+      sourceFingerprint: playtestSourceFingerprint,
       reportMtime: playtestReportMtime ? new Date(playtestReportMtime).toISOString() : null,
       summary: playtestReport?.summary ?? null,
       scenarios: playtestReport?.scenarios?.map((scenario) => ({
@@ -740,7 +717,7 @@ async function main() {
     "korean-copy-report",
     "한국어 문구 검수 리포트",
     Boolean(koreanCopyReport?.ok) &&
-      koreanCopyReportMtime >= koreanCopySourceMtime &&
+      (koreanCopyReport.sourceFingerprint ? koreanCopyReport.sourceFingerprint === koreanCopySourceFingerprint : koreanCopyReportMtime >= koreanCopySourceMtime) &&
       koreanCopyReport.summary?.violations === 0 &&
       koreanCopyReport.summary?.missingRequired === 0 &&
       koreanCopyReport.checks?.titleCopy?.awkwardCopyGone === true &&
@@ -749,6 +726,7 @@ async function main() {
     {
       generatedAt: koreanCopyReport?.generatedAt ?? null,
       sourceFreshAfter: new Date(koreanCopySourceMtime).toISOString(),
+      sourceFingerprint: koreanCopySourceFingerprint,
       reportMtime: koreanCopyReportMtime ? new Date(koreanCopyReportMtime).toISOString() : null,
       summary: koreanCopyReport?.summary ?? null,
       titleCopy: koreanCopyReport?.checks?.titleCopy ?? null
@@ -758,7 +736,9 @@ async function main() {
   const hasPagesWorkflow =
     deployWorkflowSource.includes("branches: [main]") &&
     deployWorkflowSource.includes("npm test") &&
+    deployWorkflowSource.includes("npm run copy:audit") &&
     deployWorkflowSource.includes("npm run build") &&
+    deployWorkflowSource.includes("npm run audit") &&
     deployWorkflowSource.includes("pages: write") &&
     deployWorkflowSource.includes("id-token: write") &&
     deployWorkflowSource.includes("actions/configure-pages@v6") &&
@@ -768,8 +748,8 @@ async function main() {
   record(
     "pages-deploy-workflow",
     "GitHub Pages 배포 준비",
-    hasPagesWorkflow && readme.includes("https://kibak812.github.io/deep-signal/") && readme.includes("Pages artifact") && buildSource.includes(".nojekyll"),
-    "GitHub Actions가 테스트와 빌드를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
+    hasPagesWorkflow && readme.includes("https://kibak812.github.io/deep-signal/") && readme.includes("Pages artifact") && readme.includes("npm run copy:audit") && readme.includes("npm run audit") && buildSource.includes(".nojekyll"),
+    "GitHub Actions가 테스트, 한국어 문구 검수, 빌드, 출시 감사를 통과한 dist 폴더를 Pages artifact로 게시할 수 있어야 합니다.",
     { workflow: ".github/workflows/deploy-pages.yml", mode: "github-actions-pages", publishDir: "dist" }
   );
   record("dist-build", "정적 빌드 산출물", await exists(resolve(root, "dist/index.html")) && await exists(resolve(root, "dist/.nojekyll")) && await exists(resolve(root, "dist/src/main.js")) && await exists(resolve(root, "dist/public/assets/sprite-atlas.png")), "dist 폴더에 정적 실행 산출물과 GitHub Pages용 .nojekyll 파일이 있어야 합니다.");

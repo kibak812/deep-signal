@@ -1,0 +1,266 @@
+{
+  "generatedAt": "2026-05-22T22:07:49.226Z",
+  "sourceFingerprint": "sha256:fd3fc3e51cde7a5aa1e4e243770172bb05571cc76be96955fa8a27a9b274edc0",
+  "sourceFiles": [
+    "index.html",
+    "src/main.js",
+    "src/styles.css",
+    "src/engine/game.js",
+    "src/data/cards.js",
+    "src/data/character.js",
+    "src/data/enemies.js",
+    "src/data/events.js",
+    "src/data/relics.js",
+    "scripts/generate-card-ui-icons.py",
+    "scripts/generate-hud-icons.py",
+    "scripts/generate-map-node-icons.py",
+    "scripts/generate-relic-icons.py",
+    "scripts/generate-resource-icons.py",
+    "scripts/generate-shop-service-icons.py",
+    "scripts/generate-status-icons.py",
+    "scripts/generate-title-identity.py",
+    "public/assets/favicon.svg",
+    "public/assets/card-ui-icons.png",
+    "public/assets/hud-icons.png",
+    "public/assets/map-node-icons.png",
+    "public/assets/relic-icons.png",
+    "public/assets/resource-icons.png",
+    "public/assets/shop-service-icons.png",
+    "public/assets/status-icons.png",
+    "public/assets/deep-signal-mark.png",
+    "public/assets/echo-diver-emblem.png"
+  ],
+  "fileCount": 46,
+  "files": [
+    {
+      "file": "browser-qa-abandon-confirm.png",
+      "bytes": 166468,
+      "sha256": "sha256:2ad9bdbe5dc393e46c004aa9a48d5c30de26fca7609f1bfe3dbdf4b0113f1578"
+    },
+    {
+      "file": "browser-qa-abandon-summary.png",
+      "bytes": 524753,
+      "sha256": "sha256:6f429f308e1ba67bc1f9639eb95fe169356f563cdc8ff7e58b818c6d2a6f8045"
+    },
+    {
+      "file": "browser-qa-about-refreshed.png",
+      "bytes": 486957,
+      "sha256": "sha256:b7817d1e5613ca1cb84351b18190c0c52d6ecfec6dc3e141a34c64ac7f653e88"
+    },
+    {
+      "file": "browser-qa-act-interlude-one-shot.png",
+      "bytes": 527451,
+      "sha256": "sha256:2062227d9fcddefd50dafd741c847ff73a7e4c6d34730d3cf2037fa0486d0c9b"
+    },
+    {
+      "file": "browser-qa-act-interlude-refreshed.png",
+      "bytes": 545769,
+      "sha256": "sha256:44f8aae6a36ea9e0d8b56e6017cf9c25abb0cfbf7ca50ecd27c9abcde7f54524"
+    },
+    {
+      "file": "browser-qa-boss-status-strip.png",
+      "bytes": 1085160,
+      "sha256": "sha256:aee896cfee474bd424efb4f7d33654fe554e48f4962133eb5d9e65cd5bdc20c9"
+    },
+    {
+      "file": "browser-qa-card-attack-fx.png",
+      "bytes": 980828,
+      "sha256": "sha256:7df7c719d5f6f3b33435ec81efe42c5a293657833f35190cf745376192e5028a"
+    },
+    {
+      "file": "browser-qa-card-attack-hover.png",
+      "bytes": 953692,
+      "sha256": "sha256:5c772063f055670c2faca6dfc54acf017340c827e3eb9ff6683417e29402d99a"
+    },
+    {
+      "file": "browser-qa-card-play-fx.png",
+      "bytes": 1111376,
+      "sha256": "sha256:4ce8e52ed16080c8c76938076ba0dc5e31630a95a0963f036a7cc11801b7a630"
+    },
+    {
+      "file": "browser-qa-choice-pulse-next-step.png",
+      "bytes": 548308,
+      "sha256": "sha256:0c990a672b3bcff97abfa6460dadd68da6eb53d2226ff08e34d3f2324a727374"
+    },
+    {
+      "file": "browser-qa-codex-refreshed.png",
+      "bytes": 263839,
+      "sha256": "sha256:d013a2640deace2ab4db5640f444f46043b862d6cec23ec075b32400be19375d"
+    },
+    {
+      "file": "browser-qa-combat-card-hover.png",
+      "bytes": 1049977,
+      "sha256": "sha256:8f22ccc24ecfd8896d3d3daa5a405d238634f3a9e775e4c8142c3dcd3781128b"
+    },
+    {
+      "file": "browser-qa-combat-energy-locked.png",
+      "bytes": 976253,
+      "sha256": "sha256:521389309b8970579473567804cb276c56743f9863e4e2301bdd432847d595ec"
+    },
+    {
+      "file": "browser-qa-combat-high-energy-hud.png",
+      "bytes": 1042158,
+      "sha256": "sha256:277c6e0ac5a4b1ca911f7ae409858420dd303a2a8d831c23b4fe4dd2892b3f63"
+    },
+    {
+      "file": "browser-qa-combat-intent-tooltip.png",
+      "bytes": 1126727,
+      "sha256": "sha256:0a92fa6c0301f4bc159876ac94d4fd15eafe17c31873ea3f25102f01e70835b9"
+    },
+    {
+      "file": "browser-qa-combat-refreshed.png",
+      "bytes": 1118065,
+      "sha256": "sha256:aca4cc4dca1b5f224b152e1a214f160dca5ad8f00793f96f8c51fbf2b555e658"
+    },
+    {
+      "file": "browser-qa-combat-status-tooltip.png",
+      "bytes": 1132511,
+      "sha256": "sha256:a956a203c56b581a876be568c5f6dccede7d39a357d0779721ac72704c2a2b16"
+    },
+    {
+      "file": "browser-qa-delete-save-confirm.png",
+      "bytes": 163582,
+      "sha256": "sha256:b759ba1721b8b435219c56fb9f833bbe98eec29d021f82bf5ff3458a940d9ed1"
+    },
+    {
+      "file": "browser-qa-end-turn-risk-block-preview.png",
+      "bytes": 985508,
+      "sha256": "sha256:32cfe6448adf596528206dfb4aaffadf394953ef250afeed78609a355989aec1"
+    },
+    {
+      "file": "browser-qa-end-turn-risk-kill-preview.png",
+      "bytes": 1012950,
+      "sha256": "sha256:0723c2247cae32facbf6d059c350017c3168d26b9659bd5cf00a83c10ba2454e"
+    },
+    {
+      "file": "browser-qa-end-turn-risk-preview.png",
+      "bytes": 1030911,
+      "sha256": "sha256:f7d9eb0fcff50ccb7cf94917a1309c5112df638d543863424623e05655e1535f"
+    },
+    {
+      "file": "browser-qa-enemy-density-readability.png",
+      "bytes": 1137766,
+      "sha256": "sha256:a917d1fe872a37f6651800a7f3f0d9208b8dba28c1ca57fc84bbded98d4aaa7d"
+    },
+    {
+      "file": "browser-qa-enemy-grouped-fx.png",
+      "bytes": 1010727,
+      "sha256": "sha256:f1393336ce91ac0e3b034ca9858dcacd5e936882101cb057935e41b33d7135c7"
+    },
+    {
+      "file": "browser-qa-event-refreshed.png",
+      "bytes": 457947,
+      "sha256": "sha256:56898e2e145c6227fef4aa15945c2a7e02d76e0f9bf1eb4f723918aa3281f5ba"
+    },
+    {
+      "file": "browser-qa-final-boss-finisher-reserve.png",
+      "bytes": 1027838,
+      "sha256": "sha256:d66634c8d703a637c4a2109ec395ae5da606fc314d8fcbc8868f929c914bcc25"
+    },
+    {
+      "file": "browser-qa-final-boss-readiness.png",
+      "bytes": 514728,
+      "sha256": "sha256:da1c93da285b0e6f5088f26792e6c3c43d1619c5731f9198da62fc7dba683149"
+    },
+    {
+      "file": "browser-qa-final-boss-selector.png",
+      "bytes": 416806,
+      "sha256": "sha256:bc9836c4b8ce882e54cd342d8de12c50f3cc13d4458ad27a0a9d9bf1cd434c9b"
+    },
+    {
+      "file": "browser-qa-guide-refreshed.png",
+      "bytes": 395886,
+      "sha256": "sha256:77da614e70a83757114436e15db977c5dcd5ad2dcc5a4369ca2c029e0fd412d3"
+    },
+    {
+      "file": "browser-qa-map-refreshed.png",
+      "bytes": 541174,
+      "sha256": "sha256:f7eb7c2a54f8c114471d5f8e232051b365e6da86751c6db6bff9e122237ce263"
+    },
+    {
+      "file": "browser-qa-map-route-preview.png",
+      "bytes": 543583,
+      "sha256": "sha256:3796660490ec146118f5b4ad8a3be6b25aefc71bd3a828ed48488a47278953e1"
+    },
+    {
+      "file": "browser-qa-mobile-combat-refreshed.png",
+      "bytes": 385690,
+      "sha256": "sha256:fedd57632080455768699ee0f3a293387c41bd997f2710fa0d9c4018ae7826dd"
+    },
+    {
+      "file": "browser-qa-mobile-refreshed.png",
+      "bytes": 527854,
+      "sha256": "sha256:f4d199ea100d84dae76f657f9226e8723f89a5c99c2a287c136817ce1aeccd2a"
+    },
+    {
+      "file": "browser-qa-records-refreshed.png",
+      "bytes": 355162,
+      "sha256": "sha256:7adb98b61e899eb0b6330f427bb8f1787b2beeebd832e38355126ffbd25b202f"
+    },
+    {
+      "file": "browser-qa-rest-refreshed.png",
+      "bytes": 405409,
+      "sha256": "sha256:3be472679aaf6372004e0e4e9ce13a03dde3618f09160d30eb8fdb68c02241f0"
+    },
+    {
+      "file": "browser-qa-reward-card-selected.png",
+      "bytes": 564894,
+      "sha256": "sha256:5da88a4976078c1d0516ea92b930852ce7a131519cbfd2e0897594f14be2e63b"
+    },
+    {
+      "file": "browser-qa-reward-post-victory-refreshed.png",
+      "bytes": 562301,
+      "sha256": "sha256:fba5e9c244afd72d0ed491d88334c99b799fdefe57ef94b3cefcce6a8a17ce28"
+    },
+    {
+      "file": "browser-qa-reward-refreshed.png",
+      "bytes": 562301,
+      "sha256": "sha256:fba5e9c244afd72d0ed491d88334c99b799fdefe57ef94b3cefcce6a8a17ce28"
+    },
+    {
+      "file": "browser-qa-reward-relics-refreshed.png",
+      "bytes": 572984,
+      "sha256": "sha256:76dcd58fd950856e0d31c0fd8890075640528295a03df076e0555c3f0fb0ab60"
+    },
+    {
+      "file": "browser-qa-settings-refreshed.png",
+      "bytes": 310406,
+      "sha256": "sha256:acebe32749a524e3a4b62e2bbc75ab37285f85dbb24666afa9f4c4fcdbdb0a44"
+    },
+    {
+      "file": "browser-qa-shop-refreshed.png",
+      "bytes": 538123,
+      "sha256": "sha256:eb79118ba1be2ef312e9b04bf55d3e3cb0420d497fa5cc637763d119799db33d"
+    },
+    {
+      "file": "browser-qa-summary-lost-refreshed.png",
+      "bytes": 519485,
+      "sha256": "sha256:3af2d34ab25fa6686d2892b4f8c430fd02fd0198232af7aeab32c700a590c302"
+    },
+    {
+      "file": "browser-qa-summary-won-refreshed.png",
+      "bytes": 630101,
+      "sha256": "sha256:537370ac7ccfb159626eb9f153c7c693b69113f88d50895796947bfb73b1704a"
+    },
+    {
+      "file": "browser-qa-tablet-combat-refreshed.png",
+      "bytes": 1146965,
+      "sha256": "sha256:1b641ba07d4a88ce0b0b604ecf565e154d4a0c5c2b8edfb5dbf4995b3e1e3382"
+    },
+    {
+      "file": "browser-qa-title-refreshed.png",
+      "bytes": 563209,
+      "sha256": "sha256:790df703351db39be9d2c69dc970b32d7ed8aa46ad410eb6453120c823910ae1"
+    },
+    {
+      "file": "browser-qa-turn-player-cue-minimal.png",
+      "bytes": 1028332,
+      "sha256": "sha256:160a9011ecac1aa860cee1db10d500b33729e84edffa387b897044293aa42ed4"
+    },
+    {
+      "file": "browser-qa-victory-coda.png",
+      "bytes": 858698,
+      "sha256": "sha256:57874ef6ceebf159ef6e2f914601e5473c0346dc6d4b09716ff0bd9d4ec50a9b"
+    }
+  ]
+}

@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { buildBrowserQaManifest } from "./report-fingerprints.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const qaDir = resolve(root, "qa");
@@ -366,7 +367,7 @@ try {
   await wait(250);
   await capture(cdp, "browser-qa-mobile-refreshed.png");
 
-  const summary = await evaluate(cdp, `(() => ({
+	  const summary = await evaluate(cdp, `(() => ({
     title: document.title,
     phase: document.querySelector(".game-screen")?.className ?? "",
     titleScreen: Boolean(document.querySelector(".title-screen")),
@@ -375,8 +376,10 @@ try {
     choicePulseCount: document.querySelectorAll(".choice-result-pulse").length,
     transitionCount: document.querySelectorAll(".phase-transition").length,
     text: document.body.innerText.slice(0, 500)
-  }))()`);
-  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, enemyDensity, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
+	  }))()`);
+	  const manifest = await buildBrowserQaManifest({ root, qaDir });
+	  await writeFile(resolve(qaDir, "browser-qa-manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
+	  console.log(JSON.stringify({ ok: true, reachedReward: turnAndVictoryEvidence.rewardReachedAfterVictory, enemyDensity, groupedEnemyFx, victoryCoda: victoryCodaEvidence, summary }, null, 2));
 } finally {
   await cleanup();
 }

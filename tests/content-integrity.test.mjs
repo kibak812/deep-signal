@@ -252,6 +252,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   const audioMixSource = readFileSync(new URL("../scripts/audio-mix-report.mjs", import.meta.url), "utf8");
   const koreanCopySource = readFileSync(new URL("../scripts/korean-copy-report.mjs", import.meta.url), "utf8");
   const playtestSource = readFileSync(new URL("../scripts/release-playtest-report.mjs", import.meta.url), "utf8");
+  const fingerprintSource = readFileSync(new URL("../scripts/report-fingerprints.mjs", import.meta.url), "utf8");
   const hudIconSource = readFileSync(new URL("../scripts/generate-hud-icons.py", import.meta.url), "utf8");
   const mapNodeIconSource = readFileSync(new URL("../scripts/generate-map-node-icons.py", import.meta.url), "utf8");
   const relicIconSource = readFileSync(new URL("../scripts/generate-relic-icons.py", import.meta.url), "utf8");
@@ -340,9 +341,16 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /korean-copy-report/);
   assert.match(auditSource, /koreanCopyReport/);
   assert.match(auditSource, /copy:audit/);
+  assert.match(auditSource, /sourceFingerprint/);
+  assert.match(auditSource, /buildBrowserQaManifest/);
   assert.match(koreanCopySource, /bannedCopy/);
   assert.match(koreanCopySource, /requiredCopy/);
   assert.match(koreanCopySource, /sourceFreshAfter/);
+  assert.match(fingerprintSource, /AUDIO_MIX_SOURCE_FILES/);
+  assert.match(fingerprintSource, /RELEASE_PLAYTEST_SOURCE_FILES/);
+  assert.match(fingerprintSource, /BROWSER_QA_SOURCE_FILES/);
+  assert.match(fingerprintSource, /sourceFingerprint/);
+  assert.match(fingerprintSource, /buildBrowserQaManifest/);
   assert.match(koreanCopySource, /browser-qa-title-identity\.json/);
   assert.match(koreanCopySource, /writeReportIfChanged/);
   assert.match(auditSource, /표층 완주, 최심층 최종 보스 패배, 새로고침 뒤 이어하기와 백업 복구, 설정 저장과 재로드, 런 포기 요약/);
@@ -387,6 +395,8 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.doesNotMatch(styleSource, /content:\s*"DS"/);
   assert.match(captureSource, /function assertTitleIdentityUx\(cdp\)/);
   assert.match(captureSource, /browser-qa-title-identity\.json/);
+  assert.match(captureSource, /browser-qa-manifest\.json/);
+  assert.match(captureSource, /buildBrowserQaManifest/);
   assert.match(captureSource, /deep-signal-mark\.png\?v=20260523-title2/);
   assert.match(captureSource, /echo-diver-emblem\.png\?v=20260523-title2/);
   assert.match(styleSource, /deep-signal-mark\.png/);
@@ -724,10 +734,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(audioMixSource, /sfx-headroom/);
   assert.match(buildSource, /\.nojekyll/);
   if (deployWorkflowSource) {
-    assert.match(deployWorkflowSource, /branches: \[main\]/);
-    assert.match(deployWorkflowSource, /npm test/);
-    assert.match(deployWorkflowSource, /npm run build/);
-    assert.match(deployWorkflowSource, /pages:\s*write/);
+	  assert.match(deployWorkflowSource, /branches: \[main\]/);
+	  assert.match(deployWorkflowSource, /npm test/);
+	  assert.match(deployWorkflowSource, /npm run copy:audit/);
+	  assert.match(deployWorkflowSource, /npm run build/);
+	  assert.match(deployWorkflowSource, /npm run audit/);
+	  assert.match(deployWorkflowSource, /pages:\s*write/);
     assert.match(deployWorkflowSource, /id-token:\s*write/);
     assert.match(deployWorkflowSource, /actions\/configure-pages@v6/);
     assert.match(deployWorkflowSource, /actions\/upload-pages-artifact@v5/);
@@ -2657,7 +2669,7 @@ test("title screen supports seeded and daily challenge runs with Korean credits"
   assert.match(mainSource, /라이선스/);
   assert.match(mainSource, /이용 안내/);
   assert.match(mainSource, /npm run dev/);
-  assert.match(mainSource, /npm test · npm run build · npm run balance · npm run audit/);
+  assert.match(mainSource, /npm test · npm run copy:audit · npm run build · npm run audit/);
   assert.match(styleSource, /\.run-setup/);
   assert.match(styleSource, /\.title-start-panel/);
   assert.match(styleSource, /\.title-start-copy/);

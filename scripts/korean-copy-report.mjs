@@ -1,5 +1,6 @@
 import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { KOREAN_COPY_SOURCE_FILES, sourceFingerprint } from "./report-fingerprints.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const qaDir = resolve(root, "qa");
@@ -135,6 +136,8 @@ const sourceFreshAfter = new Date(await newestMtime([...sourceFiles, "qa/browser
 const report = {
   generatedAt: new Date().toISOString(),
   sourceFreshAfter,
+  sourceFingerprint: await sourceFingerprint(KOREAN_COPY_SOURCE_FILES, { root }),
+  sourceFiles,
   ok: violations.length === 0 && missingRequired.length === 0 && titleIdentity?.awkwardCopyGone === true && titleIdentity?.copyReady === true,
   summary: {
     checkedSources: sourceFiles.length,
@@ -159,8 +162,7 @@ const report = {
       awkwardCopyGone: titleIdentity?.awkwardCopyGone ?? false,
       copyReady: titleIdentity?.copyReady ?? false
     }
-  },
-  sourceFiles
+  }
 };
 
 await mkdir(qaDir, { recursive: true });
