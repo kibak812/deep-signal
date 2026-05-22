@@ -371,6 +371,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /qa-artifact-hygiene/);
   assert.match(auditSource, /unexpectedQaArtifacts/);
   assert.match(auditSource, /dist-artifact-hygiene/);
+  assert.match(auditSource, /dist-runtime-asset-scope/);
   assert.match(auditSource, /listRelativeFiles/);
   assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
   assert.match(auditSource, /signalRunRate <= 0\.95/);
@@ -745,6 +746,7 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(buildSource, /\.nojekyll/);
   assert.match(buildSource, /releaseFileFilter/);
   assert.match(buildSource, /\.DS_Store/);
+  assert.match(buildSource, /generated-sources/);
   if (deployWorkflowSource) {
 	  assert.match(deployWorkflowSource, /branches: \[main\]/);
 	  assert.match(deployWorkflowSource, /npm test/);
