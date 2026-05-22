@@ -2580,11 +2580,10 @@ function showStatusPortalTooltip(statusChip) {
   const description = statusChip.dataset.statusDescription ?? "";
   const key = statusChip.dataset.statusKey ?? "more";
   const tone = statusChip.classList.contains("harmful") ? "harmful" : statusChip.classList.contains("beneficial") ? "beneficial" : "neutral";
-  const icon = statusChip.querySelector("i")?.textContent?.trim() || statusIcon(key);
   statusTooltipSource = statusChip;
   statusTooltipLayer.className = `status-portal-tooltip tone-${tone} status-${key}`;
   statusTooltipLayer.innerHTML = `
-    <span class="status-tooltip-icon" aria-hidden="true">${icon}</span>
+    <span class="status-tooltip-icon ${statusIconClass(key)}" aria-hidden="true"></span>
     <strong>${label}</strong>
     <small>${description}</small>
   `;
@@ -13270,7 +13269,7 @@ function renderStatuses(statuses = {}) {
       const label = keywordLabel(key);
       const description = keywordDescription(key);
       const tone = PLAYER_HARMFUL_STATUSES.includes(key) ? "harmful" : "beneficial";
-      return `<span class="status-chip status-${key} ${tone}" tabindex="0" title="${label} ${value}. ${description}" aria-label="${label} ${value}" data-status-key="${key}" data-status-label="${label} ${value}" data-status-description="${description}"><i aria-hidden="true">${statusIcon(key)}</i><strong>${value}</strong></span>`;
+      return `<span class="status-chip status-${key} ${tone}" tabindex="0" title="${label} ${value}. ${description}" aria-label="${label} ${value}" data-status-key="${key}" data-status-label="${label} ${value}" data-status-description="${description}"><i class="${statusIconClass(key)}" aria-hidden="true"></i><strong>${value}</strong></span>`;
     })
     .join("")}${hiddenEntries.length ? renderStatusMoreChip(hiddenEntries) : ""}</div>`;
 }
@@ -13278,7 +13277,7 @@ function renderStatuses(statuses = {}) {
 function renderStatusMoreChip(entries = []) {
   const label = `추가 상태 +${entries.length}`;
   const detail = entries.map(([key, value]) => `${keywordLabel(key)} ${value}: ${keywordDescription(key)}`).join(" / ");
-  return `<span class="status-chip status-more" tabindex="0" title="${label}. ${detail}" aria-label="${label}. ${detail}" data-status-label="${label}" data-status-description="${detail}"><i aria-hidden="true">+</i><strong>${entries.length}</strong></span>`;
+  return `<span class="status-chip status-more" tabindex="0" title="${label}. ${detail}" aria-label="${label}. ${detail}" data-status-key="more" data-status-label="${label}" data-status-description="${detail}"><i class="${statusIconClass("more")}" aria-hidden="true"></i><strong>${entries.length}</strong></span>`;
 }
 
 function statusSummaryText(statuses = {}) {
@@ -13953,28 +13952,32 @@ function keywordLabel(keyword) {
   }[keyword] ?? keyword;
 }
 
-function statusIcon(keyword) {
-  return {
-    vulnerable: "◇",
-    weak: "↓",
-    frail: "▱",
-    virus: "☣",
-    mark: "⌖",
-    strength: "✚",
-    focus: "◉",
-    charge: "⚡",
-    counter: "↯",
-    plated: "⬢",
-    fragile: "✕",
-    echo: "↺",
-    deepIndex: "▤",
-    choir: "♫",
-    contagion: "☣",
-    pearlEngine: "◈",
-    nextEnergy: "⚡",
-    mirror: "◌",
-    haste: "»"
-  }[keyword] ?? "•";
+function statusIconClass(keyword) {
+  const safeKey = [
+    "vulnerable",
+    "weak",
+    "frail",
+    "virus",
+    "mark",
+    "strength",
+    "focus",
+    "charge",
+    "counter",
+    "plated",
+    "fragile",
+    "echo",
+    "deepIndex",
+    "choir",
+    "contagion",
+    "pearlEngine",
+    "nextEnergy",
+    "mirror",
+    "haste",
+    "more"
+  ].includes(keyword)
+    ? keyword
+    : "more";
+  return `status-icon status-icon-${safeKey}`;
 }
 
 function keywordDescription(keyword) {

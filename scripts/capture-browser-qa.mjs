@@ -1740,18 +1740,29 @@ async function assertStatusTooltipUx(cdp) {
   await waitForSelector(cdp, ".status-portal-tooltip:not([hidden])");
   const result = await evaluate(cdp, `(() => {
     const chip = document.querySelector(".status-row:not(.empty) .status-chip");
+    const chipIcon = chip?.querySelector(".status-icon");
     const tooltip = document.querySelector(".status-portal-tooltip:not([hidden])");
     const icon = tooltip?.querySelector(".status-tooltip-icon");
     const title = tooltip?.querySelector("strong")?.innerText.trim() ?? "";
     const detail = tooltip?.querySelector("small")?.innerText.trim() ?? "";
     const box = tooltip?.getBoundingClientRect();
     const style = tooltip ? getComputedStyle(tooltip) : null;
+    const chipIconStyle = chipIcon ? getComputedStyle(chipIcon) : null;
+    const tooltipIconStyle = icon ? getComputedStyle(icon) : null;
     const pseudoDisplay = chip ? getComputedStyle(chip, "::after").display : "";
     const withinViewport = Boolean(box && box.left >= 0 && box.top >= 0 && box.right <= window.innerWidth && box.bottom <= window.innerHeight);
+    const usesStatusSprite =
+      Boolean(chipIconStyle?.backgroundImage?.includes("status-icons.png")) &&
+      Boolean(tooltipIconStyle?.backgroundImage?.includes("status-icons.png")) &&
+      chipIconStyle?.backgroundSize === "2000% 100%" &&
+      tooltipIconStyle?.backgroundSize === "2000% 100%" &&
+      !(chipIcon?.textContent ?? "").trim() &&
+      !(icon?.textContent ?? "").trim();
     const ok =
       Boolean(chip) &&
       Boolean(tooltip) &&
       Boolean(icon) &&
+      usesStatusSprite &&
       chip.getAttribute("tabindex") === "0" &&
       title.length >= 2 &&
       detail.length >= 8 &&
@@ -1764,6 +1775,9 @@ async function assertStatusTooltipUx(cdp) {
       detail,
       tabindex: chip?.getAttribute("tabindex") ?? "",
       pseudoDisplay,
+      usesStatusSprite,
+      chipIconClass: chipIcon?.className ?? "",
+      tooltipIconClass: icon?.className ?? "",
       withinViewport,
       zIndex: style?.zIndex ?? "",
       tooltipCount: document.querySelectorAll(".status-portal-tooltip:not([hidden])").length
