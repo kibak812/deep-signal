@@ -270,6 +270,12 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(auditSource, /reserveSignals/);
   assert.match(auditSource, /defenseWhileFinishMissing/);
   assert.match(auditSource, /averageSignalsPerReached/);
+  assert.match(auditSource, /function finalBossGuidanceBounds\(report\)/);
+  assert.match(auditSource, /final-boss-guidance-bounds/);
+  assert.match(auditSource, /defenseWithoutNeedShare <= 0\.08/);
+  assert.match(auditSource, /signalRunRate <= 0\.95/);
+  assert.match(auditSource, /averageSignalsPerReached <= 1\.6/);
+  assert.match(readme, /추천\/경고 피로도 게이트/);
   assert.match(readme, /qa\/browser-qa-combat-updated\.png/);
   assert.match(readme, /browser-qa-combat-card-hover\.png/);
   assert.match(readme, /browser-qa-card-outcome-readability\.json/);

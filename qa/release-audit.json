@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-05-22T00:36:36.435Z",
+  "generatedAt": "2026-05-22T00:48:07.406Z",
   "summary": {
-    "passed": 27,
+    "passed": 28,
     "failed": 0,
-    "total": 27
+    "total": 28
   },
   "checks": [
     {
@@ -1465,6 +1465,55 @@
               ]
             }
           ]
+        }
+      }
+    },
+    {
+      "id": "final-boss-guidance-bounds",
+      "label": "최종 보스 추천/경고 피로도",
+      "ok": true,
+      "detail": "마지막 문 직전 추천은 방어만 과하게 밀지 않아야 하고, 마무리 보존 경고는 부족하지도 과하지도 않은 빈도로 관측되어야 합니다.",
+      "evidence": {
+        "baseline": {
+          "samples": 149,
+          "chosen": 149,
+          "defensiveShare": 0.51,
+          "defenseWhileFinishMissing": 0,
+          "defenseWithoutDefenseMissing": 6,
+          "defenseWithoutNeedShare": 0.04,
+          "reserveReached": 93,
+          "signalRunRate": 0.91,
+          "averageSignalsPerReached": 1.28,
+          "maxSignalsPerRun": 3,
+          "phasePushSignals": 54,
+          "nearPhaseSignals": 65
+        },
+        "long": {
+          "samples": 305,
+          "chosen": 304,
+          "defensiveShare": 0.54,
+          "defenseWhileFinishMissing": 0,
+          "defenseWithoutDefenseMissing": 16,
+          "defenseWithoutNeedShare": 0.05,
+          "reserveReached": 185,
+          "signalRunRate": 0.87,
+          "averageSignalsPerReached": 1.26,
+          "maxSignalsPerRun": 3,
+          "phasePushSignals": 102,
+          "nearPhaseSignals": 132
+        },
+        "bounds": {
+          "defensiveShareMax": 0.62,
+          "defenseWithoutNeedShareMax": 0.08,
+          "signalRunRateRange": [
+            0.55,
+            0.95
+          ],
+          "averageSignalsPerReachedRange": [
+            0.6,
+            1.6
+          ],
+          "maxSignalsPerRunMax": 4
         }
       }
     },

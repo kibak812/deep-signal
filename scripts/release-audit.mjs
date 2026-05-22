@@ -130,6 +130,45 @@ function routeHasOptionalEliteFork(run) {
   return true;
 }
 
+function auditRatio(numerator, denominator) {
+  if (!denominator) return 0;
+  return Math.round((numerator / denominator) * 100) / 100;
+}
+
+function finalBossGuidanceBounds(report) {
+  const rewardGuidance = report.finalBossAnalysis?.rewardGuidance ?? {};
+  const reserveSignals = report.finalBossAnalysis?.reserveSignals ?? {};
+  const chosen = rewardGuidance.chosen ?? 0;
+  const defenseWithoutNeedShare = auditRatio(rewardGuidance.defenseWithoutDefenseMissing ?? 0, chosen);
+  return {
+    samples: rewardGuidance.samples ?? 0,
+    chosen,
+    defensiveShare: rewardGuidance.defensiveShare ?? 0,
+    defenseWhileFinishMissing: rewardGuidance.defenseWhileFinishMissing ?? 0,
+    defenseWithoutDefenseMissing: rewardGuidance.defenseWithoutDefenseMissing ?? 0,
+    defenseWithoutNeedShare,
+    reserveReached: reserveSignals.reached ?? 0,
+    signalRunRate: reserveSignals.signalRunRate ?? 0,
+    averageSignalsPerReached: reserveSignals.averageSignalsPerReached ?? 0,
+    maxSignalsPerRun: reserveSignals.maxSignalsPerRun ?? 0,
+    phasePushSignals: reserveSignals.phasePushSignals ?? 0,
+    nearPhaseSignals: reserveSignals.nearPhaseSignals ?? 0
+  };
+}
+
+function finalBossGuidanceWithinBounds(evidence, minimumSamples) {
+  return evidence.samples >= minimumSamples &&
+    evidence.defensiveShare <= 0.62 &&
+    evidence.defenseWhileFinishMissing === 0 &&
+    evidence.defenseWithoutNeedShare <= 0.08 &&
+    evidence.reserveReached >= Math.floor(minimumSamples * 0.5) &&
+    evidence.signalRunRate >= 0.55 &&
+    evidence.signalRunRate <= 0.95 &&
+    evidence.averageSignalsPerReached >= 0.6 &&
+    evidence.averageSignalsPerReached <= 1.6 &&
+    evidence.maxSignalsPerRun <= 4;
+}
+
 async function main() {
   const counts = contentCounts();
   const mainSource = await readFile(resolve(root, "src/main.js"), "utf8");
@@ -327,6 +366,8 @@ async function main() {
   const reserveSignals = balance.finalBossAnalysis?.reserveSignals;
   const longRewardGuidance = longBalance.finalBossAnalysis?.rewardGuidance;
   const longReserveSignals = longBalance.finalBossAnalysis?.reserveSignals;
+  const finalBossGuidance = finalBossGuidanceBounds(balance);
+  const longFinalBossGuidance = finalBossGuidanceBounds(longBalance);
   record(
     "balance-report",
     "밸런스 리포트 안정성",
@@ -366,6 +407,24 @@ async function main() {
       longReserveSignals?.maxSignalsPerRun <= 5,
     "장시간 자동 플레이도 진행 불가 없이 전체 승률 허용 범위 안에 있어야 하며, 최상위 난이도와 최종 보스 보상/마무리 안내 지표가 안정적이어야 합니다.",
     { config: longBalance.config, totals: longBalance.totals, byDifficulty: longBalance.byDifficulty, easiest: longEasiest, hardest: longHardest, rewardGuidance: longRewardGuidance, reserveSignals: longReserveSignals }
+  );
+  record(
+    "final-boss-guidance-bounds",
+    "최종 보스 추천/경고 피로도",
+    finalBossGuidanceWithinBounds(finalBossGuidance, 120) &&
+      finalBossGuidanceWithinBounds(longFinalBossGuidance, 240),
+    "마지막 문 직전 추천은 방어만 과하게 밀지 않아야 하고, 마무리 보존 경고는 부족하지도 과하지도 않은 빈도로 관측되어야 합니다.",
+    {
+      baseline: finalBossGuidance,
+      long: longFinalBossGuidance,
+      bounds: {
+        defensiveShareMax: 0.62,
+        defenseWithoutNeedShareMax: 0.08,
+        signalRunRateRange: [0.55, 0.95],
+        averageSignalsPerReachedRange: [0.6, 1.6],
+        maxSignalsPerRunMax: 4
+      }
+    }
   );
   record(
     "credits-license",
