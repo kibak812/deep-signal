@@ -33,10 +33,10 @@
   "persistentIntentLaneCount": 0,
   "intentPanelsReadable": true,
   "intentReadouts": [
-    "연타 집게질 피해 4 x2 · 총 8",
-    "공격 활강 절단 피해 10",
-    "상태 감염 성가 바이러스 2",
-    "공격 반사 침 피해 9"
+    "다음 행동 · 연타 집게질 피해 4 x2 · 총 8",
+    "다음 행동 · 공격 활강 절단 피해 10",
+    "다음 행동 · 상태 감염 성가 바이러스 2",
+    "다음 행동 · 공격 반사 침 피해 9"
   ],
   "intentOutcomes": [
     "피해 4 x2 · 총 8",
@@ -81,35 +81,35 @@
   "intentBoxes": [
     {
       "left": 505,
-      "top": 349,
+      "top": 351,
       "right": 647,
       "bottom": 395,
       "width": 143,
-      "height": 46
+      "height": 45
     },
     {
       "left": 683,
-      "top": 362,
+      "top": 363,
       "right": 835,
       "bottom": 411,
       "width": 151,
-      "height": 49
+      "height": 48
     },
     {
       "left": 866,
-      "top": 368,
+      "top": 369,
       "right": 1018,
       "bottom": 417,
       "width": 151,
-      "height": 49
+      "height": 48
     },
     {
       "left": 1054,
-      "top": 343,
+      "top": 345,
       "right": 1196,
       "bottom": 389,
       "width": 143,
-      "height": 46
+      "height": 45
     }
   ],
   "threatBoxes": [],

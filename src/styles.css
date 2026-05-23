@@ -4879,20 +4879,20 @@ dd,
   bottom: -62px;
   left: 50%;
   z-index: 7;
-  grid-template-columns: 32px minmax(0, 1fr);
-  width: min(226px, calc(100% - 16px));
+  grid-template-columns: 30px minmax(0, 1fr);
+  width: min(206px, calc(100% - 16px));
   min-width: 0;
   max-width: calc(100% - 16px);
-  min-height: 50px;
+  min-height: 48px;
   display: grid;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   border: 1px solid rgba(251, 113, 133, 0.5);
-  border-radius: 10px;
+  border-radius: 8px;
   background: rgba(55, 16, 13, 0.82);
   color: #ffd5cd;
   margin: 0;
-  padding: 6px 9px 6px 6px;
+  padding: 6px 8px 6px 6px;
   text-align: left;
   transform: translateX(-50%);
   box-shadow: 0 12px 26px rgba(0, 0, 0, 0.34);
@@ -4901,8 +4901,8 @@ dd,
 
 .intent i {
   display: grid;
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   place-items: center;
   border: 1px solid rgba(255, 213, 205, 0.36);
   border-radius: 50%;
@@ -4946,7 +4946,7 @@ dd,
   min-width: 0;
   overflow: hidden;
   color: color-mix(in srgb, currentColor 72%, rgba(236, 248, 243, 0.5));
-  font-size: 0.58rem;
+  font-size: 0.56rem;
   font-style: normal;
   font-weight: 900;
   letter-spacing: 0;
@@ -4957,7 +4957,7 @@ dd,
 
 .intent strong {
   color: #fff5d6;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 1000;
   line-height: 1;
   overflow: hidden;
@@ -4986,15 +4986,15 @@ dd,
     bottom: clamp(104px, 14vh, 142px);
     left: auto;
     right: calc(100% + clamp(10px, 1.4vw, 18px));
-    width: min(246px, 25vw);
-    max-width: min(246px, calc(100vw - 760px));
+    width: min(188px, 18vw);
+    max-width: min(188px, calc(100vw - 760px));
     transform: none;
   }
 
   .enemy-line.enemy-count-1 .enemy-card:has(.enemy-sprite.tier-boss) .intent {
     bottom: clamp(126px, 16vh, 174px);
-    width: min(280px, 24vw);
-    max-width: min(280px, calc(100vw - 760px));
+    width: min(216px, 19vw);
+    max-width: min(216px, calc(100vw - 760px));
   }
 }
 

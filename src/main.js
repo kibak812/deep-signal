@@ -7226,7 +7226,7 @@ function renderEnemy(run, enemy, index = 0, totalEnemies = 1) {
       <div class="intent" aria-label="${intentAria}" data-intent-title="${intentText}" data-intent-outcome="${intentOutcome}">
         <i class="${enemyIntentIconClass(move)}" aria-hidden="true"></i>
         <span>
-          <em>${intentVisualLabel}</em>
+          <em>다음 행동 · ${intentVisualLabel}</em>
           <strong>${intentLabel}</strong>
           <small>${intentOutcome}</small>
         </span>

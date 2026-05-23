@@ -84,18 +84,18 @@
   ],
   "singleEnemyIntentDock": {
     "present": true,
-    "text": "공격 흡착 피해 8 · 회복 +4",
+    "text": "다음 행동 · 공격 흡착 피해 8 · 회복 +4",
     "clearsHand": true,
     "besideSprite": true,
     "avoidsPlate": true,
     "readable": true,
     "box": {
-      "left": 705,
-      "top": 219,
+      "left": 763,
+      "top": 220,
       "right": 951,
       "bottom": 269,
-      "width": 246,
-      "height": 50
+      "width": 188,
+      "height": 49
     },
     "spriteBox": {
       "left": 1002,
