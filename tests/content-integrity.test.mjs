@@ -1853,9 +1853,13 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.intent small/);
   assert.match(styleSource, /\.enemy-card:has\(\.enemy-sprite\.tier-boss\) \.intent[\s\S]*width:\s*min\(280px, calc\(100% - 24px\)\)/);
   assert.match(styleSource, /@media \(min-width: 1041px\)[\s\S]*\.enemy-line\.enemy-count-1 \.enemy-card \.intent[\s\S]*right:\s*calc\(100% \+ clamp\(10px, 1\.4vw, 18px\)\)/);
-  assert.match(styleSource, /@media \(min-width: 1041px\)[\s\S]*\.enemy-line\.enemy-count-1 \.enemy-card \.intent[\s\S]*max-width:\s*min\(188px, calc\(100vw - 760px\)\)/);
+  assert.match(styleSource, /@media \(min-width: 1041px\)[\s\S]*\.enemy-line\.enemy-count-1 \.enemy-card \.intent[\s\S]*width:\s*100px/);
+  assert.match(styleSource, /@media \(min-width: 1041px\)[\s\S]*\.enemy-line\.enemy-count-1 \.enemy-card \.intent[\s\S]*height:\s*60px/);
+  assert.match(styleSource, /@media \(min-width: 1041px\)[\s\S]*\.enemy-line\.enemy-count-1 \.enemy-card \.intent > span[\s\S]*height:\s*45px/);
   assert.match(captureSource, /singleEnemyIntentDock/);
   assert.match(captureSource, /singleEnemyIntentDock\.ready/);
+  assert.match(captureSource, /compactSize/);
+  assert.match(captureSource, /textStackTall/);
   assert.match(styleSource, /\.enemy-threat[\s\S]*position:\s*absolute/);
   assert.match(styleSource, /\.enemy-threat[\s\S]*bottom:\s*-104px/);
   assert.match(styleSource, /\.enemy-threat\.danger/);

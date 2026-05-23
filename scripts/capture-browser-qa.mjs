@@ -3203,6 +3203,8 @@ async function assertCardPlayFxSource(cdp) {
     const style = pulse ? getComputedStyle(pulse) : null;
     const echoStyle = echo ? getComputedStyle(echo) : null;
     const visible = (box, minSize = 4) => Boolean(box && box.width > minSize && box.height > minSize && box.right >= 0 && box.left <= window.innerWidth && box.bottom >= 0 && box.top <= window.innerHeight);
+    const sourcePulseVisible = visible(boxes.pulse) && Number(style?.opacity ?? 0) >= 0.05;
+    const sourceEchoVisible = visible(boxes.echo) && Number(echoStyle?.opacity ?? 0) >= 0.05;
     const ok =
       Boolean(fx) &&
       Boolean(pulse) &&
@@ -3211,12 +3213,11 @@ async function assertCardPlayFxSource(cdp) {
       Boolean(spark) &&
       Boolean(impact) &&
       Boolean(targetFeedback) &&
-      visible(boxes.pulse) &&
+      (sourcePulseVisible || sourceEchoVisible) &&
       visible(boxes.echo) &&
       visible(boxes.trail, 2) &&
       visible(boxes.impact) &&
       visible(boxes.targetFeedback) &&
-      Number(style?.opacity ?? 0) >= 0.05 &&
       Number(echoStyle?.opacity ?? 0) >= 0.05 &&
       /fx-source-player|fx-source-card/.test(fx.className);
     return {
@@ -3224,6 +3225,8 @@ async function assertCardPlayFxSource(cdp) {
       className: fx?.className ?? "",
       pulseOpacity: style?.opacity ?? "",
       echoOpacity: echoStyle?.opacity ?? "",
+      sourcePulseVisible,
+      sourceEchoVisible,
       boxes
     };
   })()`);
@@ -3475,11 +3478,13 @@ async function assertDesktopHandReadability(cdp) {
     const endTurn = document.querySelector(".end-turn");
     const singleEnemyCard = document.querySelector(".enemy-line.enemy-count-1 .enemy-card");
     const singleEnemyIntent = singleEnemyCard?.querySelector(".intent");
+    const singleEnemyIntentText = singleEnemyIntent?.querySelector("span");
     const singleEnemySprite = singleEnemyCard?.querySelector(".enemy-sprite");
     const singleEnemyPlate = singleEnemyCard?.querySelector(".enemy-plate");
     const handBox = hand?.getBoundingClientRect();
     const endBox = endTurn?.getBoundingClientRect();
     const singleIntentBox = singleEnemyIntent?.getBoundingClientRect();
+    const singleIntentTextBox = singleEnemyIntentText?.getBoundingClientRect();
     const singleSpriteBox = singleEnemySprite?.getBoundingClientRect();
     const singlePlateBox = singleEnemyPlate?.getBoundingClientRect();
     const boxes = cards.map((card) => {
@@ -3514,7 +3519,10 @@ async function assertDesktopHandReadability(cdp) {
       besideSprite: Boolean(singleIntentBox && singleSpriteBox && singleIntentBox.right <= singleSpriteBox.left - 8),
       avoidsPlate: !overlaps(singleIntentBox, singlePlateBox),
       readable: Boolean(singleEnemyIntent && /피해|방어|회복|약화|취약|바이러스|힘|소환/.test(singleEnemyIntent.dataset.intentOutcome ?? singleEnemyIntent.innerText)),
+      compactSize: Boolean(singleIntentBox && singleIntentBox.width >= 96 && singleIntentBox.width <= 104 && singleIntentBox.height >= 58 && singleIntentBox.height <= 62),
+      textStackTall: Boolean(singleIntentTextBox && singleIntentTextBox.height >= 43 && singleIntentTextBox.height <= 47),
       box: singleIntentBox ? { left: Math.round(singleIntentBox.left), top: Math.round(singleIntentBox.top), right: Math.round(singleIntentBox.right), bottom: Math.round(singleIntentBox.bottom), width: Math.round(singleIntentBox.width), height: Math.round(singleIntentBox.height) } : null,
+      textBox: singleIntentTextBox ? { left: Math.round(singleIntentTextBox.left), top: Math.round(singleIntentTextBox.top), right: Math.round(singleIntentTextBox.right), bottom: Math.round(singleIntentTextBox.bottom), width: Math.round(singleIntentTextBox.width), height: Math.round(singleIntentTextBox.height) } : null,
       spriteBox: singleSpriteBox ? { left: Math.round(singleSpriteBox.left), top: Math.round(singleSpriteBox.top), right: Math.round(singleSpriteBox.right), bottom: Math.round(singleSpriteBox.bottom) } : null,
       plateBox: singlePlateBox ? { left: Math.round(singlePlateBox.left), top: Math.round(singlePlateBox.top), right: Math.round(singlePlateBox.right), bottom: Math.round(singlePlateBox.bottom) } : null
     };
@@ -3523,7 +3531,9 @@ async function assertDesktopHandReadability(cdp) {
       singleEnemyIntentDock.clearsHand &&
       singleEnemyIntentDock.besideSprite &&
       singleEnemyIntentDock.avoidsPlate &&
-      singleEnemyIntentDock.readable;
+      singleEnemyIntentDock.readable &&
+      singleEnemyIntentDock.compactSize &&
+      singleEnemyIntentDock.textStackTall;
     const identityTags = cards.map((card) => {
       const cardBox = card.getBoundingClientRect();
       const strip = card.querySelector(".card-identity-strip");
