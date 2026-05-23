@@ -82,6 +82,35 @@
       "overlapsHotkey": false
     }
   ],
+  "singleEnemyIntentDock": {
+    "present": true,
+    "text": "공격 흡착 피해 8 · 회복 +4",
+    "clearsHand": true,
+    "besideSprite": true,
+    "avoidsPlate": true,
+    "readable": true,
+    "box": {
+      "left": 705,
+      "top": 219,
+      "right": 951,
+      "bottom": 269,
+      "width": 246,
+      "height": 50
+    },
+    "spriteBox": {
+      "left": 1002,
+      "top": 90,
+      "right": 1160,
+      "bottom": 327
+    },
+    "plateBox": {
+      "left": 985,
+      "top": 328,
+      "right": 1177,
+      "bottom": 373
+    },
+    "ready": true
+  },
   "cardCount": 6,
   "minWidth": 170,
   "maxWidth": 171,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-22T23:41:55.030Z",
+  "generatedAt": "2026-05-23T00:03:30.831Z",
   "ok": true,
   "passed": 49,
   "failed": 0,
@@ -814,7 +814,7 @@
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
         "generatedAt": "2026-05-22T23:39:57.184Z",
-        "sourceFreshAfter": "2026-05-22T23:40:15.058Z",
+        "sourceFreshAfter": "2026-05-23T00:01:32.485Z",
         "sourceFingerprint": "sha256:d91003ee5fe6042ea22a471a05c3798207887040e40c62caeeaa45bdcb185a4c",
         "reportMtime": "2026-05-22T23:39:57.187Z",
         "summary": {
@@ -2268,8 +2268,8 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-22T23:38:27.735Z",
-        "sourceFingerprint": "sha256:7cd5683cd7db1ac72de4851bfc7cc166ab28e7f7505618a684e17f6a9c83a345",
+        "sourceFreshAfter": "2026-05-22T23:56:12.776Z",
+        "sourceFingerprint": "sha256:ba5332a70d71f7840dd672e6b50cfa1fda3a3ee99b4a3d0f4d02a8aa83061895",
         "manifestSourceFresh": true,
         "manifestFileCount": 46,
         "fileCount": 46,

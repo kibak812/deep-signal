@@ -3454,8 +3454,15 @@ async function assertDesktopHandReadability(cdp) {
     const hand = document.querySelector(".hand-zone");
     const cards = [...document.querySelectorAll(".hand-zone .game-card[data-action='play-card']")];
     const endTurn = document.querySelector(".end-turn");
+    const singleEnemyCard = document.querySelector(".enemy-line.enemy-count-1 .enemy-card");
+    const singleEnemyIntent = singleEnemyCard?.querySelector(".intent");
+    const singleEnemySprite = singleEnemyCard?.querySelector(".enemy-sprite");
+    const singleEnemyPlate = singleEnemyCard?.querySelector(".enemy-plate");
     const handBox = hand?.getBoundingClientRect();
     const endBox = endTurn?.getBoundingClientRect();
+    const singleIntentBox = singleEnemyIntent?.getBoundingClientRect();
+    const singleSpriteBox = singleEnemySprite?.getBoundingClientRect();
+    const singlePlateBox = singleEnemyPlate?.getBoundingClientRect();
     const boxes = cards.map((card) => {
       const box = card.getBoundingClientRect();
       return { left: box.left, right: box.right, bottom: box.bottom, width: box.width, height: box.height };
@@ -3481,6 +3488,23 @@ async function assertDesktopHandReadability(cdp) {
       left.bottom > right.top &&
       left.top < right.bottom
     );
+    const singleEnemyIntentDock = {
+      present: Boolean(singleEnemyIntent),
+      text: singleEnemyIntent?.innerText.replace(/\\s+/g, " ").trim() ?? "",
+      clearsHand: Boolean(singleIntentBox && handBox && singleIntentBox.bottom <= handBox.top - 10),
+      besideSprite: Boolean(singleIntentBox && singleSpriteBox && singleIntentBox.right <= singleSpriteBox.left - 8),
+      avoidsPlate: !overlaps(singleIntentBox, singlePlateBox),
+      readable: Boolean(singleEnemyIntent && /피해|방어|회복|약화|취약|바이러스|힘|소환/.test(singleEnemyIntent.dataset.intentOutcome ?? singleEnemyIntent.innerText)),
+      box: singleIntentBox ? { left: Math.round(singleIntentBox.left), top: Math.round(singleIntentBox.top), right: Math.round(singleIntentBox.right), bottom: Math.round(singleIntentBox.bottom), width: Math.round(singleIntentBox.width), height: Math.round(singleIntentBox.height) } : null,
+      spriteBox: singleSpriteBox ? { left: Math.round(singleSpriteBox.left), top: Math.round(singleSpriteBox.top), right: Math.round(singleSpriteBox.right), bottom: Math.round(singleSpriteBox.bottom) } : null,
+      plateBox: singlePlateBox ? { left: Math.round(singlePlateBox.left), top: Math.round(singlePlateBox.top), right: Math.round(singlePlateBox.right), bottom: Math.round(singlePlateBox.bottom) } : null
+    };
+    singleEnemyIntentDock.ready =
+      singleEnemyIntentDock.present &&
+      singleEnemyIntentDock.clearsHand &&
+      singleEnemyIntentDock.besideSprite &&
+      singleEnemyIntentDock.avoidsPlate &&
+      singleEnemyIntentDock.readable;
     const identityTags = cards.map((card) => {
       const cardBox = card.getBoundingClientRect();
       const strip = card.querySelector(".card-identity-strip");
@@ -3531,7 +3555,7 @@ async function assertDesktopHandReadability(cdp) {
       overlap: hand?.style.getPropertyValue("--hand-overlap") ?? ""
     };
     return {
-      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability && cardsInsideHand && handClearsEndTurn && identityTagsReadable,
+      ok: desktopViewport && noPageOverflow && handVisible && cardFacesVisible && sixCardReadability && cardsInsideHand && handClearsEndTurn && identityTagsReadable && singleEnemyIntentDock.ready,
       desktopViewport,
       noPageOverflow,
       handVisible,
@@ -3541,6 +3565,7 @@ async function assertDesktopHandReadability(cdp) {
       handClearsEndTurn,
       identityTagsReadable,
       identityTags,
+      singleEnemyIntentDock,
       cardCount: cards.length,
       minWidth: Math.round(minWidth),
       maxWidth: Math.round(maxWidth),

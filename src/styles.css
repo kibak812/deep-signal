@@ -4981,6 +4981,23 @@ dd,
   max-width: calc(100% - 24px);
 }
 
+@media (min-width: 1041px) {
+  .enemy-line.enemy-count-1 .enemy-card .intent {
+    bottom: clamp(104px, 14vh, 142px);
+    left: auto;
+    right: calc(100% + clamp(10px, 1.4vw, 18px));
+    width: min(246px, 25vw);
+    max-width: min(246px, calc(100vw - 760px));
+    transform: none;
+  }
+
+  .enemy-line.enemy-count-1 .enemy-card:has(.enemy-sprite.tier-boss) .intent {
+    bottom: clamp(126px, 16vh, 174px);
+    width: min(280px, 24vw);
+    max-width: min(280px, calc(100vw - 760px));
+  }
+}
+
 .enemy-threat {
   position: absolute;
   bottom: -104px;
