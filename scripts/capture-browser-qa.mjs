@@ -1565,6 +1565,11 @@ async function captureGroupedEnemyFx(cdp) {
       const box = lane.getBoundingClientRect();
       return style.display !== "none" && style.visibility !== "hidden" && Number.parseFloat(style.opacity) > 0.05 && box.width > 2 && box.height > 0;
     });
+    const visibleEnemyIntentCards = [...document.querySelectorAll(".enemy-card .intent")].filter((intent) => {
+      const style = getComputedStyle(intent);
+      const box = intent.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && Number.parseFloat(style.opacity) > 0.05 && box.width > 2 && box.height > 0;
+    });
     const visibleSparkCount = [...document.querySelectorAll(".entity-hit-sparks i")]
       .filter((spark) => getComputedStyle(spark).display !== "none").length;
     const visiblePlayerImpactRingCount = [...document.querySelectorAll(".player-stand.fx-target .entity-impact-ring")]
@@ -1572,6 +1577,11 @@ async function captureGroupedEnemyFx(cdp) {
         const style = getComputedStyle(ring);
         return style.display !== "none" && style.visibility !== "hidden";
       }).length;
+    const visibleEnemyTurnCueCount = [...document.querySelectorAll(".combat-turn-cue.enemy")].filter((cue) => {
+      const style = getComputedStyle(cue);
+      const box = cue.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && Number.parseFloat(style.opacity) > 0.05 && box.width > 2 && box.height > 0;
+    }).length;
     const fixtureData = ${JSON.stringify(fixture)};
     const fixtureHasMultiHit = fixtureData.enemies.some((enemy) => /[x×]\\d/.test(enemy.intent));
     const expectedHitBadge = fixtureData.expectedHitCount > 1 ? \`×\${fixtureData.expectedHitCount}\` : "";
@@ -1595,7 +1605,16 @@ async function captureGroupedEnemyFx(cdp) {
       duplicatedBeamHidden: beamStyle?.display === "none",
       attackTrailCount: fxTrails.length,
       visibleIntentLaneCount: visibleIntentLanes.length,
-      singleResolvedAttackCue: document.querySelectorAll(".combat-action-fx.fx-enemy-action").length === 1 && fxTrails.length === 1 && visibleIntentLanes.length === 0 && visibleSparkCount === 0 && visiblePlayerImpactRingCount === 0,
+      visibleEnemyIntentCardCount: visibleEnemyIntentCards.length,
+      singleResolvedAttackCue:
+        document.querySelectorAll(".combat-action-fx.fx-enemy-action").length === 1 &&
+        fxTrails.length === 1 &&
+        visibleEnemyTurnCueCount === 0 &&
+        visibleIntentLanes.length === 0 &&
+        visibleEnemyIntentCards.length === 0 &&
+        visibleSparkCount === 0 &&
+        visiblePlayerImpactRingCount === 0,
+      visibleEnemyTurnCueCount,
       visibleSparkCount,
       visiblePlayerImpactRingCount,
       lockedBoard: document.querySelector(".combat-board")?.classList.contains("turn-locked") ?? false,
@@ -1604,7 +1623,7 @@ async function captureGroupedEnemyFx(cdp) {
       endTurnClass: endTurn?.className ?? "",
       handCardCount: handCards.length,
       disabledHandCards: handCards.filter((card) => card.disabled).length,
-      lockedHandLabels: handLabels.filter((label) => /상대 턴에는 사용할 수 없음/.test(label)).length,
+      lockedHandLabels: handLabels.filter((label) => /상대 턴에는 사용할 수 없음|전투 효과 처리 중/.test(label)).length,
       unlockedHandLabels: handLabels.filter((label) => /사용 가능/.test(label)).length
     };
   })()`);
@@ -1618,8 +1637,8 @@ async function captureGroupedEnemyFx(cdp) {
     evidence.visibleSparkCount !== 0 ||
     evidence.visiblePlayerImpactRingCount !== 0 ||
     !evidence.lockedBoard ||
-    !/상대 턴/.test(evidence.endTurnText) ||
-    !/상대 턴 진행 중/.test(evidence.endTurnAria) ||
+    !/처리 중|상대 턴/.test(evidence.endTurnText) ||
+    !/전투 효과 처리 중|상대 턴 진행 중/.test(evidence.endTurnAria) ||
     evidence.disabledHandCards !== evidence.handCardCount ||
     evidence.lockedHandLabels !== evidence.handCardCount ||
     evidence.unlockedHandLabels !== 0 ||

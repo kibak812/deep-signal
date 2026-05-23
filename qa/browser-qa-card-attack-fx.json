@@ -28,35 +28,35 @@
       "height": 720
     },
     "pulse": {
-      "left": 222,
-      "top": 132,
-      "right": 333,
-      "bottom": 161,
-      "width": 111,
-      "height": 28
+      "left": 224,
+      "top": 133,
+      "right": 331,
+      "bottom": 160,
+      "width": 107,
+      "height": 27
     },
     "echo": {
       "left": 233,
       "top": 112,
-      "right": 313,
+      "right": 312,
       "bottom": 180,
       "width": 79,
-      "height": 68
+      "height": 67
     },
     "trail": {
       "left": 278,
       "top": 144,
-      "right": 1008,
-      "bottom": 220,
-      "width": 730,
-      "height": 76
+      "right": 947,
+      "bottom": 214,
+      "width": 669,
+      "height": 70
     },
     "spark": {
-      "left": 427,
-      "top": 156,
-      "right": 436,
-      "bottom": 165,
-      "width": 9,
+      "left": 412,
+      "top": 154,
+      "right": 420,
+      "bottom": 163,
+      "width": 8,
       "height": 9
     },
     "impact": {
@@ -68,43 +68,43 @@
       "height": 63
     },
     "hitEnemy": {
-      "left": 969,
+      "left": 975,
       "top": 25,
-      "right": 1193,
+      "right": 1199,
       "bottom": 385,
       "width": 224,
       "height": 360
     },
     "targetRing": {
-      "left": 971,
-      "top": 44,
-      "right": 1192,
-      "bottom": 310,
-      "width": 222,
-      "height": 265
+      "left": 977,
+      "top": 46,
+      "right": 1197,
+      "bottom": 308,
+      "width": 219,
+      "height": 262
     },
     "hitSparks": {
-      "left": 996,
-      "top": 127,
-      "right": 1167,
+      "left": 1002,
+      "top": 128,
+      "right": 1172,
       "bottom": 239,
       "width": 170,
       "height": 112
     },
     "damagePop": {
-      "left": 1119,
+      "left": 1125,
       "top": 170,
-      "right": 1173,
+      "right": 1179,
       "bottom": 204,
       "width": 54,
       "height": 34
     },
     "resultStack": null,
     "playerSource": {
-      "left": 108,
-      "top": 27,
-      "right": 323,
-      "bottom": 350,
+      "left": 128,
+      "top": 23,
+      "right": 343,
+      "bottom": 346,
       "width": 215,
       "height": 323
     }

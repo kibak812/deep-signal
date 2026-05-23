@@ -1755,6 +1755,7 @@ function stageEnemyTurnFx(run, before) {
     move: actor.move,
     tone
   });
+  clearCombatTurnCue();
   setCombatFx({
     id: `${Date.now()}-enemy-${run.combat.turn}`,
     kind: "enemy-action",

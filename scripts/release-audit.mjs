@@ -793,7 +793,9 @@ async function main() {
       !/\.combat-board\.turn-cue-enemy:not\(\.fx-active\) \.enemy-card\.intent-attack-player \.enemy-sprite \.sprite-ground-burst/.test(styleSource) &&
       groupedEnemyFxQa?.duplicateFxCount === 1 &&
       groupedEnemyFxQa?.attackTrailCount === 1 &&
+      groupedEnemyFxQa?.visibleEnemyTurnCueCount === 0 &&
       groupedEnemyFxQa?.visibleIntentLaneCount === 0 &&
+      groupedEnemyFxQa?.visibleEnemyIntentCardCount === 0 &&
       groupedEnemyFxQa?.singleResolvedAttackCue &&
       groupedEnemyFxQa?.preFx?.preFxEnemyActionClean &&
       groupedEnemyFxQa?.visibleSparkCount === 0 &&
@@ -802,7 +804,9 @@ async function main() {
     {
       duplicateFxCount: groupedEnemyFxQa?.duplicateFxCount ?? null,
       attackTrailCount: groupedEnemyFxQa?.attackTrailCount ?? null,
+      visibleEnemyTurnCueCount: groupedEnemyFxQa?.visibleEnemyTurnCueCount ?? null,
       visibleIntentLaneCount: groupedEnemyFxQa?.visibleIntentLaneCount ?? null,
+      visibleEnemyIntentCardCount: groupedEnemyFxQa?.visibleEnemyIntentCardCount ?? null,
       visibleSparkCount: groupedEnemyFxQa?.visibleSparkCount ?? null,
       visiblePlayerImpactRingCount: groupedEnemyFxQa?.visiblePlayerImpactRingCount ?? null,
       preFxEnemyActionClean: groupedEnemyFxQa?.preFx?.preFxEnemyActionClean ?? false,

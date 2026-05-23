@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-23T00:03:30.831Z",
+  "generatedAt": "2026-05-23T00:25:28.574Z",
   "ok": true,
   "passed": 49,
   "failed": 0,
@@ -325,10 +325,10 @@
       "ok": true,
       "detail": "효과음과 배경음의 상대 볼륨, 덕킹, 믹스 버스 검증 리포트가 최신이어야 합니다.",
       "evidence": {
-        "checkedAt": "2026-05-22T23:39:57.361Z",
-        "sourceFreshAfter": "2026-05-22T23:37:43.150Z",
-        "sourceFingerprint": "sha256:381fbdfc88afac1df7f8f10936eb786117bde07ddc96278734f1debec9203990",
-        "reportMtime": "2026-05-22T23:39:57.363Z",
+        "checkedAt": "2026-05-23T00:25:15.689Z",
+        "sourceFreshAfter": "2026-05-23T00:14:29.688Z",
+        "sourceFingerprint": "sha256:852f726d2fc8950976c051e91eada957ed87b42c37cc2ba38ce268dba9457211",
+        "reportMtime": "2026-05-23T00:25:15.691Z",
         "gain": {
           "musicGainScale": 0.35,
           "maxThemeGain": 0.048,
@@ -759,7 +759,9 @@
       "evidence": {
         "duplicateFxCount": 1,
         "attackTrailCount": 1,
+        "visibleEnemyTurnCueCount": 0,
         "visibleIntentLaneCount": 0,
+        "visibleEnemyIntentCardCount": 0,
         "visibleSparkCount": 0,
         "visiblePlayerImpactRingCount": 0,
         "preFxEnemyActionClean": true,
@@ -813,10 +815,10 @@
       "ok": true,
       "detail": "qa/korean-copy-report.json은 최신 사용자 노출 문구를 검사하고 어색한 번역투, 영어 우선 표현, 필수 용어 누락이 없음을 증명해야 합니다.",
       "evidence": {
-        "generatedAt": "2026-05-22T23:39:57.184Z",
-        "sourceFreshAfter": "2026-05-23T00:01:32.485Z",
-        "sourceFingerprint": "sha256:d91003ee5fe6042ea22a471a05c3798207887040e40c62caeeaa45bdcb185a4c",
-        "reportMtime": "2026-05-22T23:39:57.187Z",
+        "generatedAt": "2026-05-23T00:25:15.835Z",
+        "sourceFreshAfter": "2026-05-23T00:21:33.384Z",
+        "sourceFingerprint": "sha256:b912a0ce92ca738a16105757686d1734321c2377ea9b5120843b554805289d0e",
+        "reportMtime": "2026-05-23T00:25:15.836Z",
         "summary": {
           "checkedSources": 11,
           "bannedPhrases": 36,
@@ -2268,8 +2270,8 @@
           "tablet-combat",
           "codex"
         ],
-        "sourceFreshAfter": "2026-05-22T23:56:12.776Z",
-        "sourceFingerprint": "sha256:ba5332a70d71f7840dd672e6b50cfa1fda3a3ee99b4a3d0f4d02a8aa83061895",
+        "sourceFreshAfter": "2026-05-23T00:17:02.546Z",
+        "sourceFingerprint": "sha256:0dc62bdf44b10350a34944d0adbc6e4c90fac8e15a88a417e850eb11ad558edf",
         "manifestSourceFresh": true,
         "manifestFileCount": 46,
         "fileCount": 46,

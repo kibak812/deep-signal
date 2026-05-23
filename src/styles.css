@@ -20000,8 +20000,17 @@ dd,
   animation: enemy-source-lunge calc(980ms / var(--motion-scale)) cubic-bezier(0.12, 0.92, 0.18, 1) both;
 }
 
+.combat-board.fx-enemy-board .enemy-card .intent,
 .combat-board.fx-enemy-board .enemy-card.fx-source .intent {
-  animation: enemy-source-intent-flash calc(980ms / var(--motion-scale)) ease-out both;
+  visibility: hidden;
+  opacity: 0;
+  animation: none;
+}
+
+.combat-board.fx-enemy-board .combat-turn-cue.enemy {
+  visibility: hidden;
+  opacity: 0;
+  animation: none;
 }
 
 .player-stand.fx-target .player-sprite {

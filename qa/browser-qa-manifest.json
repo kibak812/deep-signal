@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-05-23T00:02:46.179Z",
-  "sourceFingerprint": "sha256:ba5332a70d71f7840dd672e6b50cfa1fda3a3ee99b4a3d0f4d02a8aa83061895",
+  "generatedAt": "2026-05-23T00:22:45.587Z",
+  "sourceFingerprint": "sha256:0dc62bdf44b10350a34944d0adbc6e4c90fac8e15a88a417e850eb11ad558edf",
   "sourceFiles": [
     "index.html",
     "src/main.js",
@@ -39,8 +39,8 @@
     },
     {
       "file": "browser-qa-abandon-summary.png",
-      "bytes": 525432,
-      "sha256": "sha256:5af070f8005638b23c2c51a5962001c6d89e2f64d4475c78bceb621529373f50"
+      "bytes": 525603,
+      "sha256": "sha256:e36c2defed0d024f31e784a5804ad766097f458b021a5296d70e7c204d477498"
     },
     {
       "file": "browser-qa-about-refreshed.png",
@@ -54,33 +54,33 @@
     },
     {
       "file": "browser-qa-act-interlude-refreshed.png",
-      "bytes": 545780,
-      "sha256": "sha256:f89fe6becae9d4c64174ae20dc8f857f7be5f4c4c5ccd347c2c01cbbaa79656d"
+      "bytes": 545235,
+      "sha256": "sha256:e99fcc504c131482cdc2a093d18d08540118c9b5cecfb90bad606955690633be"
     },
     {
       "file": "browser-qa-boss-status-strip.png",
-      "bytes": 1079543,
-      "sha256": "sha256:6d366a6fabdccd9b5a827f24696bc407255910a761e89afb1269d5a110d44bf4"
+      "bytes": 1080380,
+      "sha256": "sha256:676be421051664ec5dde8f5f8e8122bac4a079c27dbbc0f009ae0220c7d12f61"
     },
     {
       "file": "browser-qa-card-attack-fx.png",
-      "bytes": 968101,
-      "sha256": "sha256:31f8b82272005cda321ea881930921669552e0f57ef063eaea0e739c83df3118"
+      "bytes": 968206,
+      "sha256": "sha256:df8d7f07f9e6c62501810b5906bcbb0195098593b022b55d2d77b011042da71c"
     },
     {
       "file": "browser-qa-card-attack-hover.png",
-      "bytes": 942611,
-      "sha256": "sha256:9436a3d35c2394030066bebf486817c075a09384a1d7f71105fa91791971ff4e"
+      "bytes": 942544,
+      "sha256": "sha256:e0f6c48c3ce4596c7b6a3275641c36a1b503a429341332ac7776f4bdb6832c13"
     },
     {
       "file": "browser-qa-card-play-fx.png",
-      "bytes": 1107399,
-      "sha256": "sha256:e7316ca15806f64c8a04d9fe03b77168204c9c798408cb887f46abee6df5d911"
+      "bytes": 1107373,
+      "sha256": "sha256:8a32d886954342eff09da87cb053302527c23960dc5378793b14517da8dbde6f"
     },
     {
       "file": "browser-qa-choice-pulse-next-step.png",
-      "bytes": 548321,
-      "sha256": "sha256:8b57c94f8d18cc1bb7d35820b7ab786f023d1325f5bc74158ce6986e042ce716"
+      "bytes": 548289,
+      "sha256": "sha256:056b080266765d24222f1f913d534d1c15b2b1da45ae27ec8c866f1d5aef74ae"
     },
     {
       "file": "browser-qa-codex-refreshed.png",
@@ -89,63 +89,63 @@
     },
     {
       "file": "browser-qa-combat-card-hover.png",
-      "bytes": 1042217,
-      "sha256": "sha256:0821fd42c6e828e93d961d732ce39c5d608cddad9ca667978613c9b36655c64c"
+      "bytes": 1041938,
+      "sha256": "sha256:dd94d22ce5b55674f2d0c0c83bef7129af85330baee467eb121af8d456e40c69"
     },
     {
       "file": "browser-qa-combat-energy-locked.png",
-      "bytes": 971045,
-      "sha256": "sha256:5490d40cf2bee203808abeebdf260a1785aa563a21cfbb1bebf017634f981c4f"
+      "bytes": 969746,
+      "sha256": "sha256:f83eb49b82c1bf706b859f65d0147be7594b41c061a53cfb9a6ed28e210be275"
     },
     {
       "file": "browser-qa-combat-high-energy-hud.png",
-      "bytes": 1034226,
-      "sha256": "sha256:0b85e7eaeb306e0e05169e25c1533856bbc8e19c30ec99ba169fcb336ef54a5f"
+      "bytes": 1033766,
+      "sha256": "sha256:7df74bf7093a9c2058a7e7341e571198dd3666a64c660354c1c3d153bfa24bfa"
     },
     {
       "file": "browser-qa-combat-intent-tooltip.png",
-      "bytes": 1132942,
-      "sha256": "sha256:f31b4c138bee896e82d3b960617a9bb78d98d9a21114838d022dda7798a87f44"
+      "bytes": 1132179,
+      "sha256": "sha256:8fdc42c747ebed0fa423f447c61218148055704d3839d7a22a40ad892a351b21"
     },
     {
       "file": "browser-qa-combat-refreshed.png",
-      "bytes": 1113193,
-      "sha256": "sha256:5f83f67b18490a41eca6d9e6dec6457e1d49ffd7e632bc9280cbc166a82df5f0"
+      "bytes": 1112838,
+      "sha256": "sha256:9898ee7955a7e1d46bdb6197e530fd4eb6d855f05013bce3059ab74ca720acaf"
     },
     {
       "file": "browser-qa-combat-status-tooltip.png",
-      "bytes": 1129138,
-      "sha256": "sha256:5504497bac0484a580d716b08e292914acd6973e05b96f388a851ac8b015812d"
+      "bytes": 1129546,
+      "sha256": "sha256:110f6e78a98dc55ec8d3b3e932709388274c4189e14b7fc6565bc2ea073bf58f"
     },
     {
       "file": "browser-qa-delete-save-confirm.png",
-      "bytes": 164420,
-      "sha256": "sha256:a5aae899c22d145244c4a00a381c32e7f3b0413095d126ffe95a98b9e4e6b53a"
+      "bytes": 163738,
+      "sha256": "sha256:dc89dfcb3a48b3fea8a69b2df7bca7499d8cd4f6c0d8a3cc74a888762abf27d9"
     },
     {
       "file": "browser-qa-end-turn-risk-block-preview.png",
-      "bytes": 986046,
-      "sha256": "sha256:dfcbc2040c95ad2ea5617d9f8caee9fa8652d43324c6dc3bf7210a1935c81ab4"
+      "bytes": 987494,
+      "sha256": "sha256:79f2e128e0ebdfec105663459ba0d0f7af850e304da970a5b7da291c26759c3a"
     },
     {
       "file": "browser-qa-end-turn-risk-kill-preview.png",
-      "bytes": 1014553,
-      "sha256": "sha256:422088ef6e45d7e05118422ee72decb553a6860621e98c647e98448cbf85d4bc"
+      "bytes": 1014319,
+      "sha256": "sha256:90fe7d20d9bdcc2aa39210db60fe89e80a8dd5fa7bf89a4ed1f5fc78ee143222"
     },
     {
       "file": "browser-qa-end-turn-risk-preview.png",
-      "bytes": 1028262,
-      "sha256": "sha256:ad915ce29729a62c2b0c9b46f150bb0bb2c2aea16661a8da2bc26a3c851afcfe"
+      "bytes": 1028280,
+      "sha256": "sha256:71d236c94dff84b23ca3f60db14ee9174ba7bffb70d3229a334a8c4ede44a665"
     },
     {
       "file": "browser-qa-enemy-density-readability.png",
-      "bytes": 1138027,
-      "sha256": "sha256:447082a68cd7a8a50b6e380851a716f4daa75446761e5671cdae8783d5c90115"
+      "bytes": 1138582,
+      "sha256": "sha256:f4c18bd9639742fd7089283c073c12c76fdfc4f51cb8b8e436383980e83406b5"
     },
     {
       "file": "browser-qa-enemy-grouped-fx.png",
-      "bytes": 1010559,
-      "sha256": "sha256:180a3b426b360dc6da93ab11616c0639d04f1716a0216fd4ebf1fa26dd4a2317"
+      "bytes": 992363,
+      "sha256": "sha256:c9e7e01160f56d8eb52bbb0916781ee61f443a01d39fddeecfe6830ffc1bea63"
     },
     {
       "file": "browser-qa-event-refreshed.png",
@@ -154,8 +154,8 @@
     },
     {
       "file": "browser-qa-final-boss-finisher-reserve.png",
-      "bytes": 1024345,
-      "sha256": "sha256:e255328fef9754cd0e1a77953ac54049ddfe28fa53d3f6c30dac366ee5084cea"
+      "bytes": 1024225,
+      "sha256": "sha256:5a173d7a033a57841d55ad17ab3199f8932d2eac4ad647ecf0a30e24b1b3760d"
     },
     {
       "file": "browser-qa-final-boss-readiness.png",
@@ -174,18 +174,18 @@
     },
     {
       "file": "browser-qa-map-refreshed.png",
-      "bytes": 540223,
-      "sha256": "sha256:490f5d8aae39db23bfe25bbb11c20f256390d5f746f16d57ec0269270a3d4f22"
+      "bytes": 545101,
+      "sha256": "sha256:ccd2f6a439a964519af7b98e39b124c8b44980f3e5ea8e6501fb16bca72d842b"
     },
     {
       "file": "browser-qa-map-route-preview.png",
-      "bytes": 546595,
-      "sha256": "sha256:60b47ab6ab7bf0b3e433b6a5d7b38be8aa7743b5b50a56f2f7e9e35a2f6b5a52"
+      "bytes": 558206,
+      "sha256": "sha256:43fa9b35cf0344d301f95c313416f962c690c1d59d577776fec8334c6013cd04"
     },
     {
       "file": "browser-qa-mobile-combat-refreshed.png",
-      "bytes": 385126,
-      "sha256": "sha256:9fab13137626f3b86c1a9773a09354c402b38551fd5553ca4592ab19caed78fa"
+      "bytes": 385159,
+      "sha256": "sha256:5a300018b3a3635c4797c53d8e8a013baf51e884db58a70d86e24f3b452af441"
     },
     {
       "file": "browser-qa-mobile-refreshed.png",
@@ -239,13 +239,13 @@
     },
     {
       "file": "browser-qa-summary-won-refreshed.png",
-      "bytes": 629998,
-      "sha256": "sha256:1285f3c4cf4107553fd011936814073822ed0a13f37c1cfa965dcd03e3f53d5f"
+      "bytes": 629983,
+      "sha256": "sha256:3d10d7c753ae2cec201080ecde3b1769637c85fdd4c3989905cd1042371208a1"
     },
     {
       "file": "browser-qa-tablet-combat-refreshed.png",
-      "bytes": 1145519,
-      "sha256": "sha256:e8e7521eedbcd3f16d7f86758c99bd7583bb470533d6c8d66d9cfd9c77bb764c"
+      "bytes": 1145172,
+      "sha256": "sha256:566b1c6558e1039ffc37acebe0c6d3f144e902fb70ff685cf916c7707f6d90af"
     },
     {
       "file": "browser-qa-title-refreshed.png",
@@ -254,13 +254,13 @@
     },
     {
       "file": "browser-qa-turn-player-cue-minimal.png",
-      "bytes": 1027933,
-      "sha256": "sha256:640d1e217d7c476c340691bafd6be2f89a98f87025656d22f389e93c74f5ba36"
+      "bytes": 1020531,
+      "sha256": "sha256:224d50e46d59c275e590a8f25da14eb7a617b8d9646fafdd243eb75a3f0cdb74"
     },
     {
       "file": "browser-qa-victory-coda.png",
-      "bytes": 858603,
-      "sha256": "sha256:58c3c27fbb5272b39b77ef442b70815145ff2a7433f2f8fd09b84e229fd8c2ec"
+      "bytes": 857712,
+      "sha256": "sha256:e8dbd72c6afcb831caed429026ab9ba18794da6556ff32caa368629f78885abf"
     }
   ]
 }

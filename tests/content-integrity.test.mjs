@@ -590,7 +590,9 @@ test("release documentation lists QA artifacts and current combat feedback", () 
   assert.match(captureSource, /function captureGroupedEnemyFx\(cdp\)/);
   assert.match(captureSource, /duplicateFxCount/);
   assert.match(captureSource, /attackTrailCount/);
+  assert.match(captureSource, /visibleEnemyTurnCueCount/);
   assert.match(captureSource, /visibleIntentLaneCount/);
+  assert.match(captureSource, /visibleEnemyIntentCardCount/);
   assert.match(captureSource, /visiblePlayerImpactRingCount/);
   assert.match(captureSource, /singleResolvedAttackCue/);
   assert.match(captureSource, /fixtureHasMultiHit/);
@@ -1749,9 +1751,13 @@ test("accessibility settings and combat feedback are wired into the rendered UI"
   assert.match(styleSource, /\.combat-board \.depth-rail small[\s\S]*text-overflow:\s*ellipsis/);
   assert.match(mainSource, /if \(\(forecast\?\.incomingDamage \?\? 0\) > 0\) base\.push\("enemy-aiming"\)/);
   assert.match(mainSource, /if \(\(forecast\?\.hpLoss \?\? 0\) > 0\) base\.push\("enemy-aiming-danger"\)/);
+  assert.match(mainSource, /clearCombatTurnCue\(\);\s*setCombatFx\(\{/);
   assert.match(styleSource, /\.combat-board\.enemy-aiming \.player-stand:not\(\.preview-self\)::after/);
   assert.doesNotMatch(mainSource, /renderEnemyIntentLane\(move\)/);
   assert.doesNotMatch(mainSource, /class="enemy-intent-lane"/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.enemy-card \.intent,[\s\S]*\.combat-board\.fx-enemy-board \.enemy-card\.fx-source \.intent[\s\S]*visibility:\s*hidden/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.enemy-card \.intent,[\s\S]*animation:\s*none/);
+  assert.match(styleSource, /\.combat-board\.fx-enemy-board \.combat-turn-cue\.enemy[\s\S]*visibility:\s*hidden/);
   assert.match(styleSource, /\.intent-portal-tooltip/);
   assert.match(styleSource, /\.intent-tooltip-icon/);
   assert.match(styleSource, /\.intent-portal-tooltip i\.attack/);
